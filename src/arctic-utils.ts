@@ -21,9 +21,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 import { OAuth2Tokens } from "./old-oauth2";
+import { CodeChallengeMethod } from "./types";
 
 /**
- * RFC‑7636 S256 code challenge (isomorphic, async).
+ * RFC‑7636 S256 code challenge
  */
 export async function createS256CodeChallenge(codeVerifier: string) {
 	const data = new TextEncoder().encode(codeVerifier);
@@ -34,12 +35,15 @@ export async function createS256CodeChallenge(codeVerifier: string) {
 /**
  * Generate a 32‑byte random string, URL‑safe Base64 without padding.
  */
-export function generateCodeVerifier(): string {
+export function generateCodeVerifier() {
 	const rnd = crypto.getRandomValues(new Uint8Array(32));
 	return base64Url(rnd);
 }
 
-export function generateState(): string {
+/**
+ * Generate a 32‑byte random string, URL‑safe Base64 without padding.
+ */
+export function generateState() {
 	const rnd = crypto.getRandomValues(new Uint8Array(32));
 	return base64Url(rnd);
 }
@@ -47,7 +51,7 @@ export function generateState(): string {
 /**
  * Helper: convert ArrayBuffer or Uint8Array to URL‑safe Base64 (no padding).
  */
-function base64Url(bytes: ArrayBuffer | Uint8Array): string {
+function base64Url(bytes: ArrayBuffer | Uint8Array) {
 	const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
 	let bin = "";
 	for (const b of arr) {
@@ -58,7 +62,7 @@ function base64Url(bytes: ArrayBuffer | Uint8Array): string {
 	let b64 =
 		typeof btoa === "function"
 			? btoa(bin)
-			: // Node/Bun/Elysia:
+			: // Node/Bun/Deno:
 				typeof Buffer !== "undefined"
 				? Buffer.from(arr).toString("base64")
 				: (() => {
@@ -68,7 +72,7 @@ function base64Url(bytes: ArrayBuffer | Uint8Array): string {
 	return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-function trimLeft(s: string, character: string): string {
+function trimLeft(s: string, character: string) {
 	if (character.length !== 1) {
 		throw new TypeError("Invalid character string");
 	}
@@ -79,7 +83,7 @@ function trimLeft(s: string, character: string): string {
 	return s.slice(start);
 }
 
-function trimRight(s: string, character: string): string {
+function trimRight(s: string, character: string) {
 	if (character.length !== 1) {
 		throw new TypeError("Invalid character string");
 	}
@@ -90,7 +94,7 @@ function trimRight(s: string, character: string): string {
 	return s.slice(0, end);
 }
 
-export function joinURIAndPath(base: string, ...path: string[]): string {
+export function joinURIAndPath(base: string, ...path: string[]) {
 	let joined = trimRight(base, "/");
 	for (const part of path) {
 		joined = trimRight(joined, "/") + "/" + trimLeft(part, "/");
@@ -98,10 +102,7 @@ export function joinURIAndPath(base: string, ...path: string[]): string {
 	return joined;
 }
 
-export function createOAuth2Request(
-	endpoint: string,
-	body: URLSearchParams
-): Request {
+export function createOAuth2Request(endpoint: string, body: URLSearchParams) {
 	const bodyBytes = new TextEncoder().encode(body.toString());
 	const request = new Request(endpoint, {
 		method: "POST",
@@ -117,10 +118,7 @@ export function createOAuth2Request(
 /**
  * Encode "username:password" as Base64
  */
-export function encodeBasicCredentials(
-	username: string,
-	password: string
-): string {
+export function encodeBasicCredentials(username: string, password: string) {
 	const str = `${username}:${password}`;
 	const bytes = new TextEncoder().encode(str);
 
@@ -140,9 +138,7 @@ export function encodeBasicCredentials(
 	throw new Error("No Base64 encoder available in this environment");
 }
 
-export async function sendTokenRequest(
-	request: Request
-): Promise<OAuth2Tokens> {
+export async function sendTokenRequest(request: Request) {
 	let response: Response;
 	try {
 		response = await fetch(request);
@@ -157,8 +153,11 @@ export async function sendTokenRequest(
 		let data: unknown;
 		try {
 			data = await response.json();
-		} catch {
-			throw new UnexpectedResponseError(response.status);
+		} catch (error) {
+			if (error instanceof Error)
+				throw new Error(`${error.message} - ${error.stack ?? ""}`);
+
+			throw new Error(`Unexpected error: ${error}`);
 		}
 		if (typeof data !== "object" || data === null) {
 			throw new UnexpectedErrorResponseBodyError(response.status, data);
@@ -170,8 +169,11 @@ export async function sendTokenRequest(
 		let data: unknown;
 		try {
 			data = await response.json();
-		} catch {
-			throw new UnexpectedResponseError(response.status);
+		} catch (error) {
+			if (error instanceof Error)
+				throw new Error(`${error.message} - ${error.stack ?? ""}`);
+
+			throw new Error(`Unexpected error: ${error}`);
 		}
 		if (typeof data !== "object" || data === null) {
 			throw new UnexpectedErrorResponseBodyError(response.status, data);
@@ -182,12 +184,12 @@ export async function sendTokenRequest(
 	if (response.body) {
 		await response.body.cancel();
 	}
-	throw new UnexpectedResponseError(response.status);
+	throw new Error(
+		`Unexpected response status: ${response.status} - ${response.statusText}`
+	);
 }
 
-export async function sendTokenRevocationRequest(
-	request: Request
-): Promise<void> {
+export async function sendTokenRevocationRequest(request: Request) {
 	let response: Response;
 	try {
 		response = await fetch(request);
@@ -221,7 +223,9 @@ export async function sendTokenRevocationRequest(
 	if (response.body) {
 		await response.body.cancel();
 	}
-	throw new UnexpectedResponseError(response.status);
+	throw new Error(
+		`Failed to revoke tokens: ${response.status} - ${response.statusText}`
+	);
 }
 
 export function createOAuth2RequestError(result: any): OAuth2RequestError {
@@ -258,14 +262,6 @@ export class OAuth2RequestError extends Error {
 	}
 }
 
-export class UnexpectedResponseError extends Error {
-	public status: number;
-	constructor(responseStatus: number) {
-		super("Unexpected error response");
-		this.status = responseStatus;
-	}
-}
-
 export class UnexpectedErrorResponseBodyError extends Error {
 	public status: number;
 	public data: unknown;
@@ -275,3 +271,125 @@ export class UnexpectedErrorResponseBodyError extends Error {
 		this.data = data;
 	}
 }
+
+export const createAuthorizationURL = (
+	providerName: ProviderOption,
+	authorizationEndpoint: string,
+	state: string,
+	scopes: string[]
+) => {
+	const url = new URL(authorizationEndpoint);
+	// url.searchParams.set("response_type", "code");
+	// url.searchParams.set("client_id", this.clientId);
+	// if (this.redirectURI !== null) {
+	// 	url.searchParams.set("redirect_uri", this.redirectURI);
+	// }
+	// url.searchParams.set("state", state);
+	// if (scopes.length > 0) {
+	// 	url.searchParams.set("scope", scopes.join(" "));
+	// }
+	return url;
+};
+
+export const createAuthorizationURLWithPKCE = async (
+	authorizationEndpoint: string,
+	state: string,
+	codeChallengeMethod: CodeChallengeMethod,
+	codeVerifier: string,
+	scopes: string[]
+) => {
+	const url = new URL(authorizationEndpoint);
+	// url.searchParams.set("response_type", "code");
+	// url.searchParams.set("client_id", this.clientId);
+	// if (this.redirectURI !== null) {
+	// 	url.searchParams.set("redirect_uri", this.redirectURI);
+	// }
+	// url.searchParams.set("state", state);
+	// if (codeChallengeMethod === CodeChallengeMethod.S256) {
+	// 	const codeChallenge = await createS256CodeChallenge(codeVerifier);
+	// 	url.searchParams.set("code_challenge_method", "S256");
+	// 	url.searchParams.set("code_challenge", codeChallenge);
+	// } else if (codeChallengeMethod === CodeChallengeMethod.Plain) {
+	// 	url.searchParams.set("code_challenge_method", "plain");
+	// 	url.searchParams.set("code_challenge", codeVerifier);
+	// }
+	// if (scopes.length > 0) {
+	// 	url.searchParams.set("scope", scopes.join(" "));
+	// }
+	return url;
+};
+
+export const validateAuthorizationCode = async (
+	tokenEndpoint: string,
+	code: string,
+	codeVerifier: string | null
+) => {
+	// const body = new URLSearchParams();
+	// body.set("grant_type", "authorization_code");
+	// body.set("code", code);
+	// if (this.redirectURI !== null) {
+	// 	body.set("redirect_uri", this.redirectURI);
+	// }
+	// if (codeVerifier !== null) {
+	// 	body.set("code_verifier", codeVerifier);
+	// }
+	// if (this.clientPassword === null) {
+	// 	body.set("client_id", this.clientId);
+	// }
+	// const request = createOAuth2Request(tokenEndpoint, body);
+	// if (this.clientPassword !== null) {
+	// 	const encodedCredentials = encodeBasicCredentials(
+	// 		this.clientId,
+	// 		this.clientPassword
+	// 	);
+	// 	request.headers.set("Authorization", `Basic ${encodedCredentials}`);
+	// }
+	// const tokens = await sendTokenRequest(request);
+	// return tokens;
+};
+
+export const refreshAccessToken = async (
+	tokenEndpoint: string,
+	refreshToken: string,
+	scopes: string[]
+) => {
+	// const body = new URLSearchParams();
+	// body.set("grant_type", "refresh_token");
+	// body.set("refresh_token", refreshToken);
+	// if (this.clientPassword === null) {
+	// 	body.set("client_id", this.clientId);
+	// }
+	// if (scopes.length > 0) {
+	// 	body.set("scope", scopes.join(" "));
+	// }
+	// const request = createOAuth2Request(tokenEndpoint, body);
+	// if (this.clientPassword !== null) {
+	// 	const encodedCredentials = encodeBasicCredentials(
+	// 		this.clientId,
+	// 		this.clientPassword
+	// 	);
+	// 	request.headers.set("Authorization", `Basic ${encodedCredentials}`);
+	// }
+	// const tokens = await sendTokenRequest(request);
+	// return tokens;
+};
+
+export const revokeToken = async (
+	tokenRevocationEndpoint: string,
+	token: string
+) => {
+	// const body = new URLSearchParams();
+	// body.set("token", token);
+	// if (this.clientPassword === null) {
+	// 	body.set("client_id", this.clientId);
+	// }
+	// const request = createOAuth2Request(tokenRevocationEndpoint, body);
+	// if (this.clientPassword !== null) {
+	// 	const encodedCredentials = encodeBasicCredentials(
+	// 		this.clientId,
+	// 		this.clientPassword
+	// 	);
+	// 	request.headers.set("Authorization", `Basic ${encodedCredentials}`);
+	// }
+	// await sendTokenRevocationRequest(request);
+};

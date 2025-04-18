@@ -4,12 +4,15 @@ type Provider = {
 	authorizationUrl: string;
 	tokenUrl: string;
 	tokenRevocationUrl?: string;
-	authorizationUrlParams?: Record<string, string>;
-	tokenUrlParams?: Record<string, string>;
-	tokenRevocationUrlParams?: Record<string, string>;
-}
+	createAuthorizationURLSearchParams?: Record<string, string>;
+	validateAuthorizationCodeBody?: Record<string, string>;
+};
 
-const providers = {
+const defineProviders = <K extends string, V extends Record<K, Provider>>(
+	providers: V
+): V => providers;
+
+const providers = defineProviders({
 	Google: {
 		isPKCE: true,
 		isOIDC: true,
@@ -21,14 +24,20 @@ const providers = {
 		isPKCE: false,
 		isOIDC: false,
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
-		tokenUrl: 'https://graph.facebook.com/v16.0/oauth/access_token'
+		tokenUrl: 'https://graph.facebook.com/v16.0/oauth/access_token',
+		createAuthorizationURLSearchParams: {
+			response_type: 'code',
+		},
+		validateAuthorizationCodeBody: {
+			grant_type: 'authorization_code',
+		}
 	},
 	Apple: {
 		isPKCE: true,
 		isOIDC: true,
 		authorizationUrl: 'https://appleid.apple.com/auth/authorize',
-		tokenUrl: 'https://appleid.apple.com/auth/token',
+		tokenUrl: 'https://appleid.apple.com/auth/token'
 	}
-};
+});
 
 type ProviderOption = keyof typeof providers;

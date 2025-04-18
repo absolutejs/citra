@@ -1,0 +1,24 @@
+{
+	"name": "polar-break",
+	"version": "0.0.1",
+	"description": "OAuth2 library for Typescript",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/absolutejs/absolutejs.git"
+	},
+	"main": "./dist/index.js",
+	"types": "./dist/src/index.d.ts",
+	"license": "CC BY-NC 4.0",
+	"author": "Alex Kahn",
+	"scripts": {
+		"build": "rm -rf dist && bun build src/index.ts --outdir dist --minify --splitting --target=bun --external react --external react-dom --external elysia && tsc --emitDeclarationOnly --project tsconfig.json",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"format": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json}\"",
+		"dev": "bun run --watch example/server.ts",
+		"release": "bun run format && bun run build && bun publish"
+	},
+	"devDependencies": {
+		"@types/bun": "1.2.10",
+		"typescript": "5.7.2"
+	}
+}

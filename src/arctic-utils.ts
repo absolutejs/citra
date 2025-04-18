@@ -1,0 +1,277 @@
+/*MIT License
+
+Copyright (c) 2023 pilcrowOnPaper
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.*/
+
+import { OAuth2Tokens } from "./old-oauth2";
+
+/**
+ * RFC‑7636 S256 code challenge (isomorphic, async).
+ */
+export async function createS256CodeChallenge(codeVerifier: string) {
+	const data = new TextEncoder().encode(codeVerifier);
+	const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+	return base64Url(hashBuffer);
+}
+
+/**
+ * Generate a 32‑byte random string, URL‑safe Base64 without padding.
+ */
+export function generateCodeVerifier(): string {
+	const rnd = crypto.getRandomValues(new Uint8Array(32));
+	return base64Url(rnd);
+}
+
+export function generateState(): string {
+	const rnd = crypto.getRandomValues(new Uint8Array(32));
+	return base64Url(rnd);
+}
+
+/**
+ * Helper: convert ArrayBuffer or Uint8Array to URL‑safe Base64 (no padding).
+ */
+function base64Url(bytes: ArrayBuffer | Uint8Array): string {
+	const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+	let bin = "";
+	for (const b of arr) {
+		bin += String.fromCharCode(b);
+	}
+
+	// browser:
+	let b64 =
+		typeof btoa === "function"
+			? btoa(bin)
+			: // Node/Bun/Elysia:
+				typeof Buffer !== "undefined"
+				? Buffer.from(arr).toString("base64")
+				: (() => {
+						throw new Error("No Base64 encoder available");
+					})();
+
+	return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function trimLeft(s: string, character: string): string {
+	if (character.length !== 1) {
+		throw new TypeError("Invalid character string");
+	}
+	let start = 0;
+	while (start < s.length && s[start] === character) {
+		start++;
+	}
+	return s.slice(start);
+}
+
+function trimRight(s: string, character: string): string {
+	if (character.length !== 1) {
+		throw new TypeError("Invalid character string");
+	}
+	let end = s.length;
+	while (end > 0 && s[end - 1] === character) {
+		end--;
+	}
+	return s.slice(0, end);
+}
+
+export function joinURIAndPath(base: string, ...path: string[]): string {
+	let joined = trimRight(base, "/");
+	for (const part of path) {
+		joined = trimRight(joined, "/") + "/" + trimLeft(part, "/");
+	}
+	return joined;
+}
+
+export function createOAuth2Request(
+	endpoint: string,
+	body: URLSearchParams
+): Request {
+	const bodyBytes = new TextEncoder().encode(body.toString());
+	const request = new Request(endpoint, {
+		method: "POST",
+		body: bodyBytes
+	});
+	request.headers.set("Content-Type", "application/x-www-form-urlencoded");
+	request.headers.set("Accept", "application/json");
+	request.headers.set("User-Agent", "arctic");
+	request.headers.set("Content-Length", String(bodyBytes.byteLength));
+	return request;
+}
+
+/**
+ * Encode "username:password" as Base64
+ */
+export function encodeBasicCredentials(
+	username: string,
+	password: string
+): string {
+	const str = `${username}:${password}`;
+	const bytes = new TextEncoder().encode(str);
+
+	let bin = "";
+	for (const b of bytes) {
+		bin += String.fromCharCode(b);
+	}
+
+	if (typeof btoa === "function") {
+		return btoa(bin);
+	}
+
+	if (typeof Buffer !== "undefined") {
+		return Buffer.from(bytes).toString("base64");
+	}
+
+	throw new Error("No Base64 encoder available in this environment");
+}
+
+export async function sendTokenRequest(
+	request: Request
+): Promise<OAuth2Tokens> {
+	let response: Response;
+	try {
+		response = await fetch(request);
+	} catch (error) {
+		if (error instanceof Error)
+			throw new Error(`${error.message} - ${error.stack ?? ""}`);
+
+		throw new Error(`Unexpected error: ${error}`);
+	}
+
+	if (response.status === 400 || response.status === 401) {
+		let data: unknown;
+		try {
+			data = await response.json();
+		} catch {
+			throw new UnexpectedResponseError(response.status);
+		}
+		if (typeof data !== "object" || data === null) {
+			throw new UnexpectedErrorResponseBodyError(response.status, data);
+		}
+		throw createOAuth2RequestError(data);
+	}
+
+	if (response.status === 200) {
+		let data: unknown;
+		try {
+			data = await response.json();
+		} catch {
+			throw new UnexpectedResponseError(response.status);
+		}
+		if (typeof data !== "object" || data === null) {
+			throw new UnexpectedErrorResponseBodyError(response.status, data);
+		}
+		return new OAuth2Tokens(data);
+	}
+
+	if (response.body) {
+		await response.body.cancel();
+	}
+	throw new UnexpectedResponseError(response.status);
+}
+
+export async function sendTokenRevocationRequest(
+	request: Request
+): Promise<void> {
+	let response: Response;
+	try {
+		response = await fetch(request);
+	} catch (error) {
+		if (error instanceof Error)
+			throw new Error(`${error.message} - ${error.stack ?? ""}`);
+
+		throw new Error(`Unexpected error: ${error}`);
+	}
+
+	if (response.status === 400 || response.status === 401) {
+		let data: unknown;
+		try {
+			data = await response.json();
+		} catch {
+			throw new UnexpectedErrorResponseBodyError(response.status, null);
+		}
+		if (typeof data !== "object" || data === null) {
+			throw new UnexpectedErrorResponseBodyError(response.status, data);
+		}
+		throw createOAuth2RequestError(data);
+	}
+
+	if (response.status === 200) {
+		if (response.body) {
+			await response.body.cancel();
+		}
+		return;
+	}
+
+	if (response.body) {
+		await response.body.cancel();
+	}
+	throw new UnexpectedResponseError(response.status);
+}
+
+export function createOAuth2RequestError(result: any): OAuth2RequestError {
+	if (typeof result.error !== "string") {
+		throw new Error("Invalid error response");
+	}
+	const code = result.error;
+	const description =
+		typeof result.error_description === "string"
+			? result.error_description
+			: null;
+	const uri = typeof result.error_uri === "string" ? result.error_uri : null;
+	const state = typeof result.state === "string" ? result.state : null;
+	return new OAuth2RequestError(code, description, uri, state);
+}
+
+export class OAuth2RequestError extends Error {
+	public code: string;
+	public description: string | null;
+	public uri: string | null;
+	public state: string | null;
+
+	constructor(
+		code: string,
+		description: string | null,
+		uri: string | null,
+		state: string | null
+	) {
+		super(`OAuth request error: ${code}`);
+		this.code = code;
+		this.description = description;
+		this.uri = uri;
+		this.state = state;
+	}
+}
+
+export class UnexpectedResponseError extends Error {
+	public status: number;
+	constructor(responseStatus: number) {
+		super("Unexpected error response");
+		this.status = responseStatus;
+	}
+}
+
+export class UnexpectedErrorResponseBodyError extends Error {
+	public status: number;
+	public data: unknown;
+	constructor(status: number, data: unknown) {
+		super("Unexpected error response body");
+		this.status = status;
+		this.data = data;
+	}
+}

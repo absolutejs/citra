@@ -20,15 +20,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-import { OAuth2Tokens } from "./old-oauth2";
-import { CodeChallengeMethod } from "./types";
+import { isValidOAuth2Tokens } from './typeGuards';
+import { CodeChallengeMethod } from './types';
 
 /**
  * RFC‑7636 S256 code challenge
  */
 export async function createS256CodeChallenge(codeVerifier: string) {
 	const data = new TextEncoder().encode(codeVerifier);
-	const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+	const hashBuffer = await crypto.subtle.digest('SHA-256', data);
 	return base64Url(hashBuffer);
 }
 
@@ -53,28 +53,28 @@ export function generateState() {
  */
 function base64Url(bytes: ArrayBuffer | Uint8Array) {
 	const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-	let bin = "";
+	let bin = '';
 	for (const b of arr) {
 		bin += String.fromCharCode(b);
 	}
 
 	// browser:
 	let b64 =
-		typeof btoa === "function"
+		typeof btoa === 'function'
 			? btoa(bin)
 			: // Node/Bun/Deno:
-				typeof Buffer !== "undefined"
-				? Buffer.from(arr).toString("base64")
+				typeof Buffer !== 'undefined'
+				? Buffer.from(arr).toString('base64')
 				: (() => {
-						throw new Error("No Base64 encoder available");
+						throw new Error('No Base64 encoder available');
 					})();
 
-	return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+	return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function trimLeft(s: string, character: string) {
 	if (character.length !== 1) {
-		throw new TypeError("Invalid character string");
+		throw new TypeError('Invalid character string');
 	}
 	let start = 0;
 	while (start < s.length && s[start] === character) {
@@ -85,7 +85,7 @@ function trimLeft(s: string, character: string) {
 
 function trimRight(s: string, character: string) {
 	if (character.length !== 1) {
-		throw new TypeError("Invalid character string");
+		throw new TypeError('Invalid character string');
 	}
 	let end = s.length;
 	while (end > 0 && s[end - 1] === character) {
@@ -95,9 +95,9 @@ function trimRight(s: string, character: string) {
 }
 
 export function joinURIAndPath(base: string, ...path: string[]) {
-	let joined = trimRight(base, "/");
+	let joined = trimRight(base, '/');
 	for (const part of path) {
-		joined = trimRight(joined, "/") + "/" + trimLeft(part, "/");
+		joined = trimRight(joined, '/') + '/' + trimLeft(part, '/');
 	}
 	return joined;
 }
@@ -105,13 +105,13 @@ export function joinURIAndPath(base: string, ...path: string[]) {
 export function createOAuth2Request(endpoint: string, body: URLSearchParams) {
 	const bodyBytes = new TextEncoder().encode(body.toString());
 	const request = new Request(endpoint, {
-		method: "POST",
+		method: 'POST',
 		body: bodyBytes
 	});
-	request.headers.set("Content-Type", "application/x-www-form-urlencoded");
-	request.headers.set("Accept", "application/json");
-	request.headers.set("User-Agent", "arctic");
-	request.headers.set("Content-Length", String(bodyBytes.byteLength));
+	request.headers.set('Content-Type', 'application/x-www-form-urlencoded');
+	request.headers.set('Accept', 'application/json');
+	request.headers.set('User-Agent', 'arctic');
+	request.headers.set('Content-Length', String(bodyBytes.byteLength));
 	return request;
 }
 
@@ -122,20 +122,20 @@ export function encodeBasicCredentials(username: string, password: string) {
 	const str = `${username}:${password}`;
 	const bytes = new TextEncoder().encode(str);
 
-	let bin = "";
+	let bin = '';
 	for (const b of bytes) {
 		bin += String.fromCharCode(b);
 	}
 
-	if (typeof btoa === "function") {
+	if (typeof btoa === 'function') {
 		return btoa(bin);
 	}
 
-	if (typeof Buffer !== "undefined") {
-		return Buffer.from(bytes).toString("base64");
+	if (typeof Buffer !== 'undefined') {
+		return Buffer.from(bytes).toString('base64');
 	}
 
-	throw new Error("No Base64 encoder available in this environment");
+	throw new Error('No Base64 encoder available in this environment');
 }
 
 export async function sendTokenRequest(request: Request) {
@@ -144,7 +144,7 @@ export async function sendTokenRequest(request: Request) {
 		response = await fetch(request);
 	} catch (error) {
 		if (error instanceof Error)
-			throw new Error(`${error.message} - ${error.stack ?? ""}`);
+			throw new Error(`${error.message} - ${error.stack ?? ''}`);
 
 		throw new Error(`Unexpected error: ${error}`);
 	}
@@ -155,12 +155,12 @@ export async function sendTokenRequest(request: Request) {
 			data = await response.json();
 		} catch (error) {
 			if (error instanceof Error)
-				throw new Error(`${error.message} - ${error.stack ?? ""}`);
+				throw new Error(`${error.message} - ${error.stack ?? ''}`);
 
 			throw new Error(`Unexpected error: ${error}`);
 		}
-		if (typeof data !== "object" || data === null) {
-			throw new UnexpectedErrorResponseBodyError(response.status, data);
+		if (typeof data !== 'object' || data === null) {
+			throw new ResponseBodyError(response.status, data);
 		}
 		throw createOAuth2RequestError(data);
 	}
@@ -171,14 +171,15 @@ export async function sendTokenRequest(request: Request) {
 			data = await response.json();
 		} catch (error) {
 			if (error instanceof Error)
-				throw new Error(`${error.message} - ${error.stack ?? ""}`);
+				throw new Error(`${error.message} - ${error.stack ?? ''}`);
 
 			throw new Error(`Unexpected error: ${error}`);
 		}
-		if (typeof data !== "object" || data === null) {
-			throw new UnexpectedErrorResponseBodyError(response.status, data);
+		if (!isValidOAuth2Tokens(data) || data === null) {
+			throw new ResponseBodyError(response.status, data);
 		}
-		return new OAuth2Tokens(data);
+
+		return data;
 	}
 
 	if (response.body) {
@@ -195,7 +196,7 @@ export async function sendTokenRevocationRequest(request: Request) {
 		response = await fetch(request);
 	} catch (error) {
 		if (error instanceof Error)
-			throw new Error(`${error.message} - ${error.stack ?? ""}`);
+			throw new Error(`${error.message} - ${error.stack ?? ''}`);
 
 		throw new Error(`Unexpected error: ${error}`);
 	}
@@ -205,10 +206,10 @@ export async function sendTokenRevocationRequest(request: Request) {
 		try {
 			data = await response.json();
 		} catch {
-			throw new UnexpectedErrorResponseBodyError(response.status, null);
+			throw new ResponseBodyError(response.status, null);
 		}
-		if (typeof data !== "object" || data === null) {
-			throw new UnexpectedErrorResponseBodyError(response.status, data);
+		if (typeof data !== 'object' || data === null) {
+			throw new ResponseBodyError(response.status, data);
 		}
 		throw createOAuth2RequestError(data);
 	}
@@ -229,16 +230,16 @@ export async function sendTokenRevocationRequest(request: Request) {
 }
 
 export function createOAuth2RequestError(result: any): OAuth2RequestError {
-	if (typeof result.error !== "string") {
-		throw new Error("Invalid error response");
+	if (typeof result.error !== 'string') {
+		throw new Error('Invalid error response');
 	}
 	const code = result.error;
 	const description =
-		typeof result.error_description === "string"
+		typeof result.error_description === 'string'
 			? result.error_description
 			: null;
-	const uri = typeof result.error_uri === "string" ? result.error_uri : null;
-	const state = typeof result.state === "string" ? result.state : null;
+	const uri = typeof result.error_uri === 'string' ? result.error_uri : null;
+	const state = typeof result.state === 'string' ? result.state : null;
 	return new OAuth2RequestError(code, description, uri, state);
 }
 
@@ -262,11 +263,11 @@ export class OAuth2RequestError extends Error {
 	}
 }
 
-export class UnexpectedErrorResponseBodyError extends Error {
+export class ResponseBodyError extends Error {
 	public status: number;
 	public data: unknown;
 	constructor(status: number, data: unknown) {
-		super("Unexpected error response body");
+		super('Unexpected error response body');
 		this.status = status;
 		this.data = data;
 	}

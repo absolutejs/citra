@@ -4,7 +4,7 @@
 	"description": "OAuth2 library for Typescript",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/absolutejs/absolutejs.git"
+		"url": "https://github.com/absolutejs/citra.git"
 	},
 	"main": "./dist/index.js",
 	"types": "./dist/src/index.d.ts",

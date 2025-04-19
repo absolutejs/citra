@@ -1,4 +1,5 @@
 export type CodeChallengeMethod = 'S256' | 'plain';
+
 export type OAuth2Tokens = {
 	access_token: string;
 	refresh_token?: string;

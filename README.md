@@ -1,34 +1,9 @@
-# AbsoluteJS
+# Citra
 
 ## Introduction
 
-AbsoluteJS is a revolutionary JavaScript framework designed to unify all past, present, and future JavaScript frameworks into one powerful environment. It's powered by Bun and Elysia, providing a seamless and efficient development experience.
+A collection of OAuth2 providers with the proper endpoint and request information set up.
 
-## Features
+## Reasoning
 
-- **Unified Environment**: AbsoluteJS brings together all JavaScript frameworks, allowing developers to use any framework within one environment.
-- **Powered by Bun and Elysia**: Leveraging the power of Bun and Elysia, AbsoluteJS provides a robust and efficient development experience.
-- **Future-Proof**: AbsoluteJS is designed to accommodate future JavaScript frameworks, making it a sustainable choice for JavaScript development.
-
-## Getting Started
-
-1. **Installation**: Provide instructions on how to install AbsoluteJS.
-2. **Basic Usage**: Give a simple example of how to use AbsoluteJS.
-
-## Documentation
-
-Link to your detailed documentation here.
-
-## Contributing
-
-Provide guidelines on how contributors can help improve AbsoluteJS.
-
-## License
-
-Include information about your license here.
-
-## Contact
-
-Provide contact information or links to your social media profiles here.
-
-We hope you enjoy using AbsoluteJS as much as we enjoyed building it!
+To be a standardized typescript starting point for OAuth2 protocol. This package was inspired by arctic. The main differnece with citra is a focus on interchangability of the providers, as well as removing the overhead of having classes. 

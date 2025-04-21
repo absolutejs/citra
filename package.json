@@ -18,7 +18,13 @@
 		"release": "bun run format && bun run build && bun publish"
 	},
 	"devDependencies": {
+		"@absolutejs/absolute": "0.3.1",
+		"@elysiajs/static": "1.2.0",
 		"@types/bun": "1.2.10",
-		"typescript": "5.7.2"
+		"elysia": "1.2.25",
+		"prettier": "3.5.3",
+		"react": "19.1.0",
+		"typescript": "5.7.2",
+		"@types/react": "19.1.1"
 	}
 }

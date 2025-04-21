@@ -102,9 +102,9 @@ export function joinURIAndPath(base: string, ...path: string[]) {
 	return joined;
 }
 
-export function createOAuth2Request(endpoint: string, body: URLSearchParams) {
+export function createOAuth2Request(Url: string, body: URLSearchParams) {
 	const bodyBytes = new TextEncoder().encode(body.toString());
-	const request = new Request(endpoint, {
+	const request = new Request(Url, {
 		method: 'POST',
 		body: bodyBytes
 	});
@@ -274,27 +274,27 @@ export class ResponseBodyError extends Error {
 }
 
 export const createAuthorizationURL = (
-	authorizationEndpoint: string,
+	authorizationUrl: string,
 	state: string,
 	scopes: string[],
 	clientId: string,
 	redirectURI: string | null
 ) => {
-	const url = new URL(authorizationEndpoint);
-	url.searchParams.set("response_type", "code");
-	url.searchParams.set("client_id", clientId);
+	const url = new URL(authorizationUrl);
+	url.searchParams.set('response_type', 'code');
+	url.searchParams.set('client_id', clientId);
 	if (redirectURI !== null) {
-		url.searchParams.set("redirect_uri", redirectURI);
+		url.searchParams.set('redirect_uri', redirectURI);
 	}
-	url.searchParams.set("state", state);
+	url.searchParams.set('state', state);
 	if (scopes.length > 0) {
-		url.searchParams.set("scope", scopes.join(" "));
+		url.searchParams.set('scope', scopes.join(' '));
 	}
 	return url;
 };
 
 export const createAuthorizationURLWithPKCE = async (
-	authorizationEndpoint: string,
+	authorizationUrl: string,
 	state: string,
 	codeChallengeMethod: CodeChallengeMethod,
 	codeVerifier: string,
@@ -302,29 +302,29 @@ export const createAuthorizationURLWithPKCE = async (
 	clientId: string,
 	redirectURI: string | null
 ) => {
-	const url = new URL(authorizationEndpoint);
-	url.searchParams.set("response_type", "code");
-	url.searchParams.set("client_id", clientId);
+	const url = new URL(authorizationUrl);
+	url.searchParams.set('response_type', 'code');
+	url.searchParams.set('client_id', clientId);
 	if (redirectURI !== null) {
-		url.searchParams.set("redirect_uri", redirectURI);
+		url.searchParams.set('redirect_uri', redirectURI);
 	}
-	url.searchParams.set("state", state);
-	if (codeChallengeMethod === "S256") {
+	url.searchParams.set('state', state);
+	if (codeChallengeMethod === 'S256') {
 		const codeChallenge = await createS256CodeChallenge(codeVerifier);
-		url.searchParams.set("code_challenge_method", "S256");
-		url.searchParams.set("code_challenge", codeChallenge);
-	} else if (codeChallengeMethod === "plain") {
-		url.searchParams.set("code_challenge_method", "plain");
-		url.searchParams.set("code_challenge", codeVerifier);
+		url.searchParams.set('code_challenge_method', 'S256');
+		url.searchParams.set('code_challenge', codeChallenge);
+	} else if (codeChallengeMethod === 'plain') {
+		url.searchParams.set('code_challenge_method', 'plain');
+		url.searchParams.set('code_challenge', codeVerifier);
 	}
 	if (scopes.length > 0) {
-		url.searchParams.set("scope", scopes.join(" "));
+		url.searchParams.set('scope', scopes.join(' '));
 	}
 	return url;
 };
 
 export const validateAuthorizationCode = async (
-	tokenEndpoint: string,
+	tokenUrl: string,
 	code: string,
 	codeVerifier: string | null,
 	redirectURI: string | null,
@@ -332,75 +332,75 @@ export const validateAuthorizationCode = async (
 	clientPassword: string | null
 ) => {
 	const body = new URLSearchParams();
-	body.set("grant_type", "authorization_code");
-	body.set("code", code);
+	body.set('grant_type', 'authorization_code');
+	body.set('code', code);
 	if (redirectURI !== null) {
-		body.set("redirect_uri", redirectURI);
+		body.set('redirect_uri', redirectURI);
 	}
 	if (codeVerifier !== null) {
-		body.set("code_verifier", codeVerifier);
+		body.set('code_verifier', codeVerifier);
 	}
 	if (clientPassword === null) {
-		body.set("client_id", clientId);
+		body.set('client_id', clientId);
 	}
-	const request = createOAuth2Request(tokenEndpoint, body);
+	const request = createOAuth2Request(tokenUrl, body);
 	if (clientPassword !== null) {
 		const encodedCredentials = encodeBasicCredentials(
 			clientId,
 			clientPassword
 		);
-		request.headers.set("Authorization", `Basic ${encodedCredentials}`);
+		request.headers.set('Authorization', `Basic ${encodedCredentials}`);
 	}
 	const tokens = await sendTokenRequest(request);
 	return tokens;
 };
 
 export const refreshAccessToken = async (
-	tokenEndpoint: string,
+	tokenUrl: string,
 	refreshToken: string,
 	scopes: string[],
 	clientId: string,
 	clientPassword: string | null
 ) => {
 	const body = new URLSearchParams();
-	body.set("grant_type", "refresh_token");
-	body.set("refresh_token", refreshToken);
+	body.set('grant_type', 'refresh_token');
+	body.set('refresh_token', refreshToken);
 	if (clientPassword === null) {
-		body.set("client_id", clientId);
+		body.set('client_id', clientId);
 	}
 	if (scopes.length > 0) {
-		body.set("scope", scopes.join(" "));
+		body.set('scope', scopes.join(' '));
 	}
-	const request = createOAuth2Request(tokenEndpoint, body);
+	const request = createOAuth2Request(tokenUrl, body);
 	if (clientPassword !== null) {
 		const encodedCredentials = encodeBasicCredentials(
 			clientId,
 			clientPassword
 		);
-		request.headers.set("Authorization", `Basic ${encodedCredentials}`);
+		request.headers.set('Authorization', `Basic ${encodedCredentials}`);
 	}
 	const tokens = await sendTokenRequest(request);
 	return tokens;
 };
 
 export const revokeToken = async (
-	tokenRevocationEndpoint: string,
+	tokenRevocationUrl: string,
 	token: string,
 	clientId: string,
 	clientPassword: string | null
 ) => {
 	const body = new URLSearchParams();
-	body.set("token", token);
+	body.set('token', token);
 	if (clientPassword === null) {
-		body.set("client_id", clientId);
+		body.set('client_id', clientId);
 	}
-	const request = createOAuth2Request(tokenRevocationEndpoint, body);
+	const request = createOAuth2Request(tokenRevocationUrl, body);
 	if (clientPassword !== null) {
 		const encodedCredentials = encodeBasicCredentials(
 			clientId,
 			clientPassword
 		);
-		request.headers.set("Authorization", `Basic ${encodedCredentials}`);
+		request.headers.set('Authorization', `Basic ${encodedCredentials}`);
 	}
 	await sendTokenRevocationRequest(request);
 };

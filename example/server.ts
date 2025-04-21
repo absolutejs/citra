@@ -38,11 +38,6 @@ if (!Bun.env.DATABASE_URL) {
 	throw new Error('DATABASE_URL is not set in .env file');
 }
 
-const googleOAuthClient = createOAuth2Client('Google', {
-	clientId: Bun.env.GOOGLE_CLIENT_ID,
-	clientSecret: Bun.env.GOOGLE_CLIENT_SECRET,
-	redirectUri: Bun.env.GOOGLE_REDIRECT_URI,
-});
 
 new Elysia()
 	.use(
@@ -52,6 +47,8 @@ new Elysia()
 		})
 	)
 	.get('/', () => handleReactPageRequest(Example, manifest['ExampleIndex']))
+	.get('/authorize/google', () => {})
+	.get('/google/callback', () => {})
 	.use(networkingPlugin)
 	.on('error', (error: any) => {
 		console.error(`Server error: ${error.code}`);

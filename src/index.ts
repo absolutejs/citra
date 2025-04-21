@@ -21,7 +21,7 @@ import {
     /**
      * Exchanges an authorization code for tokens.
      */
-    exchangeCode: (
+    validateAuthorizationCode: (
       code: string,
       opts?: { codeVerifier?: string }
     ) => Promise<any>;
@@ -93,7 +93,7 @@ import {
         return url;
       },
   
-      exchangeCode(code, { codeVerifier: _cv } = {}) {
+      validateAuthorizationCode(code, { codeVerifier: _cv } = {}) {
         const body = new URLSearchParams();
         body.set('grant_type', 'authorization_code');
         body.set('code', code);

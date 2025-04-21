@@ -6,6 +6,7 @@ import {
 	handleReactPageRequest,
 	networkingPlugin
 } from '@absolutejs/absolute';
+import { createOAuth2Client } from '../src';
 
 const manifest = await build({
 	reactPagesDir: 'example/pages',
@@ -35,6 +36,12 @@ if (
 if (!Bun.env.DATABASE_URL) {
 	throw new Error('DATABASE_URL is not set in .env file');
 }
+
+const googleOAuthClient = createOAuth2Client('Google', {
+	clientId: Bun.env.GOOGLE_CLIENT_ID,
+	clientSecret: Bun.env.GOOGLE_CLIENT_SECRET,
+	redirectUri: Bun.env.GOOGLE_REDIRECT_URI,
+});
 
 new Elysia()
 	.use(

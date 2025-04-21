@@ -1,26 +1,8 @@
-type Provider = {
-	isPKCE: boolean;
-	isOIDC: boolean;
-	authorizationUrl: string;
-	tokenUrl: string;
-	tokenRevocationUrl?: string;
+import { ProviderConfig } from './types';
 
-	/** Static query params added to the auth URL */
-	createAuthorizationURLSearchParams?: Record<string, string>;
-
-	/** Static fields added to the authorization‑code exchange body */
-	validateAuthorizationCodeBody?: Record<string, string>;
-
-	/** Static fields added to the refresh‑token request body */
-	refreshAccessTokenBody?: Record<string, string>;
-
-	/** Static fields added to the token‑revocation request body */
-	tokenRevocationBody?: Record<string, string>;
-};
-
-const defineProviders = <K extends string, V extends Record<K, Provider>>(
-	providers: V
-): V => providers;
+export const defineProviders = <T extends Record<string, ProviderConfig>>(
+	providers: T
+): Record<keyof T, ProviderConfig> => providers;
 
 export const providers = defineProviders({
 	'42': {
@@ -202,6 +184,15 @@ export const providers = defineProviders({
 		authorizationUrl: '${baseURL}/oauth/authorize',
 		tokenUrl: '${baseURL}/oauth/token',
 		tokenRevocationUrl: '${baseURL}/oauth/revoke'
+	},
+	Google: {
+		isPKCE: true,
+		isOIDC: true,
+		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+		tokenUrl: 'https://oauth2.googleapis.com/token',
+		tokenRevocationUrl: 'https://oauth2.googleapis.com/revoke',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Intuit: {
 		isPKCE: false,
@@ -433,6 +424,18 @@ export const providers = defineProviders({
 		tokenUrl: 'https://id.twitch.tv/oauth2/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+	},
+	Twitter: {
+		isPKCE: true,
+		isOIDC: false,
+		authorizationUrl: 'https://twitter.com/i/oauth2/authorize',
+		tokenUrl: 'https://api.twitter.com/2/oauth2/token',
+		createAuthorizationURLSearchParams: {
+			response_type: 'code',
+			code_challenge_method: 'S256'
+		},
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
+		refreshAccessTokenBody: { grant_type: 'refresh_token' }
 	},
 	VK: {
 		isPKCE: false,

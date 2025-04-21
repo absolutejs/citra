@@ -1,4 +1,27 @@
+import { providers } from './providers';
+
 export type CodeChallengeMethod = 'S256' | 'plain';
+
+export type ProviderConfig = {
+	isPKCE: boolean;
+	isOIDC: boolean;
+	authorizationUrl: string;
+	tokenUrl: string;
+	tokenRevocationUrl?: string;
+
+	/** Static query params added to the auth URL */
+	createAuthorizationURLSearchParams?: Record<string, string>;
+
+	/** Static fields added to the authorization‑code exchange body */
+	validateAuthorizationCodeBody?: Record<string, string>;
+
+	/** Static fields added to the refresh‑token request body */
+	refreshAccessTokenBody?: Record<string, string>;
+
+	/** Static fields added to the token‑revocation request body */
+	tokenRevocationBody?: Record<string, string>;
+};
+
 
 export type OAuth2Tokens = {
 	access_token: string;
@@ -333,3 +356,74 @@ export type ZoomOAuth2Config = {
 	clientSecret: string;
 	redirectUri: string;
 };
+
+export type ConfigMap = {
+	'42': FortyTwoOAuth2Config;
+	AmazonCognito: AmazonCognitoOAuth2Config;
+	AniList: AniListOAuth2Config;
+	Apple: AppleOAuth2Config;
+	Auth0: Auth0OAuth2Config;
+	Authentik: AuthentikOAuth2Config;
+	Autodesk: AutodeskOAuth2Config;
+	Atlassian: AtlassianOAuth2Config;
+	Battlenet: BattlenetOAuth2Config;
+	Bitbucket: BitbucketOAuth2Config;
+	Box: BoxOAuth2Config;
+	Bungie: BungieOAuth2Config;
+	Coinbase: CoinbaseOAuth2Config;
+	Discord: DiscordOAuth2Config;
+	DonationAlerts: DonationAlertsOAuth2Config;
+	Dribbble: DribbbleOAuth2Config;
+	Dropbox: DropboxOAuth2Config;
+	EpicGames: EpicGamesOAuth2Config;
+	Etsy: EtsyOAuth2Config;
+	Facebook: FacebookOAuth2Config;
+	Figma: FigmaOAuth2Config;
+	Gitea: GiteaOAuth2Config;
+	GitHub: GitHubOAuth2Config;
+	GitLab: GitLabOAuth2Config;
+	Google: GoogleOAuth2Config;
+	Intuit: IntuitOAuth2Config;
+	Kakao: KakaoOAuth2Config;
+	KeyCloak: KeyCloakOAuth2Config;
+	Kick: KickOAuth2Config;
+	Line: LINEOAuth2Config;
+	Lichess: LichessOAuth2Config;
+	Linear: LinearOAuth2Config;
+	LinkedIn: LinkedInOAuth2Config;
+	Mastodon: MastodonOAuth2Config;
+	MercadoLibre: MercadoLibreOAuth2Config;
+	MercadoPago: MercadoPagoOAuth2Config;
+	MicrosoftEntraId: MicrosoftEntraIdOAuth2Config;
+	MyAnimeList: MyAnimeListOAuth2Config;
+	Naver: NaverOAuth2Config;
+	Notion: NotionOAuth2Config;
+	Okta: OktaOAuth2Config;
+	Osu: OsuOAuth2Config;
+	Patreon: PatreonOAuth2Config;
+	Polar: PolarOAuth2Config;
+	Reddit: RedditOAuth2Config;
+	Roblox: RobloxOAuth2Config;
+	Salesforce: SalesforceOAuth2Config;
+	Shikimori: ShikimoriOAuth2Config;
+	Slack: SlackOAuth2Config;
+	Spotify: SpotifyOAuth2Config;
+	StartGG: StartGGOAuth2Config;
+	Strava: StravaOAuth2Config;
+	Synology: SynologyOAuth2Config;
+	TikTok: TikTokOAuth2Config;
+	Tiltify: TiltifyOAuth2Config;
+	Tumblr: TumblrOAuth2Config;
+	Twitch: TwitchOAuth2Config;
+	Twitter: TwitterOAuth2Config;
+	VK: VKOAuth2Config;
+	WorkOS: WorkOSOAuth2Config;
+	Yahoo: YahooOAuth2Config;
+	Yandex: YandexOAuth2Config;
+	Zoom: ZoomOAuth2Config;
+};
+
+export type ConfigFor<P extends keyof typeof providers> =
+  P extends keyof ConfigMap
+	? ConfigMap[P]
+	: never;

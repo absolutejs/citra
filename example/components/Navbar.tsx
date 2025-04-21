@@ -8,10 +8,7 @@ type NavbarProps = {
 	setModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const Navbar = ({
-	modalOpen,
-	setModalOpen
-}: NavbarProps) => {
+export const Navbar = ({ modalOpen, setModalOpen }: NavbarProps) => {
 	return (
 		<header
 			style={{
@@ -36,14 +33,11 @@ export const Navbar = ({
 				Citra
 			</a>
 
-				{modalOpen && (
-					<Modal
-						isOpen={modalOpen}
-						onClose={() => setModalOpen(false)}
-					>
-						<AuthOptions />
-					</Modal>
-				)}
+			{modalOpen && (
+				<Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+					<AuthOptions />
+				</Modal>
+			)}
 		</header>
 	);
 };

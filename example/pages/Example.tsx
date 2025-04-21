@@ -16,16 +16,11 @@ export const Example = () => {
 		<html lang="en" style={htmlDefault}>
 			<Head />
 			<body style={bodyDefault}>
-				<Navbar
-					modalOpen={modalOpen}
-					setModalOpen={setModalOpen}
-				/>
+				<Navbar modalOpen={modalOpen} setModalOpen={setModalOpen} />
 				<main style={mainDefault}>
 					<div style={contentStyle}>
 						<h1>Welcome to Citra Example</h1>
-						<p>
-							Use the signin to test auth flow with a provider
-						</p>
+						<p>Use the signin to test auth flow with a provider</p>
 					</div>
 				</main>
 			</body>

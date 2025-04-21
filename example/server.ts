@@ -7,6 +7,7 @@ import {
 	networkingPlugin
 } from '@absolutejs/absolute';
 import { createOAuth2Client } from '../src';
+import { generateState } from '../src/arctic-utils';
 
 const manifest = await build({
 	reactPagesDir: 'example/pages',

@@ -7,8 +7,6 @@ import {
 	networkingPlugin
 } from '@absolutejs/absolute';
 import { createOAuth2Client } from '../src';
-import { generateCodeVerifier, generateState } from '../src/arctic-utils';
-import { COOKIE_DURATION } from './constants';
 import { googlePlugin } from './providers/google';
 
 const manifest = await build({

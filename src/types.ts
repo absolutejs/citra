@@ -18,6 +18,8 @@ export type OIDCProviders = {
 
 export type NonPKCEProviders = Exclude<ProviderOption, PKCEProviders>;
 
+export type NonOIDCProviders = Exclude<ProviderOption, OIDCProviders>;
+
 export type OAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
 		opts: { state: string } & (P extends PKCEProviders
@@ -31,8 +33,9 @@ export type OAuth2Client<P extends ProviderOption> = {
 	): Promise<URL>;
 
 	validateAuthorizationCode(
-		code: string,
-		opts?: { codeVerifier?: string }
+		opts: { code: string } & (P extends PKCEProviders
+			? { codeVerifier: string }
+			: {})
 	): Promise<any>;
 
 	refresh(refreshToken: string): Promise<any>;

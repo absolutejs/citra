@@ -7,7 +7,6 @@ import {
 import { providers } from './providers';
 import {
 	ConfigFor,
-	NonPKCEProviders,
 	OAuth2Client,
 	PKCEProviders,
 	ProviderOption
@@ -36,7 +35,8 @@ export function createOAuth2Client<P extends ProviderOption>(
 				scope = [],
 				extraParams = {},
 				codeVerifier
-			} = opts || {};
+			} = opts ?? {};
+
 			const url = new URL(meta.authorizationUrl);
 			url.searchParams.set('response_type', 'code');
 			url.searchParams.set('client_id', config.clientId);
@@ -51,11 +51,14 @@ export function createOAuth2Client<P extends ProviderOption>(
 			}
 
 			if (meta.isPKCE) {
-				// this branch only runs at runtime—but TS *knows* for PKCEProviders
-				// that the overload requires you to pass codeVerifier
-				const cv = codeVerifier!;
+				if (!codeVerifier) {
+					throw new Error(
+						'`codeVerifier` is required when `meta.isPKCE` is true'
+					);
+				}
+
 				url.searchParams.set('code_challenge_method', 'S256');
-				const challenge = await createS256CodeChallenge(cv);
+				const challenge = await createS256CodeChallenge(codeVerifier);
 				url.searchParams.set('code_challenge', challenge);
 			}
 
@@ -69,22 +72,39 @@ export function createOAuth2Client<P extends ProviderOption>(
 			return url;
 		},
 
-		validateAuthorizationCode(code, { codeVerifier: _ } = {}) {
+		validateAuthorizationCode(opts: {
+			code: string;
+			codeVerifier?: string;
+		}) {
+			const { code, codeVerifier } = opts;
+
 			const body = new URLSearchParams();
 			body.set('grant_type', 'authorization_code');
 			body.set('code', code);
+
 			if (config.redirectUri) {
 				body.set('redirect_uri', config.redirectUri);
 			}
 			Object.entries(meta.validateAuthorizationCodeBody || {}).forEach(
 				([k, v]) => body.set(k, v)
 			);
+
 			if ('clientSecret' in config && config.clientSecret) {
 				body.set('client_id', config.clientId);
 				body.set('client_secret', config.clientSecret);
 			} else {
 				body.set('client_id', config.clientId);
 			}
+
+			if (meta.isPKCE) {
+				if (!codeVerifier) {
+					throw new Error(
+						'codeVerifier is required for PKCE providers'
+					);
+				}
+				body.set('code_verifier', codeVerifier);
+			}
+
 			return postForm(meta.tokenUrl, body);
 		},
 

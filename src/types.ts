@@ -2,6 +2,39 @@ import { providers } from './providers';
 
 export type CodeChallengeMethod = 'S256' | 'plain';
 
+export type ProviderOption = keyof typeof providers;
+
+export type PKCEProviders = {
+	[K in ProviderOption]: (typeof providers)[K]['isPKCE'] extends true
+		? K
+		: never;
+}[ProviderOption];
+
+export type OIDCProviders = {
+	[K in ProviderOption]: (typeof providers)[K]['isOIDC'] extends true ? K : never
+}[ProviderOption];
+
+export type NonPKCEProviders = Exclude<ProviderOption, PKCEProviders>;
+
+export type OAuth2Client<P extends ProviderOption> = {
+	createAuthorizationUrl(
+	  opts: 
+		{ state: string }
+		& (P extends PKCEProviders   ? { codeVerifier: string } : {})
+		& (P extends OIDCProviders   ? { scope: string[] } : { scope?: string[] })
+		& { extraParams?: Record<string, string> }
+	): Promise<URL>;
+  
+	validateAuthorizationCode(
+	  code: string,
+	  opts?: { codeVerifier?: string }
+	): Promise<any>;
+  
+	refresh(refreshToken: string): Promise<any>;
+	revoke(token: string): Promise<void>;
+  };
+  
+
 export type ProviderConfig = {
 	isPKCE: boolean;
 	isOIDC: boolean;
@@ -21,7 +54,6 @@ export type ProviderConfig = {
 	/** Static fields added to the token‑revocation request body */
 	tokenRevocationBody?: Record<string, string>;
 };
-
 
 export type OAuth2Tokens = {
 	access_token: string;
@@ -424,6 +456,4 @@ export type ConfigMap = {
 };
 
 export type ConfigFor<P extends keyof typeof providers> =
-  P extends keyof ConfigMap
-	? ConfigMap[P]
-	: never;
+	P extends keyof ConfigMap ? ConfigMap[P] : never;

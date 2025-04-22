@@ -1,8 +1,10 @@
 import { ProviderConfig } from './types';
 
-export const defineProviders = <T extends Record<string, ProviderConfig>>(
-	providers: T
-): Record<keyof T, ProviderConfig> => providers;
+export function defineProviders<L extends Record<string, ProviderConfig>>(
+	providers: L
+): { [K in keyof L]: L[K] & ProviderConfig } {
+	return providers;
+}
 
 export const providers = defineProviders({
 	'42': {
@@ -188,6 +190,7 @@ export const providers = defineProviders({
 	Google: {
 		isPKCE: true,
 		isOIDC: true,
+		requiresScope: true,
 		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 		tokenUrl: 'https://oauth2.googleapis.com/token',
 		tokenRevocationUrl: 'https://oauth2.googleapis.com/revoke',
@@ -481,5 +484,3 @@ export const providers = defineProviders({
 		refreshAccessTokenBody: { grant_type: 'refresh_token' }
 	}
 });
-
-export type ProviderOption = keyof typeof providers;

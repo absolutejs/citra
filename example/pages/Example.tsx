@@ -21,6 +21,15 @@ export const Example = () => {
 					<div style={contentStyle}>
 						<h1>Welcome to Citra Example</h1>
 						<p>Use the signin to test auth flow with a provider</p>
+						<button
+							style={buttonStyle({
+								backgroundColor: '#4285F4',
+								color: 'white'
+							})}
+							onClick={() =>setModalOpen(true)}
+						>
+							Test OAuth2
+						</button>
 					</div>
 				</main>
 			</body>

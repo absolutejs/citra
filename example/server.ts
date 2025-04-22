@@ -13,7 +13,7 @@ const manifest = await build({
 	reactPagesDir: 'example/pages',
 	reactIndexDir: 'example/indexes',
 	assetsDir: 'example/assets',
-	buildDir: 'example/build',
+	buildDir: 'example/build'
 });
 
 if (manifest === null)
@@ -55,13 +55,20 @@ new Elysia()
 		})
 	)
 	.get('/', () => handleReactPageRequest(Example, manifest['ExampleIndex']))
-	.get('/authorize/google', async ({redirect}) => {
+	.get('/authorize/google', async ({ redirect }) => {
 		const currentState = generateState();
 		const codeVerifier = generateCodeVerifier();
-		const authorizationUrl = await googleOAuth2Client.createAuthorizationUrl({codeVerifier,state:currentState,scope:['email','profile','openid']});
+		const authorizationUrl =
+			await googleOAuth2Client.createAuthorizationUrl({
+				codeVerifier,
+				state: currentState,
+				scope: ['email', 'profile', 'openid']
+			});
 		return redirect(authorizationUrl.toString());
 	})
-	.get('/authorize/callback', ({redirect}) => {return redirect('/');})
+	.get('/authorize/callback', ({ redirect }) => {
+		return redirect('/');
+	})
 	.use(networkingPlugin)
 	.on('error', (error: any) => {
 		console.error(`Server error: ${error.code}`);

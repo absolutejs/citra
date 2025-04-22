@@ -26,7 +26,7 @@ export const Example = () => {
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
-							onClick={() =>setModalOpen(true)}
+							onClick={() => setModalOpen(true)}
 						>
 							Test OAuth2
 						</button>

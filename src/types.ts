@@ -11,29 +11,33 @@ export type PKCEProviders = {
 }[ProviderOption];
 
 export type OIDCProviders = {
-	[K in ProviderOption]: (typeof providers)[K]['isOIDC'] extends true ? K : never
+	[K in ProviderOption]: (typeof providers)[K]['isOIDC'] extends true
+		? K
+		: never;
 }[ProviderOption];
 
 export type NonPKCEProviders = Exclude<ProviderOption, PKCEProviders>;
 
 export type OAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
-	  opts: 
-		{ state: string }
-		& (P extends PKCEProviders   ? { codeVerifier: string } : {})
-		& (P extends OIDCProviders   ? { scope: string[] } : { scope?: string[] })
-		& { extraParams?: Record<string, string> }
+		opts: { state: string } & (P extends PKCEProviders
+			? { codeVerifier: string }
+			: {}) &
+			(P extends OIDCProviders
+				? { scope: string[] }
+				: { scope?: string[] }) & {
+				extraParams?: Record<string, string>;
+			}
 	): Promise<URL>;
-  
+
 	validateAuthorizationCode(
-	  code: string,
-	  opts?: { codeVerifier?: string }
+		code: string,
+		opts?: { codeVerifier?: string }
 	): Promise<any>;
-  
+
 	refresh(refreshToken: string): Promise<any>;
 	revoke(token: string): Promise<void>;
-  };
-  
+};
 
 export type ProviderConfig = {
 	isPKCE: boolean;

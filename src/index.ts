@@ -13,7 +13,6 @@ import {
 	ProviderOption
 } from './types';
 
-
 export function createOAuth2Client<P extends ProviderOption>(
 	providerName: P,
 	config: ConfigFor<P>

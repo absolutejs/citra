@@ -22,7 +22,9 @@ export const bodyDefault: CSSProperties = {
 export const mainDefault: CSSProperties = {
 	flex: 1,
 	display: 'flex',
-	flexDirection: 'column'
+	flexDirection: 'column',
+	alignItems: 'center',
+	justifyContent: 'center',
 };
 
 export const htmlDefault: CSSProperties = {

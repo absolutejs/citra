@@ -5,12 +5,7 @@ import {
 	sendTokenRevocationRequest
 } from './arctic-utils';
 import { providers } from './providers';
-import {
-	ConfigFor,
-	OAuth2Client,
-	PKCEProviders,
-	ProviderOption
-} from './types';
+import { ConfigFor, OAuth2Client, ProviderOption } from './types';
 
 export function createOAuth2Client<P extends ProviderOption>(
 	providerName: P,

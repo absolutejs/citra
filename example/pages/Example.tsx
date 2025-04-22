@@ -3,34 +3,96 @@ import {
 	htmlDefault,
 	bodyDefault,
 	mainDefault,
-	buttonStyle,
-	contentStyle
+	buttonStyle
 } from '../utils/styles';
 
 import { useState } from 'react';
 import { Head } from '../components/Head';
+import { AuthOptions } from '../components/AuthOptions';
+import { Modal } from '../components/Modal';
 
 export const Example = () => {
-	const [modalOpen, setModalOpen] = useState(false);
+	const [authModalOpen, setAuthauthModalOpen] = useState(false);
+	const [refreshModalOpen, setRefreshModalOpen] = useState(false);
+	const [revokeModalOpen, setRevokeModalOpen] = useState(false);
+
 	return (
 		<html lang="en" style={htmlDefault}>
 			<Head />
 			<body style={bodyDefault}>
-				<Navbar modalOpen={modalOpen} setModalOpen={setModalOpen} />
+				<Navbar />
 				<main style={mainDefault}>
-					<div style={contentStyle}>
-						<h1>Welcome to Citra Example</h1>
-						<p>Use the signin to test auth flow with a provider</p>
+					<h1
+						style={{
+							fontSize: '2.5rem',
+							marginBottom: '20px',
+							color: '#333',
+							textAlign: 'center'
+						}}
+					>
+						Welcome to Citra Example
+					</h1>
+					<p
+						style={{
+							fontSize: '1.2rem',
+							marginBottom: '20px',
+							color: '#333',
+							lineHeight: '1.5',
+							maxWidth: '600px',
+							textAlign: 'center'
+						}}
+					>
+						Citra is a lightweight TypeScript OAuth2 client library
+						that makes it easy to authorize users, refresh tokens,
+						and revoke access with just a few lines of code.
+					</p>
+
+					<nav
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							gap: '10px'
+						}}
+					>
 						<button
 							style={buttonStyle({
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
-							onClick={() => setModalOpen(true)}
+							onClick={() => setAuthauthModalOpen(true)}
 						>
 							Test OAuth2
 						</button>
-					</div>
+
+						<button
+							style={buttonStyle({
+								backgroundColor: '#4285F4',
+								color: 'white'
+							})}
+							onClick={() => setRefreshModalOpen(true)}
+						>
+							Refresh Token
+						</button>
+
+						<button
+							style={buttonStyle({
+								backgroundColor: '#4285F4',
+								color: 'white'
+							})}
+							onClick={() => setRevokeModalOpen(true)}
+						>
+							Revoke Token
+						</button>
+					</nav>
+					{authModalOpen && (
+						<Modal
+							isOpen={authModalOpen}
+							onClose={() => setAuthauthModalOpen(false)}
+						>
+							<AuthOptions />
+						</Modal>
+					)}
 				</main>
 			</body>
 		</html>

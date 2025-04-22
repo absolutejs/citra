@@ -1,14 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
-import { buttonStyle } from '../utils/styles';
-import { Modal } from './Modal';
-import { AuthOptions } from './AuthOptions';
-
-type NavbarProps = {
-	modalOpen: boolean;
-	setModalOpen: Dispatch<SetStateAction<boolean>>;
-};
-
-export const Navbar = ({ modalOpen, setModalOpen }: NavbarProps) => {
+export const Navbar = () => {
 	return (
 		<header
 			style={{
@@ -32,12 +22,6 @@ export const Navbar = ({ modalOpen, setModalOpen }: NavbarProps) => {
 			>
 				Citra
 			</a>
-
-			{modalOpen && (
-				<Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-					<AuthOptions />
-				</Modal>
-			)}
 		</header>
 	);
 };

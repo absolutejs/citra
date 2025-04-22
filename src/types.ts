@@ -36,9 +36,9 @@ export type OAuth2Client<P extends ProviderOption> = {
 		opts: { code: string } & (P extends PKCEProviders
 			? { codeVerifier: string }
 			: {})
-	): Promise<any>;
+	): Promise<OAuth2TokenResponse>;
 
-	refresh(refreshToken: string): Promise<any>;
+	refresh(refreshToken: string): Promise<OAuth2TokenResponse>;
 	revoke(token: string): Promise<void>;
 };
 
@@ -62,7 +62,7 @@ export type ProviderConfig = {
 	tokenRevocationBody?: Record<string, string>;
 };
 
-export type OAuth2Tokens = {
+export type OAuth2TokenResponse = {
 	access_token: string;
 	refresh_token?: string;
 	token_type: string;

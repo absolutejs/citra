@@ -24,7 +24,7 @@ export const mainDefault: CSSProperties = {
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
-	justifyContent: 'center',
+	justifyContent: 'center'
 };
 
 export const htmlDefault: CSSProperties = {

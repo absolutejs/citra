@@ -10,6 +10,8 @@ import { useState } from 'react';
 import { Head } from '../components/Head';
 import { AuthOptions } from '../components/AuthOptions';
 import { Modal } from '../components/Modal';
+import { RefreshToken } from '../components/RefreshToken';
+import { RevokeToken } from '../components/RevokeToken';
 
 export const Example = () => {
 	const [authModalOpen, setAuthauthModalOpen] = useState(false);
@@ -91,6 +93,23 @@ export const Example = () => {
 							onClose={() => setAuthauthModalOpen(false)}
 						>
 							<AuthOptions />
+						</Modal>
+					)}
+
+					{refreshModalOpen && (
+						<Modal
+							isOpen={refreshModalOpen}
+							onClose={() => setRefreshModalOpen(false)}
+						>
+							<RefreshToken />
+						</Modal>
+					)}
+					{revokeModalOpen && (
+						<Modal
+							isOpen={revokeModalOpen}
+							onClose={() => setRevokeModalOpen(false)}
+						>
+							<RevokeToken />
 						</Modal>
 					)}
 				</main>

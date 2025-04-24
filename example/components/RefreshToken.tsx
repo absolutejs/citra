@@ -1,11 +1,13 @@
-import { providers } from '../../src/providers';
+import { useState } from 'react';
 import { formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 
 export const RefreshToken = () => {
+	const [currentProvider, setCurrentProvider] = useState<string>();
+
 	return (
 		<form style={formStyle}>
-			<ProviderDropdown />
+			<ProviderDropdown setCurrentProvider={setCurrentProvider} />
 
 			<input
 				type="text"

@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 
 export const RevokeToken = () => {
+	const [currentProvider, setCurrentProvider] = useState<string>();
+
 	return (
 		<form style={formStyle}>
-			<ProviderDropdown />
+			<ProviderDropdown setCurrentProvider={setCurrentProvider} />
 
 			<input
 				type="text"

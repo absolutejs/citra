@@ -16,11 +16,23 @@ export type OIDCProviders = {
 		: never;
 }[ProviderOption];
 
+export type RefreshableProviders = {
+	[K in ProviderOption]: (typeof providers)[K]['isRefreshable'] extends true
+		? K
+		: never;
+}[ProviderOption];
+
+export type RevocableProviders = {
+	[K in ProviderOption]: (typeof providers)[K]['tokenRevocationUrl'] extends string
+		? K
+		: never;
+}[ProviderOption];
+
 export type NonPKCEProviders = Exclude<ProviderOption, PKCEProviders>;
 
 export type NonOIDCProviders = Exclude<ProviderOption, OIDCProviders>;
 
-export type OAuth2Client<P extends ProviderOption> = {
+export type BaseOAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
 		opts: { state: string } & (P extends PKCEProviders
 			? { codeVerifier: string }
@@ -28,7 +40,7 @@ export type OAuth2Client<P extends ProviderOption> = {
 			(P extends OIDCProviders
 				? { scope: string[] }
 				: { scope?: string[] }) & {
-				extraParams?: Record<string, string>;
+				searchParams?: [string, string][];
 			}
 	): Promise<URL>;
 
@@ -37,14 +49,24 @@ export type OAuth2Client<P extends ProviderOption> = {
 			? { codeVerifier: string }
 			: {})
 	): Promise<OAuth2TokenResponse>;
-
-	refresh(refreshToken: string): Promise<OAuth2TokenResponse>;
-	revoke(token: string): Promise<void>;
 };
+
+export type RefreshableOAuth2Client = {
+	refreshAccessToken(refreshToken: string): Promise<OAuth2TokenResponse>;
+};
+
+export type RevocableOAuth2Client = {
+	revokeToken(token: string): Promise<void>;
+};
+
+export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
+	(P extends RefreshableProviders ? RefreshableOAuth2Client : {}) &
+	(P extends RevocableProviders ? RevocableOAuth2Client : {});
 
 export type ProviderConfig = {
 	isPKCE: boolean;
 	isOIDC: boolean;
+	isRefreshable: boolean;
 	authorizationUrl: string;
 	tokenUrl: string;
 	tokenRevocationUrl?: string;

@@ -21,10 +21,7 @@ export const RefreshToken = () => {
 				}}
 			/>
 
-			<button
-				type="submit"
-				style={formButtonStyle(currentProvider)}
-			>
+			<button type="submit" style={formButtonStyle(currentProvider)}>
 				Refresh Token
 			</button>
 

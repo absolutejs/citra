@@ -20,8 +20,8 @@ export const ProviderDropdown = ({
 					setCurrentProvider(undefined);
 				}
 
-				if(isValidProviderOption(event.target.value)) {
-				setCurrentProvider(event.target.value);
+				if (isValidProviderOption(event.target.value)) {
+					setCurrentProvider(event.target.value);
 				}
 			}}
 			style={{

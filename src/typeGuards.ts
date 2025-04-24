@@ -1,4 +1,4 @@
-import { providers } from "./providers";
+import { providers } from './providers';
 
 // TODO: Add OAuth2 token type guard
 export const isValidOAuth2Tokens = (tokens: any): tokens is any => {
@@ -26,4 +26,4 @@ export const isValidProviderOption = (
 			provider.charAt(0).toUpperCase() + provider.slice(1)
 		)
 	);
-}
+};

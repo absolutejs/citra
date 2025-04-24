@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { formStyle } from '../utils/styles';
+import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 import { ProviderOption } from '../../src/types';
 
@@ -21,18 +21,7 @@ export const RevokeToken = () => {
 				}}
 			/>
 
-			<button
-				type="submit"
-				style={{
-					padding: '8px',
-					border: 'none',
-					borderRadius: '4px',
-					fontSize: '14px',
-					backgroundColor: '#4285F4',
-					color: 'white',
-					cursor: 'pointer'
-				}}
-			>
+			<button type="submit" style={formButtonStyle(currentProvider)}>
 				Revoke Token
 			</button>
 

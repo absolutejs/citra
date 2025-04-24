@@ -22,13 +22,13 @@ export function createOAuth2Client<P extends ProviderOption>(
 		async createAuthorizationUrl(opts?: {
 			state?: string;
 			scope?: string[];
-			extraParams?: Record<string, string>;
+			searchParams?: [string, string][];
 			codeVerifier?: string;
-		}): Promise<URL> {
+		}) {
 			const {
 				state,
 				scope = [],
-				extraParams = {},
+				searchParams = [],
 				codeVerifier
 			} = opts ?? {};
 
@@ -60,9 +60,7 @@ export function createOAuth2Client<P extends ProviderOption>(
 			Object.entries(
 				meta.createAuthorizationURLSearchParams || {}
 			).forEach(([k, v]) => url.searchParams.set(k, v));
-			Object.entries(extraParams).forEach(([k, v]) =>
-				url.searchParams.set(k, v)
-			);
+			searchParams.forEach(([k, v]) => url.searchParams.set(k, v));
 
 			return url;
 		},
@@ -103,7 +101,7 @@ export function createOAuth2Client<P extends ProviderOption>(
 			return postForm(meta.tokenUrl, body);
 		},
 
-		refresh(refreshToken) {
+		refreshAccessToken(refreshToken) {
 			if (!meta.refreshAccessTokenBody) {
 				return Promise.reject(new Error('Refresh not supported'));
 			}
@@ -120,7 +118,7 @@ export function createOAuth2Client<P extends ProviderOption>(
 			return postForm(meta.tokenUrl, body);
 		},
 
-		revoke(token) {
+		revokeToken(token) {
 			if (!meta.tokenRevocationUrl) {
 				return Promise.reject(new Error('Revocation not supported'));
 			}

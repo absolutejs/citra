@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { formStyle } from '../utils/styles';
+import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 import { ProviderOption } from '../../src/types';
 
@@ -17,16 +17,7 @@ export const Authorize = () => {
 			<button
 				type="submit"
 				disabled={!currentProvider}
-				style={{
-					padding: '8px 16px',
-					backgroundColor: '#007bff',
-					color: '#fff',
-					border: 'none',
-					borderRadius: '4px',
-					fontSize: '14px',
-					cursor: currentProvider ? 'pointer' : 'not-allowed',
-					opacity: currentProvider ? 1 : 0.5
-				}}
+				style={formButtonStyle(currentProvider)}
 			>
 				Authorize
 			</button>

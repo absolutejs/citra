@@ -67,7 +67,9 @@ export const formStyle: CSSProperties = {
 	width: '300px'
 };
 
-export const formButtonStyle = (currentProvider?: ProviderOption): CSSProperties => ({
+export const formButtonStyle = (
+	currentProvider?: ProviderOption
+): CSSProperties => ({
 	padding: '8px 16px',
 	backgroundColor: '#007bff',
 	color: '#fff',
@@ -76,4 +78,4 @@ export const formButtonStyle = (currentProvider?: ProviderOption): CSSProperties
 	fontSize: '14px',
 	cursor: currentProvider ? 'pointer' : 'not-allowed',
 	opacity: currentProvider ? 1 : 0.5
-})
+});

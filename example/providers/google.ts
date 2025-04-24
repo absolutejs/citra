@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../constants';
@@ -17,18 +17,32 @@ const googleOAuth2Client = createOAuth2Client('Google', {
 	redirectUri: Bun.env.GOOGLE_REDIRECT_URI
 });
 
+const createGoogleAuthorizationUrl = async () => {
+	const currentState = generateState();
+	const codeVerifier = generateCodeVerifier();
+	const authorizationUrl = await googleOAuth2Client.createAuthorizationUrl({
+		codeVerifier,
+		state: currentState,
+		scope: ['email', 'profile', 'openid'],
+		searchParams: [
+			['access_type', 'offline'],
+			['prompt', 'consent']
+		]
+	});
+	return {
+		authorizationUrl: authorizationUrl.toString(),
+		currentState,
+		codeVerifier
+	};
+};
+
 export const googlePlugin = new Elysia()
 	.get(
 		'/authorize/google',
 		async ({ redirect, cookie: { state, code_verifier } }) => {
-			const currentState = generateState();
-			const codeVerifier = generateCodeVerifier();
-			const authorizationUrl =
-				await googleOAuth2Client.createAuthorizationUrl({
-					codeVerifier,
-					state: currentState,
-					scope: ['email', 'profile', 'openid']
-				});
+			const { authorizationUrl, currentState, codeVerifier } =
+				await createGoogleAuthorizationUrl();
+
 			state.set({
 				httpOnly: true,
 				maxAge: COOKIE_DURATION,
@@ -65,13 +79,31 @@ export const googlePlugin = new Elysia()
 			if (codeVerifier === undefined)
 				return error('Bad Request', 'Code verifier is missing');
 
-			const tokens = await googleOAuth2Client.validateAuthorizationCode({
-				code,
-				codeVerifier
-			});
+			const oauthResponse =
+				await googleOAuth2Client.validateAuthorizationCode({
+					code,
+					codeVerifier
+				});
 
-			console.log('Google tokens:', tokens);
+			console.log('Google authorized:', oauthResponse);
 
 			return redirect('/');
 		}
-	);
+	)
+	.post(
+		'/google/refresh',
+		async ({ body: { refresh_token } }) => {
+			const oauthResponse =
+				await googleOAuth2Client.refreshAccessToken(refresh_token);
+			console.log('Google token refreshed:', oauthResponse);
+			return new Response('Token refreshed successfully', {
+				status: 204
+			});
+		},
+		{
+			body: t.Object({
+				refresh_token: t.String()
+			})
+		}
+	)
+	.post('/google/revoke', async ({}) => {});

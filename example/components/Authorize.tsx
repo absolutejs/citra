@@ -8,7 +8,7 @@ export const Authorize = () => {
 
 	return (
 		<form
-			action={`/authorize/${currentProvider?.toLowerCase()}`}
+			action={`/oauth2/${currentProvider?.toLowerCase()}/authorization`}
 			method="get"
 			style={formStyle}
 		>
@@ -17,7 +17,7 @@ export const Authorize = () => {
 			<button
 				type="submit"
 				disabled={!currentProvider}
-				style={formButtonStyle(currentProvider)}
+				style={formButtonStyle(currentProvider !== undefined)}
 			>
 				Authorize
 			</button>

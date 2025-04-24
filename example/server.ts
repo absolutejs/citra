@@ -19,6 +19,11 @@ const manifest = await build({
 if (manifest === null)
 	throw new Error('Failed to build the application manifest');
 
+const exampleIndex = manifest['ExampleIndex'];
+if (exampleIndex === undefined) {
+	throw new Error('ExampleIndex is not defined in the manifest');
+}
+
 if (
 	!Bun.env.FACEBOOK_CLIENT_ID ||
 	!Bun.env.FACEBOOK_CLIENT_SECRET ||
@@ -39,7 +44,7 @@ new Elysia()
 			prefix: ''
 		})
 	)
-	.get('/', () => handleReactPageRequest(Example, manifest['ExampleIndex']))
+	.get('/', () => handleReactPageRequest(Example, exampleIndex))
 	.use(googlePlugin)
 	.use(networkingPlugin)
 	.on('error', (error: any) => {

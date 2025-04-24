@@ -5,6 +5,7 @@ import { ProviderOption } from '../../src/types';
 
 export const RefreshToken = () => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
+	const [refreshToken, setRefreshToken] = useState<string>('');
 
 	return (
 		<form style={formStyle}>
@@ -12,7 +13,10 @@ export const RefreshToken = () => {
 
 			<input
 				type="text"
-				placeholder="Enter your token"
+				name="refresh_token"
+				placeholder="Enter refresh token"
+				value={refreshToken}
+				onChange={(e) => setRefreshToken(e.target.value)}
 				style={{
 					padding: '8px',
 					border: '1px solid #ccc',
@@ -21,11 +25,27 @@ export const RefreshToken = () => {
 				}}
 			/>
 
-			<button type="submit" style={formButtonStyle(currentProvider)}>
+			<button
+				type="submit"
+				formAction={`oauth2/${currentProvider?.toLowerCase()}/tokens`}
+				disabled={!currentProvider || !refreshToken}
+				formMethod="post"
+				style={formButtonStyle(
+					currentProvider !== undefined && refreshToken !== undefined
+				)}
+			>
 				Refresh Token
 			</button>
 
-			<a href="/">Authorize and Refresh Token</a>
+			<button
+				type="submit"
+				formAction={`/oauth2/${currentProvider?.toLowerCase()}/authorization-tokens`}
+				disabled={!currentProvider}
+				formMethod="get"
+				style={formButtonStyle(currentProvider !== undefined)}
+			>
+				Authorize and Refresh Token
+			</button>
 		</form>
 	);
 };

@@ -46,16 +46,16 @@ export function createOAuth2Client<P extends ProviderOption>(
 			}
 
 			if (meta.isPKCE) {
-				if (!codeVerifier) {
-					throw new Error(
-						'`codeVerifier` is required when `meta.isPKCE` is true'
-					);
-				}
-
+				const verifier = codeVerifier ??
+				  (() => { throw new Error('`codeVerifier` is required when `meta.isPKCE` is true'); })();
+			  
 				url.searchParams.set('code_challenge_method', 'S256');
-				const challenge = await createS256CodeChallenge(codeVerifier);
-				url.searchParams.set('code_challenge', challenge);
-			}
+				url.searchParams.set(
+				  'code_challenge',
+				  await createS256CodeChallenge(verifier)
+				);
+			  }
+			  
 
 			Object.entries(
 				meta.createAuthorizationURLSearchParams || {}
@@ -89,27 +89,27 @@ export function createOAuth2Client<P extends ProviderOption>(
 				body.set('client_id', config.clientId);
 			}
 
-			if (meta.isPKCE) {
-				if (!codeVerifier) {
-					throw new Error(
-						'codeVerifier is required for PKCE providers'
-					);
-				}
-				body.set('code_verifier', codeVerifier);
+			if(meta.isPKCE) {
+				const verifier = codeVerifier ??
+					(() => {
+						// TODO: This should never error because this function can only be called if the provider is using PKCE. See if the type can be narrowed to remove the undefined case.
+						throw new Error(
+							'`codeVerifier` is required when `meta.isPKCE` is true'
+						)
+					}
+				)()
+				body.set('code_verifier', verifier);
 			}
 
 			return postForm(meta.tokenUrl, body);
 		},
 
 		refreshAccessToken(refreshToken) {
-			if (!meta.refreshAccessTokenBody) {
-				return Promise.reject(new Error('Refresh not supported'));
-			}
 			const body = new URLSearchParams();
 			body.set('grant_type', 'refresh_token');
 			body.set('refresh_token', refreshToken);
-			Object.entries(meta.refreshAccessTokenBody).forEach(([k, v]) =>
-				body.set(k, v)
+			Object.entries(meta.refreshAccessTokenBody ?? {}).forEach(
+				([k, v]) => body.set(k, v)
 			);
 			if ('clientSecret' in config && config.clientSecret) {
 				body.set('client_id', config.clientId);
@@ -119,12 +119,15 @@ export function createOAuth2Client<P extends ProviderOption>(
 		},
 
 		revokeToken(token) {
-			if (!meta.tokenRevocationUrl) {
-				return Promise.reject(new Error('Revocation not supported'));
+			if(!meta.tokenRevocationUrl) {
+				// TODO: This should never error because this function can only be called if the provider has a token revocation URL defined. See if the type can be narrowed to remove the undefined case.
+				throw new Error(
+					'Token revocation URL is not defined for this provider'
+				);
 			}
 			const body = new URLSearchParams();
 			body.set('token', token);
-			Object.entries(meta.tokenRevocationBody || {}).forEach(([k, v]) =>
+			Object.entries(meta.tokenRevocationBody ?? {}).forEach(([k, v]) =>
 				body.set(k, v)
 			);
 			body.set('client_id', config.clientId);

@@ -38,8 +38,11 @@ const createGoogleAuthorizationUrl = async () => {
 
 export const googlePlugin = new Elysia()
 	.get(
-		'/authorize/google',
-		async ({ redirect, cookie: { state, code_verifier } }) => {
+		'/oauth2/google/authorization',
+		async ({ redirect, error, cookie: { state, code_verifier } }) => {
+			if (state === undefined || code_verifier === undefined)
+				return error('Bad Request', 'Cookies are missing');
+
 			const { authorizationUrl, currentState, codeVerifier } =
 				await createGoogleAuthorizationUrl();
 
@@ -63,13 +66,19 @@ export const googlePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/google/callback',
+		'/oauth2/google/callback',
 		async ({
 			error,
 			redirect,
 			cookie: { state: stored_state, code_verifier },
 			query: { code, state: callback_state }
 		}) => {
+			if (stored_state === undefined || code_verifier === undefined)
+				return error('Bad Request', 'Cookies are missing');
+
+			if (code === undefined)
+				return error('Bad Request', 'Code is missing in query');
+
 			if (callback_state !== stored_state.value) {
 				return error('Bad Request', 'Invalid state mismatch');
 			}
@@ -85,17 +94,17 @@ export const googlePlugin = new Elysia()
 					codeVerifier
 				});
 
-			console.log('Google authorized:', oauthResponse);
+			console.log('\nGoogle authorized:', oauthResponse);
 
 			return redirect('/');
 		}
 	)
 	.post(
-		'/google/refresh',
+		'/oauth2/google/tokens',
 		async ({ body: { refresh_token } }) => {
 			const oauthResponse =
 				await googleOAuth2Client.refreshAccessToken(refresh_token);
-			console.log('Google token refreshed:', oauthResponse);
+			console.log('\nGoogle token refreshed:', oauthResponse);
 			return new Response('Token refreshed successfully', {
 				status: 204
 			});
@@ -106,4 +115,9 @@ export const googlePlugin = new Elysia()
 			})
 		}
 	)
-	.post('/google/revoke', async ({}) => {});
+	.post(
+		'/oauth2/google/revocation',
+		async ({ query: { access_token, refresh_token } }) => {}
+	)
+	.get('/oauth2/google/authorization-tokens', async ({}) => {})
+	.get('/oauth2/google/authorization-revocation', async ({}) => {});

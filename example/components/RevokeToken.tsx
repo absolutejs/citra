@@ -5,6 +5,7 @@ import { ProviderOption } from '../../src/types';
 
 export const RevokeToken = () => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
+	const [tokenToRevoke, setTokenToRevoke] = useState<string>('');
 
 	return (
 		<form style={formStyle}>
@@ -12,7 +13,10 @@ export const RevokeToken = () => {
 
 			<input
 				type="text"
-				placeholder="Enter your token"
+				name="token"
+				value={tokenToRevoke}
+				onChange={(e) => setTokenToRevoke(e.target.value)}
+				placeholder="Enter token to revoke"
 				style={{
 					padding: '8px',
 					border: '1px solid #ccc',
@@ -21,11 +25,27 @@ export const RevokeToken = () => {
 				}}
 			/>
 
-			<button type="submit" style={formButtonStyle(currentProvider)}>
+			<button
+				formAction={`oauth2/${currentProvider?.toLowerCase()}/revocation`}
+				disabled={!currentProvider || !tokenToRevoke}
+				formMethod="post"
+				type="submit"
+				style={formButtonStyle(
+					currentProvider !== undefined && tokenToRevoke !== undefined
+				)}
+			>
 				Revoke Token
 			</button>
 
-			<a href="/">Authorize and Revoke Token</a>
+			<button
+				type="submit"
+				formAction={`/oauth2/${currentProvider?.toLowerCase()}/authorization-revocation`}
+				disabled={!currentProvider}
+				formMethod="get"
+				style={formButtonStyle(currentProvider !== undefined)}
+			>
+				Authorize and Revoke Token
+			</button>
 		</form>
 	);
 };

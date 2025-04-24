@@ -13,14 +13,22 @@ export const Navbar = () => {
 		>
 			<a
 				style={{
-					fontSize: '1.5rem',
+					fontSize: '2rem',
 					fontWeight: 'bold',
 					textDecoration: 'none',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					color: '#fff'
 				}}
 				href="/"
 			>
-				Citra
+				<img
+					src="/assets/citra-logo.png"
+					alt="Citra Logo"
+					style={{ height: '100px', marginRight: '10px' }}
+				/>
+				Citra Example
 			</a>
 		</header>
 	);

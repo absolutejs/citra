@@ -67,15 +67,13 @@ export const formStyle: CSSProperties = {
 	width: '300px'
 };
 
-export const formButtonStyle = (
-	currentProvider?: ProviderOption
-): CSSProperties => ({
+export const formButtonStyle = (isFullOpacity?: boolean): CSSProperties => ({
 	padding: '8px 16px',
 	backgroundColor: '#007bff',
 	color: '#fff',
 	border: 'none',
 	borderRadius: '4px',
 	fontSize: '14px',
-	cursor: currentProvider ? 'pointer' : 'not-allowed',
-	opacity: currentProvider ? 1 : 0.5
+	cursor: isFullOpacity ? 'pointer' : 'not-allowed',
+	opacity: isFullOpacity ? 1 : 0.5
 });

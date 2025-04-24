@@ -28,10 +28,6 @@ export type RevocableProviders = {
 		: never;
 }[ProviderOption];
 
-export type NonPKCEProviders = Exclude<ProviderOption, PKCEProviders>;
-
-export type NonOIDCProviders = Exclude<ProviderOption, OIDCProviders>;
-
 export type BaseOAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
 		opts: { state: string } & (P extends PKCEProviders

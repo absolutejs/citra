@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
+import { ProviderOption } from '../../src/types';
 
 export const RevokeToken = () => {
-	const [currentProvider, setCurrentProvider] = useState<string>();
+	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
 
 	return (
 		<form style={formStyle}>

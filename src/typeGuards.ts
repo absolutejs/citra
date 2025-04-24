@@ -1,6 +1,7 @@
-import { OAuth2Tokens } from './types';
+import { providers } from "./providers";
 
-export const isValidOAuth2Tokens = (tokens: any): tokens is OAuth2Tokens => {
+// TODO: Add OAuth2 token type guard
+export const isValidOAuth2Tokens = (tokens: any): tokens is any => {
 	return (
 		typeof tokens === 'object' &&
 		typeof tokens.access_token === 'string' &&
@@ -15,3 +16,14 @@ export const isValidOAuth2Tokens = (tokens: any): tokens is OAuth2Tokens => {
 			typeof tokens.id_token === 'string')
 	);
 };
+
+export const isValidProviderOption = (
+	provider: any
+): provider is keyof typeof providers => {
+	return (
+		typeof provider === 'string' &&
+		Object.keys(providers).includes(
+			provider.charAt(0).toUpperCase() + provider.slice(1)
+		)
+	);
+}

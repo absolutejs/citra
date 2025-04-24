@@ -1,8 +1,10 @@
 import { Dispatch, SetStateAction } from 'react';
 import { providers } from '../../src/providers';
+import { ProviderOption } from '../../src/types';
+import { isValidProviderOption } from '../../src/typeGuards';
 
 type ProviderDropdownProps = {
-	setCurrentProvider: Dispatch<SetStateAction<string | undefined>>;
+	setCurrentProvider: Dispatch<SetStateAction<ProviderOption | undefined>>;
 };
 
 export const ProviderDropdown = ({
@@ -18,7 +20,9 @@ export const ProviderDropdown = ({
 					setCurrentProvider(undefined);
 				}
 
-				setCurrentProvider(event.target.value.toLowerCase());
+				if(isValidProviderOption(event.target.value)) {
+				setCurrentProvider(event.target.value);
+				}
 			}}
 			style={{
 				padding: '8px',

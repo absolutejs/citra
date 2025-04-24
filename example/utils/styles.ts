@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import { ProviderOption } from '../../src/types';
 
 export const styleReset = `
     * {
@@ -65,3 +66,14 @@ export const formStyle: CSSProperties = {
 	padding: '16px',
 	width: '300px'
 };
+
+export const formButtonStyle = (currentProvider?: ProviderOption): CSSProperties => ({
+	padding: '8px 16px',
+	backgroundColor: '#007bff',
+	color: '#fff',
+	border: 'none',
+	borderRadius: '4px',
+	fontSize: '14px',
+	cursor: currentProvider ? 'pointer' : 'not-allowed',
+	opacity: currentProvider ? 1 : 0.5
+})

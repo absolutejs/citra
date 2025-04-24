@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
+import { ProviderOption } from '../../src/types';
 
 export const Authorize = () => {
-	const [currentProvider, setCurrentProvider] = useState<string>();
+	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
 
 	return (
 		<form
-			action={`/authorize/${currentProvider}`}
+			action={`/authorize/${currentProvider?.toLowerCase()}`}
 			method="get"
 			style={formStyle}
 		>

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { formStyle } from '../utils/styles';
+import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
+import { ProviderOption } from '../../src/types';
 
 export const RefreshToken = () => {
-	const [currentProvider, setCurrentProvider] = useState<string>();
+	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
 
 	return (
 		<form style={formStyle}>
@@ -22,15 +23,7 @@ export const RefreshToken = () => {
 
 			<button
 				type="submit"
-				style={{
-					padding: '8px',
-					border: 'none',
-					borderRadius: '4px',
-					fontSize: '14px',
-					backgroundColor: '#4285F4',
-					color: 'white',
-					cursor: 'pointer'
-				}}
+				style={formButtonStyle(currentProvider)}
 			>
 				Refresh Token
 			</button>

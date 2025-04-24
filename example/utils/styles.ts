@@ -58,31 +58,10 @@ export const buttonStyle = ({
 	textWrap: 'nowrap'
 });
 
-export const authContainerStyle: CSSProperties = {
+export const formStyle: CSSProperties = {
 	display: 'flex',
 	flexDirection: 'column',
-	alignItems: 'center',
-	justifyContent: 'center',
-	width: '100%',
-	maxWidth: '21.875rem',
-	margin: 'auto',
-	padding: '1.25rem',
-	borderRadius: '0.625rem'
-};
-
-export const textButtonStyle: CSSProperties = {
-	color: ' #222   ',
-	fontSize: '1.25rem',
-	textAlign: 'center',
-	width: '100%',
-	marginTop: '1.25rem',
-	cursor: 'pointer'
-};
-
-export const contentStyle: CSSProperties = {
-	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'center',
-	justifyContent: 'center',
-	height: '100%'
-};
+	gap: '8px',
+	padding: '16px',
+	width: '300px'
+}

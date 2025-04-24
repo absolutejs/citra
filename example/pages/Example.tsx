@@ -8,7 +8,7 @@ import {
 
 import { useState } from 'react';
 import { Head } from '../components/Head';
-import { Authorize} from '../components/Authorize';
+import { Authorize } from '../components/Authorize';
 import { Modal } from '../components/Modal';
 import { RefreshToken } from '../components/RefreshToken';
 import { RevokeToken } from '../components/RevokeToken';
@@ -45,8 +45,8 @@ export const Example = () => {
 						}}
 					>
 						Citra is a lightweight TypeScript OAuth2 client library
-						that makes it easy to authorize users, refresh,
-						and revoke tokens with just a few lines of code.
+						that makes it easy to authorize users, refresh, and
+						revoke tokens with just a few lines of code.
 					</p>
 
 					<nav

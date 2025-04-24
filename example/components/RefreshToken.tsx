@@ -3,11 +3,8 @@ import { formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 
 export const RefreshToken = () => {
-
 	return (
-		<form
-			style={formStyle}
-		>
+		<form style={formStyle}>
 			<ProviderDropdown />
 
 			<input

@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction } from "react";
-import { providers } from "../../src/providers";
+import { Dispatch, SetStateAction } from 'react';
+import { providers } from '../../src/providers';
 
 type ProviderDropdownProps = {
-	setCurrentProvider: Dispatch<SetStateAction<string | undefined>>
-}
+	setCurrentProvider: Dispatch<SetStateAction<string | undefined>>;
+};
 
 export const ProviderDropdown = ({
 	setCurrentProvider
@@ -13,7 +13,13 @@ export const ProviderDropdown = ({
 	return (
 		<select
 			defaultValue=""
-			onChange={event => setCurrentProvider(event.target.value.toLowerCase() || undefined)}
+			onChange={(event) => {
+				if (event.target.value === '') {
+					setCurrentProvider(undefined);
+				}
+
+				setCurrentProvider(event.target.value.toLowerCase());
+			}}
 			style={{
 				padding: '8px',
 				border: '1px solid #ccc',
@@ -22,11 +28,11 @@ export const ProviderDropdown = ({
 			}}
 		>
 			<option value="">Select provider</option>
-			{providerNames.map(provider => (
+			{providerNames.map((provider) => (
 				<option key={provider} value={provider}>
 					{provider}
 				</option>
 			))}
 		</select>
-	)
-}
+	);
+};

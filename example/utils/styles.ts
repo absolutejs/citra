@@ -64,4 +64,4 @@ export const formStyle: CSSProperties = {
 	gap: '8px',
 	padding: '16px',
 	width: '300px'
-}
+};

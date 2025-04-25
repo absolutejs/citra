@@ -2,6 +2,7 @@ import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 import { ProviderOption } from '../../src/types';
+import { providers } from '../../src/providers';
 
 type RevokeTokenProps = {
 	setRevokeModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -32,7 +33,7 @@ export const RevokeToken = ({ setRevokeModalOpen }: RevokeTokenProps) => {
 
 	return (
 		<form style={formStyle} onSubmit={handleSubmit}>
-			<ProviderDropdown setCurrentProvider={setCurrentProvider} />
+			<ProviderDropdown setCurrentProvider={setCurrentProvider} providerOptions={Object.keys(providers)} />
 
 			<input
 				type="text"

@@ -1,14 +1,16 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
-import { ProviderOption } from '../../src/types';
+import {  RefreshableProviders } from '../../src/types';
+import { providers } from '../../src/providers';
+
 
 type RefreshTokenProps = {
 	setRefreshModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 export const RefreshToken = ({ setRefreshModalOpen }: RefreshTokenProps) => {
-	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
+	const [currentProvider, setCurrentProvider] = useState<RefreshableProviders>();
 	const [refreshToken, setRefreshToken] = useState<string>('');
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -35,7 +37,7 @@ export const RefreshToken = ({ setRefreshModalOpen }: RefreshTokenProps) => {
 
 	return (
 		<form style={formStyle} onSubmit={handleSubmit}>
-			<ProviderDropdown setCurrentProvider={setCurrentProvider} />
+			<ProviderDropdown setCurrentProvider={setCurrentProvider} providerOptions={Object.keys(providers)} />
 
 			<input
 				type="text"

@@ -1,16 +1,15 @@
 import { Dispatch, SetStateAction } from 'react';
-import { providers } from '../../src/providers';
-import { ProviderOption } from '../../src/types';
 import { isValidProviderOption } from '../../src/typeGuards';
 
 type ProviderDropdownProps = {
-	setCurrentProvider: Dispatch<SetStateAction<ProviderOption | undefined>>;
+	providerOptions: string[]
+	setCurrentProvider: Dispatch<SetStateAction<any | undefined>>;
 };
 
 export const ProviderDropdown = ({
+	providerOptions,
 	setCurrentProvider
 }: ProviderDropdownProps) => {
-	const providerNames = Object.keys(providers);
 
 	return (
 		<select
@@ -32,7 +31,7 @@ export const ProviderDropdown = ({
 			}}
 		>
 			<option value="">Select provider</option>
-			{providerNames.map((provider) => (
+			{providerOptions.map((provider) => (
 				<option key={provider} value={provider}>
 					{provider}
 				</option>

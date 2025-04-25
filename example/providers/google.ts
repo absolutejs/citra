@@ -115,9 +115,19 @@ export const googlePlugin = new Elysia()
 			})
 		}
 	)
-	.post(
+	.delete(
 		'/oauth2/google/revocation',
-		async ({ query: { access_token, refresh_token } }) => {}
-	)
-	.get('/oauth2/google/authorization-tokens', async ({}) => {})
-	.get('/oauth2/google/authorization-revocation', async ({}) => {});
+		async ({ error, query: { token_to_revoke } }) => {
+			if (!token_to_revoke)
+				return error(
+					'Bad Request',
+					'Token to revoke is required in query parameters'
+				);
+
+			await googleOAuth2Client.revokeToken(token_to_revoke);
+			console.log('\nGoogle token revoked:', token_to_revoke);
+			return new Response('Token revoked successfully', {
+				status: 204
+			});
+		}
+	);

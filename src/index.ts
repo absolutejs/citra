@@ -46,16 +46,20 @@ export function createOAuth2Client<P extends ProviderOption>(
 			}
 
 			if (meta.isPKCE) {
-				const verifier = codeVerifier ??
-				  (() => { throw new Error('`codeVerifier` is required when `meta.isPKCE` is true'); })();
-			  
+				const verifier =
+					codeVerifier ??
+					(() => {
+						throw new Error(
+							'`codeVerifier` is required when `meta.isPKCE` is true'
+						);
+					})();
+
 				url.searchParams.set('code_challenge_method', 'S256');
 				url.searchParams.set(
-				  'code_challenge',
-				  await createS256CodeChallenge(verifier)
+					'code_challenge',
+					await createS256CodeChallenge(verifier)
 				);
-			  }
-			  
+			}
 
 			Object.entries(
 				meta.createAuthorizationURLSearchParams || {}
@@ -89,15 +93,15 @@ export function createOAuth2Client<P extends ProviderOption>(
 				body.set('client_id', config.clientId);
 			}
 
-			if(meta.isPKCE) {
-				const verifier = codeVerifier ??
+			if (meta.isPKCE) {
+				const verifier =
+					codeVerifier ??
 					(() => {
 						// TODO: This should never error because this function can only be called if the provider is using PKCE. See if the type can be narrowed to remove the undefined case.
 						throw new Error(
 							'`codeVerifier` is required when `meta.isPKCE` is true'
-						)
-					}
-				)()
+						);
+					})();
 				body.set('code_verifier', verifier);
 			}
 
@@ -119,7 +123,7 @@ export function createOAuth2Client<P extends ProviderOption>(
 		},
 
 		revokeToken(token) {
-			if(!meta.tokenRevocationUrl) {
+			if (!meta.tokenRevocationUrl) {
 				// TODO: This should never error because this function can only be called if the provider has a token revocation URL defined. See if the type can be narrowed to remove the undefined case.
 				throw new Error(
 					'Token revocation URL is not defined for this provider'

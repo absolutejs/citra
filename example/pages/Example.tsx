@@ -101,7 +101,9 @@ export const Example = () => {
 							isOpen={refreshModalOpen}
 							onClose={() => setRefreshModalOpen(false)}
 						>
-							<RefreshToken />
+							<RefreshToken
+								setRefreshModalOpen={setRefreshModalOpen}
+							/>
 						</Modal>
 					)}
 					{revokeModalOpen && (
@@ -109,7 +111,9 @@ export const Example = () => {
 							isOpen={revokeModalOpen}
 							onClose={() => setRevokeModalOpen(false)}
 						>
-							<RevokeToken />
+							<RevokeToken
+								setRevokeModalOpen={setRevokeModalOpen}
+							/>
 						</Modal>
 					)}
 				</main>

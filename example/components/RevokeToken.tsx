@@ -1,14 +1,37 @@
-import { useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 import { ProviderOption } from '../../src/types';
 
-export const RevokeToken = () => {
+type RevokeTokenProps = {
+	setRevokeModalOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export const RevokeToken = ({ setRevokeModalOpen }: RevokeTokenProps) => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
 	const [tokenToRevoke, setTokenToRevoke] = useState<string>('');
 
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+
+		const response = await fetch(
+			`oauth2/${currentProvider?.toLowerCase()}/revocation?token_to_revoke=${tokenToRevoke}`,
+			{
+				method: 'DELETE'
+			}
+		);
+
+		if (!response.ok) {
+			const errorText = await response.text();
+			alert(`Error: ${errorText}`);
+			return;
+		}
+		setRevokeModalOpen(false);
+		alert('Token revoked successfully!');
+	};
+
 	return (
-		<form style={formStyle}>
+		<form style={formStyle} onSubmit={handleSubmit}>
 			<ProviderDropdown setCurrentProvider={setCurrentProvider} />
 
 			<input
@@ -26,25 +49,13 @@ export const RevokeToken = () => {
 			/>
 
 			<button
-				formAction={`oauth2/${currentProvider?.toLowerCase()}/revocation`}
 				disabled={!currentProvider || !tokenToRevoke}
-				formMethod="post"
 				type="submit"
 				style={formButtonStyle(
-					currentProvider !== undefined && tokenToRevoke !== undefined
+					currentProvider !== undefined && tokenToRevoke !== ''
 				)}
 			>
 				Revoke Token
-			</button>
-
-			<button
-				type="submit"
-				formAction={`/oauth2/${currentProvider?.toLowerCase()}/authorization-revocation`}
-				disabled={!currentProvider}
-				formMethod="get"
-				style={formButtonStyle(currentProvider !== undefined)}
-			>
-				Authorize and Revoke Token
 			</button>
 		</form>
 	);

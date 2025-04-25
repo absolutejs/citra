@@ -5,7 +5,10 @@ type HeadProps = {
 	icon?: string;
 };
 
-export const Head = ({ title = 'Citra', icon = '/assets/favicon.ico' }: HeadProps) => {
+export const Head = ({
+	title = 'Citra',
+	icon = '/assets/favicon.ico'
+}: HeadProps) => {
 	return (
 		<head>
 			<meta charSet="utf-8" />

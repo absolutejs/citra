@@ -1,14 +1,40 @@
-import { useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 import { ProviderOption } from '../../src/types';
 
-export const RefreshToken = () => {
+type RefreshTokenProps = {
+	setRefreshModalOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export const RefreshToken = ({ setRefreshModalOpen }: RefreshTokenProps) => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
 	const [refreshToken, setRefreshToken] = useState<string>('');
 
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+
+		const response = await fetch(
+			`oauth2/${currentProvider?.toLowerCase()}/tokens`,
+			{
+				method: 'POST',
+				body: new URLSearchParams({
+					refresh_token: refreshToken
+				})
+			}
+		);
+
+		if (!response.ok) {
+			const errorText = await response.text();
+			alert(`Error: ${errorText}`);
+			return;
+		}
+		setRefreshModalOpen(false);
+		alert('Token refreshed successfully!');
+	};
+
 	return (
-		<form style={formStyle}>
+		<form style={formStyle} onSubmit={handleSubmit}>
 			<ProviderDropdown setCurrentProvider={setCurrentProvider} />
 
 			<input
@@ -16,7 +42,7 @@ export const RefreshToken = () => {
 				name="refresh_token"
 				placeholder="Enter refresh token"
 				value={refreshToken}
-				onChange={(e) => setRefreshToken(e.target.value)}
+				onChange={(event) => setRefreshToken(event.target.value)}
 				style={{
 					padding: '8px',
 					border: '1px solid #ccc',
@@ -27,24 +53,12 @@ export const RefreshToken = () => {
 
 			<button
 				type="submit"
-				formAction={`oauth2/${currentProvider?.toLowerCase()}/tokens`}
 				disabled={!currentProvider || !refreshToken}
-				formMethod="post"
 				style={formButtonStyle(
-					currentProvider !== undefined && refreshToken !== undefined
+					currentProvider !== undefined && refreshToken !== ''
 				)}
 			>
 				Refresh Token
-			</button>
-
-			<button
-				type="submit"
-				formAction={`/oauth2/${currentProvider?.toLowerCase()}/authorization-tokens`}
-				disabled={!currentProvider}
-				formMethod="get"
-				style={formButtonStyle(currentProvider !== undefined)}
-			>
-				Authorize and Refresh Token
 			</button>
 		</form>
 	);

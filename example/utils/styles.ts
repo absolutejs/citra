@@ -35,12 +35,10 @@ export const htmlDefault: CSSProperties = {
 type ButtonStyleProps = {
 	backgroundColor?: string;
 	color?: string;
-	width?: string;
 };
 export const buttonStyle = ({
 	backgroundColor = 'none',
-	color = 'white',
-	width
+	color = 'white'
 }: ButtonStyleProps): CSSProperties => ({
 	display: 'flex',
 	alignItems: 'center',
@@ -51,7 +49,7 @@ export const buttonStyle = ({
 	border: 'none',
 	borderRadius: '0.3125rem',
 	color,
-	width,
+	width: '100%',
 	backgroundColor,
 	cursor: 'pointer',
 	fontSize: '1rem',

@@ -17,25 +17,6 @@ const googleOAuth2Client = createOAuth2Client('Google', {
 	redirectUri: Bun.env.GOOGLE_REDIRECT_URI
 });
 
-const createGoogleAuthorizationUrl = async () => {
-	const currentState = generateState();
-	const codeVerifier = generateCodeVerifier();
-	const authorizationUrl = await googleOAuth2Client.createAuthorizationUrl({
-		codeVerifier,
-		state: currentState,
-		scope: ['email', 'profile', 'openid'],
-		searchParams: [
-			['access_type', 'offline'],
-			['prompt', 'consent']
-		]
-	});
-	return {
-		authorizationUrl: authorizationUrl.toString(),
-		currentState,
-		codeVerifier
-	};
-};
-
 export const googlePlugin = new Elysia()
 	.get(
 		'/oauth2/google/authorization',
@@ -43,8 +24,18 @@ export const googlePlugin = new Elysia()
 			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
-			const { authorizationUrl, currentState, codeVerifier } =
-				await createGoogleAuthorizationUrl();
+			const currentState = generateState();
+			const codeVerifier = generateCodeVerifier();
+			const authorizationUrl =
+				await googleOAuth2Client.createAuthorizationUrl({
+					codeVerifier,
+					state: currentState,
+					scope: ['email', 'profile', 'openid'],
+					searchParams: [
+						['access_type', 'offline'],
+						['prompt', 'consent']
+					]
+				});
 
 			state.set({
 				httpOnly: true,

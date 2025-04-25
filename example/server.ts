@@ -6,8 +6,8 @@ import {
 	handleReactPageRequest,
 	networkingPlugin
 } from '@absolutejs/absolute';
-import { createOAuth2Client } from '../src';
 import { googlePlugin } from './providers/google';
+import { providersPlugin } from './providersPlugin';
 
 const manifest = await build({
 	reactPagesDir: 'example/pages',
@@ -16,26 +16,14 @@ const manifest = await build({
 	buildDir: 'example/build'
 });
 
-if (manifest === null)
-	throw new Error('Failed to build the application manifest');
+if (manifest === null) {
+	throw new Error('Build manifest is null');
+}
 
 const exampleIndex = manifest['ExampleIndex'];
 if (exampleIndex === undefined) {
 	throw new Error('ExampleIndex is not defined in the manifest');
 }
-
-if (
-	!Bun.env.FACEBOOK_CLIENT_ID ||
-	!Bun.env.FACEBOOK_CLIENT_SECRET ||
-	!Bun.env.FACEBOOK_REDIRECT_URI
-) {
-	throw new Error('Facebook OAuth2 credentials are not set in .env file');
-}
-const facebookOAuth2Client = createOAuth2Client('Facebook', {
-	clientId: Bun.env.FACEBOOK_CLIENT_ID,
-	clientSecret: Bun.env.FACEBOOK_CLIENT_SECRET,
-	redirectUri: Bun.env.FACEBOOK_REDIRECT_URI
-});
 
 new Elysia()
 	.use(
@@ -45,8 +33,11 @@ new Elysia()
 		})
 	)
 	.get('/', () => handleReactPageRequest(Example, exampleIndex))
-	.use(googlePlugin)
+	.use(providersPlugin)
 	.use(networkingPlugin)
-	.on('error', (error: any) => {
-		console.error(`Server error: ${error.code}`);
+	.on('error', (error) => {
+		const { request } = error;
+		console.error(
+			`Server error on ${request.method} ${request.url}: ${error.message}`
+		);
 	});

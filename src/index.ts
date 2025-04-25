@@ -140,6 +140,37 @@ export function createOAuth2Client<P extends ProviderOption>(
 			}
 			const req = createOAuth2Request(meta.tokenRevocationUrl, body);
 			return sendTokenRevocationRequest(req);
+		},
+
+		async fetchUserProfile(profileRequest, accessToken) {
+			let url = profileRequest.url;
+			const method = profileRequest.method;
+			const headers: Record<string, string> = {};
+
+			if (profileRequest.authIn === 'header') {
+				headers['Authorization'] = `Bearer ${accessToken}`;
+			} else {
+				const sep = url.includes('?') ? '&' : '?';
+				url = `${url}${sep}'access_token'=${encodeURIComponent(accessToken)}`;
+			}
+
+			const init: RequestInit = { method, headers };
+
+			if (method === 'POST' && profileRequest.body) {
+				headers['Content-Type'] = 'application/json';
+				init.body = JSON.stringify(profileRequest.body);
+			}
+
+			const response = await fetch(url, init);
+
+			if (!response.ok) {
+				const errText = await response.text();
+				throw new Error(
+					`Failed to fetch user profile: ${response.status} ${response.statusText} - ${errText}`
+				);
+			}
+
+			return response.json();
 		}
 	};
 }

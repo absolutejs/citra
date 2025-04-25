@@ -2,6 +2,15 @@ import { providers } from './providers';
 
 export type CodeChallengeMethod = 'S256' | 'plain';
 
+export type ProfileRequestConfig = {
+	url: string;
+	method: 'GET' | 'POST';
+	authIn: 'header' | 'query';
+	headers?: Record<string, string>;
+	body?: any;
+	searchParams?: [string, string][];
+};
+
 export type ProviderOption = keyof typeof providers;
 
 export type PKCEProvider = {
@@ -45,6 +54,11 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 			? { codeVerifier: string }
 			: {})
 	): Promise<OAuth2TokenResponse>;
+
+	fetchUserProfile(
+		profileRequest: ProfileRequestConfig,
+		accessToken: string
+	): Promise<any>;
 };
 
 export type RefreshableOAuth2Client = {
@@ -66,6 +80,7 @@ export type ProviderConfig = {
 	authorizationUrl: string;
 	tokenUrl: string;
 	tokenRevocationUrl?: string;
+	profileRequest?: ProfileRequestConfig;
 
 	/** Static query params added to the auth URL */
 	createAuthorizationURLSearchParams?: Record<string, string>;

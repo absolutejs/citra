@@ -12,11 +12,13 @@ import { Authorize } from '../components/Authorize';
 import { Modal } from '../components/Modal';
 import { RefreshToken } from '../components/RefreshToken';
 import { RevokeToken } from '../components/RevokeToken';
+import { FetchProfile } from '../components/FetchProfile';
 
 export const Example = () => {
 	const [authModalOpen, setAuthauthModalOpen] = useState(false);
 	const [refreshModalOpen, setRefreshModalOpen] = useState(false);
 	const [revokeModalOpen, setRevokeModalOpen] = useState(false);
+	const [profileModalOpen, setProfileModalOpen] = useState(false);
 
 	return (
 		<html lang="en" style={htmlDefault}>
@@ -86,6 +88,16 @@ export const Example = () => {
 						>
 							Revoke Token
 						</button>
+
+						<button
+							style={buttonStyle({
+								backgroundColor: '#4285F4',
+								color: 'white'
+							})}
+							onClick={() => setProfileModalOpen(true)}
+						>
+							Fetch Profile
+						</button>
 					</nav>
 					{authModalOpen && (
 						<Modal
@@ -113,6 +125,16 @@ export const Example = () => {
 						>
 							<RevokeToken
 								setRevokeModalOpen={setRevokeModalOpen}
+							/>
+						</Modal>
+					)}
+					{profileModalOpen && (
+						<Modal
+							isOpen={profileModalOpen}
+							onClose={() => setProfileModalOpen(false)}
+						>
+							<FetchProfile
+								setProfileModalOpen={setProfileModalOpen}
 							/>
 						</Modal>
 					)}

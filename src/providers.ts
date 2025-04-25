@@ -179,7 +179,13 @@ export const providers = defineProviders({
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
 		tokenUrl: 'https://graph.facebook.com/v16.0/oauth/access_token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
+		profileRequest: {
+			url: 'https://graph.facebook.com/me',
+			method: 'GET',
+			authIn: 'query',
+			searchParams: [['fields', 'id,name,email,picture']]
+		}
 	},
 	Figma: {
 		isPKCE: false,

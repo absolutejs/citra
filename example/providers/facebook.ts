@@ -17,32 +17,32 @@ const facebookOAuth2Client = createOAuth2Client('Facebook', {
 });
 
 export const facebookPlugin = new Elysia()
-.get(
-        '/oauth2/facebook/authorization',
-        async ({ redirect, error, cookie: { state} }) => {
-            if (state === undefined)
-                return error('Bad Request', 'Cookies are missing');
+	.get(
+		'/oauth2/facebook/authorization',
+		async ({ redirect, error, cookie: { state } }) => {
+			if (state === undefined)
+				return error('Bad Request', 'Cookies are missing');
 
-            const currentState = generateState();
-          
-            const authorizationUrl =
-                await facebookOAuth2Client.createAuthorizationUrl({
-                    state: currentState,
-                });
+			const currentState = generateState();
 
-            state.set({
-                httpOnly: true,
-                maxAge: COOKIE_DURATION,
-                path: '/',
-                sameSite: 'lax',
-                secure: true,
-                value: currentState
-            });
-            
-            return redirect(authorizationUrl.toString());
-        }
-    )
-    .get(
+			const authorizationUrl =
+				await facebookOAuth2Client.createAuthorizationUrl({
+					state: currentState
+				});
+
+			state.set({
+				httpOnly: true,
+				maxAge: COOKIE_DURATION,
+				path: '/',
+				sameSite: 'lax',
+				secure: true,
+				value: currentState
+			});
+
+			return redirect(authorizationUrl.toString());
+		}
+	)
+	.get(
 		'/oauth2/facebook/callback',
 		async ({
 			error,
@@ -63,10 +63,14 @@ export const facebookPlugin = new Elysia()
 
 			const oauthResponse =
 				await facebookOAuth2Client.validateAuthorizationCode({
-					code				});
+					code
+				});
 
 			console.log('\nFacebook authorized:', oauthResponse);
 
 			return redirect('/');
 		}
 	)
+	.get('/oauth2/facebook/profile', async ({ error }) => {
+		console.log('Fetching Facebook profile...');
+	});

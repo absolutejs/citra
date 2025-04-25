@@ -55,10 +55,7 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 			: {})
 	): Promise<OAuth2TokenResponse>;
 
-	fetchUserProfile(
-		profileRequest: ProfileRequestConfig,
-		accessToken: string
-	): Promise<any>;
+	fetchUserProfile(accessToken: string): Promise<any>;
 };
 
 export type RefreshableOAuth2Client = {

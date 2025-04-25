@@ -28,6 +28,18 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://graphql.anilist.co',
+			method: 'POST',
+			authIn: 'header',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json'
+			},
+			body: {
+				query: `query { Viewer { id name } }`
+			}
+		},
 		authorizationUrl: 'https://anilist.co/api/v2/oauth/authorize',
 		tokenUrl: 'https://anilist.co/api/v2/oauth/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -80,6 +92,11 @@ export const providers = defineProviders({
 			audience: 'api.atlassian.com',
 			prompt: 'consent'
 		},
+		profileRequest: {
+			url: 'https://api.atlassian.com/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
 		refreshAccessTokenBody: { grant_type: 'refresh_token' }
 	},
@@ -93,12 +110,22 @@ export const providers = defineProviders({
 			response_type: 'code',
 			scope: 'openid'
 		},
+		profileRequest: {
+			url: 'https://oauth.battle.net/userinfo',
+			method: 'GET',
+			authIn: 'header'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Bitbucket: {
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.bitbucket.org/2.0/user',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
 		tokenUrl: 'https://bitbucket.org/site/oauth2/access_token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -108,6 +135,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.box.com/2.0/users/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
 		tokenUrl: 'https://api.box.com/oauth2/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
@@ -117,6 +149,14 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://www.bungie.net/Platform/User/GetCurrentBungieNetUser',
+			method: 'GET',
+			authIn: 'header',
+			headers: {
+				'X-API-Key': '<YOUR_API_KEY>'
+			}
+		},
 		authorizationUrl: 'https://www.bungie.net/en/OAuth/Authorize',
 		tokenUrl: 'https://www.bungie.net/platform/app/oauth/token/'
 	},
@@ -124,6 +164,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.coinbase.com/v2/user',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
 		tokenUrl: 'https://api.coinbase.com/oauth/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -133,12 +178,22 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://discord.com/api/users/@me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
 		tokenUrl: 'https://discord.com/api/oauth2/token'
 	},
 	DonationAlerts: {
 		isPKCE: false,
 		isOIDC: false,
+		profileRequest: {
+			url: 'https://www.donationalerts.com/api/v1/user',
+			method: 'GET',
+			authIn: 'header'
+		},
 		isRefreshable: true,
 		authorizationUrl: 'https://www.donationalerts.com/oauth/authorize',
 		tokenUrl: 'https://www.donationalerts.com/oauth/token'
@@ -147,6 +202,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: false,
+		profileRequest: {
+			url: 'https://api.dribbble.com/v2/user',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://dribbble.com/oauth/authorize',
 		tokenUrl: 'https://dribbble.com/oauth/token'
 	},
@@ -154,6 +214,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.dropboxapi.com/2/users/get_current_account',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://www.dropbox.com/oauth2/authorize',
 		tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
 		tokenRevocationUrl: ' https://api.dropboxapi.com/2/auth/token/revoke'
@@ -162,12 +227,22 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.epicgames.dev/epic/oauth/v2/userInfo',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://www.epicgames.com/id/authorize',
 		tokenUrl: 'https://api.epicgames.dev/epic/oauth/v1/token'
 	},
 	Etsy: {
 		isPKCE: false,
 		isOIDC: false,
+		profileRequest: {
+			url: 'https://openapi.etsy.com/v3/application/users/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		isRefreshable: true,
 		authorizationUrl: 'https://www.etsy.com/oauth/connect',
 		tokenUrl: 'https://api.etsy.com/v3/public/oauth/token'
@@ -191,6 +266,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.figma.com/v1/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://www.figma.com/oauth',
 		tokenUrl: 'https://api.figma.com/v1/oauth/token'
 	},
@@ -198,6 +278,11 @@ export const providers = defineProviders({
 		isPKCE: true,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://<YOUR_GITEA_DOMAIN>/api/v1/user',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: '${baseURL}/login/oauth/authorize',
 		tokenUrl: '${baseURL}/login/oauth/access_token'
 	},
@@ -205,6 +290,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.github.com/user',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://github.com/login/oauth/authorize',
 		tokenUrl: 'https://github.com/login/oauth/access_token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -213,6 +303,11 @@ export const providers = defineProviders({
 	GitLab: {
 		isPKCE: true,
 		isOIDC: false,
+		profileRequest: {
+			url: 'https://gitlab.com/api/v4/user',
+			method: 'GET',
+			authIn: 'header'
+		},
 		isRefreshable: true,
 		authorizationUrl: '${baseURL}/oauth/authorize',
 		tokenUrl: '${baseURL}/oauth/token',
@@ -232,6 +327,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://oauth.platform.intuit.com/oauth2/v1/userinfo',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
 		tokenUrl: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
 		tokenRevocationUrl:
@@ -241,6 +341,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://kapi.kakao.com/v2/user/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
 		tokenUrl: 'https://kauth.kakao.com/oauth/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -250,6 +355,11 @@ export const providers = defineProviders({
 		isPKCE: true,
 		isOIDC: true,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.kick.com/v1/user',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: '${realmURL}/protocol/openid-connect/auth',
 		tokenUrl: '${realmURL}/protocol/openid-connect/token',
 		tokenRevocationUrl: '${realmURL}/protocol/openid-connect/revoke'
@@ -267,22 +377,15 @@ export const providers = defineProviders({
 		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
-	Line: {
-		isPKCE: true,
-		isOIDC: false,
-		isRefreshable: true,
-		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
-		tokenUrl: 'https://api.line.me/oauth2/v2.1/token',
-		createAuthorizationURLSearchParams: {
-			response_type: 'code',
-			code_challenge_method: 'S256'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
-	},
 	Lichess: {
 		isPKCE: true,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://lichess.org/api/account',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://lichess.org/oauth',
 		tokenUrl: 'https://lichess.org/api/token'
 	},
@@ -295,6 +398,24 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
+	Line: {
+		isPKCE: true,
+		isOIDC: false,
+		isRefreshable: true,
+		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
+		tokenUrl: 'https://api.line.me/oauth2/v2.1/token',
+		createAuthorizationURLSearchParams: {
+			response_type: 'code',
+			code_challenge_method: 'S256'
+		},
+		profileRequest: {
+			url: 'https://api.line.me/v2/profile',
+			method: 'GET',
+			authIn: 'header'
+		},
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
+		refreshAccessTokenBody: { grant_type: 'refresh_token' }
+	},
 	Linear: {
 		isPKCE: false,
 		isOIDC: false,
@@ -302,7 +423,19 @@ export const providers = defineProviders({
 		authorizationUrl: 'https://linear.app/oauth/authorize',
 		tokenUrl: 'https://api.linear.app/oauth/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
+		profileRequest: {
+			url: 'https://api.linear.app/graphql',
+			method: 'POST',
+			authIn: 'header',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json'
+			},
+			body: {
+				query: `query { viewer { id name } }`
+			}
+		}
 	},
 	Mastodon: {
 		isPKCE: true,
@@ -310,12 +443,22 @@ export const providers = defineProviders({
 		isRefreshable: true,
 		authorizationUrl: '${baseURL}/api/v1/oauth/authorize',
 		tokenUrl: '${baseURL}/api/v1/oauth/token',
-		tokenRevocationUrl: '${baseURL}/api/v1/oauth/revoke'
+		tokenRevocationUrl: '${baseURL}/api/v1/oauth/revoke',
+		profileRequest: {
+			url: 'https://<YOUR_INSTANCE>/api/v1/accounts/verify_credentials',
+			method: 'GET',
+			authIn: 'header'
+		}
 	},
 	MercadoLibre: {
 		isPKCE: true,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.mercadolibre.com/users/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://auth.mercadolibre.com/authorization',
 		tokenUrl: 'https://api.mercadolibre.com/oauth/token'
 	},
@@ -323,6 +466,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.mercadopago.com/v1/users/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://auth.mercadopago.com/authorization',
 		tokenUrl: 'https://api.mercadopago.com/oauth/token'
 	},
@@ -339,6 +487,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.myanimelist.net/v2/users/@me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://myanimelist.net/v1/oauth2/authorize',
 		tokenUrl: 'https://myanimelist.net/v1/oauth2/token'
 	},
@@ -346,6 +499,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://openapi.naver.com/v1/nid/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://nid.naver.com/oauth2.0/authorize',
 		tokenUrl: 'https://nid.naver.com/oauth2.0/token'
 	},
@@ -353,6 +511,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.notion.com/v1/users/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
 		tokenUrl: 'https://api.notion.com/v1/oauth/token'
 	},
@@ -368,6 +531,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://osu.ppy.sh/api/v2/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
 		tokenUrl: 'https://osu.ppy.sh/oauth/token'
 	},
@@ -375,12 +543,22 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://www.patreon.com/api/oauth2/v2/identity',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://www.patreon.com/oauth2/authorize',
 		tokenUrl: 'https://www.patreon.com/api/oauth2/token'
 	},
 	Polar: {
 		isPKCE: false,
 		isOIDC: false,
+		profileRequest: {
+			url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>',
+			method: 'GET',
+			authIn: 'header'
+		},
 		isRefreshable: true,
 		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
 		tokenUrl: 'https://polarremote.com/oauth2/token'
@@ -389,6 +567,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://oauth.reddit.com/api/v1/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
 		tokenUrl: 'https://www.reddit.com/api/v1/access_token'
 	},
@@ -396,6 +579,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://apis.roblox.com/oauth/v1/userinfo',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://www.roblox.com/oauth/authorize',
 		tokenUrl: 'https://oauth.roblox.com/v1/token'
 	},
@@ -411,6 +599,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://shikimori.one/api/users/whoami',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://shikimori.org/oauth/authorize',
 		tokenUrl: 'https://shikimori.org/oauth/token'
 	},
@@ -418,6 +611,12 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: true,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://slack.com/api/users.identity',
+			method: 'GET',
+			authIn: 'query'
+			// tokenParam: 'token'
+		},
 		authorizationUrl: 'https://slack.com/openid/connect/authorize',
 		tokenUrl: 'https://slack.com/api/openid.connect.token'
 	},
@@ -425,6 +624,11 @@ export const providers = defineProviders({
 		isPKCE: true,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.spotify.com/v1/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://accounts.spotify.com/authorize',
 		tokenUrl: 'https://accounts.spotify.com/api/token'
 	},
@@ -432,6 +636,18 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.start.gg/gql/alpha',
+			method: 'POST',
+			authIn: 'header',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json'
+			},
+			body: {
+				query: `query { currentUser { id slug email player { gamerTag } } }`
+			}
+		},
 		authorizationUrl: 'https://start.gg/oauth/authoriz',
 		tokenUrl: 'https://api.start.gg/oauth/access_token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -441,6 +657,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://www.strava.com/api/v3/athlete',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://www.strava.com/oauth/authorize',
 		tokenUrl: 'https://www.strava.com/api/v3/oauth/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -450,6 +671,11 @@ export const providers = defineProviders({
 		isPKCE: true,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://<YOUR_DOMAIN>/webman/sso/SSOUserInfo.cgi',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: '${baseURL}/webman/sso/SSOOauth.cgi',
 		tokenUrl: '${baseURL}/webman/sso/SSOAccessToken.cgi'
 	},
@@ -457,6 +683,11 @@ export const providers = defineProviders({
 		isPKCE: true,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://open.douyin.com/oauth/userinfo',
+			method: 'GET',
+			authIn: 'query'
+		},
 		authorizationUrl: 'https://www.tiktok.com/v2/auth/authorize',
 		tokenUrl: 'https://open.tiktokapis.com/v2/oauth/token/',
 		tokenRevocationUrl: 'https://open.tiktokapis.com/v2/oauth/revoke/',
@@ -470,6 +701,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://tiltify.com/api/v3/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorizeze',
 		tokenUrl: 'https://v5api.tiltify.com/oauth/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -479,6 +715,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.tumblr.com/v2/user/info',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://www.tumblr.com/oauth2/authorize',
 		tokenUrl: 'https://api.tumblr.com/v2/oauth2/token'
 	},
@@ -486,6 +727,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.twitch.tv/helix/users',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://id.twitch.tv/oauth2/authorize',
 		tokenUrl: 'https://id.twitch.tv/oauth2/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -495,6 +741,11 @@ export const providers = defineProviders({
 		isPKCE: true,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.twitter.com/2/users/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://twitter.com/i/oauth2/authorize',
 		tokenUrl: 'https://api.twitter.com/2/oauth2/token',
 		createAuthorizationURLSearchParams: {
@@ -508,6 +759,11 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.vk.com/method/users.get',
+			method: 'GET',
+			authIn: 'query'
+		},
 		authorizationUrl: 'https://oauth.vk.com/authorize',
 		tokenUrl: 'https://oauth.vk.com/access_token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
@@ -545,6 +801,11 @@ export const providers = defineProviders({
 		isPKCE: true,
 		isOIDC: false,
 		isRefreshable: true,
+		profileRequest: {
+			url: 'https://api.zoom.us/v2/users/me',
+			method: 'GET',
+			authIn: 'header'
+		},
 		authorizationUrl: 'https://zoom.us/oauth/authorize',
 		tokenUrl: 'https://zoom.us/oauth/token',
 		tokenRevocationUrl: 'https://zoom.us/oauth/revoke',

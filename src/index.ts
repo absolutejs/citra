@@ -142,7 +142,15 @@ export function createOAuth2Client<P extends ProviderOption>(
 			return sendTokenRevocationRequest(req);
 		},
 
-		async fetchUserProfile(profileRequest, accessToken) {
+		async fetchUserProfile(accessToken: string) {
+			const profileRequest = meta.profileRequest;
+			//TODO : Remvoe when providers is fully updated
+			if (!profileRequest) {
+				throw new Error(
+					'User profile request is not defined for this provider'
+				);
+			}
+
 			let url = profileRequest.url;
 			const method = profileRequest.method;
 			const headers: Record<string, string> = {};
@@ -151,26 +159,27 @@ export function createOAuth2Client<P extends ProviderOption>(
 				headers['Authorization'] = `Bearer ${accessToken}`;
 			} else {
 				const sep = url.includes('?') ? '&' : '?';
-				url = `${url}${sep}'access_token'=${encodeURIComponent(accessToken)}`;
+				url = `${url}${sep}access_token=${encodeURIComponent(accessToken)}`;
 			}
 
 			const init: RequestInit = { method, headers };
-
 			if (method === 'POST' && profileRequest.body) {
 				headers['Content-Type'] = 'application/json';
 				init.body = JSON.stringify(profileRequest.body);
 			}
 
 			const response = await fetch(url, init);
+			const responseText = await response.clone().text();
 
 			if (!response.ok) {
-				const errText = await response.text();
 				throw new Error(
-					`Failed to fetch user profile: ${response.status} ${response.statusText} - ${errText}`
+					`Failed to fetch user profile: ${response.status} ${response.statusText} - ${responseText}`
 				);
 			}
 
-			return response.json();
+			const json = await response.json();
+
+			return json;
 		}
 	};
 }

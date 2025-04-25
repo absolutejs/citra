@@ -15,11 +15,14 @@ export const FetchProfile = ({ setProfileModalOpen }: FetchProfileProps) => {
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
-		const response = await fetch(`/oauth2/${currentProvider?.toLowerCase()}/profile`, {
-			headers: {
-				'Authorization': `Bearer ${accessToken}`,
+		const response = await fetch(
+			`/oauth2/${currentProvider?.toLowerCase()}/profile`,
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`
+				}
 			}
-		})
+		);
 
 		if (!response.ok) {
 			const errorText = await response.text();

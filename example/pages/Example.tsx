@@ -24,15 +24,15 @@ export const Example = () => {
 	// fragment from the URL after the redirect.
 	useEffect(() => {
 		if (window.location.hash === '#_=_') {
-		  // Remove the fragment without reloading
-		  window.history.replaceState(
-			null,
-			document.title,
-			window.location.pathname + window.location.search
-		  );
+			// Remove the fragment without reloading
+			window.history.replaceState(
+				null,
+				document.title,
+				window.location.pathname + window.location.search
+			);
 		}
-	  }, []);
-	  
+	}, []);
+
 	return (
 		<html lang="en" style={htmlDefault}>
 			<Head />

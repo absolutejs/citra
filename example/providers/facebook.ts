@@ -1,6 +1,6 @@
 import Elysia from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
+import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../constants';
 
 if (
@@ -71,6 +71,24 @@ export const facebookPlugin = new Elysia()
 			return redirect('/');
 		}
 	)
-	.get('/oauth2/facebook/profile', async ({ error }) => {
-		console.log('Fetching Facebook profile...');
-	});
+	.get(
+		'/oauth2/facebook/profile',
+		async ({ error, headers: { authorization } }) => {
+			if (authorization === undefined)
+				return error(
+					'Unauthorized',
+					'Access token is missing in headers'
+				);
+
+			const accessToken = authorization.replace('Bearer ', '');
+			const userProfile =
+				await facebookOAuth2Client.fetchUserProfile(accessToken);
+			console.log('\nFacebook user profile:', userProfile);
+
+			return new Response(JSON.stringify(userProfile), {
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+		}
+	);

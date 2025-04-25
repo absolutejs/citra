@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { isValidProviderOption } from '../../src/typeGuards';
 
 type ProviderDropdownProps = {
-	providerOptions: string[]
+	providerOptions: string[];
 	setCurrentProvider: Dispatch<SetStateAction<any | undefined>>;
 };
 
@@ -10,7 +10,6 @@ export const ProviderDropdown = ({
 	providerOptions,
 	setCurrentProvider
 }: ProviderDropdownProps) => {
-
 	return (
 		<select
 			defaultValue=""

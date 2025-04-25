@@ -1,4 +1,5 @@
 import { providers } from './providers';
+import { RefreshableProvider, RevocableProvider } from './types';
 
 // TODO: Add OAuth2 token type guard
 export const isValidOAuth2Tokens = (tokens: any): tokens is any => {
@@ -18,12 +19,24 @@ export const isValidOAuth2Tokens = (tokens: any): tokens is any => {
 };
 
 export const isValidProviderOption = (
-	provider: any
+	provider: string
 ): provider is keyof typeof providers => {
+	return Object.keys(providers).includes(
+		provider.charAt(0).toUpperCase() + provider.slice(1)
+	);
+};
+
+export const isRefreshableProvider = (
+	provider: string
+): provider is RefreshableProvider => {
+	return isValidProviderOption(provider) && providers[provider].isRefreshable;
+};
+
+export const isRevocableProvider = (
+	provider: string
+): provider is RevocableProvider => {
 	return (
-		typeof provider === 'string' &&
-		Object.keys(providers).includes(
-			provider.charAt(0).toUpperCase() + provider.slice(1)
-		)
+		isValidProviderOption(provider) &&
+		providers[provider].tokenRevocationUrl !== undefined
 	);
 };

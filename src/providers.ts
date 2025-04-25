@@ -76,7 +76,6 @@ export const providers = defineProviders({
 		isRefreshable: true,
 		authorizationUrl: 'https://auth.atlassian.com/authorize',
 		tokenUrl: 'https://auth.atlassian.com/oauth/token',
-		tokenRevocationUrl: 'https://auth.atlassian.com/oauth/revoke',
 		createAuthorizationURLSearchParams: {
 			audience: 'api.atlassian.com',
 			prompt: 'consent'
@@ -111,7 +110,8 @@ export const providers = defineProviders({
 		isRefreshable: true,
 		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
 		tokenUrl: 'https://api.box.com/oauth2/token',
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
+		tokenRevocationUrl: 'https://api.box.com/oauth2/revoke'
 	},
 	Bungie: {
 		isPKCE: false,
@@ -155,7 +155,8 @@ export const providers = defineProviders({
 		isOIDC: false,
 		isRefreshable: true,
 		authorizationUrl: 'https://www.dropbox.com/oauth2/authorize',
-		tokenUrl: 'https://api.dropboxapi.com/oauth2/token'
+		tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
+		tokenRevocationUrl: ' https://api.dropboxapi.com/2/auth/token/revoke'
 	},
 	EpicGames: {
 		isPKCE: false,

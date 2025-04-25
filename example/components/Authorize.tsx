@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 import { ProviderOption } from '../../src/types';
+import { providers } from '../../src/providers';
 
 export const Authorize = () => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
@@ -12,7 +13,10 @@ export const Authorize = () => {
 			method="get"
 			style={formStyle}
 		>
-			<ProviderDropdown setCurrentProvider={setCurrentProvider} />
+			<ProviderDropdown
+				setCurrentProvider={setCurrentProvider}
+				providerOptions={Object.keys(providers)}
+			/>
 
 			<button
 				type="submit"

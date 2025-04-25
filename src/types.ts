@@ -4,25 +4,25 @@ export type CodeChallengeMethod = 'S256' | 'plain';
 
 export type ProviderOption = keyof typeof providers;
 
-export type PKCEProviders = {
+export type PKCEProvider = {
 	[K in ProviderOption]: (typeof providers)[K]['isPKCE'] extends true
 		? K
 		: never;
 }[ProviderOption];
 
-export type OIDCProviders = {
+export type OIDCProvider = {
 	[K in ProviderOption]: (typeof providers)[K]['isOIDC'] extends true
 		? K
 		: never;
 }[ProviderOption];
 
-export type RefreshableProviders = {
+export type RefreshableProvider = {
 	[K in ProviderOption]: (typeof providers)[K]['isRefreshable'] extends true
 		? K
 		: never;
 }[ProviderOption];
 
-export type RevocableProviders = {
+export type RevocableProvider = {
 	[K in ProviderOption]: (typeof providers)[K]['tokenRevocationUrl'] extends string
 		? K
 		: never;
@@ -30,10 +30,10 @@ export type RevocableProviders = {
 
 export type BaseOAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
-		opts: { state: string } & (P extends PKCEProviders
+		opts: { state: string } & (P extends PKCEProvider
 			? { codeVerifier: string }
 			: {}) &
-			(P extends OIDCProviders
+			(P extends OIDCProvider
 				? { scope: string[] }
 				: { scope?: string[] }) & {
 				searchParams?: [string, string][];
@@ -41,7 +41,7 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 	): Promise<URL>;
 
 	validateAuthorizationCode(
-		opts: { code: string } & (P extends PKCEProviders
+		opts: { code: string } & (P extends PKCEProvider
 			? { codeVerifier: string }
 			: {})
 	): Promise<OAuth2TokenResponse>;
@@ -56,8 +56,8 @@ export type RevocableOAuth2Client = {
 };
 
 export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
-	(P extends RefreshableProviders ? RefreshableOAuth2Client : {}) &
-	(P extends RevocableProviders ? RevocableOAuth2Client : {});
+	(P extends RefreshableProvider ? RefreshableOAuth2Client : {}) &
+	(P extends RevocableProvider ? RevocableOAuth2Client : {});
 
 export type ProviderConfig = {
 	isPKCE: boolean;

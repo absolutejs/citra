@@ -6,7 +6,7 @@ import {
 	buttonStyle
 } from '../utils/styles';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Head } from '../components/Head';
 import { Authorize } from '../components/Authorize';
 import { Modal } from '../components/Modal';
@@ -20,6 +20,19 @@ export const Example = () => {
 	const [revokeModalOpen, setRevokeModalOpen] = useState(false);
 	const [profileModalOpen, setProfileModalOpen] = useState(false);
 
+	// This is a fix for the Facebook OAuth2 flow to remove the hash
+	// fragment from the URL after the redirect.
+	useEffect(() => {
+		if (window.location.hash === '#_=_') {
+		  // Remove the fragment without reloading
+		  window.history.replaceState(
+			null,
+			document.title,
+			window.location.pathname + window.location.search
+		  );
+		}
+	  }, []);
+	  
 	return (
 		<html lang="en" style={htmlDefault}>
 			<Head />

@@ -111,16 +111,16 @@ export const Example = () => {
 							Fetch Profile
 						</button>
 					</nav>
-					{authModalOpen ? (
+					{authModalOpen === true && (
 						<Modal
 							isOpen={authModalOpen}
 							onClose={() => setAuthauthModalOpen(false)}
 						>
 							<Authorize />
 						</Modal>
-					) : null}
+					)}
 
-					{refreshModalOpen ? (
+					{refreshModalOpen === true && (
 						<Modal
 							isOpen={refreshModalOpen}
 							onClose={() => setRefreshModalOpen(false)}
@@ -129,8 +129,8 @@ export const Example = () => {
 								setRefreshModalOpen={setRefreshModalOpen}
 							/>
 						</Modal>
-					) : null}
-					{revokeModalOpen ? (
+					) }
+					{revokeModalOpen === true && (
 						<Modal
 							isOpen={revokeModalOpen}
 							onClose={() => setRevokeModalOpen(false)}
@@ -139,8 +139,8 @@ export const Example = () => {
 								setRevokeModalOpen={setRevokeModalOpen}
 							/>
 						</Modal>
-					) : null}
-					{profileModalOpen ? (
+					)}
+					{profileModalOpen === true && (
 						<Modal
 							isOpen={profileModalOpen}
 							onClose={() => setProfileModalOpen(false)}
@@ -149,7 +149,7 @@ export const Example = () => {
 								setProfileModalOpen={setProfileModalOpen}
 							/>
 						</Modal>
-					) : null}
+					)}
 				</main>
 			</body>
 		</html>

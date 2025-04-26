@@ -1,38 +1,38 @@
 import { Dispatch, SetStateAction } from 'react';
-import { isValidProviderOption } from '../../src/typeGuards';
 
-type ProviderDropdownProps = {
-	providerOptions: string[];
-	setCurrentProvider: Dispatch<SetStateAction<any | undefined>>;
+type ProviderDropdownProps<T extends string> = {
+  providerOptions: T[];
+  setCurrentProvider: Dispatch<SetStateAction<T | undefined>>;
 };
 
-export const ProviderDropdown = ({
-	providerOptions,
-	setCurrentProvider
-}: ProviderDropdownProps) => (
-	<select
-		defaultValue=""
-		onChange={(event) => {
-			if (event.target.value === '') {
-				setCurrentProvider(undefined);
-			}
-
-			if (isValidProviderOption(event.target.value)) {
-				setCurrentProvider(event.target.value);
-			}
-		}}
-		style={{
-			border: '1px solid #ccc',
-			borderRadius: '4px',
-			fontSize: '14px',
-			padding: '8px'
-		}}
-	>
-		<option value="">Select provider</option>
-		{providerOptions.map((provider) => (
-			<option key={provider} value={provider}>
-				{provider}
-			</option>
-		))}
-	</select>
-);
+export function ProviderDropdown<T extends string>({
+  providerOptions,
+  setCurrentProvider,
+}: ProviderDropdownProps<T>) {
+  return (
+    <select
+      defaultValue={-1}
+      onChange={(e) => {
+        const idx = Number(e.target.value);
+        if (idx < 0) {
+          setCurrentProvider(undefined);
+        } else {
+          setCurrentProvider(providerOptions[idx]);
+        }
+      }}
+      style={{
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        fontSize: '14px',
+        padding: '8px',
+      }}
+    >
+      <option value={-1}>Select provider</option>
+      {providerOptions.map((provider, i) => (
+        <option key={provider} value={i}>
+          {provider}
+        </option>
+      ))}
+    </select>
+  );
+}

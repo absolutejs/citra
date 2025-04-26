@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { ProviderOption } from '../../src/types';
+import { HALF } from './constants';
 
 export const styleReset = `
     * {
@@ -72,6 +72,6 @@ export const formButtonStyle = (isFullOpacity?: boolean): CSSProperties => ({
 	color: '#fff',
 	cursor: isFullOpacity ? 'pointer' : 'not-allowed',
 	fontSize: '14px',
-	opacity: isFullOpacity ? 1 : 0.5,
+	opacity: isFullOpacity ? 1 : HALF,
 	padding: '8px 16px'
 });

@@ -1,20 +1,21 @@
+import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
-import { COOKIE_DURATION } from '../constants';
+import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!Bun.env.GOOGLE_CLIENT_ID ||
-	!Bun.env.GOOGLE_CLIENT_SECRET ||
-	!Bun.env.GOOGLE_REDIRECT_URI
+	!env.GOOGLE_CLIENT_ID ||
+	!env.GOOGLE_CLIENT_SECRET ||
+	!env.GOOGLE_REDIRECT_URI
 ) {
 	throw new Error('Google OAuth2 credentials are not set in .env file');
 }
 
 const googleOAuth2Client = createOAuth2Client('Google', {
-	clientId: Bun.env.GOOGLE_CLIENT_ID,
-	clientSecret: Bun.env.GOOGLE_CLIENT_SECRET,
-	redirectUri: Bun.env.GOOGLE_REDIRECT_URI,
+	clientId: env.GOOGLE_CLIENT_ID,
+	clientSecret: env.GOOGLE_CLIENT_SECRET,
+	redirectUri: env.GOOGLE_REDIRECT_URI
 });
 
 export const googlePlugin = new Elysia()

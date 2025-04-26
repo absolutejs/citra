@@ -1,19 +1,20 @@
+import { env } from 'process';
 import Elysia from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState } from '../../src/arctic-utils';
-import { COOKIE_DURATION } from '../constants';
+import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!Bun.env.FACEBOOK_CLIENT_ID ||
-	!Bun.env.FACEBOOK_CLIENT_SECRET ||
-	!Bun.env.FACEBOOK_REDIRECT_URI
+	!env.FACEBOOK_CLIENT_ID ||
+	!env.FACEBOOK_CLIENT_SECRET ||
+	!env.FACEBOOK_REDIRECT_URI
 ) {
 	throw new Error('Facebook OAuth2 credentials are not set in .env file');
 }
 const facebookOAuth2Client = createOAuth2Client('Facebook', {
-	clientId: Bun.env.FACEBOOK_CLIENT_ID,
-	clientSecret: Bun.env.FACEBOOK_CLIENT_SECRET,
-	redirectUri: Bun.env.FACEBOOK_REDIRECT_URI
+	clientId: env.FACEBOOK_CLIENT_ID,
+	clientSecret: env.FACEBOOK_CLIENT_SECRET,
+	redirectUri: env.FACEBOOK_REDIRECT_URI
 });
 
 export const facebookPlugin = new Elysia()

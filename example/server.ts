@@ -6,7 +6,6 @@ import {
 import { staticPlugin } from '@elysiajs/static';
 import { Elysia } from 'elysia';
 import { Example } from './pages/Example';
-import { googlePlugin } from './providers/google';
 import { providersPlugin } from './providersPlugin';
 
 const manifest = await build({

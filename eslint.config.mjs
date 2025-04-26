@@ -207,5 +207,17 @@ export default [
 		settings: {
 			react: { version: 'detect' }
 		}
+	},
+	{
+		files: ['example/server.ts','example/indexes/ExampleIndex.tsx'],
+		rules: {
+			'import/no-unused-modules': 'off'
+		}
+	},
+	{
+		files: ['example/providers/**/*.ts'],
+		rules: {
+			'no-console': 'off'
+		}
 	}
 ];

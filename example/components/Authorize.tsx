@@ -3,6 +3,9 @@ import { providers } from '../../src/providers';
 import { ProviderOption } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
+import { isValidProviderOption } from '../../src/typeGuards';
+
+const providerOptions = Object.keys(providers).filter(isValidProviderOption)
 
 export const Authorize = () => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
@@ -15,7 +18,7 @@ export const Authorize = () => {
 		>
 			<ProviderDropdown
 				setCurrentProvider={setCurrentProvider}
-				providerOptions={Object.keys(providers)}
+				providerOptions={providerOptions}
 			/>
 
 			<button

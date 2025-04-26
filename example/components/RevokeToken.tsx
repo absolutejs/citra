@@ -1,7 +1,7 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 import { providers } from '../../src/providers';
 import { isRevocableProvider } from '../../src/typeGuards';
-import { ProviderOption, RevocableProvider } from '../../src/types';
+import {  RevocableProvider } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
 
@@ -46,7 +46,7 @@ export const RevokeToken = ({ setRevokeModalOpen }: RevokeTokenProps) => {
 				type="text"
 				name="token"
 				value={tokenToRevoke}
-				onChange={(e) => setTokenToRevoke(e.target.value)}
+				onChange={(event) => setTokenToRevoke(event.target.value)}
 				placeholder="Enter token to revoke"
 				style={{
 					border: '1px solid #ccc',

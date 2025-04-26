@@ -3,10 +3,13 @@ import { providers } from '../../src/providers';
 import { ProviderOption } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
+import { isValidProviderOption } from '../../src/typeGuards';
 
 type FetchProfileProps = {
 	setProfileModalOpen: Dispatch<SetStateAction<boolean>>;
 };
+
+const providerOptions = Object.keys(providers).filter(isValidProviderOption);
 
 export const FetchProfile = ({ setProfileModalOpen }: FetchProfileProps) => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
@@ -38,7 +41,7 @@ export const FetchProfile = ({ setProfileModalOpen }: FetchProfileProps) => {
 		<form style={formStyle} onSubmit={handleSubmit}>
 			<ProviderDropdown
 				setCurrentProvider={setCurrentProvider}
-				providerOptions={Object.keys(providers)}
+				providerOptions={providerOptions}
 			/>
 
 			<input

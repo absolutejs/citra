@@ -89,39 +89,3 @@ export const createOAuth2Request = (Url: string, body: URLSearchParams) => {
 
 	return request;
 };
-
-export const sendTokenRequest = async (request: Request) => {
-	try {
-		const response = await fetch(request);
-		if (!response.ok) {
-			throw new Error(
-				`Token request failed: ${response.status} ${response.statusText}`
-			);
-		}
-
-		return await response.json();
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new Error(`${error.message} - ${error.stack ?? ''}`);
-		}
-		throw new Error(`Unexpected error: ${error}`);
-	}
-};
-
-export const sendTokenRevocationRequest = async (request: Request) => {
-	let response: Response;
-
-	try {
-		response = await fetch(request);
-	} catch (error) {
-		if (error instanceof Error)
-			throw new Error(`${error.message} - ${error.stack ?? ''}`);
-		throw new Error(`Unexpected error: ${error}`);
-	}
-
-	if (!response.ok) {
-		throw new Error(
-			`Token revocation failed: ${response.status} ${response.statusText}`
-		);
-	}
-};

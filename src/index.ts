@@ -1,8 +1,6 @@
 import {
 	createOAuth2Request,
-	sendTokenRequest,
 	createS256CodeChallenge,
-	sendTokenRevocationRequest
 } from './arctic-utils';
 import { providers } from './providers';
 import { ConfigFor, OAuth2Client, ProviderOption } from './types';
@@ -14,9 +12,23 @@ export const createOAuth2Client = <P extends ProviderOption>(
 	const meta = providers[providerName];
 
 	const postForm = async (url: string, body: URLSearchParams) => {
-		const req = createOAuth2Request(url, body);
+		const request = createOAuth2Request(url, body);
 
-		return sendTokenRequest(req);
+		try {
+			const response = await fetch(request);
+			if (!response.ok) {
+				throw new Error(
+					`Token request failed: ${response.status} ${response.statusText}`
+				);
+			}
+	
+			return await response.json();
+		} catch (error) {
+			if (error instanceof Error) {
+				throw new Error(`${error.message} - ${error.stack ?? ''}`);
+			}
+			throw new Error(`Unexpected error: ${error}`);
+		}
 	};
 
 	return {
@@ -124,7 +136,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			return postForm(meta.tokenUrl, body);
 		},
 
-		revokeToken(token: string) {
+		async revokeToken(token: string) {
 			if (!meta.tokenRevocationUrl) {
 				throw new Error(
 					'Token revocation URL is not defined for this provider'
@@ -139,9 +151,21 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			if ('clientSecret' in config && config.clientSecret) {
 				body.set('client_secret', config.clientSecret);
 			}
-			const req = createOAuth2Request(meta.tokenRevocationUrl, body);
+			const request = createOAuth2Request(meta.tokenRevocationUrl, body);
 
-			return sendTokenRevocationRequest(req);
+			try {
+				const response = await fetch(request);
+				
+				if (!response.ok) {
+					throw new Error(
+						`Token revocation failed: ${response.status} ${response.statusText}`
+					);
+				}
+			} catch (error) {
+				if (error instanceof Error)
+					throw new Error(`${error.message} - ${error.stack ?? ''}`);
+				throw new Error(`Unexpected error: ${error}`);
+			}
 		},
 
 		validateAuthorizationCode(opts: {

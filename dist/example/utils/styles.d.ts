@@ -6,10 +6,8 @@ export declare const htmlDefault: CSSProperties;
 type ButtonStyleProps = {
     backgroundColor?: string;
     color?: string;
-    width?: string;
 };
-export declare const buttonStyle: ({ backgroundColor, color, width }: ButtonStyleProps) => CSSProperties;
-export declare const authContainerStyle: CSSProperties;
-export declare const textButtonStyle: CSSProperties;
-export declare const contentStyle: CSSProperties;
+export declare const buttonStyle: ({ backgroundColor, color }: ButtonStyleProps) => CSSProperties;
+export declare const formStyle: CSSProperties;
+export declare const formButtonStyle: (isFullOpacity?: boolean) => CSSProperties;
 export {};

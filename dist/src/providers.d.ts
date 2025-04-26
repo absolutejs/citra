@@ -1,578 +1,907 @@
-import { ProviderConfig } from './types';
-export declare function defineProviders<L extends Record<string, ProviderConfig>>(providers: L): {
-    [K in keyof L]: L[K] & ProviderConfig;
-};
+import { DefineProviders } from './types';
+export declare const defineProviders: DefineProviders;
 export declare const providers: {
     '42': {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     AmazonCognito: {
-        isPKCE: true;
-        isOIDC: true;
         authorizationUrl: string;
-        tokenUrl: string;
+        isOIDC: true;
+        isPKCE: true;
+        isRefreshable: true;
         tokenRevocationUrl: string;
-    } & ProviderConfig;
+        tokenUrl: string;
+    } & import("./types").ProviderConfig;
     AniList: {
-        isPKCE: false;
+        authorizationUrl: string;
+        createAuthorizationURLSearchParams: {
+            response_type: string;
+        };
         isOIDC: false;
-        authorizationUrl: string;
-        tokenUrl: string;
-        createAuthorizationURLSearchParams: {
-            response_type: string;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            body: {
+                query: string;
+            };
+            headers: {
+                Accept: string;
+                'Content-Type': string;
+            };
+            method: "POST";
+            url: string;
         };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Apple: {
-        isPKCE: true;
-        isOIDC: true;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: true;
+        isPKCE: true;
+        isRefreshable: true;
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
-    Auth0: {
-        isPKCE: true;
-        isOIDC: true;
+    } & import("./types").ProviderConfig;
+    Atlassian: {
         authorizationUrl: string;
+        createAuthorizationURLSearchParams: {
+            audience: string;
+            prompt: string;
+        };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        refreshAccessTokenBody: {
+            grant_type: string;
+        };
         tokenUrl: string;
-        tokenRevocationUrl: string;
+        validateAuthorizationCodeBody: {
+            grant_type: string;
+        };
+    } & import("./types").ProviderConfig;
+    Auth0: {
+        authorizationUrl: string;
+        isOIDC: true;
+        isPKCE: true;
+        isRefreshable: true;
         refreshAccessTokenBody: {
             grant_type: string;
         };
         tokenRevocationBody: {
             token_type_hint: string;
         };
-    } & ProviderConfig;
+        tokenRevocationUrl: string;
+        tokenUrl: string;
+    } & import("./types").ProviderConfig;
     Authentik: {
-        isPKCE: true;
+        authorizationUrl: string;
         isOIDC: true;
-        authorizationUrl: string;
+        isPKCE: true;
+        isRefreshable: true;
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Autodesk: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
-        validateAuthorizationCodeBody: {
-            grant_type: string;
-        };
-    } & ProviderConfig;
-    Atlassian: {
-        isPKCE: false;
         isOIDC: false;
-        authorizationUrl: string;
+        isPKCE: false;
+        isRefreshable: true;
         tokenUrl: string;
-        tokenRevocationUrl: string;
-        createAuthorizationURLSearchParams: {
-            audience: string;
-            prompt: string;
-        };
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-        refreshAccessTokenBody: {
-            grant_type: string;
-        };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Battlenet: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
             scope: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Bitbucket: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Box: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenRevocationUrl: string;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Bungie: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            headers: {
+                'X-API-Key': string;
+            };
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Coinbase: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Discord: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     DonationAlerts: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Dribbble: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: false;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Dropbox: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenRevocationUrl: string;
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     EpicGames: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Etsy: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Facebook: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: false;
+        profileRequest: {
+            authIn: "query";
+            method: "GET";
+            searchParams: [string, string][];
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Figma: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Gitea: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     GitHub: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     GitLab: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenRevocationUrl: string;
-    } & ProviderConfig;
+        tokenUrl: string;
+    } & import("./types").ProviderConfig;
     Google: {
-        isPKCE: true;
-        isOIDC: true;
-        requiresScope: boolean;
         authorizationUrl: string;
-        tokenUrl: string;
-        tokenRevocationUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: true;
+        isPKCE: true;
+        isRefreshable: true;
+        tokenRevocationUrl: string;
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Intuit: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenRevocationUrl: string;
-    } & ProviderConfig;
+        tokenUrl: string;
+    } & import("./types").ProviderConfig;
     Kakao: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     KeyCloak: {
-        isPKCE: true;
-        isOIDC: true;
         authorizationUrl: string;
-        tokenUrl: string;
+        isOIDC: true;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenRevocationUrl: string;
-    } & ProviderConfig;
+        tokenUrl: string;
+    } & import("./types").ProviderConfig;
     Kick: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
+        createAuthorizationURLSearchParams: {
+            code_challenge_method: string;
+            response_type: string;
+        };
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
         tokenRevocationUrl: string;
-        createAuthorizationURLSearchParams: {
-            response_type: string;
-            code_challenge_method: string;
-        };
-        validateAuthorizationCodeBody: {
-            grant_type: string;
-        };
-    } & ProviderConfig;
-    Line: {
-        isPKCE: true;
-        isOIDC: false;
-        authorizationUrl: string;
         tokenUrl: string;
-        createAuthorizationURLSearchParams: {
-            response_type: string;
-            code_challenge_method: string;
-        };
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Lichess: {
+        authorizationUrl: string;
+        isOIDC: false;
         isPKCE: true;
-        isOIDC: false;
-        authorizationUrl: string;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
-    LinkedIn: {
-        isPKCE: false;
-        isOIDC: false;
+    } & import("./types").ProviderConfig;
+    Line: {
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
+            code_challenge_method: string;
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        refreshAccessTokenBody: {
+            grant_type: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Linear: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            body: {
+                query: string;
+            };
+            headers: {
+                Accept: string;
+                'Content-Type': string;
+            };
+            method: "POST";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
+    LinkedIn: {
+        authorizationUrl: string;
+        createAuthorizationURLSearchParams: {
+            response_type: string;
+        };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        tokenUrl: string;
+        validateAuthorizationCodeBody: {
+            grant_type: string;
+        };
+    } & import("./types").ProviderConfig;
     Mastodon: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenRevocationUrl: string;
-    } & ProviderConfig;
+        tokenUrl: string;
+    } & import("./types").ProviderConfig;
     MercadoLibre: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     MercadoPago: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     MicrosoftEntraId: {
-        isPKCE: true;
-        isOIDC: true;
         authorizationUrl: string;
+        isOIDC: true;
+        isPKCE: true;
+        isRefreshable: true;
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     MyAnimeList: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Naver: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Notion: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Okta: {
-        isPKCE: true;
-        isOIDC: true;
         authorizationUrl: string;
-        tokenUrl: string;
+        isOIDC: true;
+        isPKCE: true;
+        isRefreshable: true;
         tokenRevocationUrl: string;
-    } & ProviderConfig;
+        tokenUrl: string;
+    } & import("./types").ProviderConfig;
     Osu: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Patreon: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Polar: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Reddit: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Roblox: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Salesforce: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Shikimori: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Slack: {
-        isPKCE: false;
+        authorizationUrl: string;
         isOIDC: true;
-        authorizationUrl: string;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "query";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Spotify: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     StartGG: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            body: {
+                query: string;
+            };
+            headers: {
+                Accept: string;
+                'Content-Type': string;
+            };
+            method: "POST";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Strava: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Synology: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     TikTok: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
-        tokenRevocationUrl: string;
         createAuthorizationURLSearchParams: {
-            response_type: string;
             code_challenge_method: string;
+            response_type: string;
         };
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "query";
+            method: "GET";
+            url: string;
+        };
+        tokenRevocationUrl: string;
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Tiltify: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Tumblr: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
         tokenUrl: string;
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Twitch: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     Twitter: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
-            response_type: string;
             code_challenge_method: string;
+            response_type: string;
         };
-        validateAuthorizationCodeBody: {
-            grant_type: string;
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
         };
         refreshAccessTokenBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+        tokenUrl: string;
+        validateAuthorizationCodeBody: {
+            grant_type: string;
+        };
+    } & import("./types").ProviderConfig;
     VK: {
-        isPKCE: false;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "query";
+            method: "GET";
+            url: string;
+        };
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+    } & import("./types").ProviderConfig;
     WorkOS: {
-        isPKCE: true;
-        isOIDC: false;
         authorizationUrl: string;
-        tokenUrl: string;
         createAuthorizationURLSearchParams: {
-            response_type: string;
             code_challenge_method: string;
-        };
-        validateAuthorizationCodeBody: {
-            grant_type: string;
-        };
-    } & ProviderConfig;
-    Yahoo: {
-        isPKCE: false;
-        isOIDC: false;
-        authorizationUrl: string;
-        tokenUrl: string;
-    } & ProviderConfig;
-    Yandex: {
-        isPKCE: false;
-        isOIDC: false;
-        authorizationUrl: string;
-        tokenUrl: string;
-        createAuthorizationURLSearchParams: {
             response_type: string;
         };
-        validateAuthorizationCodeBody: {
-            grant_type: string;
-        };
-    } & ProviderConfig;
-    Zoom: {
+        isOIDC: false;
         isPKCE: true;
-        isOIDC: false;
-        authorizationUrl: string;
+        isRefreshable: true;
         tokenUrl: string;
-        tokenRevocationUrl: string;
+        validateAuthorizationCodeBody: {
+            grant_type: string;
+        };
+    } & import("./types").ProviderConfig;
+    Yahoo: {
+        authorizationUrl: string;
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        tokenUrl: string;
+    } & import("./types").ProviderConfig;
+    Yandex: {
+        authorizationUrl: string;
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
+        isOIDC: false;
+        isPKCE: false;
+        isRefreshable: true;
+        tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
+        };
+    } & import("./types").ProviderConfig;
+    Zoom: {
+        authorizationUrl: string;
+        createAuthorizationURLSearchParams: {
+            response_type: string;
+        };
+        isOIDC: false;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
         };
         refreshAccessTokenBody: {
             grant_type: string;
         };
-    } & ProviderConfig;
+        tokenRevocationUrl: string;
+        tokenUrl: string;
+        validateAuthorizationCodeBody: {
+            grant_type: string;
+        };
+    } & import("./types").ProviderConfig;
 };

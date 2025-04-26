@@ -1,37 +1,62 @@
 import { providers } from './providers';
-export type CodeChallengeMethod = 'S256' | 'plain';
+export type ProfileRequestConfig = {
+    url: string;
+    method: 'GET' | 'POST';
+    authIn: 'header' | 'query';
+    headers?: Record<string, string>;
+    body?: unknown;
+    searchParams?: [string, string][];
+};
+export type DefineProviders = <ProviderMap extends Record<string, ProviderConfig>>(providerMap: ProviderMap) => {
+    [ProviderName in keyof ProviderMap]: ProviderMap[ProviderName] & ProviderConfig;
+};
 export type ProviderOption = keyof typeof providers;
-export type PKCEProviders = {
+export type PKCEProvider = {
     [K in ProviderOption]: (typeof providers)[K]['isPKCE'] extends true ? K : never;
 }[ProviderOption];
-export type OIDCProviders = {
+export type OIDCProvider = {
     [K in ProviderOption]: (typeof providers)[K]['isOIDC'] extends true ? K : never;
 }[ProviderOption];
-export type NonPKCEProviders = Exclude<ProviderOption, PKCEProviders>;
-export type OAuth2Client<P extends ProviderOption> = {
+export type RefreshableProvider = {
+    [K in ProviderOption]: (typeof providers)[K]['isRefreshable'] extends true ? K : never;
+}[ProviderOption];
+export type RevocableProvider = {
+    [K in ProviderOption]: (typeof providers)[K]['tokenRevocationUrl'] extends string ? K : never;
+}[ProviderOption];
+export type BaseOAuth2Client<P extends ProviderOption> = {
     createAuthorizationUrl(opts: {
         state: string;
-    } & (P extends PKCEProviders ? {
+    } & (P extends PKCEProvider ? {
         codeVerifier: string;
-    } : {}) & (P extends OIDCProviders ? {
+    } : unknown) & (P extends OIDCProvider ? {
         scope: string[];
     } : {
         scope?: string[];
     }) & {
-        extraParams?: Record<string, string>;
+        searchParams?: [string, string][];
     }): Promise<URL>;
-    validateAuthorizationCode(code: string, opts?: {
-        codeVerifier?: string;
-    }): Promise<any>;
-    refresh(refreshToken: string): Promise<any>;
-    revoke(token: string): Promise<void>;
+    validateAuthorizationCode(opts: {
+        code: string;
+    } & (P extends PKCEProvider ? {
+        codeVerifier: string;
+    } : unknown)): Promise<OAuth2TokenResponse>;
+    fetchUserProfile(accessToken: string): Promise<unknown>;
 };
+export type RefreshableOAuth2Client = {
+    refreshAccessToken(refreshToken: string): Promise<OAuth2TokenResponse>;
+};
+export type RevocableOAuth2Client = {
+    revokeToken(token: string): Promise<void>;
+};
+export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> & (P extends RefreshableProvider ? RefreshableOAuth2Client : unknown) & (P extends RevocableProvider ? RevocableOAuth2Client : unknown);
 export type ProviderConfig = {
     isPKCE: boolean;
     isOIDC: boolean;
+    isRefreshable: boolean;
     authorizationUrl: string;
     tokenUrl: string;
     tokenRevocationUrl?: string;
+    profileRequest?: ProfileRequestConfig;
     /** Static query params added to the auth URL */
     createAuthorizationURLSearchParams?: Record<string, string>;
     /** Static fields added to the authorization‑code exchange body */
@@ -41,7 +66,7 @@ export type ProviderConfig = {
     /** Static fields added to the token‑revocation request body */
     tokenRevocationBody?: Record<string, string>;
 };
-export type OAuth2Tokens = {
+export type OAuth2TokenResponse = {
     access_token: string;
     refresh_token?: string;
     token_type: string;

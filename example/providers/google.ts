@@ -29,12 +29,12 @@ export const googlePlugin = new Elysia()
 			const authorizationUrl =
 				await googleOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-					state: currentState,
 					scope: ['email', 'profile', 'openid'],
 					searchParams: [
 						['access_type', 'offline'],
 						['prompt', 'consent']
-					]
+					],
+					state: currentState
 				});
 
 			state.set({
@@ -53,6 +53,7 @@ export const googlePlugin = new Elysia()
 				secure: true,
 				value: codeVerifier ?? ''
 			});
+
 			return redirect(authorizationUrl.toString());
 		}
 	)
@@ -96,6 +97,7 @@ export const googlePlugin = new Elysia()
 			const oauthResponse =
 				await googleOAuth2Client.refreshAccessToken(refresh_token);
 			console.log('\nGoogle token refreshed:', oauthResponse);
+
 			return new Response('Token refreshed successfully', {
 				status: 204
 			});
@@ -117,6 +119,7 @@ export const googlePlugin = new Elysia()
 
 			await googleOAuth2Client.revokeToken(token_to_revoke);
 			console.log('\nGoogle token revoked:', token_to_revoke);
+
 			return new Response('Token revoked successfully', {
 				status: 204
 			});

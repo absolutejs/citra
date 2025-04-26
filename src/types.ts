@@ -7,7 +7,7 @@ export type ProfileRequestConfig = {
 	method: 'GET' | 'POST';
 	authIn: 'header' | 'query';
 	headers?: Record<string, string>;
-	body?: any;
+	body?: unknown;
 	searchParams?: [string, string][];
 };
 

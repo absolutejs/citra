@@ -1,35 +1,33 @@
-export const Navbar = () => {
-	return (
-		<header
+export const Navbar = () => (
+	<header
+		style={{
+			alignItems: 'center',
+			backgroundColor: '#0C1015',
+			color: '#fff',
+			display: 'flex',
+			justifyContent: 'space-between',
+			padding: '10px 20px',
+			position: 'relative'
+		}}
+	>
+		<a
 			style={{
-				position: 'relative',
-				backgroundColor: '#0C1015',
-				padding: '10px 20px',
+				alignItems: 'center',
 				color: '#fff',
 				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'space-between'
+				fontSize: '2rem',
+				fontWeight: 'bold',
+				justifyContent: 'center',
+				textDecoration: 'none'
 			}}
+			href="/"
 		>
-			<a
-				style={{
-					fontSize: '2rem',
-					fontWeight: 'bold',
-					textDecoration: 'none',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					color: '#fff'
-				}}
-				href="/"
-			>
-				<img
-					src="/assets/citra-logo.png"
-					alt="Citra Logo"
-					style={{ height: '100px', marginRight: '10px' }}
-				/>
-				Citra Example
-			</a>
-		</header>
-	);
-};
+			<img
+				src="/assets/citra-logo.png"
+				alt="Citra Logo"
+				style={{ height: '100px', marginRight: '10px' }}
+			/>
+			Citra Example
+		</a>
+	</header>
+);

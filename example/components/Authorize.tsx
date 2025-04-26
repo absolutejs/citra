@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { providers } from '../../src/providers';
+import { ProviderOption } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
-import { ProviderOption } from '../../src/types';
-import { providers } from '../../src/providers';
 
 export const Authorize = () => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();

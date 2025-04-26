@@ -29,6 +29,7 @@ import { CodeChallengeMethod } from './types';
 export async function createS256CodeChallenge(codeVerifier: string) {
 	const data = new TextEncoder().encode(codeVerifier);
 	const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
 	return base64Url(hashBuffer);
 }
 
@@ -37,6 +38,7 @@ export async function createS256CodeChallenge(codeVerifier: string) {
  */
 export function generateCodeVerifier() {
 	const rnd = crypto.getRandomValues(new Uint8Array(32));
+
 	return base64Url(rnd);
 }
 
@@ -45,6 +47,7 @@ export function generateCodeVerifier() {
  */
 export function generateState() {
 	const rnd = crypto.getRandomValues(new Uint8Array(32));
+
 	return base64Url(rnd);
 }
 
@@ -59,7 +62,7 @@ function base64Url(bytes: ArrayBuffer | Uint8Array) {
 	}
 
 	// browser:
-	let b64 =
+	const b64 =
 		typeof btoa === 'function'
 			? btoa(bin)
 			: // Node/Bun/Deno:
@@ -80,6 +83,7 @@ function trimLeft(s: string, character: string) {
 	while (start < s.length && s[start] === character) {
 		start++;
 	}
+
 	return s.slice(start);
 }
 
@@ -91,27 +95,30 @@ function trimRight(s: string, character: string) {
 	while (end > 0 && s[end - 1] === character) {
 		end--;
 	}
+
 	return s.slice(0, end);
 }
 
 export function joinURIAndPath(base: string, ...path: string[]) {
 	let joined = trimRight(base, '/');
 	for (const part of path) {
-		joined = trimRight(joined, '/') + '/' + trimLeft(part, '/');
+		joined = `${trimRight(joined, '/')}/${trimLeft(part, '/')}`;
 	}
+
 	return joined;
 }
 
 export function createOAuth2Request(Url: string, body: URLSearchParams) {
 	const bodyBytes = new TextEncoder().encode(body.toString());
 	const request = new Request(Url, {
-		method: 'POST',
-		body: bodyBytes
+		body: bodyBytes,
+		method: 'POST'
 	});
 	request.headers.set('Content-Type', 'application/x-www-form-urlencoded');
 	request.headers.set('Accept', 'application/json');
 	request.headers.set('User-Agent', 'citra');
 	request.headers.set('Content-Length', String(bodyBytes.byteLength));
+
 	return request;
 }
 
@@ -218,6 +225,7 @@ export async function sendTokenRevocationRequest(request: Request) {
 		if (response.body) {
 			await response.body.cancel();
 		}
+
 		return;
 	}
 
@@ -240,6 +248,7 @@ export function createOAuth2RequestError(result: any): OAuth2RequestError {
 			: null;
 	const uri = typeof result.error_uri === 'string' ? result.error_uri : null;
 	const state = typeof result.state === 'string' ? result.state : null;
+
 	return new OAuth2RequestError(code, description, uri, state);
 }
 
@@ -290,6 +299,7 @@ export const createAuthorizationURL = (
 	if (scopes.length > 0) {
 		url.searchParams.set('scope', scopes.join(' '));
 	}
+
 	return url;
 };
 
@@ -320,6 +330,7 @@ export const createAuthorizationURLWithPKCE = async (
 	if (scopes.length > 0) {
 		url.searchParams.set('scope', scopes.join(' '));
 	}
+
 	return url;
 };
 
@@ -352,6 +363,7 @@ export const validateAuthorizationCode = async (
 		request.headers.set('Authorization', `Basic ${encodedCredentials}`);
 	}
 	const tokens = await sendTokenRequest(request);
+
 	return tokens;
 };
 
@@ -380,6 +392,7 @@ export const refreshAccessToken = async (
 		request.headers.set('Authorization', `Basic ${encodedCredentials}`);
 	}
 	const tokens = await sendTokenRequest(request);
+
 	return tokens;
 };
 

@@ -15,6 +15,7 @@ export function createOAuth2Client<P extends ProviderOption>(
 
 	const postForm = async (url: string, body: URLSearchParams) => {
 		const req = createOAuth2Request(url, body);
+
 		return sendTokenRequest(req);
 	};
 
@@ -68,7 +69,79 @@ export function createOAuth2Client<P extends ProviderOption>(
 
 			return url;
 		},
+		async fetchUserProfile(accessToken: string) {
+			const { profileRequest } = meta;
+			//TODO : Remvoe when providers is fully updated
+			if (!profileRequest) {
+				throw new Error(
+					'User profile request is not defined for this provider'
+				);
+			}
 
+			let { url } = profileRequest;
+			const { method } = profileRequest;
+			const headers: Record<string, string> = {};
+
+			if (profileRequest.authIn === 'header') {
+				headers['Authorization'] = `Bearer ${accessToken}`;
+			} else {
+				const sep = url.includes('?') ? '&' : '?';
+				url = `${url}${sep}access_token=${encodeURIComponent(accessToken)}`;
+			}
+
+			const init: RequestInit = { headers, method };
+			if (method === 'POST' && profileRequest.body) {
+				headers['Content-Type'] = 'application/json';
+				init.body = JSON.stringify(profileRequest.body);
+			}
+
+			const response = await fetch(url, init);
+			const responseText = await response.clone().text();
+
+			if (!response.ok) {
+				throw new Error(
+					`Failed to fetch user profile: ${response.status} ${response.statusText} - ${responseText}`
+				);
+			}
+
+			const json = await response.json();
+
+			return json;
+		},
+		refreshAccessToken(refreshToken) {
+			const body = new URLSearchParams();
+			body.set('grant_type', 'refresh_token');
+			body.set('refresh_token', refreshToken);
+			Object.entries(meta.refreshAccessTokenBody ?? {}).forEach(
+				([k, v]) => body.set(k, v)
+			);
+			if ('clientSecret' in config && config.clientSecret) {
+				body.set('client_id', config.clientId);
+				body.set('client_secret', config.clientSecret);
+			}
+
+			return postForm(meta.tokenUrl, body);
+		},
+		revokeToken(token) {
+			if (!meta.tokenRevocationUrl) {
+				// TODO: This should never error because this function can only be called if the provider has a token revocation URL defined. See if the type can be narrowed to remove the undefined case.
+				throw new Error(
+					'Token revocation URL is not defined for this provider'
+				);
+			}
+			const body = new URLSearchParams();
+			body.set('token', token);
+			Object.entries(meta.tokenRevocationBody ?? {}).forEach(([k, v]) =>
+				body.set(k, v)
+			);
+			body.set('client_id', config.clientId);
+			if ('clientSecret' in config && config.clientSecret) {
+				body.set('client_secret', config.clientSecret);
+			}
+			const req = createOAuth2Request(meta.tokenRevocationUrl, body);
+
+			return sendTokenRevocationRequest(req);
+		},
 		validateAuthorizationCode(opts: {
 			code: string;
 			codeVerifier?: string;
@@ -106,80 +179,6 @@ export function createOAuth2Client<P extends ProviderOption>(
 			}
 
 			return postForm(meta.tokenUrl, body);
-		},
-
-		refreshAccessToken(refreshToken) {
-			const body = new URLSearchParams();
-			body.set('grant_type', 'refresh_token');
-			body.set('refresh_token', refreshToken);
-			Object.entries(meta.refreshAccessTokenBody ?? {}).forEach(
-				([k, v]) => body.set(k, v)
-			);
-			if ('clientSecret' in config && config.clientSecret) {
-				body.set('client_id', config.clientId);
-				body.set('client_secret', config.clientSecret);
-			}
-			return postForm(meta.tokenUrl, body);
-		},
-
-		revokeToken(token) {
-			if (!meta.tokenRevocationUrl) {
-				// TODO: This should never error because this function can only be called if the provider has a token revocation URL defined. See if the type can be narrowed to remove the undefined case.
-				throw new Error(
-					'Token revocation URL is not defined for this provider'
-				);
-			}
-			const body = new URLSearchParams();
-			body.set('token', token);
-			Object.entries(meta.tokenRevocationBody ?? {}).forEach(([k, v]) =>
-				body.set(k, v)
-			);
-			body.set('client_id', config.clientId);
-			if ('clientSecret' in config && config.clientSecret) {
-				body.set('client_secret', config.clientSecret);
-			}
-			const req = createOAuth2Request(meta.tokenRevocationUrl, body);
-			return sendTokenRevocationRequest(req);
-		},
-
-		async fetchUserProfile(accessToken: string) {
-			const profileRequest = meta.profileRequest;
-			//TODO : Remvoe when providers is fully updated
-			if (!profileRequest) {
-				throw new Error(
-					'User profile request is not defined for this provider'
-				);
-			}
-
-			let url = profileRequest.url;
-			const method = profileRequest.method;
-			const headers: Record<string, string> = {};
-
-			if (profileRequest.authIn === 'header') {
-				headers['Authorization'] = `Bearer ${accessToken}`;
-			} else {
-				const sep = url.includes('?') ? '&' : '?';
-				url = `${url}${sep}access_token=${encodeURIComponent(accessToken)}`;
-			}
-
-			const init: RequestInit = { method, headers };
-			if (method === 'POST' && profileRequest.body) {
-				headers['Content-Type'] = 'application/json';
-				init.body = JSON.stringify(profileRequest.body);
-			}
-
-			const response = await fetch(url, init);
-			const responseText = await response.clone().text();
-
-			if (!response.ok) {
-				throw new Error(
-					`Failed to fetch user profile: ${response.status} ${response.statusText} - ${responseText}`
-				);
-			}
-
-			const json = await response.json();
-
-			return json;
 		}
 	};
 }

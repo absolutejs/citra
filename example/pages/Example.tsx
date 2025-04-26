@@ -1,18 +1,17 @@
+import { useEffect, useState } from 'react';
+import { Authorize } from '../components/Authorize';
+import { FetchProfile } from '../components/FetchProfile';
+import { Head } from '../components/Head';
+import { Modal } from '../components/Modal';
 import { Navbar } from '../components/Navbar';
+import { RefreshToken } from '../components/RefreshToken';
+import { RevokeToken } from '../components/RevokeToken';
 import {
 	htmlDefault,
 	bodyDefault,
 	mainDefault,
 	buttonStyle
 } from '../utils/styles';
-
-import { useEffect, useState } from 'react';
-import { Head } from '../components/Head';
-import { Authorize } from '../components/Authorize';
-import { Modal } from '../components/Modal';
-import { RefreshToken } from '../components/RefreshToken';
-import { RevokeToken } from '../components/RevokeToken';
-import { FetchProfile } from '../components/FetchProfile';
 
 export const Example = () => {
 	const [authModalOpen, setAuthauthModalOpen] = useState(false);
@@ -41,9 +40,9 @@ export const Example = () => {
 				<main style={mainDefault}>
 					<h1
 						style={{
+							color: '#333',
 							fontSize: '2.5rem',
 							marginBottom: '20px',
-							color: '#333',
 							textAlign: 'center'
 						}}
 					>
@@ -51,10 +50,10 @@ export const Example = () => {
 					</h1>
 					<p
 						style={{
-							fontSize: '1.2rem',
-							marginBottom: '20px',
 							color: '#333',
+							fontSize: '1.2rem',
 							lineHeight: '1.5',
+							marginBottom: '20px',
 							maxWidth: '600px',
 							textAlign: 'center'
 						}}
@@ -66,9 +65,9 @@ export const Example = () => {
 
 					<nav
 						style={{
+							alignItems: 'center',
 							display: 'flex',
 							flexDirection: 'column',
-							alignItems: 'center',
 							gap: '10px'
 						}}
 					>
@@ -112,16 +111,16 @@ export const Example = () => {
 							Fetch Profile
 						</button>
 					</nav>
-					{authModalOpen && (
+					{authModalOpen ? (
 						<Modal
 							isOpen={authModalOpen}
 							onClose={() => setAuthauthModalOpen(false)}
 						>
 							<Authorize />
 						</Modal>
-					)}
+					) : null}
 
-					{refreshModalOpen && (
+					{refreshModalOpen ? (
 						<Modal
 							isOpen={refreshModalOpen}
 							onClose={() => setRefreshModalOpen(false)}
@@ -130,8 +129,8 @@ export const Example = () => {
 								setRefreshModalOpen={setRefreshModalOpen}
 							/>
 						</Modal>
-					)}
-					{revokeModalOpen && (
+					) : null}
+					{revokeModalOpen ? (
 						<Modal
 							isOpen={revokeModalOpen}
 							onClose={() => setRevokeModalOpen(false)}
@@ -140,8 +139,8 @@ export const Example = () => {
 								setRevokeModalOpen={setRevokeModalOpen}
 							/>
 						</Modal>
-					)}
-					{profileModalOpen && (
+					) : null}
+					{profileModalOpen ? (
 						<Modal
 							isOpen={profileModalOpen}
 							onClose={() => setProfileModalOpen(false)}
@@ -150,7 +149,7 @@ export const Example = () => {
 								setProfileModalOpen={setProfileModalOpen}
 							/>
 						</Modal>
-					)}
+					) : null}
 				</main>
 			</body>
 		</html>

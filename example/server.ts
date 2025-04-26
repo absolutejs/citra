@@ -1,19 +1,19 @@
-import { Elysia } from 'elysia';
-import { Example } from './pages/Example';
-import { staticPlugin } from '@elysiajs/static';
 import {
 	build,
 	handleReactPageRequest,
 	networkingPlugin
 } from '@absolutejs/absolute';
+import { staticPlugin } from '@elysiajs/static';
+import { Elysia } from 'elysia';
+import { Example } from './pages/Example';
 import { googlePlugin } from './providers/google';
 import { providersPlugin } from './providersPlugin';
 
 const manifest = await build({
-	reactPagesDir: 'example/pages',
-	reactIndexDir: 'example/indexes',
 	assetsDir: 'example/assets',
-	buildDir: 'example/build'
+	buildDir: 'example/build',
+	reactIndexDir: 'example/indexes',
+	reactPagesDir: 'example/pages'
 });
 
 if (manifest === null) {

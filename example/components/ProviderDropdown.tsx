@@ -9,32 +9,30 @@ type ProviderDropdownProps = {
 export const ProviderDropdown = ({
 	providerOptions,
 	setCurrentProvider
-}: ProviderDropdownProps) => {
-	return (
-		<select
-			defaultValue=""
-			onChange={(event) => {
-				if (event.target.value === '') {
-					setCurrentProvider(undefined);
-				}
+}: ProviderDropdownProps) => (
+	<select
+		defaultValue=""
+		onChange={(event) => {
+			if (event.target.value === '') {
+				setCurrentProvider(undefined);
+			}
 
-				if (isValidProviderOption(event.target.value)) {
-					setCurrentProvider(event.target.value);
-				}
-			}}
-			style={{
-				padding: '8px',
-				border: '1px solid #ccc',
-				borderRadius: '4px',
-				fontSize: '14px'
-			}}
-		>
-			<option value="">Select provider</option>
-			{providerOptions.map((provider) => (
-				<option key={provider} value={provider}>
-					{provider}
-				</option>
-			))}
-		</select>
-	);
-};
+			if (isValidProviderOption(event.target.value)) {
+				setCurrentProvider(event.target.value);
+			}
+		}}
+		style={{
+			border: '1px solid #ccc',
+			borderRadius: '4px',
+			fontSize: '14px',
+			padding: '8px'
+		}}
+	>
+		<option value="">Select provider</option>
+		{providerOptions.map((provider) => (
+			<option key={provider} value={provider}>
+				{provider}
+			</option>
+		))}
+	</select>
+);

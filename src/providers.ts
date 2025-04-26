@@ -8,809 +8,808 @@ export function defineProviders<L extends Record<string, ProviderConfig>>(
 
 export const providers = defineProviders({
 	'42': {
-		isPKCE: false,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl: 'https://api.intra.42.fr/oauth/authorize',
-		tokenUrl: 'https://api.intra.42.fr/oauth/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
+		tokenUrl: 'https://api.intra.42.fr/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	AmazonCognito: {
-		isPKCE: true,
-		isOIDC: true,
-		isRefreshable: true,
 		authorizationUrl: 'https://${domain}/oauth2/authorize',
-		tokenUrl: 'https://${domain}/oauth2/token',
-		tokenRevocationUrl: 'https://${domain}/oauth2/revoke'
+		isOIDC: true,
+		isPKCE: true,
+		isRefreshable: true,
+		tokenRevocationUrl: 'https://${domain}/oauth2/revoke',
+		tokenUrl: 'https://${domain}/oauth2/token'
 	},
 	AniList: {
-		isPKCE: false,
+		authorizationUrl: 'https://anilist.co/api/v2/oauth/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://graphql.anilist.co',
-			method: 'POST',
 			authIn: 'header',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json'
-			},
 			body: {
 				query: `query { Viewer { id name } }`
-			}
+			},
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			url: 'https://graphql.anilist.co'
 		},
-		authorizationUrl: 'https://anilist.co/api/v2/oauth/authorize',
 		tokenUrl: 'https://anilist.co/api/v2/oauth/token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Apple: {
-		isPKCE: true,
-		isOIDC: true,
-		isRefreshable: true,
 		authorizationUrl: 'https://appleid.apple.com/auth/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
+		isOIDC: true,
+		isPKCE: true,
+		isRefreshable: true,
 		tokenUrl: 'https://appleid.apple.com/auth/token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
-	},
-	Auth0: {
-		isPKCE: true,
-		isOIDC: true,
-		isRefreshable: true,
-		authorizationUrl: 'https://${domain}/authorize',
-		tokenUrl: 'https://${domain}/oauth/token',
-		tokenRevocationUrl: 'https://${domain}/oauth/revoke',
-		refreshAccessTokenBody: { grant_type: 'refresh_token' },
-		tokenRevocationBody: { token_type_hint: 'refresh_token' }
-	},
-	Authentik: {
-		isPKCE: true,
-		isOIDC: true,
-		isRefreshable: true,
-		authorizationUrl: 'https://${baseURL}/oauth/authorize',
-		tokenUrl: 'https://${baseURL}/oauth/token'
-	},
-	Autodesk: {
-		isPKCE: false,
-		isOIDC: false,
-		isRefreshable: true,
-		authorizationUrl:
-			'https://developer.api.autodesk.com/authentication/v1/authorize',
-		tokenUrl:
-			'https://developer.api.autodesk.com/authentication/v1/gettoken',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Atlassian: {
-		isPKCE: false,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl: 'https://auth.atlassian.com/authorize',
-		tokenUrl: 'https://auth.atlassian.com/oauth/token',
 		createAuthorizationURLSearchParams: {
 			audience: 'api.atlassian.com',
 			prompt: 'consent'
 		},
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.atlassian.com/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.atlassian.com/me'
 		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
-		refreshAccessTokenBody: { grant_type: 'refresh_token' }
+		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+		tokenUrl: 'https://auth.atlassian.com/oauth/token',
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+	},
+	Auth0: {
+		authorizationUrl: 'https://${domain}/authorize',
+		isOIDC: true,
+		isPKCE: true,
+		isRefreshable: true,
+		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+		tokenRevocationBody: { token_type_hint: 'refresh_token' },
+		tokenRevocationUrl: 'https://${domain}/oauth/revoke',
+		tokenUrl: 'https://${domain}/oauth/token'
+	},
+	Authentik: {
+		authorizationUrl: 'https://${baseURL}/oauth/authorize',
+		isOIDC: true,
+		isPKCE: true,
+		isRefreshable: true,
+		tokenUrl: 'https://${baseURL}/oauth/token'
+	},
+	Autodesk: {
+		authorizationUrl:
+			'https://developer.api.autodesk.com/authentication/v1/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
+		tokenUrl:
+			'https://developer.api.autodesk.com/authentication/v1/gettoken',
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Battlenet: {
-		isPKCE: false,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl: 'https://oauth.battle.net/authorize',
-		tokenUrl: 'https://oauth.battle.net/token',
 		createAuthorizationURLSearchParams: {
 			response_type: 'code',
 			scope: 'openid'
 		},
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
 		profileRequest: {
-			url: 'https://oauth.battle.net/userinfo',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://oauth.battle.net/userinfo'
 		},
+		tokenUrl: 'https://oauth.battle.net/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Bitbucket: {
-		isPKCE: false,
+		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.bitbucket.org/2.0/user',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.bitbucket.org/2.0/user'
 		},
-		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
 		tokenUrl: 'https://bitbucket.org/site/oauth2/access_token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Box: {
-		isPKCE: false,
+		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.box.com/2.0/users/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.box.com/2.0/users/me'
 		},
-		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
+		tokenRevocationUrl: 'https://api.box.com/oauth2/revoke',
 		tokenUrl: 'https://api.box.com/oauth2/token',
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
-		tokenRevocationUrl: 'https://api.box.com/oauth2/revoke'
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Bungie: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.bungie.net/en/OAuth/Authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://www.bungie.net/Platform/User/GetCurrentBungieNetUser',
-			method: 'GET',
 			authIn: 'header',
 			headers: {
 				'X-API-Key': '<YOUR_API_KEY>'
-			}
+			},
+			method: 'GET',
+			url: 'https://www.bungie.net/Platform/User/GetCurrentBungieNetUser'
 		},
-		authorizationUrl: 'https://www.bungie.net/en/OAuth/Authorize',
 		tokenUrl: 'https://www.bungie.net/platform/app/oauth/token/'
 	},
 	Coinbase: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.coinbase.com/v2/user',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.coinbase.com/v2/user'
 		},
-		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
 		tokenUrl: 'https://api.coinbase.com/oauth/token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Discord: {
-		isPKCE: false,
+		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://discord.com/api/users/@me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://discord.com/api/users/@me'
 		},
-		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
 		tokenUrl: 'https://discord.com/api/oauth2/token'
 	},
 	DonationAlerts: {
-		isPKCE: false,
-		isOIDC: false,
-		profileRequest: {
-			url: 'https://www.donationalerts.com/api/v1/user',
-			method: 'GET',
-			authIn: 'header'
-		},
-		isRefreshable: true,
 		authorizationUrl: 'https://www.donationalerts.com/oauth/authorize',
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://www.donationalerts.com/api/v1/user'
+		},
 		tokenUrl: 'https://www.donationalerts.com/oauth/token'
 	},
 	Dribbble: {
-		isPKCE: false,
+		authorizationUrl: 'https://dribbble.com/oauth/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: false,
 		profileRequest: {
-			url: 'https://api.dribbble.com/v2/user',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.dribbble.com/v2/user'
 		},
-		authorizationUrl: 'https://dribbble.com/oauth/authorize',
 		tokenUrl: 'https://dribbble.com/oauth/token'
 	},
 	Dropbox: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.dropbox.com/oauth2/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.dropboxapi.com/2/users/get_current_account',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.dropboxapi.com/2/users/get_current_account'
 		},
-		authorizationUrl: 'https://www.dropbox.com/oauth2/authorize',
-		tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
-		tokenRevocationUrl: ' https://api.dropboxapi.com/2/auth/token/revoke'
+		tokenRevocationUrl: ' https://api.dropboxapi.com/2/auth/token/revoke',
+		tokenUrl: 'https://api.dropboxapi.com/oauth2/token'
 	},
 	EpicGames: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.epicgames.com/id/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.epicgames.dev/epic/oauth/v2/userInfo',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.epicgames.dev/epic/oauth/v2/userInfo'
 		},
-		authorizationUrl: 'https://www.epicgames.com/id/authorize',
 		tokenUrl: 'https://api.epicgames.dev/epic/oauth/v1/token'
 	},
 	Etsy: {
-		isPKCE: false,
-		isOIDC: false,
-		profileRequest: {
-			url: 'https://openapi.etsy.com/v3/application/users/me',
-			method: 'GET',
-			authIn: 'header'
-		},
-		isRefreshable: true,
 		authorizationUrl: 'https://www.etsy.com/oauth/connect',
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://openapi.etsy.com/v3/application/users/me'
+		},
 		tokenUrl: 'https://api.etsy.com/v3/public/oauth/token'
 	},
 	Facebook: {
-		isPKCE: false,
-		isOIDC: false,
-		isRefreshable: false,
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
-		tokenUrl: 'https://graph.facebook.com/v16.0/oauth/access_token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: false,
 		profileRequest: {
-			url: 'https://graph.facebook.com/me',
-			method: 'GET',
 			authIn: 'query',
-			searchParams: [['fields', 'id,name,email,picture']]
-		}
+			method: 'GET',
+			searchParams: [['fields', 'id,name,email,picture']],
+			url: 'https://graph.facebook.com/me'
+		},
+		tokenUrl: 'https://graph.facebook.com/v16.0/oauth/access_token',
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Figma: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.figma.com/oauth',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.figma.com/v1/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.figma.com/v1/me'
 		},
-		authorizationUrl: 'https://www.figma.com/oauth',
 		tokenUrl: 'https://api.figma.com/v1/oauth/token'
 	},
 	Gitea: {
-		isPKCE: true,
+		authorizationUrl: '${baseURL}/login/oauth/authorize',
 		isOIDC: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://<YOUR_GITEA_DOMAIN>/api/v1/user',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://<YOUR_GITEA_DOMAIN>/api/v1/user'
 		},
-		authorizationUrl: '${baseURL}/login/oauth/authorize',
 		tokenUrl: '${baseURL}/login/oauth/access_token'
 	},
 	GitHub: {
-		isPKCE: false,
+		authorizationUrl: 'https://github.com/login/oauth/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.github.com/user',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.github.com/user'
 		},
-		authorizationUrl: 'https://github.com/login/oauth/authorize',
 		tokenUrl: 'https://github.com/login/oauth/access_token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	GitLab: {
-		isPKCE: true,
-		isOIDC: false,
-		profileRequest: {
-			url: 'https://gitlab.com/api/v4/user',
-			method: 'GET',
-			authIn: 'header'
-		},
-		isRefreshable: true,
 		authorizationUrl: '${baseURL}/oauth/authorize',
-		tokenUrl: '${baseURL}/oauth/token',
-		tokenRevocationUrl: '${baseURL}/oauth/revoke'
+		isOIDC: false,
+		isPKCE: true,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://gitlab.com/api/v4/user'
+		},
+		tokenRevocationUrl: '${baseURL}/oauth/revoke',
+		tokenUrl: '${baseURL}/oauth/token'
 	},
 	Google: {
-		isPKCE: true,
-		isOIDC: true,
-		isRefreshable: true,
 		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-		tokenUrl: 'https://oauth2.googleapis.com/token',
-		tokenRevocationUrl: 'https://oauth2.googleapis.com/revoke',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
+		isOIDC: true,
+		isPKCE: true,
+		isRefreshable: true,
+		tokenRevocationUrl: 'https://oauth2.googleapis.com/revoke',
+		tokenUrl: 'https://oauth2.googleapis.com/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Intuit: {
-		isPKCE: false,
+		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://oauth.platform.intuit.com/oauth2/v1/userinfo',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://oauth.platform.intuit.com/oauth2/v1/userinfo'
 		},
-		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
-		tokenUrl: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
 		tokenRevocationUrl:
-			'https://developer.API.intuit.com/v2/oauth2/tokens/revoke'
+			'https://developer.API.intuit.com/v2/oauth2/tokens/revoke',
+		tokenUrl: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'
 	},
 	Kakao: {
-		isPKCE: false,
+		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://kapi.kakao.com/v2/user/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://kapi.kakao.com/v2/user/me'
 		},
-		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
 		tokenUrl: 'https://kauth.kakao.com/oauth/token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	KeyCloak: {
-		isPKCE: true,
+		authorizationUrl: '${realmURL}/protocol/openid-connect/auth',
 		isOIDC: true,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.kick.com/v1/user',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.kick.com/v1/user'
 		},
-		authorizationUrl: '${realmURL}/protocol/openid-connect/auth',
-		tokenUrl: '${realmURL}/protocol/openid-connect/token',
-		tokenRevocationUrl: '${realmURL}/protocol/openid-connect/revoke'
+		tokenRevocationUrl: '${realmURL}/protocol/openid-connect/revoke',
+		tokenUrl: '${realmURL}/protocol/openid-connect/token'
 	},
 	Kick: {
-		isPKCE: true,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl: 'https://id.kick.com/oauth/authorize',
-		tokenUrl: 'https://id.kick.com/oauth/token',
-		tokenRevocationUrl: 'https://id.kick.com/oauth/revoke',
 		createAuthorizationURLSearchParams: {
-			response_type: 'code',
-			code_challenge_method: 'S256'
+			code_challenge_method: 'S256',
+			response_type: 'code'
 		},
+		isOIDC: false,
+		isPKCE: true,
+		isRefreshable: true,
+		tokenRevocationUrl: 'https://id.kick.com/oauth/revoke',
+		tokenUrl: 'https://id.kick.com/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Lichess: {
-		isPKCE: true,
+		authorizationUrl: 'https://lichess.org/oauth',
 		isOIDC: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://lichess.org/api/account',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://lichess.org/api/account'
 		},
-		authorizationUrl: 'https://lichess.org/oauth',
 		tokenUrl: 'https://lichess.org/api/token'
 	},
-	LinkedIn: {
-		isPKCE: false,
+	Line: {
+		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
+		createAuthorizationURLSearchParams: {
+			code_challenge_method: 'S256',
+			response_type: 'code'
+		},
 		isOIDC: false,
+		isPKCE: true,
 		isRefreshable: true,
-		authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
-		tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://api.line.me/v2/profile'
+		},
+		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+		tokenUrl: 'https://api.line.me/oauth2/v2.1/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
-	Line: {
-		isPKCE: true,
-		isOIDC: false,
-		isRefreshable: true,
-		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
-		tokenUrl: 'https://api.line.me/oauth2/v2.1/token',
-		createAuthorizationURLSearchParams: {
-			response_type: 'code',
-			code_challenge_method: 'S256'
-		},
-		profileRequest: {
-			url: 'https://api.line.me/v2/profile',
-			method: 'GET',
-			authIn: 'header'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
-		refreshAccessTokenBody: { grant_type: 'refresh_token' }
-	},
 	Linear: {
-		isPKCE: false,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl: 'https://linear.app/oauth/authorize',
-		tokenUrl: 'https://api.linear.app/oauth/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.linear.app/graphql',
-			method: 'POST',
 			authIn: 'header',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json'
-			},
 			body: {
 				query: `query { viewer { id name } }`
-			}
-		}
+			},
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			url: 'https://api.linear.app/graphql'
+		},
+		tokenUrl: 'https://api.linear.app/oauth/token',
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+	},
+	LinkedIn: {
+		authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
+		tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Mastodon: {
-		isPKCE: true,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl: '${baseURL}/api/v1/oauth/authorize',
-		tokenUrl: '${baseURL}/api/v1/oauth/token',
-		tokenRevocationUrl: '${baseURL}/api/v1/oauth/revoke',
+		isOIDC: false,
+		isPKCE: true,
+		isRefreshable: true,
 		profileRequest: {
-			url: 'https://<YOUR_INSTANCE>/api/v1/accounts/verify_credentials',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
-		}
+			url: 'https://<YOUR_INSTANCE>/api/v1/accounts/verify_credentials'
+		},
+		tokenRevocationUrl: '${baseURL}/api/v1/oauth/revoke',
+		tokenUrl: '${baseURL}/api/v1/oauth/token'
 	},
 	MercadoLibre: {
-		isPKCE: true,
+		authorizationUrl: 'https://auth.mercadolibre.com/authorization',
 		isOIDC: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.mercadolibre.com/users/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.mercadolibre.com/users/me'
 		},
-		authorizationUrl: 'https://auth.mercadolibre.com/authorization',
 		tokenUrl: 'https://api.mercadolibre.com/oauth/token'
 	},
 	MercadoPago: {
-		isPKCE: false,
+		authorizationUrl: 'https://auth.mercadopago.com/authorization',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.mercadopago.com/v1/users/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.mercadopago.com/v1/users/me'
 		},
-		authorizationUrl: 'https://auth.mercadopago.com/authorization',
 		tokenUrl: 'https://api.mercadopago.com/oauth/token'
 	},
 	MicrosoftEntraId: {
-		isPKCE: true,
-		isOIDC: true,
-		isRefreshable: true,
 		authorizationUrl:
 			'https://${tenantId}.b2clogin.com/${tenantId}/oauth2/v2.0/authorize',
+		isOIDC: true,
+		isPKCE: true,
+		isRefreshable: true,
 		tokenUrl:
 			'https://${tenantId}.b2clogin.com/${tenantId}/oauth2/v2.0/token'
 	},
 	MyAnimeList: {
-		isPKCE: false,
+		authorizationUrl: 'https://myanimelist.net/v1/oauth2/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.myanimelist.net/v2/users/@me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.myanimelist.net/v2/users/@me'
 		},
-		authorizationUrl: 'https://myanimelist.net/v1/oauth2/authorize',
 		tokenUrl: 'https://myanimelist.net/v1/oauth2/token'
 	},
 	Naver: {
-		isPKCE: false,
+		authorizationUrl: 'https://nid.naver.com/oauth2.0/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://openapi.naver.com/v1/nid/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://openapi.naver.com/v1/nid/me'
 		},
-		authorizationUrl: 'https://nid.naver.com/oauth2.0/authorize',
 		tokenUrl: 'https://nid.naver.com/oauth2.0/token'
 	},
 	Notion: {
-		isPKCE: false,
+		authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.notion.com/v1/users/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.notion.com/v1/users/me'
 		},
-		authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
 		tokenUrl: 'https://api.notion.com/v1/oauth/token'
 	},
 	Okta: {
-		isPKCE: true,
-		isOIDC: true,
-		isRefreshable: true,
 		authorizationUrl: 'https://${domain}/oauth2/default/v1/authorize',
-		tokenUrl: 'https://${domain}/oauth2/default/v1/token',
-		tokenRevocationUrl: 'https://${domain}/oauth2/default/v1/revoke'
+		isOIDC: true,
+		isPKCE: true,
+		isRefreshable: true,
+		tokenRevocationUrl: 'https://${domain}/oauth2/default/v1/revoke',
+		tokenUrl: 'https://${domain}/oauth2/default/v1/token'
 	},
 	Osu: {
-		isPKCE: false,
+		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://osu.ppy.sh/api/v2/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://osu.ppy.sh/api/v2/me'
 		},
-		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
 		tokenUrl: 'https://osu.ppy.sh/oauth/token'
 	},
 	Patreon: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.patreon.com/oauth2/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://www.patreon.com/api/oauth2/v2/identity',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://www.patreon.com/api/oauth2/v2/identity'
 		},
-		authorizationUrl: 'https://www.patreon.com/oauth2/authorize',
 		tokenUrl: 'https://www.patreon.com/api/oauth2/token'
 	},
 	Polar: {
-		isPKCE: false,
-		isOIDC: false,
-		profileRequest: {
-			url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>',
-			method: 'GET',
-			authIn: 'header'
-		},
-		isRefreshable: true,
 		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>'
+		},
 		tokenUrl: 'https://polarremote.com/oauth2/token'
 	},
 	Reddit: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://oauth.reddit.com/api/v1/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://oauth.reddit.com/api/v1/me'
 		},
-		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
 		tokenUrl: 'https://www.reddit.com/api/v1/access_token'
 	},
 	Roblox: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.roblox.com/oauth/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://apis.roblox.com/oauth/v1/userinfo',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://apis.roblox.com/oauth/v1/userinfo'
 		},
-		authorizationUrl: 'https://www.roblox.com/oauth/authorize',
 		tokenUrl: 'https://oauth.roblox.com/v1/token'
 	},
 	Salesforce: {
-		isPKCE: false,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl:
 			'https://login.salesforce.com/services/oauth2/authorize',
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
 		tokenUrl: 'https://login.salesforce.com/services/oauth2/token'
 	},
 	Shikimori: {
-		isPKCE: false,
+		authorizationUrl: 'https://shikimori.org/oauth/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://shikimori.one/api/users/whoami',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://shikimori.one/api/users/whoami'
 		},
-		authorizationUrl: 'https://shikimori.org/oauth/authorize',
 		tokenUrl: 'https://shikimori.org/oauth/token'
 	},
 	Slack: {
-		isPKCE: false,
+		authorizationUrl: 'https://slack.com/openid/connect/authorize',
 		isOIDC: true,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://slack.com/api/users.identity',
+			authIn: 'query',
 			method: 'GET',
-			authIn: 'query'
-			// tokenParam: 'token'
+			url: 'https://slack.com/api/users.identity'
 		},
-		authorizationUrl: 'https://slack.com/openid/connect/authorize',
 		tokenUrl: 'https://slack.com/api/openid.connect.token'
 	},
 	Spotify: {
-		isPKCE: true,
+		authorizationUrl: 'https://accounts.spotify.com/authorize',
 		isOIDC: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.spotify.com/v1/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.spotify.com/v1/me'
 		},
-		authorizationUrl: 'https://accounts.spotify.com/authorize',
 		tokenUrl: 'https://accounts.spotify.com/api/token'
 	},
 	StartGG: {
-		isPKCE: false,
+		authorizationUrl: 'https://start.gg/oauth/authoriz',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.start.gg/gql/alpha',
-			method: 'POST',
 			authIn: 'header',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json'
-			},
 			body: {
 				query: `query { currentUser { id slug email player { gamerTag } } }`
-			}
+			},
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			url: 'https://api.start.gg/gql/alpha'
 		},
-		authorizationUrl: 'https://start.gg/oauth/authoriz',
 		tokenUrl: 'https://api.start.gg/oauth/access_token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Strava: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.strava.com/oauth/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://www.strava.com/api/v3/athlete',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://www.strava.com/api/v3/athlete'
 		},
-		authorizationUrl: 'https://www.strava.com/oauth/authorize',
 		tokenUrl: 'https://www.strava.com/api/v3/oauth/token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Synology: {
-		isPKCE: true,
+		authorizationUrl: '${baseURL}/webman/sso/SSOOauth.cgi',
 		isOIDC: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://<YOUR_DOMAIN>/webman/sso/SSOUserInfo.cgi',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://<YOUR_DOMAIN>/webman/sso/SSOUserInfo.cgi'
 		},
-		authorizationUrl: '${baseURL}/webman/sso/SSOOauth.cgi',
 		tokenUrl: '${baseURL}/webman/sso/SSOAccessToken.cgi'
 	},
 	TikTok: {
-		isPKCE: true,
+		authorizationUrl: 'https://www.tiktok.com/v2/auth/authorize',
+		createAuthorizationURLSearchParams: {
+			code_challenge_method: 'S256',
+			response_type: 'code'
+		},
 		isOIDC: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://open.douyin.com/oauth/userinfo',
+			authIn: 'query',
 			method: 'GET',
-			authIn: 'query'
+			url: 'https://open.douyin.com/oauth/userinfo'
 		},
-		authorizationUrl: 'https://www.tiktok.com/v2/auth/authorize',
-		tokenUrl: 'https://open.tiktokapis.com/v2/oauth/token/',
 		tokenRevocationUrl: 'https://open.tiktokapis.com/v2/oauth/revoke/',
-		createAuthorizationURLSearchParams: {
-			response_type: 'code',
-			code_challenge_method: 'S256'
-		},
+		tokenUrl: 'https://open.tiktokapis.com/v2/oauth/token/',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Tiltify: {
-		isPKCE: false,
+		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorizeze',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://tiltify.com/api/v3/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://tiltify.com/api/v3/me'
 		},
-		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorizeze',
 		tokenUrl: 'https://v5api.tiltify.com/oauth/token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Tumblr: {
-		isPKCE: false,
+		authorizationUrl: 'https://www.tumblr.com/oauth2/authorize',
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.tumblr.com/v2/user/info',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.tumblr.com/v2/user/info'
 		},
-		authorizationUrl: 'https://www.tumblr.com/oauth2/authorize',
 		tokenUrl: 'https://api.tumblr.com/v2/oauth2/token'
 	},
 	Twitch: {
-		isPKCE: false,
+		authorizationUrl: 'https://id.twitch.tv/oauth2/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.twitch.tv/helix/users',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.twitch.tv/helix/users'
 		},
-		authorizationUrl: 'https://id.twitch.tv/oauth2/authorize',
 		tokenUrl: 'https://id.twitch.tv/oauth2/token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Twitter: {
-		isPKCE: true,
+		authorizationUrl: 'https://twitter.com/i/oauth2/authorize',
+		createAuthorizationURLSearchParams: {
+			code_challenge_method: 'S256',
+			response_type: 'code'
+		},
 		isOIDC: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.twitter.com/2/users/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.twitter.com/2/users/me'
 		},
-		authorizationUrl: 'https://twitter.com/i/oauth2/authorize',
+		refreshAccessTokenBody: { grant_type: 'refresh_token' },
 		tokenUrl: 'https://api.twitter.com/2/oauth2/token',
-		createAuthorizationURLSearchParams: {
-			response_type: 'code',
-			code_challenge_method: 'S256'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
-		refreshAccessTokenBody: { grant_type: 'refresh_token' }
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	VK: {
-		isPKCE: false,
+		authorizationUrl: 'https://oauth.vk.com/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.vk.com/method/users.get',
+			authIn: 'query',
 			method: 'GET',
-			authIn: 'query'
+			url: 'https://api.vk.com/method/users.get'
 		},
-		authorizationUrl: 'https://oauth.vk.com/authorize',
 		tokenUrl: 'https://oauth.vk.com/access_token',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	WorkOS: {
-		isPKCE: true,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl: 'https://api.workos.com/sso/authorize',
-		tokenUrl: 'https://api.workos.com/sso/token',
 		createAuthorizationURLSearchParams: {
-			response_type: 'code',
-			code_challenge_method: 'S256'
+			code_challenge_method: 'S256',
+			response_type: 'code'
 		},
+		isOIDC: false,
+		isPKCE: true,
+		isRefreshable: true,
+		tokenUrl: 'https://api.workos.com/sso/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Yahoo: {
-		isPKCE: false,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl: 'https://api.login.yahoo.com/oauth2/request_auth',
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
 		tokenUrl: 'https://api.login.yahoo.com/oauth2/get_token'
 	},
 	Yandex: {
-		isPKCE: false,
-		isOIDC: false,
-		isRefreshable: true,
 		authorizationUrl: 'https://oauth.yandex.com/authorize',
-		tokenUrl: 'https://oauth.yandex.com/token',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: true,
+		tokenUrl: 'https://oauth.yandex.com/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Zoom: {
-		isPKCE: true,
+		authorizationUrl: 'https://zoom.us/oauth/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
-			url: 'https://api.zoom.us/v2/users/me',
+			authIn: 'header',
 			method: 'GET',
-			authIn: 'header'
+			url: 'https://api.zoom.us/v2/users/me'
 		},
-		authorizationUrl: 'https://zoom.us/oauth/authorize',
-		tokenUrl: 'https://zoom.us/oauth/token',
+		refreshAccessTokenBody: { grant_type: 'refresh_token' },
 		tokenRevocationUrl: 'https://zoom.us/oauth/revoke',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' },
-		refreshAccessTokenBody: { grant_type: 'refresh_token' }
+		tokenUrl: 'https://zoom.us/oauth/token',
+		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	}
 });

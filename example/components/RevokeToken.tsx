@@ -1,9 +1,9 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
-import { formButtonStyle, formStyle } from '../utils/styles';
-import { ProviderDropdown } from './ProviderDropdown';
-import { ProviderOption, RevocableProvider } from '../../src/types';
 import { providers } from '../../src/providers';
 import { isRevocableProvider } from '../../src/typeGuards';
+import { ProviderOption, RevocableProvider } from '../../src/types';
+import { formButtonStyle, formStyle } from '../utils/styles';
+import { ProviderDropdown } from './ProviderDropdown';
 
 type RevokeTokenProps = {
 	setRevokeModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -28,6 +28,7 @@ export const RevokeToken = ({ setRevokeModalOpen }: RevokeTokenProps) => {
 		if (!response.ok) {
 			const errorText = await response.text();
 			alert(`Error: ${errorText}`);
+
 			return;
 		}
 		setRevokeModalOpen(false);
@@ -48,10 +49,10 @@ export const RevokeToken = ({ setRevokeModalOpen }: RevokeTokenProps) => {
 				onChange={(e) => setTokenToRevoke(e.target.value)}
 				placeholder="Enter token to revoke"
 				style={{
-					padding: '8px',
 					border: '1px solid #ccc',
 					borderRadius: '4px',
-					fontSize: '14px'
+					fontSize: '14px',
+					padding: '8px'
 				}}
 			/>
 

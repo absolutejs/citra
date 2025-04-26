@@ -1,8 +1,8 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
-import { formButtonStyle, formStyle } from '../utils/styles';
-import { ProviderDropdown } from './ProviderDropdown';
 import { providers } from '../../src/providers';
 import { ProviderOption } from '../../src/types';
+import { formButtonStyle, formStyle } from '../utils/styles';
+import { ProviderDropdown } from './ProviderDropdown';
 
 type FetchProfileProps = {
 	setProfileModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -27,6 +27,7 @@ export const FetchProfile = ({ setProfileModalOpen }: FetchProfileProps) => {
 		if (!response.ok) {
 			const errorText = await response.text();
 			alert(`Error: ${errorText}`);
+
 			return;
 		}
 		setProfileModalOpen(false);
@@ -47,10 +48,10 @@ export const FetchProfile = ({ setProfileModalOpen }: FetchProfileProps) => {
 				value={accessToken}
 				onChange={(event) => setAccessToken(event.target.value)}
 				style={{
-					padding: '8px',
 					border: '1px solid #ccc',
 					borderRadius: '4px',
-					fontSize: '14px'
+					fontSize: '14px',
+					padding: '8px'
 				}}
 			/>
 

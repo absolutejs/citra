@@ -13,12 +13,14 @@
 	"scripts": {
 		"build": "rm -rf dist && bun build src/index.ts --outdir dist --minify --splitting --target=bun --external react --external react-dom --external elysia && tsc --emitDeclarationOnly --project tsconfig.json",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"format": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json}\"",
+		"format": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json,mjs}\"",
 		"dev": "bun run --watch example/server.ts",
+		"lint": "eslint ./src ./example ./eslint.config.mjs",
 		"typecheck": "bun run tsc --noEmit",
 		"release": "bun run format && bun run build && bun publish"
 	},
 	"devDependencies": {
+		"@stylistic/eslint-plugin-ts": "4.2.0",
 		"@absolutejs/absolute": "0.3.1",
 		"@elysiajs/static": "1.2.0",
 		"@types/bun": "1.2.10",
@@ -26,7 +28,19 @@
 		"prettier": "3.5.3",
 		"react": "19.1.0",
 		"typescript": "5.7.2",
+		"typescript-eslint": "8.28.0",
 		"@types/react": "19.1.1",
-		"@types/react-dom": "19.1.2"
+		"@types/react-dom": "19.1.2",
+		"eslint": "9.23.0",
+		"eslint-plugin-import": "2.31.0",
+		"eslint-plugin-jsx-a11y": "6.10.2",
+		"eslint-plugin-promise": "7.2.1",
+		"eslint-plugin-react": "7.37.4",
+		"eslint-plugin-react-compiler": "19.0.0-beta-e993439-20250328",
+		"eslint-plugin-react-hooks": "5.2.0",
+		"eslint-plugin-security": "3.0.1"
+	},
+	"dependencies": {
+		"eslint-plugin-absolute": "^0.0.1"
 	}
 }

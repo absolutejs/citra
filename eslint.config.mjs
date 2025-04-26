@@ -59,15 +59,13 @@ export default [
 			security: securityPlugin
 		},
 		rules: {
-			// ── JS core ───────────────────────────────────────────
-			// ── absolute plugin ───────────────────────────────
 			'absolute/explicit-object-types': 'error',
 			'absolute/localize-react-props': 'error',
 			'absolute/max-depth-extended': ['error', 1],
 			'absolute/max-jsxnesting': ['error', 5],
 			'absolute/min-var-length': [
 				'error',
-				{ allowedVars: ['_', 'id', 'db'], minLength: 3 }
+				{ allowedVars: ['_', 'id', 'db', 'OK'], minLength: 3 }
 			],
 			'absolute/no-button-navigation': 'error',
 			'absolute/no-explicit-return-type': 'error',
@@ -98,7 +96,7 @@ export default [
 					order: 'asc',
 					variablesBeforeFunctions: true
 				}
-			], // ── JS core ───────────────────────────────────────────
+			],
 			'arrow-body-style': ['error', 'as-needed'],
 			'consistent-return': 'error',
 			eqeqeq: 'error',
@@ -106,7 +104,7 @@ export default [
 				'error',
 				'expression',
 				{ allowArrowFunctions: true }
-			], // ── import plugin ────────────────────────────────
+			],
 			'import/no-cycle': 'error',
 			'import/no-default-export': 'error',
 			'import/no-relative-packages': 'error',
@@ -170,7 +168,7 @@ export default [
 				{ array: true, object: true },
 				{ enforceForRenamedProperties: false }
 			],
-			'prefer-template': 'error', // ── promise plugin ─────────────────────────────────
+			'prefer-template': 'error',
 			'promise/always-return': 'warn',
 			'promise/avoid-new': 'warn',
 			'promise/catch-or-return': 'error',

@@ -1,7 +1,5 @@
 import { providers } from './providers';
 
-export type CodeChallengeMethod = 'S256' | 'plain';
-
 export type ProfileRequestConfig = {
 	url: string;
 	method: 'GET' | 'POST';
@@ -9,6 +7,15 @@ export type ProfileRequestConfig = {
 	headers?: Record<string, string>;
 	body?: unknown;
 	searchParams?: [string, string][];
+};
+
+export type DefineProviders = <
+	ProviderMap extends Record<string, ProviderConfig>
+>(
+	providerMap: ProviderMap
+) => {
+	[ProviderName in keyof ProviderMap]: ProviderMap[ProviderName] &
+		ProviderConfig;
 };
 
 export type ProviderOption = keyof typeof providers;

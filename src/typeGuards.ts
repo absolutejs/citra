@@ -1,18 +1,38 @@
 import { providers } from './providers';
-import { RefreshableProvider, RevocableProvider } from './types';
+import {
+	OAuth2TokenResponse,
+	RefreshableProvider,
+	RevocableProvider
+} from './types';
 
-// TODO: Add OAuth2 token type guard
-export const isValidOAuth2Tokens = (tokens: any): tokens is any =>
-	typeof tokens === 'object' &&
-	typeof tokens.access_token === 'string' &&
-	(typeof tokens.refresh_token === 'undefined' ||
-		typeof tokens.refresh_token === 'string') &&
-	typeof tokens.token_type === 'string' &&
-	(typeof tokens.expires_in === 'undefined' ||
-		typeof tokens.expires_in === 'number') &&
-	(typeof tokens.scope === 'undefined' || typeof tokens.scope === 'string') &&
-	(typeof tokens.id_token === 'undefined' ||
-		typeof tokens.id_token === 'string');
+function isRecord(x: unknown): x is Record<string, unknown> {
+	return typeof x === 'object' && x !== null;
+}
+
+export function isValidOAuth2TokenResponse(
+	tokens: unknown
+): tokens is OAuth2TokenResponse {
+	if (!isRecord(tokens)) return false;
+
+	if (typeof tokens['access_token'] !== 'string') return false;
+	if (typeof tokens['token_type'] !== 'string') return false;
+
+	if (
+		'refresh_token' in tokens &&
+		typeof tokens['refresh_token'] !== 'string'
+	)
+		return false;
+
+	if ('expires_in' in tokens && typeof tokens['expires_in'] !== 'number')
+		return false;
+
+	if ('scope' in tokens && typeof tokens['scope'] !== 'string') return false;
+
+	if ('id_token' in tokens && typeof tokens['id_token'] !== 'string')
+		return false;
+
+	return true;
+}
 
 export const isValidProviderOption = (
 	provider: string

@@ -5,50 +5,17 @@ import {
 	sendTokenRevocationRequest
 } from './arctic-utils';
 import { providers } from './providers';
-import {
-	ConfigFor,
-	OAuth2Client,
-	ProviderOption,
-	RefreshableProvider,
-	RevocableProvider
-} from './types';
-
-//  Both refreshable and revocable
-export function createOAuth2Client<
-	P extends RefreshableProvider & RevocableProvider
->(
-	providerName: P,
-	config: ConfigFor<P>
-): OAuth2Client<P>;
-
-// Only refreshable
-export function createOAuth2Client<P extends RefreshableProvider>(
-	providerName: P,
-	config: ConfigFor<P>
-): OAuth2Client<P>;
-
-// Only revocable
-export function createOAuth2Client<P extends RevocableProvider>(
-	providerName: P,
-	config: ConfigFor<P>
-): OAuth2Client<P>;
-
-// Neither refreshable nor revocable
-export function createOAuth2Client<
-	P extends Exclude<ProviderOption, RefreshableProvider | RevocableProvider>
->(
-	providerName: P,
-	config: ConfigFor<P>
-): OAuth2Client<P>;
+import { ConfigFor, OAuth2Client, ProviderOption } from './types';
 
 export function createOAuth2Client<P extends ProviderOption>(
 	providerName: P,
 	config: ConfigFor<P>
-) {
+): OAuth2Client<P> {
 	const meta = providers[providerName];
 
 	const postForm = async (url: string, body: URLSearchParams) => {
 		const req = createOAuth2Request(url, body);
+
 		return sendTokenRequest(req);
 	};
 
@@ -188,8 +155,8 @@ export function createOAuth2Client<P extends ProviderOption>(
 			if (config.redirectUri) {
 				body.set('redirect_uri', config.redirectUri);
 			}
-			Object.entries(meta.validateAuthorizationCodeBody || {}).forEach(([k, v]) =>
-				body.set(k, v)
+			Object.entries(meta.validateAuthorizationCodeBody || {}).forEach(
+				([k, v]) => body.set(k, v)
 			);
 
 			if ('clientSecret' in config && config.clientSecret) {

@@ -7,9 +7,9 @@ type ModalProps = {
 };
 
 export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
-	const backgroundRef = useRef<HTMLDivElement>(null);
+	const backgroundRef = useRef<HTMLButtonElement>(null);
 
-	const handleBackgroundClick = (event: MouseEvent<HTMLDivElement>) => {
+	const handleBackgroundClick = (event: MouseEvent<HTMLButtonElement>) => {
 		if (event.target === event.currentTarget) {
 			onClose();
 		}
@@ -28,9 +28,8 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 	if (!isOpen) return null;
 
 	return (
-		<div
+		<button
 			ref={backgroundRef}
-			role="button"
 			tabIndex={0}
 			onKeyDown={(event) => {
 				if (event.key === 'Escape') {
@@ -78,6 +77,6 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 				</button>
 				{children}
 			</div>
-		</div>
+		</button>
 	);
 };

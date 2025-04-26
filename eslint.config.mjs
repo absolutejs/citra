@@ -209,7 +209,7 @@ export default [
 		}
 	},
 	{
-		files: ['example/server.ts','example/indexes/ExampleIndex.tsx'],
+		files: ['example/server.ts', 'example/indexes/ExampleIndex.tsx'],
 		rules: {
 			'import/no-unused-modules': 'off'
 		}
@@ -218,6 +218,18 @@ export default [
 		files: ['example/providers/**/*.ts'],
 		rules: {
 			'no-console': 'off'
+		}
+	},
+	{
+		files: ['eslint.config.mjs'],
+		rules: {
+			'no-magic-numbers': 'off'
+		}
+	},
+	{
+		files: ['eslint.config.mjs'],
+		rules: {
+			'import/no-default-export': 'off'
 		}
 	}
 ];

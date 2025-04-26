@@ -129,7 +129,7 @@ export const Example = () => {
 								setRefreshModalOpen={setRefreshModalOpen}
 							/>
 						</Modal>
-					) }
+					)}
 					{revokeModalOpen === true && (
 						<Modal
 							isOpen={revokeModalOpen}

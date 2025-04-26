@@ -76,39 +76,6 @@ const base64Url = (bytes: ArrayBuffer | Uint8Array) => {
 	return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
 
-const trimLeft = (string: string, character: string) => {
-	if (character.length !== 1) {
-		throw new TypeError('Invalid character string');
-	}
-	let start = 0;
-	while (start < string.length && string[start] === character) {
-		start++;
-	}
-
-	return string.slice(start);
-};
-
-const trimRight = (string: string, character: string) => {
-	if (character.length !== 1) {
-		throw new TypeError('Invalid character string');
-	}
-	let end = string.length;
-	while (end > 0 && string[end - 1] === character) {
-		end--;
-	}
-
-	return string.slice(0, end);
-};
-
-export const joinURIAndPath = (base: string, ...path: string[]) => {
-	let joined = trimRight(base, '/');
-	for (const part of path) {
-		joined = `${trimRight(joined, '/')}/${trimLeft(part, '/')}`;
-	}
-
-	return joined;
-};
-
 export const createOAuth2Request = (Url: string, body: URLSearchParams) => {
 	const bodyBytes = new TextEncoder().encode(body.toString());
 	const request = new Request(Url, {
@@ -123,25 +90,6 @@ export const createOAuth2Request = (Url: string, body: URLSearchParams) => {
 	return request;
 };
 
-/**
- * Encode "username:password" as Base64
- */
-export const encodeBasicCredentials = (username: string, password: string) => {
-	const str = `${username}:${password}`;
-	const bytes = new TextEncoder().encode(str);
-	let bin = '';
-	for (const b of bytes) {
-		bin += String.fromCharCode(b);
-	}
-	if (typeof btoa === 'function') {
-		return btoa(bin);
-	}
-	if (typeof Buffer !== 'undefined') {
-		return Buffer.from(bytes).toString('base64');
-	}
-	throw new Error('No Base64 encoder available in this environment');
-};
-
 export const sendTokenRequest = async (request: Request) => {
 	try {
 		const response = await fetch(request);
@@ -150,6 +98,7 @@ export const sendTokenRequest = async (request: Request) => {
 				`Token request failed: ${response.status} ${response.statusText}`
 			);
 		}
+
 		return await response.json();
 	} catch (error) {
 		if (error instanceof Error) {

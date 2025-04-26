@@ -14,7 +14,7 @@ if (
 const googleOAuth2Client = createOAuth2Client('Google', {
 	clientId: Bun.env.GOOGLE_CLIENT_ID,
 	clientSecret: Bun.env.GOOGLE_CLIENT_SECRET,
-	redirectUri: Bun.env.GOOGLE_REDIRECT_URI
+	redirectUri: Bun.env.GOOGLE_REDIRECT_URI,
 });
 
 export const googlePlugin = new Elysia()

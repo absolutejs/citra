@@ -2,6 +2,8 @@ import { providers } from './providers';
 
 export type CodeChallengeMethod = 'S256' | 'plain';
 
+type EmptyObject = Record<string, never>;
+
 export type ProfileRequestConfig = {
 	url: string;
 	method: 'GET' | 'POST';
@@ -41,7 +43,7 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
 		opts: { state: string } & (P extends PKCEProvider
 			? { codeVerifier: string }
-			: {}) &
+			: EmptyObject) &
 			(P extends OIDCProvider
 				? { scope: string[] }
 				: { scope?: string[] }) & {
@@ -52,10 +54,10 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 	validateAuthorizationCode(
 		opts: { code: string } & (P extends PKCEProvider
 			? { codeVerifier: string }
-			: {})
+			: EmptyObject)
 	): Promise<OAuth2TokenResponse>;
 
-	fetchUserProfile(accessToken: string): Promise<any>;
+	fetchUserProfile(accessToken: string): Promise<unknown>;
 };
 
 export type RefreshableOAuth2Client = {
@@ -67,8 +69,8 @@ export type RevocableOAuth2Client = {
 };
 
 export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
-	(P extends RefreshableProvider ? RefreshableOAuth2Client : {}) &
-	(P extends RevocableProvider ? RevocableOAuth2Client : {});
+	(P extends RefreshableProvider ? RefreshableOAuth2Client : EmptyObject) &
+	(P extends RevocableProvider ? RevocableOAuth2Client : EmptyObject);
 
 export type ProviderConfig = {
 	isPKCE: boolean;

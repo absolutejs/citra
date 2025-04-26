@@ -1,10 +1,8 @@
 import { ProviderConfig } from './types';
 
-export function defineProviders<L extends Record<string, ProviderConfig>>(
+export const defineProviders = <L extends Record<string, ProviderConfig>>(
 	providers: L
-): { [K in keyof L]: L[K] & ProviderConfig } {
-	return providers;
-}
+): { [K in keyof L]: L[K] & ProviderConfig } => providers;
 
 export const providers = defineProviders({
 	'42': {

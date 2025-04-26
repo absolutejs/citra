@@ -7,10 +7,10 @@ import {
 import { providers } from './providers';
 import { ConfigFor, OAuth2Client, ProviderOption } from './types';
 
-export function createOAuth2Client<P extends ProviderOption>(
+export const createOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	config: ConfigFor<P>
-): OAuth2Client<P> {
+): OAuth2Client<P> => {
 	const meta = providers[providerName];
 
 	const postForm = async (url: string, body: URLSearchParams) => {
@@ -64,14 +64,16 @@ export function createOAuth2Client<P extends ProviderOption>(
 
 			Object.entries(
 				meta.createAuthorizationURLSearchParams || {}
-			).forEach(([k, v]) => url.searchParams.set(k, v));
-			searchParams.forEach(([k, v]) => url.searchParams.set(k, v));
+			).forEach(([key, value]) => url.searchParams.set(key, value));
+			searchParams.forEach(([key, value]) =>
+				url.searchParams.set(key, value)
+			);
 
 			return url;
 		},
+
 		async fetchUserProfile(accessToken: string) {
 			const { profileRequest } = meta;
-			//TODO : Remvoe when providers is fully updated
 			if (!profileRequest) {
 				throw new Error(
 					'User profile request is not defined for this provider'
@@ -104,16 +106,15 @@ export function createOAuth2Client<P extends ProviderOption>(
 				);
 			}
 
-			const json = await response.json();
-
-			return json;
+			return response.json();
 		},
+
 		refreshAccessToken(refreshToken: string) {
 			const body = new URLSearchParams();
 			body.set('grant_type', 'refresh_token');
 			body.set('refresh_token', refreshToken);
 			Object.entries(meta.refreshAccessTokenBody ?? {}).forEach(
-				([k, v]) => body.set(k, v)
+				([key, value]) => body.set(key, value)
 			);
 			if ('clientSecret' in config && config.clientSecret) {
 				body.set('client_id', config.clientId);
@@ -122,17 +123,17 @@ export function createOAuth2Client<P extends ProviderOption>(
 
 			return postForm(meta.tokenUrl, body);
 		},
+
 		revokeToken(token: string) {
 			if (!meta.tokenRevocationUrl) {
-				// TODO: This should never error because this function can only be called if the provider has a token revocation URL defined. See if the type can be narrowed to remove the undefined case.
 				throw new Error(
 					'Token revocation URL is not defined for this provider'
 				);
 			}
 			const body = new URLSearchParams();
 			body.set('token', token);
-			Object.entries(meta.tokenRevocationBody ?? {}).forEach(([k, v]) =>
-				body.set(k, v)
+			Object.entries(meta.tokenRevocationBody ?? {}).forEach(
+				([key, value]) => body.set(key, value)
 			);
 			body.set('client_id', config.clientId);
 			if ('clientSecret' in config && config.clientSecret) {
@@ -142,6 +143,7 @@ export function createOAuth2Client<P extends ProviderOption>(
 
 			return sendTokenRevocationRequest(req);
 		},
+
 		validateAuthorizationCode(opts: {
 			code: string;
 			codeVerifier?: string;
@@ -151,26 +153,22 @@ export function createOAuth2Client<P extends ProviderOption>(
 			const body = new URLSearchParams();
 			body.set('grant_type', 'authorization_code');
 			body.set('code', code);
-
 			if (config.redirectUri) {
 				body.set('redirect_uri', config.redirectUri);
 			}
 			Object.entries(meta.validateAuthorizationCodeBody || {}).forEach(
-				([k, v]) => body.set(k, v)
+				([key, value]) => body.set(key, value)
 			);
-
 			if ('clientSecret' in config && config.clientSecret) {
 				body.set('client_id', config.clientId);
 				body.set('client_secret', config.clientSecret);
 			} else {
 				body.set('client_id', config.clientId);
 			}
-
 			if (meta.isPKCE) {
 				const verifier =
 					codeVerifier ??
 					(() => {
-						// TODO: This should never error because this function can only be called if the provider is using PKCE. See if the type can be narrowed to remove the undefined case.
 						throw new Error(
 							'`codeVerifier` is required when `meta.isPKCE` is true'
 						);
@@ -181,4 +179,4 @@ export function createOAuth2Client<P extends ProviderOption>(
 			return postForm(meta.tokenUrl, body);
 		}
 	};
-}
+};

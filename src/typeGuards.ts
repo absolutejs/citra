@@ -5,13 +5,12 @@ import {
 	RevocableProvider
 } from './types';
 
-function isRecord(x: unknown): x is Record<string, unknown> {
-	return typeof x === 'object' && x !== null;
-}
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === 'object' && value !== null;
 
-export function isValidOAuth2TokenResponse(
+export const isValidOAuth2TokenResponse = (
 	tokens: unknown
-): tokens is OAuth2TokenResponse {
+): tokens is OAuth2TokenResponse => {
 	if (!isRecord(tokens)) return false;
 
 	if (typeof tokens['access_token'] !== 'string') return false;
@@ -32,7 +31,7 @@ export function isValidOAuth2TokenResponse(
 		return false;
 
 	return true;
-}
+};
 
 export const isValidProviderOption = (
 	provider: string

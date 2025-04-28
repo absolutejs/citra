@@ -1,7 +1,4 @@
-import {
-	createOAuth2Request,
-	createS256CodeChallenge,
-} from './arctic-utils';
+import { createOAuth2Request, createS256CodeChallenge } from './arctic-utils';
 import { providers } from './providers';
 import { ConfigFor, OAuth2Client, ProviderOption } from './types';
 
@@ -21,7 +18,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					`Token request failed: ${response.status} ${response.statusText}`
 				);
 			}
-	
+
 			return await response.json();
 		} catch (error) {
 			if (error instanceof Error) {
@@ -155,7 +152,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			try {
 				const response = await fetch(request);
-				
+
 				if (!response.ok) {
 					throw new Error(
 						`Token revocation failed: ${response.status} ${response.statusText}`

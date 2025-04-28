@@ -5,22 +5,24 @@ import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.GOOGLE_CLIENT_ID ||
-	!env.GOOGLE_CLIENT_SECRET ||
-	!env.GOOGLE_REDIRECT_URI
+	!env.AMAZON_COGNITO_CLIENT_ID ||
+	!env.AMAZON_COGNITO_CLIENT_SECRET ||
+	!env.AMAZON_COGNITO_REDIRECT_URI ||
+    !env.AMAZON_COGNITO_DOMAIN
 ) {
-	throw new Error('Google OAuth2 credentials are not set in .env file');
+	throw new Error('Amazon Cognito OAuth2 credentials are not set in .env file');
 }
 
-const googleOAuth2Client = createOAuth2Client('Google', {
-	clientId: env.GOOGLE_CLIENT_ID,
-	clientSecret: env.GOOGLE_CLIENT_SECRET,
-	redirectUri: env.GOOGLE_REDIRECT_URI
+const amazonCognitoOAuth2Client = createOAuth2Client('AmazonCognito', {
+	clientId: env.AMAZON_COGNITO_CLIENT_ID,
+	clientSecret: env.AMAZON_COGNITO_CLIENT_SECRET,
+	redirectUri: env.AMAZON_COGNITO_REDIRECT_URI,
+    domain: env.AMAZON_COGNITO_DOMAIN 
 });
 
-export const googlePlugin = new Elysia()
+export const amazonCognitoPlugin = new Elysia()
 	.get(
-		'/oauth2/google/authorization',
+		'/oauth2/amazoncognito/authorization',
 		async ({ redirect, error, cookie: { state, code_verifier } }) => {
 			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
@@ -28,13 +30,9 @@ export const googlePlugin = new Elysia()
 			const currentState = generateState();
 			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await googleOAuth2Client.createAuthorizationUrl({
+				await amazonCognitoOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-					scope: ['email', 'profile', 'openid'],
-					searchParams: [
-						['access_type', 'offline'],
-						['prompt', 'consent']
-					],
+                    scope: ['email', 'profile', 'openid'],
 					state: currentState
 				});
 
@@ -59,7 +57,7 @@ export const googlePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/google/callback',
+		'/oauth2/amazoncognito/callback',
 		async ({
 			error,
 			redirect,
@@ -82,22 +80,22 @@ export const googlePlugin = new Elysia()
 				return error('Bad Request', 'Code verifier is missing');
 
 			const oauthResponse =
-				await googleOAuth2Client.validateAuthorizationCode({
+				await amazonCognitoOAuth2Client.validateAuthorizationCode({
 					code,
 					codeVerifier
 				});
 
-			console.log('\nGoogle authorized:', oauthResponse);
+			console.log('\nAmazon Cognito authorized:', oauthResponse);
 
 			return redirect('/');
 		}
 	)
 	.post(
-		'/oauth2/google/tokens',
+		'/oauth2/amazoncognito/tokens',
 		async ({ body: { refresh_token } }) => {
 			const oauthResponse =
-				await googleOAuth2Client.refreshAccessToken(refresh_token);
-			console.log('\nGoogle token refreshed:', oauthResponse);
+				await amazonCognitoOAuth2Client.refreshAccessToken(refresh_token);
+			console.log('\nAmazon Cognito token refreshed:', oauthResponse);
 
 			return new Response('Token refreshed successfully', {
 				status: 204
@@ -110,7 +108,7 @@ export const googlePlugin = new Elysia()
 		}
 	)
 	.delete(
-		'/oauth2/google/revocation',
+		'/oauth2/amazoncognito/revocation',
 		async ({ error, query: { token_to_revoke } }) => {
 			if (!token_to_revoke)
 				return error(
@@ -118,8 +116,8 @@ export const googlePlugin = new Elysia()
 					'Token to revoke is required in query parameters'
 				);
 
-			await googleOAuth2Client.revokeToken(token_to_revoke);
-			console.log('\nGoogle token revoked:', token_to_revoke);
+			await amazonCognitoOAuth2Client.revokeToken(token_to_revoke);
+			console.log('\nAmazon Cognito token revoked:', token_to_revoke);
 
 			return new Response('Token revoked successfully', {
 				status: 204
@@ -127,7 +125,7 @@ export const googlePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/google/profile',
+		'/oauth2/amazoncognito/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -137,8 +135,8 @@ export const googlePlugin = new Elysia()
 
 			const accessToken = authorization.replace('Bearer ', '');
 			const userProfile =
-				await googleOAuth2Client.fetchUserProfile(accessToken);
-			console.log('\nGoogle user profile:', userProfile);
+				await amazonCognitoOAuth2Client.fetchUserProfile(accessToken);
+			console.log('\nAmazon Cognito user profile:', userProfile);
 
 			return new Response(JSON.stringify(userProfile), {
 				headers: {

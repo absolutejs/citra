@@ -315,6 +315,12 @@ export const providers = defineProviders({
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://people.googleapis.com/v1/people/me',
+			searchParams: [['personFields', 'names,emailAddresses,photos']]
+		},
 		tokenRevocationUrl: 'https://oauth2.googleapis.com/revoke',
 		tokenUrl: 'https://oauth2.googleapis.com/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }

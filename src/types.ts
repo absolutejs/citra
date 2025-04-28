@@ -1,5 +1,7 @@
 import { providers } from './providers';
 
+type NonEmptyArray<T> = [T, ...T[]];
+
 export type ProfileRequestConfig = {
 	url: string;
 	method: 'GET' | 'POST';
@@ -50,7 +52,7 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 			? { codeVerifier: string }
 			: unknown) &
 			(P extends OIDCProvider
-				? { scope: string[] }
+				? { scope: NonEmptyArray<string> }
 				: { scope?: string[] }) & {
 				searchParams?: [string, string][];
 			}

@@ -10,6 +10,7 @@ import { googlePlugin } from './providers/google';
 import { authentikPlugin } from './providers/authentik';
 import { autodeskPlugin } from './providers/autodesk';
 import { battlenetPlugin } from './providers/battlenet';
+import { bitbucketPlugin } from './providers/bitbucket';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -21,5 +22,6 @@ export const providersPlugin = new Elysia()
 	.use(authentikPlugin)
 	.use(autodeskPlugin)
 	.use(battlenetPlugin)
+	.use(bitbucketPlugin)
 	.use(googlePlugin)
 	.use(facebookPlugin);

@@ -21,3 +21,6 @@ Some providers were either restricted or required payment to set up a client so 
 - Atlassian
 - Auth0
 - Authentik (untested)
+- Autodesk
+- Battlenet
+- Bitbucket

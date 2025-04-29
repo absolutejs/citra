@@ -7,6 +7,8 @@ import { atlassianPlugin } from './providers/atlassian';
 import { auth0Plugin } from './providers/auth0';
 import { facebookPlugin } from './providers/facebook';
 import { googlePlugin } from './providers/google';
+import { authentikPlugin } from './providers/authentik';
+import { autodeskPlugin } from './providers/autodesk';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -15,5 +17,7 @@ export const providersPlugin = new Elysia()
 	.use(applePlugin)
 	.use(atlassianPlugin)
 	.use(auth0Plugin)
+	.use(authentikPlugin)
+	.use(autodeskPlugin)
 	.use(googlePlugin)
 	.use(facebookPlugin);

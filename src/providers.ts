@@ -84,22 +84,25 @@ export const providers = defineProviders({
 		tokenUrl: (config) => `https://${config.domain}/oauth/token`
 	},
 	Authentik: {
-		authorizationUrl: 'https://${baseURL}/oauth/authorize',
+		authorizationUrl: (config) =>
+			`https://${config.baseURL}/oauth/authorize`,
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
-		tokenUrl: 'https://${baseURL}/oauth/token'
+		tokenUrl: (config) => `https://${config.baseURL}/oauth/token`
 	},
 	Autodesk: {
 		authorizationUrl:
-			'https://developer.api.autodesk.com/authentication/v1/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
-		isOIDC: false,
-		isPKCE: false,
-		isRefreshable: true,
-		tokenUrl:
-			'https://developer.api.autodesk.com/authentication/v1/gettoken',
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+			'https://developer.api.autodesk.com/authentication/v2/authorize',
+		tokenUrl: 'https://developer.api.autodesk.com/authentication/v2/token',
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://api.userprofile.autodesk.com/userinfo'
+		},
+		isOIDC: true,
+		isPKCE: true,
+		isRefreshable: true
 	},
 	Battlenet: {
 		authorizationUrl: 'https://oauth.battle.net/authorize',

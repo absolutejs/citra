@@ -1,9 +1,9 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 import { providers } from '../../src/providers';
+import { isValidProviderOption } from '../../src/typeGuards';
 import { ProviderOption } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
-import { isValidProviderOption } from '../../src/typeGuards';
 
 type FetchProfileProps = {
 	setProfileModalOpen: Dispatch<SetStateAction<boolean>>;

@@ -1,10 +1,10 @@
 import { Elysia } from 'elysia';
-import { facebookPlugin } from './providers/facebook';
-import { googlePlugin } from './providers/google';
-import { anilistPlugin } from './providers/anilist';
 import { fortyTwoPlugin } from './providers/42';
 import { amazonCognitoPlugin } from './providers/amazonCognito';
+import { anilistPlugin } from './providers/anilist';
 import { atlassianPlugin } from './providers/atlassian';
+import { facebookPlugin } from './providers/facebook';
+import { googlePlugin } from './providers/google';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -12,4 +12,4 @@ export const providersPlugin = new Elysia()
 	.use(anilistPlugin)
 	.use(atlassianPlugin)
 	.use(googlePlugin)
-	.use(facebookPlugin)
+	.use(facebookPlugin);

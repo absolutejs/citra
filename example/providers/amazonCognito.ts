@@ -8,16 +8,18 @@ if (
 	!env.AMAZON_COGNITO_CLIENT_ID ||
 	!env.AMAZON_COGNITO_CLIENT_SECRET ||
 	!env.AMAZON_COGNITO_REDIRECT_URI ||
-    !env.AMAZON_COGNITO_DOMAIN
+	!env.AMAZON_COGNITO_DOMAIN
 ) {
-	throw new Error('Amazon Cognito OAuth2 credentials are not set in .env file');
+	throw new Error(
+		'Amazon Cognito OAuth2 credentials are not set in .env file'
+	);
 }
 
 const amazonCognitoOAuth2Client = createOAuth2Client('AmazonCognito', {
 	clientId: env.AMAZON_COGNITO_CLIENT_ID,
 	clientSecret: env.AMAZON_COGNITO_CLIENT_SECRET,
-	redirectUri: env.AMAZON_COGNITO_REDIRECT_URI,
-    domain: env.AMAZON_COGNITO_DOMAIN 
+	domain: env.AMAZON_COGNITO_DOMAIN,
+	redirectUri: env.AMAZON_COGNITO_REDIRECT_URI
 });
 
 export const amazonCognitoPlugin = new Elysia()
@@ -32,7 +34,7 @@ export const amazonCognitoPlugin = new Elysia()
 			const authorizationUrl =
 				await amazonCognitoOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-                    scope: ['email', 'profile', 'openid'],
+					scope: ['email', 'profile', 'openid'],
 					state: currentState
 				});
 
@@ -94,7 +96,9 @@ export const amazonCognitoPlugin = new Elysia()
 		'/oauth2/amazoncognito/tokens',
 		async ({ body: { refresh_token } }) => {
 			const oauthResponse =
-				await amazonCognitoOAuth2Client.refreshAccessToken(refresh_token);
+				await amazonCognitoOAuth2Client.refreshAccessToken(
+					refresh_token
+				);
 			console.log('\nAmazon Cognito token refreshed:', oauthResponse);
 
 			return new Response('Token refreshed successfully', {

@@ -1,7 +1,7 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState} from '../../src/arctic-utils';
+import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -39,7 +39,7 @@ export const fortyTwoPlugin = new Elysia()
 				secure: true,
 				value: currentState
 			});
-			
+
 			return redirect(authorizationUrl.toString());
 		}
 	)
@@ -51,7 +51,7 @@ export const fortyTwoPlugin = new Elysia()
 			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined )
+			if (stored_state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -64,8 +64,7 @@ export const fortyTwoPlugin = new Elysia()
 
 			const oauthResponse =
 				await fortyTwoOAuth2Client.validateAuthorizationCode({
-					code,
-		
+					code
 				});
 
 			console.log('\n42 authorized:', oauthResponse);

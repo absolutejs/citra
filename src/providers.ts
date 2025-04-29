@@ -318,8 +318,8 @@ export const providers = defineProviders({
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
-			url: 'https://people.googleapis.com/v1/people/me',
-			searchParams: [['personFields', 'names,emailAddresses,photos']]
+			searchParams: [['personFields', 'names,emailAddresses,photos']],
+			url: 'https://people.googleapis.com/v1/people/me'
 		},
 		tokenRevocationUrl: 'https://oauth2.googleapis.com/revoke',
 		tokenUrl: 'https://oauth2.googleapis.com/token',

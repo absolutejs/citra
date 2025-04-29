@@ -1,7 +1,7 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState} from '../../src/arctic-utils';
+import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -26,10 +26,10 @@ export const anilistPlugin = new Elysia()
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
-		
+
 			const authorizationUrl =
 				await anilistOAuth2Client.createAuthorizationUrl({
-					state: currentState,
+					state: currentState
 				});
 
 			state.set({
@@ -40,7 +40,7 @@ export const anilistPlugin = new Elysia()
 				secure: true,
 				value: currentState
 			});
-			
+
 			return redirect(authorizationUrl.toString());
 		}
 	)

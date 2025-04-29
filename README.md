@@ -12,8 +12,9 @@ To be a standardized javascript or typescript starting point for OAuth2 protocol
 
 There are 63 providers available through Citra
 
-Some providers were not easy to set up a client so they are not tested, if any issues occur please open one so it can be fixed
+Some providers were either restricted or required payment to set up a client so they are not tested. If any issues occur please open one so it can be fixed.
 
 - 42 (untested)
 - Amazon Cognito (untested)
 - AniList
+- Apple  (untested)

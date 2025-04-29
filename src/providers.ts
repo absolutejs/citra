@@ -69,14 +69,19 @@ export const providers = defineProviders({
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Auth0: {
-		authorizationUrl: (config) => `https://${config.domain}/authorize`,
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: (config) => `https://${config.domain}/userinfo`
+		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
 		tokenRevocationBody: { token_type_hint: 'refresh_token' },
-		tokenUrl: (config) => `https://${config.domain}/oauth/token`,
-		tokenRevocationUrl: (config) => `https://${config.domain}/oauth/revoke`
+		authorizationUrl: (config) => `https://${config.domain}/authorize`,
+		tokenRevocationUrl: (config) => `https://${config.domain}/oauth/revoke`,
+		tokenUrl: (config) => `https://${config.domain}/oauth/token`
 	},
 	Authentik: {
 		authorizationUrl: 'https://${baseURL}/oauth/authorize',

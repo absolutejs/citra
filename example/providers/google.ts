@@ -96,6 +96,7 @@ export const googlePlugin = new Elysia()
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -112,6 +113,7 @@ export const googlePlugin = new Elysia()
 				const oauthResponse =
 					await googleOAuth2Client.refreshAccessToken(refresh_token);
 				console.log('\nGoogle token refreshed:', oauthResponse);
+
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -124,6 +126,7 @@ export const googlePlugin = new Elysia()
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -148,6 +151,7 @@ export const googlePlugin = new Elysia()
 			try {
 				await googleOAuth2Client.revokeToken(token_to_revoke);
 				console.log('\nGoogle token revoked:', token_to_revoke);
+
 				return new Response(
 					`Token ${token_to_revoke} revoked successfully`,
 					{
@@ -163,6 +167,7 @@ export const googlePlugin = new Elysia()
 						`Failed to revoke token: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -185,6 +190,7 @@ export const googlePlugin = new Elysia()
 				const userProfile =
 					await googleOAuth2Client.fetchUserProfile(accessToken);
 				console.log('\nGoogle user profile:', userProfile);
+
 				return new Response(JSON.stringify(userProfile), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -197,6 +203,7 @@ export const googlePlugin = new Elysia()
 						`Failed to fetch user profile: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`

@@ -76,6 +76,7 @@ export const facebookPlugin = new Elysia()
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -100,6 +101,7 @@ export const facebookPlugin = new Elysia()
 				const userProfile =
 					await facebookOAuth2Client.fetchUserProfile(accessToken);
 				console.log('\nFacebook user profile:', userProfile);
+
 				return new Response(JSON.stringify(userProfile), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -112,6 +114,7 @@ export const facebookPlugin = new Elysia()
 						`Failed to fetch user profile: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`

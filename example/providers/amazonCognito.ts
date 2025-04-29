@@ -96,6 +96,7 @@ export const amazonCognitoPlugin = new Elysia()
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -114,6 +115,7 @@ export const amazonCognitoPlugin = new Elysia()
 						refresh_token
 					);
 				console.log('\nAmazon Cognito token refreshed:', oauthResponse);
+
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -126,6 +128,7 @@ export const amazonCognitoPlugin = new Elysia()
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -150,6 +153,7 @@ export const amazonCognitoPlugin = new Elysia()
 			try {
 				await amazonCognitoOAuth2Client.revokeToken(token_to_revoke);
 				console.log('\nAmazon Cognito token revoked:', token_to_revoke);
+
 				return new Response('Token revoked successfully', {
 					status: 204
 				});
@@ -160,6 +164,7 @@ export const amazonCognitoPlugin = new Elysia()
 						`Failed to revoke token: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -184,6 +189,7 @@ export const amazonCognitoPlugin = new Elysia()
 						accessToken
 					);
 				console.log('\nAmazon Cognito user profile:', userProfile);
+
 				return new Response(JSON.stringify(userProfile), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -196,6 +202,7 @@ export const amazonCognitoPlugin = new Elysia()
 						`Failed to fetch user profile: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`

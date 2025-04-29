@@ -7,9 +7,9 @@ export const createOAuth2Client = <P extends ProviderOption>(
 	config: ConfigFor<P>
 ): OAuth2Client<P> => {
 	const meta = providers[providerName];
-	const resolveUrl = (
-		urlProp: string | ((config: ConfigFor<P>) => string)
-	): string => (typeof urlProp === 'function' ? urlProp(config) : urlProp);
+
+	const resolveUrl = (urlProp: string | ((cfg: ConfigFor<P>) => string)) =>
+		typeof urlProp === 'function' ? urlProp(config) : urlProp;
 	const authorizationUrl = resolveUrl(meta.authorizationUrl);
 	const tokenUrl = resolveUrl(meta.tokenUrl);
 
@@ -23,6 +23,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					`${text}`
 			);
 		}
+
 		return res.json();
 	};
 
@@ -81,21 +82,25 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 		async fetchUserProfile(accessToken: string) {
 			const { profileRequest } = meta;
+
+			//TODO : remove when all providers have profileRequest defined
 			if (!profileRequest) {
 				throw new Error(
 					'User profile request is not defined for this provider'
 				);
 			}
 
-			let { url } = profileRequest;
+			const { url } = profileRequest;
+			let profileRequestUrl = resolveUrl(url);
+
 			const { method } = profileRequest;
 			const headers: Record<string, string> = {};
 
 			if (profileRequest.authIn === 'header') {
 				headers['Authorization'] = `Bearer ${accessToken}`;
 			} else {
-				const sep = url.includes('?') ? '&' : '?';
-				url = `${url}${sep}access_token=${encodeURIComponent(accessToken)}`;
+				const seperator = profileRequestUrl.includes('?') ? '&' : '?';
+				profileRequestUrl = `${url}${seperator}access_token=${encodeURIComponent(accessToken)}`;
 			}
 
 			const init: RequestInit = { headers, method };
@@ -104,7 +109,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				init.body = JSON.stringify(profileRequest.body);
 			}
 
-			const response = await fetch(url, init);
+			const response = await fetch(profileRequestUrl, init);
 			const responseText = await response.clone().text();
 
 			if (!response.ok) {

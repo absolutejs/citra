@@ -1,9 +1,9 @@
+import { Buffer } from 'buffer';
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
-import { Buffer } from 'buffer';
 
 if (
 	!env.APPLE_CLIENT_ID ||
@@ -17,10 +17,10 @@ if (
 
 const appleOAuth2Client = createOAuth2Client('Apple', {
 	clientId: env.APPLE_CLIENT_ID,
-	redirectUri: env.APPLE_REDIRECT_URI,
-	teamId: env.APPLE_TEAM_ID,
+	keyId: env.APPLE_KEY_ID,
 	pkcs8PrivateKey: Buffer.from(env.APPLE_PKCS8_PRIVATE_KEY, 'utf8'),
-	keyId: env.APPLE_KEY_ID
+	redirectUri: env.APPLE_REDIRECT_URI,
+	teamId: env.APPLE_TEAM_ID
 });
 
 export const applePlugin = new Elysia()
@@ -97,6 +97,7 @@ export const applePlugin = new Elysia()
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -113,6 +114,7 @@ export const applePlugin = new Elysia()
 				const oauthResponse =
 					await appleOAuth2Client.refreshAccessToken(refresh_token);
 				console.log('\nApple token refreshed:', oauthResponse);
+
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -125,6 +127,7 @@ export const applePlugin = new Elysia()
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -152,6 +155,7 @@ export const applePlugin = new Elysia()
 				const userProfile =
 					await appleOAuth2Client.fetchUserProfile(accessToken);
 				console.log('\nApple user profile:', userProfile);
+
 				return new Response(JSON.stringify(userProfile), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -164,6 +168,7 @@ export const applePlugin = new Elysia()
 						`Failed to fetch user profile: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`

@@ -78,6 +78,7 @@ export const fortyTwoPlugin = new Elysia()
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -96,6 +97,7 @@ export const fortyTwoPlugin = new Elysia()
 						refresh_token
 					);
 				console.log('\n42 token refreshed:', oauthResponse);
+
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -108,6 +110,7 @@ export const fortyTwoPlugin = new Elysia()
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -135,6 +138,7 @@ export const fortyTwoPlugin = new Elysia()
 				const userProfile =
 					await fortyTwoOAuth2Client.fetchUserProfile(accessToken);
 				console.log('\n42 user profile:', userProfile);
+
 				return new Response(JSON.stringify(userProfile), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -147,6 +151,7 @@ export const fortyTwoPlugin = new Elysia()
 						`Failed to fetch user profile: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`

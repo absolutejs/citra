@@ -78,11 +78,13 @@ export const anilistPlugin = new Elysia()
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
 			}
+
 			return redirect('/');
 		}
 	)
@@ -93,6 +95,12 @@ export const anilistPlugin = new Elysia()
 				const oauthResponse =
 					await anilistOAuth2Client.refreshAccessToken(refresh_token);
 				console.log('\nAniList token refreshed:', oauthResponse);
+
+				return new Response(JSON.stringify(oauthResponse), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -100,6 +108,7 @@ export const anilistPlugin = new Elysia()
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -127,6 +136,7 @@ export const anilistPlugin = new Elysia()
 				const userProfile =
 					await anilistOAuth2Client.fetchUserProfile(accessToken);
 				console.log('\nAniList user profile:', userProfile);
+
 				return new Response(JSON.stringify(userProfile), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -139,6 +149,7 @@ export const anilistPlugin = new Elysia()
 						`Failed to fetch user profile: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`

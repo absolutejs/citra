@@ -3,7 +3,9 @@ import { providers } from './providers';
 type NonEmptyArray<T> = [T, ...T[]];
 
 export type ProfileRequestConfig = {
-	url: string;
+	// TODO: remove any type in favor of the actual config for this specific provider
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	url: string | ((config: any) => string);
 	method: 'GET' | 'POST';
 	authIn: 'header' | 'query';
 	headers?: Record<string, string>;
@@ -86,8 +88,12 @@ export type ProviderConfig = {
 	isOIDC: boolean;
 	isRefreshable: boolean;
 
+	// TODO : remove any type in favor of the actual config for this specific provider
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	authorizationUrl: string | ((config: any) => string);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	tokenUrl: string | ((config: any) => string);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	tokenRevocationUrl?: string | ((config: any) => string);
 	profileRequest?: ProfileRequestConfig;
 

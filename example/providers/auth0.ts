@@ -16,8 +16,8 @@ if (
 const auth0OAuth2Client = createOAuth2Client('Auth0', {
 	clientId: env.AUTH0_CLIENT_ID,
 	clientSecret: env.AUTH0_CLIENT_SECRET,
-	redirectUri: env.AUTH0_REDIRECT_URI,
-	domain: env.AUTH0_DOMAIN
+	domain: env.AUTH0_DOMAIN,
+	redirectUri: env.AUTH0_REDIRECT_URI
 });
 
 export const auth0Plugin = new Elysia()
@@ -32,7 +32,8 @@ export const auth0Plugin = new Elysia()
 			const authorizationUrl =
 				await auth0OAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-					scope: ['openid', 'profile', 'email'],
+					scope: ['openid', 'profile', 'email', 'offline_access'],
+					searchParams: [['prompt', 'login']],
 					state: currentState
 				});
 
@@ -94,6 +95,7 @@ export const auth0Plugin = new Elysia()
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -110,6 +112,7 @@ export const auth0Plugin = new Elysia()
 				const oauthResponse =
 					await auth0OAuth2Client.refreshAccessToken(refresh_token);
 				console.log('\nAuth0 token refreshed:', oauthResponse);
+
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -122,6 +125,7 @@ export const auth0Plugin = new Elysia()
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -146,6 +150,7 @@ export const auth0Plugin = new Elysia()
 			try {
 				await auth0OAuth2Client.revokeToken(token_to_revoke);
 				console.log('\nAuth0 token revoked:', token_to_revoke);
+
 				return new Response(
 					`Token ${token_to_revoke} revoked successfully`,
 					{
@@ -161,6 +166,7 @@ export const auth0Plugin = new Elysia()
 						`Failed to revoke token: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
@@ -183,6 +189,7 @@ export const auth0Plugin = new Elysia()
 				const userProfile =
 					await auth0OAuth2Client.fetchUserProfile(accessToken);
 				console.log('\nAuth0 user profile:', userProfile);
+
 				return new Response(JSON.stringify(userProfile), {
 					headers: {
 						'Content-Type': 'application/json'
@@ -195,6 +202,7 @@ export const auth0Plugin = new Elysia()
 						`Failed to fetch user profile: ${err.message}`
 					);
 				}
+
 				return error(
 					'Internal Server Error',
 					`Unexpected error: ${err}`

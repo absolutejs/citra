@@ -108,11 +108,10 @@ export const providers = defineProviders({
 		authorizationUrl: 'https://oauth.battle.net/authorize',
 		createAuthorizationURLSearchParams: {
 			response_type: 'code',
-			scope: 'openid'
 		},
-		isOIDC: false,
+		isOIDC: true,
 		isPKCE: false,
-		isRefreshable: true,
+		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',

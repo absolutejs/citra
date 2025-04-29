@@ -14,13 +14,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 		if (!res.ok) {
 			const text = await res.text().catch(() => '[unreadable]');
 			throw new Error(
-			  `HTTP ${res.status} ${res.statusText} for ${res.url}\n` +
-			  `${text}`
+				`HTTP ${res.status} ${res.statusText} for ${res.url}\n` +
+					`${text}`
 			);
-		  }
+		}
 		return res.json();
-	  };
-	  
+	};
+
 	return {
 		async createAuthorizationUrl(opts?: {
 			state?: string;
@@ -143,18 +143,12 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 			const request = createOAuth2Request(meta.tokenRevocationUrl, body);
 
-			try {
-				const response = await fetch(request);
+			const response = await fetch(request);
 
-				if (!response.ok) {
-					throw new Error(
-						`Token revocation failed: ${response.status} ${response.statusText}`
-					);
-				}
-			} catch (error) {
-				if (error instanceof Error)
-					throw new Error(`${error.message} - ${error.stack ?? ''}`);
-				throw new Error(`Unexpected error: ${error}`);
+			if (!response.ok) {
+				throw new Error(
+					`Token revocation failed: ${response.status} ${response.statusText}`
+				);
 			}
 		},
 

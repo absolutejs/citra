@@ -28,7 +28,7 @@ export const atlassianPlugin = new Elysia()
 			const currentState = generateState();
 			const authorizationUrl =
 				await atlassianOAuth2Client.createAuthorizationUrl({
-					scope: ['read:me'],
+					scope: ['read:me', 'offline_access'],
 					state: currentState
 				});
 

@@ -1,25 +1,27 @@
-import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { providers } from '../../src/providers';
 import { isRefreshableProvider } from '../../src/typeGuards';
 import { RefreshableProvider } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
-
-type RefreshTokenProps = {
-	setRefreshModalOpen: Dispatch<SetStateAction<boolean>>;
-};
+import { useToast } from './Toast';
 
 const refreshableProviders = Object.keys(providers).filter(
 	isRefreshableProvider
 );
 
-export const RefreshToken = ({ setRefreshModalOpen }: RefreshTokenProps) => {
+export const RefreshToken = () => {
 	const [currentProvider, setCurrentProvider] =
 		useState<RefreshableProvider>();
 	const [refreshToken, setRefreshToken] = useState<string>('');
+	const { addToast } = useToast();
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+
+		addToast({
+			message: 'Refreshing token, please wait...'
+		});
 
 		const response = await fetch(
 			`oauth2/${currentProvider?.toLowerCase()}/tokens`,
@@ -33,12 +35,18 @@ export const RefreshToken = ({ setRefreshModalOpen }: RefreshTokenProps) => {
 
 		if (!response.ok) {
 			const errorText = await response.text();
-			alert(`${errorText}`);
+			addToast({
+				message: `${errorText}`,
+				style: { background: '#f8d7da', color: '#721c24' },
+				duration: 0
+			});
 
 			return;
 		}
-		setRefreshModalOpen(false);
-		alert('Token refreshed successfully!');
+		addToast({
+			message: 'Token refreshed successfully!',
+			style: { background: '#d4edda', color: '#155724' }
+		});
 	};
 
 	return (

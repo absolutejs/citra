@@ -48,7 +48,7 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 				position: 'fixed',
 				top: 0,
 				width: '100%',
-				zIndex: 10000
+				zIndex: 1000
 			}}
 		>
 			<div

@@ -12,6 +12,7 @@ import {
 	mainDefault,
 	buttonStyle
 } from '../utils/styles';
+import { ToastProvider } from '../components/Toast';
 
 export const Example = () => {
 	const [authModalOpen, setAuthauthModalOpen] = useState(false);
@@ -111,45 +112,41 @@ export const Example = () => {
 							Fetch Profile
 						</button>
 					</nav>
-					{authModalOpen === true && (
-						<Modal
-							isOpen={authModalOpen}
-							onClose={() => setAuthauthModalOpen(false)}
-						>
-							<Authorize />
-						</Modal>
-					)}
+					<ToastProvider>
+						{authModalOpen === true && (
+							<Modal
+								isOpen={authModalOpen}
+								onClose={() => setAuthauthModalOpen(false)}
+							>
+								<Authorize />
+							</Modal>
+						)}
 
-					{refreshModalOpen === true && (
-						<Modal
-							isOpen={refreshModalOpen}
-							onClose={() => setRefreshModalOpen(false)}
-						>
-							<RefreshToken
-								setRefreshModalOpen={setRefreshModalOpen}
-							/>
-						</Modal>
-					)}
-					{revokeModalOpen === true && (
-						<Modal
-							isOpen={revokeModalOpen}
-							onClose={() => setRevokeModalOpen(false)}
-						>
-							<RevokeToken
-								setRevokeModalOpen={setRevokeModalOpen}
-							/>
-						</Modal>
-					)}
-					{profileModalOpen === true && (
-						<Modal
-							isOpen={profileModalOpen}
-							onClose={() => setProfileModalOpen(false)}
-						>
-							<FetchProfile
-								setProfileModalOpen={setProfileModalOpen}
-							/>
-						</Modal>
-					)}
+						{refreshModalOpen === true && (
+							<Modal
+								isOpen={refreshModalOpen}
+								onClose={() => setRefreshModalOpen(false)}
+							>
+								<RefreshToken />
+							</Modal>
+						)}
+						{revokeModalOpen === true && (
+							<Modal
+								isOpen={revokeModalOpen}
+								onClose={() => setRevokeModalOpen(false)}
+							>
+								<RevokeToken />
+							</Modal>
+						)}
+						{profileModalOpen === true && (
+							<Modal
+								isOpen={profileModalOpen}
+								onClose={() => setProfileModalOpen(false)}
+							>
+								<FetchProfile />
+							</Modal>
+						)}
+					</ToastProvider>
 				</main>
 			</body>
 		</html>

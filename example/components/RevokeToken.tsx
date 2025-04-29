@@ -1,19 +1,18 @@
-import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { providers } from '../../src/providers';
 import { isRevocableProvider } from '../../src/typeGuards';
 import { RevocableProvider } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
-
-type RevokeTokenProps = {
-	setRevokeModalOpen: Dispatch<SetStateAction<boolean>>;
-};
+import { useToast } from './Toast';
 
 const revocableProviders = Object.keys(providers).filter(isRevocableProvider);
 
-export const RevokeToken = ({ setRevokeModalOpen }: RevokeTokenProps) => {
+export const RevokeToken = () => {
 	const [currentProvider, setCurrentProvider] = useState<RevocableProvider>();
 	const [tokenToRevoke, setTokenToRevoke] = useState<string>('');
+
+	const { addToast } = useToast();
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -27,12 +26,18 @@ export const RevokeToken = ({ setRevokeModalOpen }: RevokeTokenProps) => {
 
 		if (!response.ok) {
 			const errorText = await response.text();
-			alert(`${errorText}`);
+			addToast({
+				message: `${errorText}`,
+				style: { background: '#f8d7da', color: '#721c24' },
+				duration: 0
+			});
 
 			return;
 		}
-		setRevokeModalOpen(false);
-		alert('Token revoked successfully!');
+		addToast({
+			message: 'Token revoked successfully!',
+			style: { background: '#d4edda', color: '#155724' }
+		});
 	};
 
 	return (

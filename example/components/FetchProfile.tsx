@@ -1,19 +1,18 @@
-import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { providers } from '../../src/providers';
 import { isValidProviderOption } from '../../src/typeGuards';
 import { ProviderOption } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { ProviderDropdown } from './ProviderDropdown';
-
-type FetchProfileProps = {
-	setProfileModalOpen: Dispatch<SetStateAction<boolean>>;
-};
+import { useToast } from './Toast';
 
 const providerOptions = Object.keys(providers).filter(isValidProviderOption);
 
-export const FetchProfile = ({ setProfileModalOpen }: FetchProfileProps) => {
+export const FetchProfile = () => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
 	const [accessToken, setAccessToken] = useState<string>('');
+
+	const { addToast } = useToast();
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -29,12 +28,18 @@ export const FetchProfile = ({ setProfileModalOpen }: FetchProfileProps) => {
 
 		if (!response.ok) {
 			const errorText = await response.text();
-			alert(`${errorText}`);
+			addToast({
+				message: `${errorText}`,
+				style: { background: '#f8d7da', color: '#721c24' },
+				duration: 0
+			});
 
 			return;
 		}
-		setProfileModalOpen(false);
-		alert('Profile fetched successfully!');
+		addToast({
+			message: 'Fetched profile successfully!',
+			style: { background: '#d4edda', color: '#155724' }
+		});
 	};
 
 	return (

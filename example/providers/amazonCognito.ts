@@ -197,10 +197,7 @@ export const amazonCognitoPlugin = new Elysia()
 				});
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
-						'Internal Server Error',
-						`Failed to fetch user profile: ${err.message}`
-					);
+					return error('Internal Server Error', err.message);
 				}
 
 				return error(

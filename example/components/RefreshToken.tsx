@@ -33,7 +33,7 @@ export const RefreshToken = ({ setRefreshModalOpen }: RefreshTokenProps) => {
 
 		if (!response.ok) {
 			const errorText = await response.text();
-			alert(`Error: ${errorText}`);
+			alert(`${errorText}`);
 
 			return;
 		}

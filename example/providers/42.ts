@@ -26,6 +26,7 @@ export const fortyTwoPlugin = new Elysia()
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
+
 			const authorizationUrl =
 				await fortyTwoOAuth2Client.createAuthorizationUrl({
 					state: currentState
@@ -62,22 +63,50 @@ export const fortyTwoPlugin = new Elysia()
 			}
 			stored_state.remove();
 
-			const oauthResponse =
-				await fortyTwoOAuth2Client.validateAuthorizationCode({
-					code
-				});
+			try {
+				const oauthResponse =
+					await fortyTwoOAuth2Client.validateAuthorizationCode({
+						code
+					});
 
-			console.log('\n42 authorized:', oauthResponse);
+				console.log('\n42 authorized:', oauthResponse);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to validate authorization code: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 
 			return redirect('/');
 		}
 	)
 	.post(
 		'/oauth2/42/tokens',
-		async ({ body: { refresh_token } }) => {
-			const oauthResponse =
-				await fortyTwoOAuth2Client.refreshAccessToken(refresh_token);
-			console.log('\n42 token refreshed:', oauthResponse);
+		async ({ error, body: { refresh_token } }) => {
+			try {
+				const oauthResponse =
+					await fortyTwoOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
+				console.log('\n42 token refreshed:', oauthResponse);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to refresh access token: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 
 			return new Response('Token refreshed successfully', {
 				status: 204

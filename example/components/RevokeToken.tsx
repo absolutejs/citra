@@ -27,7 +27,7 @@ export const RevokeToken = ({ setRevokeModalOpen }: RevokeTokenProps) => {
 
 		if (!response.ok) {
 			const errorText = await response.text();
-			alert(`Error: ${errorText}`);
+			alert(`${errorText}`);
 
 			return;
 		}

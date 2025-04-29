@@ -29,7 +29,7 @@ export const FetchProfile = ({ setProfileModalOpen }: FetchProfileProps) => {
 
 		if (!response.ok) {
 			const errorText = await response.text();
-			alert(`Error: ${errorText}`);
+			alert(`${errorText}`);
 
 			return;
 		}

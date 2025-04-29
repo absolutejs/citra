@@ -75,10 +75,25 @@ export const atlassianPlugin = new Elysia()
 	)
 	.post(
 		'/oauth2/atlassian/tokens',
-		async ({ body: { refresh_token } }) => {
-			const oauthResponse =
-				await atlassianOAuth2Client.refreshAccessToken(refresh_token);
-			console.log('\nAtlassian token refreshed:', oauthResponse);
+		async ({ error, body: { refresh_token } }) => {
+			try {
+				const oauthResponse =
+					await atlassianOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
+				console.log('\nAtlassian token refreshed:', oauthResponse);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to refresh access token: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 
 			return new Response('Token refreshed successfully', {
 				status: 204

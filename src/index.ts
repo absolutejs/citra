@@ -7,6 +7,11 @@ export const createOAuth2Client = <P extends ProviderOption>(
 	config: ConfigFor<P>
 ): OAuth2Client<P> => {
 	const meta = providers[providerName];
+	const resolveUrl = (
+		urlProp: string | ((config: ConfigFor<P>) => string)
+	): string => (typeof urlProp === 'function' ? urlProp(config) : urlProp);
+	const authorizationUrl = resolveUrl(meta.authorizationUrl);
+	const tokenUrl = resolveUrl(meta.tokenUrl);
 
 	const postForm = async (url: string, body: URLSearchParams) => {
 		const req = createOAuth2Request(url, body);
@@ -35,7 +40,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				codeVerifier
 			} = opts ?? {};
 
-			const url = new URL(meta.authorizationUrl);
+			const url = new URL(authorizationUrl);
 			url.searchParams.set('response_type', 'code');
 			url.searchParams.set('client_id', config.clientId);
 			if (config.redirectUri) {
@@ -123,7 +128,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				body.set('client_secret', config.clientSecret);
 			}
 
-			return postForm(meta.tokenUrl, body);
+			return postForm(tokenUrl, body);
 		},
 
 		async revokeToken(token: string) {
@@ -132,6 +137,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					'Token revocation URL is not defined for this provider'
 				);
 			}
+			const tokenRevocationUrl = resolveUrl(meta.tokenRevocationUrl);
+
 			const body = new URLSearchParams();
 			body.set('token', token);
 			Object.entries(meta.tokenRevocationBody ?? {}).forEach(
@@ -141,7 +148,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			if ('clientSecret' in config && config.clientSecret) {
 				body.set('client_secret', config.clientSecret);
 			}
-			const request = createOAuth2Request(meta.tokenRevocationUrl, body);
+			const request = createOAuth2Request(tokenRevocationUrl, body);
 
 			const response = await fetch(request);
 
@@ -184,7 +191,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				body.set('code_verifier', verifier);
 			}
 
-			return postForm(meta.tokenUrl, body);
+			return postForm(tokenUrl, body);
 		}
 	};
 };

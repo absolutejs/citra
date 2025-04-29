@@ -41,7 +41,9 @@ export type RefreshableProvider = {
 }[ProviderOption];
 
 export type RevocableProvider = {
-	[K in ProviderOption]: (typeof providers)[K]['tokenRevocationUrl'] extends string
+	[K in ProviderOption]: (typeof providers)[K] extends {
+		tokenRevocationUrl: string | ((config: ConfigFor<K>) => string);
+	}
 		? K
 		: never;
 }[ProviderOption];
@@ -83,9 +85,10 @@ export type ProviderConfig = {
 	isPKCE: boolean;
 	isOIDC: boolean;
 	isRefreshable: boolean;
-	authorizationUrl: string;
-	tokenUrl: string;
-	tokenRevocationUrl?: string;
+
+	authorizationUrl: string | ((config: any) => string);
+	tokenUrl: string | ((config: any) => string);
+	tokenRevocationUrl?: string | ((config: any) => string);
 	profileRequest?: ProfileRequestConfig;
 
 	/** Static query params added to the auth URL */

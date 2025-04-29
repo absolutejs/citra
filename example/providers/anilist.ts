@@ -61,28 +61,50 @@ export const anilistPlugin = new Elysia()
 			if (callback_state !== stored_state.value) {
 				return error('Bad Request', 'Invalid state mismatch');
 			}
+
 			stored_state.remove();
 
-			const oauthResponse =
-				await anilistOAuth2Client.validateAuthorizationCode({
-					code
-				});
+			try {
+				const oauthResponse =
+					await anilistOAuth2Client.validateAuthorizationCode({
+						code
+					});
 
-			console.log('\nAniList authorized:', oauthResponse);
-
+				console.log('\nAniList authorized:', oauthResponse);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to validate authorization code: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 			return redirect('/');
 		}
 	)
 	.post(
 		'/oauth2/anilist/tokens',
-		async ({ body: { refresh_token } }) => {
-			const oauthResponse =
-				await anilistOAuth2Client.refreshAccessToken(refresh_token);
-			console.log('\nAniList token refreshed:', oauthResponse);
-
-			return new Response('Token refreshed successfully', {
-				status: 204
-			});
+		async ({ error, body: { refresh_token } }) => {
+			try {
+				const oauthResponse =
+					await anilistOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nAniList token refreshed:', oauthResponse);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to refresh access token: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 		},
 		{
 			body: t.Object({
@@ -100,14 +122,27 @@ export const anilistPlugin = new Elysia()
 				);
 
 			const accessToken = authorization.replace('Bearer ', '');
-			const userProfile =
-				await anilistOAuth2Client.fetchUserProfile(accessToken);
-			console.log('\nAniList user profile:', userProfile);
 
-			return new Response(JSON.stringify(userProfile), {
-				headers: {
-					'Content-Type': 'application/json'
+			try {
+				const userProfile =
+					await anilistOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nAniList user profile:', userProfile);
+				return new Response(JSON.stringify(userProfile), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to fetch user profile: ${err.message}`
+					);
 				}
-			});
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 		}
 	);

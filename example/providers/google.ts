@@ -75,33 +75,60 @@ export const googlePlugin = new Elysia()
 			if (callback_state !== stored_state.value) {
 				return error('Bad Request', 'Invalid state mismatch');
 			}
+
 			stored_state.remove();
 
 			const codeVerifier = code_verifier.value;
 			if (codeVerifier === undefined)
 				return error('Bad Request', 'Code verifier is missing');
 
-			const oauthResponse =
-				await googleOAuth2Client.validateAuthorizationCode({
-					code,
-					codeVerifier
-				});
-
-			console.log('\nGoogle authorized:', oauthResponse);
+			try {
+				const oauthResponse =
+					await googleOAuth2Client.validateAuthorizationCode({
+						code,
+						codeVerifier
+					});
+				console.log('\nGoogle authorized:', oauthResponse);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to validate authorization code: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 
 			return redirect('/');
 		}
 	)
 	.post(
 		'/oauth2/google/tokens',
-		async ({ body: { refresh_token } }) => {
-			const oauthResponse =
-				await googleOAuth2Client.refreshAccessToken(refresh_token);
-			console.log('\nGoogle token refreshed:', oauthResponse);
-
-			return new Response('Token refreshed successfully', {
-				status: 204
-			});
+		async ({ error, body: { refresh_token } }) => {
+			try {
+				const oauthResponse =
+					await googleOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nGoogle token refreshed:', oauthResponse);
+				return new Response(JSON.stringify(oauthResponse), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to refresh access token: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 		},
 		{
 			body: t.Object({
@@ -118,12 +145,29 @@ export const googlePlugin = new Elysia()
 					'Token to revoke is required in query parameters'
 				);
 
-			await googleOAuth2Client.revokeToken(token_to_revoke);
-			console.log('\nGoogle token revoked:', token_to_revoke);
-
-			return new Response('Token revoked successfully', {
-				status: 204
-			});
+			try {
+				await googleOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nGoogle token revoked:', token_to_revoke);
+				return new Response(
+					`Token ${token_to_revoke} revoked successfully`,
+					{
+						headers: {
+							'Content-Type': 'text/plain'
+						}
+					}
+				);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to revoke token: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 		}
 	)
 	.get(
@@ -136,14 +180,27 @@ export const googlePlugin = new Elysia()
 				);
 
 			const accessToken = authorization.replace('Bearer ', '');
-			const userProfile =
-				await googleOAuth2Client.fetchUserProfile(accessToken);
-			console.log('\nGoogle user profile:', userProfile);
 
-			return new Response(JSON.stringify(userProfile), {
-				headers: {
-					'Content-Type': 'application/json'
+			try {
+				const userProfile =
+					await googleOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nGoogle user profile:', userProfile);
+				return new Response(JSON.stringify(userProfile), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to fetch user profile: ${err.message}`
+					);
 				}
-			});
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 		}
 	);

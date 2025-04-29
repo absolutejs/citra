@@ -60,14 +60,27 @@ export const facebookPlugin = new Elysia()
 			if (callback_state !== stored_state.value) {
 				return error('Bad Request', 'Invalid state mismatch');
 			}
+
 			stored_state.remove();
 
-			const oauthResponse =
-				await facebookOAuth2Client.validateAuthorizationCode({
-					code
-				});
-
-			console.log('\nFacebook authorized:', oauthResponse);
+			try {
+				const oauthResponse =
+					await facebookOAuth2Client.validateAuthorizationCode({
+						code
+					});
+				console.log('\nFacebook authorized:', oauthResponse);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to validate authorization code: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 
 			return redirect('/');
 		}
@@ -82,14 +95,27 @@ export const facebookPlugin = new Elysia()
 				);
 
 			const accessToken = authorization.replace('Bearer ', '');
-			const userProfile =
-				await facebookOAuth2Client.fetchUserProfile(accessToken);
-			console.log('\nFacebook user profile:', userProfile);
 
-			return new Response(JSON.stringify(userProfile), {
-				headers: {
-					'Content-Type': 'application/json'
+			try {
+				const userProfile =
+					await facebookOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nFacebook user profile:', userProfile);
+				return new Response(JSON.stringify(userProfile), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to fetch user profile: ${err.message}`
+					);
 				}
-			});
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 		}
 	);

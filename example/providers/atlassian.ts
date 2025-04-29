@@ -61,14 +61,28 @@ export const atlassianPlugin = new Elysia()
 			if (callback_state !== stored_state.value) {
 				return error('Bad Request', 'Invalid state mismatch');
 			}
+
 			stored_state.remove();
 
-			const oauthResponse =
-				await atlassianOAuth2Client.validateAuthorizationCode({
-					code
-				});
+			try {
+				const oauthResponse =
+					await atlassianOAuth2Client.validateAuthorizationCode({
+						code
+					});
 
-			console.log('\nAtlassian authorized:', oauthResponse);
+				console.log('\nAtlassian authorized:', oauthResponse);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to validate authorization code: ${err.message}`
+					);
+				}
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 
 			return redirect('/');
 		}
@@ -82,6 +96,11 @@ export const atlassianPlugin = new Elysia()
 						refresh_token
 					);
 				console.log('\nAtlassian token refreshed:', oauthResponse);
+				return new Response(JSON.stringify(oauthResponse), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -94,10 +113,6 @@ export const atlassianPlugin = new Elysia()
 					`Unexpected error: ${err}`
 				);
 			}
-
-			return new Response('Token refreshed successfully', {
-				status: 204
-			});
 		},
 		{
 			body: t.Object({
@@ -115,14 +130,27 @@ export const atlassianPlugin = new Elysia()
 				);
 
 			const accessToken = authorization.replace('Bearer ', '');
-			const userProfile =
-				await atlassianOAuth2Client.fetchUserProfile(accessToken);
-			console.log('\nAtlassian user profile:', userProfile);
 
-			return new Response(JSON.stringify(userProfile), {
-				headers: {
-					'Content-Type': 'application/json'
+			try {
+				const userProfile =
+					await atlassianOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nAtlassian user profile:', userProfile);
+				return new Response(JSON.stringify(userProfile), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to fetch user profile: ${err.message}`
+					);
 				}
-			});
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 		}
 	);

@@ -18,3 +18,4 @@ Some providers were either restricted or required payment to set up a client so 
 - Amazon Cognito (untested)
 - AniList
 - Apple  (untested)
+- Atlassian

@@ -24,3 +24,7 @@ Some providers were either restricted or required payment to set up a client so 
 - Autodesk
 - Battlenet
 - Bitbucket
+- Box 
+- Bungie (test later)
+- Coinbase (server down)
+- Discord

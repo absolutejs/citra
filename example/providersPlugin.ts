@@ -12,6 +12,8 @@ import { autodeskPlugin } from './providers/autodesk';
 import { battlenetPlugin } from './providers/battlenet';
 import { bitbucketPlugin } from './providers/bitbucket';
 import { boxPlugin } from './providers/box';
+import { coinbasePlugin } from './providers/coinbase';
+import { discordPlugin } from './providers/discord';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -25,5 +27,7 @@ export const providersPlugin = new Elysia()
 	.use(battlenetPlugin)
 	.use(bitbucketPlugin)
 	.use(boxPlugin)
+	.use(coinbasePlugin)
+	.use(discordPlugin)
 	.use(googlePlugin)
 	.use(facebookPlugin);

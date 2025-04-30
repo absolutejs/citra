@@ -55,7 +55,7 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 		opts: { state: string } & (P extends PKCEProvider
 			? { codeVerifier: string }
 			: unknown) &
-			(P extends OIDCProvider | 'Atlassian'
+			(P extends OIDCProvider | 'Atlassian' | 'Discord'
 				? { scope: NonEmptyArray<string> }
 				: { scope?: string[] }) & {
 				searchParams?: [string, string][];

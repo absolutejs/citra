@@ -82,45 +82,42 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 		async fetchUserProfile(accessToken: string) {
 			const { profileRequest } = meta;
-
-			//TODO : remove when all providers have profileRequest defined
 			if (!profileRequest) {
 				throw new Error(
 					'User profile request is not defined for this provider'
 				);
 			}
 
-			const { url } = profileRequest;
-			let profileRequestUrl = resolveUrl(url);
+			const { url, method, authIn, searchParams, body } = profileRequest;
+			const endpoint = new URL(resolveUrl(url));
+			if (searchParams) {
+				for (const [key, value] of searchParams) {
+					endpoint.searchParams.append(key, value);
+				}
+			}
 
-			const { method } = profileRequest;
 			const headers: Record<string, string> = {};
-
-			if (profileRequest.authIn === 'header') {
-				headers['Authorization'] = `Bearer ${accessToken}`;
+			if (authIn === 'header') {
+				headers.Authorization = `Bearer ${accessToken}`;
 			} else {
-				const seperator = profileRequestUrl.includes('?') ? '&' : '?';
-				profileRequestUrl = `${url}${seperator}access_token=${encodeURIComponent(accessToken)}`;
+				endpoint.searchParams.append('access_token', accessToken);
 			}
 
-			const init: RequestInit = { headers, method };
-			if (method === 'POST' && profileRequest.body) {
+			const init: RequestInit = { method, headers };
+			if (method === 'POST' && body) {
 				headers['Content-Type'] = 'application/json';
-				init.body = JSON.stringify(profileRequest.body);
+				init.body = JSON.stringify(body);
 			}
 
-			const response = await fetch(profileRequestUrl, init);
-			const responseText = await response.clone().text();
-
+			const response = await fetch(endpoint.toString(), init);
+			const text = await response.clone().text();
 			if (!response.ok) {
 				throw new Error(
-					`Failed to fetch user profile: ${response.status} ${response.statusText} - ${responseText}`
+					`Failed to fetch user profile: ${response.status} ${response.statusText} - ${text}`
 				);
 			}
-
 			return response.json();
 		},
-
 		refreshAccessToken(refreshToken: string) {
 			const body = new URLSearchParams();
 			body.set('grant_type', 'refresh_token');

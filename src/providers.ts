@@ -107,7 +107,7 @@ export const providers = defineProviders({
 	Battlenet: {
 		authorizationUrl: 'https://oauth.battle.net/authorize',
 		createAuthorizationURLSearchParams: {
-			response_type: 'code',
+			response_type: 'code'
 		},
 		isOIDC: true,
 		isPKCE: false,

@@ -17,6 +17,10 @@ export const FetchProfile = () => {
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
+		addToast({
+			message: 'Fetching profile, please wait...'
+		});
+
 		const response = await fetch(
 			`/oauth2/${currentProvider?.toLowerCase()}/profile`,
 			{

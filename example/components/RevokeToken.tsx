@@ -17,6 +17,10 @@ export const RevokeToken = () => {
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
+		addToast({
+			message: 'Revoking token, please wait...'
+		});
+
 		const response = await fetch(
 			`oauth2/${currentProvider?.toLowerCase()}/revocation?token_to_revoke=${tokenToRevoke}`,
 			{

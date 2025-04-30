@@ -22,7 +22,7 @@ export const bitbucketPlugin = new Elysia()
 	.get(
 		'/oauth2/bitbucket/authorization',
 		async ({ redirect, error, cookie: { state } }) => {
-			if (state === undefined )
+			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
@@ -51,7 +51,7 @@ export const bitbucketPlugin = new Elysia()
 			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined )
+			if (stored_state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -66,7 +66,7 @@ export const bitbucketPlugin = new Elysia()
 			try {
 				const oauthResponse =
 					await bitbucketOAuth2Client.validateAuthorizationCode({
-						code,
+						code
 					});
 				console.log('\nBitbucket authorized:', oauthResponse);
 			} catch (err) {
@@ -91,7 +91,9 @@ export const bitbucketPlugin = new Elysia()
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await bitbucketOAuth2Client.refreshAccessToken(refresh_token);
+					await bitbucketOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
 				console.log('\nBitbucket token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {

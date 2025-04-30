@@ -29,7 +29,7 @@ export const battlenetPlugin = new Elysia()
 			const authorizationUrl =
 				await battlenetOAuth2Client.createAuthorizationUrl({
 					state: currentState,
-                    scope: ['openid'],
+					scope: ['openid']
 				});
 
 			state.set({
@@ -64,12 +64,10 @@ export const battlenetPlugin = new Elysia()
 
 			stored_state.remove();
 
-			
 			try {
 				const oauthResponse =
 					await battlenetOAuth2Client.validateAuthorizationCode({
-						code,
-
+						code
 					});
 				console.log('\nBattlenet authorized:', oauthResponse);
 			} catch (err) {

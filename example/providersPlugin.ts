@@ -11,6 +11,7 @@ import { authentikPlugin } from './providers/authentik';
 import { autodeskPlugin } from './providers/autodesk';
 import { battlenetPlugin } from './providers/battlenet';
 import { bitbucketPlugin } from './providers/bitbucket';
+import { boxPlugin } from './providers/box';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -23,5 +24,6 @@ export const providersPlugin = new Elysia()
 	.use(autodeskPlugin)
 	.use(battlenetPlugin)
 	.use(bitbucketPlugin)
+	.use(boxPlugin)
 	.use(googlePlugin)
 	.use(facebookPlugin);

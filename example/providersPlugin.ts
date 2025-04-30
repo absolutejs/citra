@@ -14,6 +14,7 @@ import { bitbucketPlugin } from './providers/bitbucket';
 import { boxPlugin } from './providers/box';
 import { coinbasePlugin } from './providers/coinbase';
 import { discordPlugin } from './providers/discord';
+import { bungiePlugin } from './providers/bungie';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -27,6 +28,7 @@ export const providersPlugin = new Elysia()
 	.use(battlenetPlugin)
 	.use(bitbucketPlugin)
 	.use(boxPlugin)
+	.use(bungiePlugin)
 	.use(coinbasePlugin)
 	.use(discordPlugin)
 	.use(googlePlugin)

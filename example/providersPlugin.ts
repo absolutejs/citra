@@ -15,6 +15,7 @@ import { boxPlugin } from './providers/box';
 import { coinbasePlugin } from './providers/coinbase';
 import { discordPlugin } from './providers/discord';
 import { bungiePlugin } from './providers/bungie';
+import { donationAlertsPlugin } from './providers/donationalerts';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -31,5 +32,6 @@ export const providersPlugin = new Elysia()
 	.use(bungiePlugin)
 	.use(coinbasePlugin)
 	.use(discordPlugin)
+	.use(donationAlertsPlugin)
 	.use(googlePlugin)
 	.use(facebookPlugin);

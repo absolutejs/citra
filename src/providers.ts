@@ -197,7 +197,7 @@ export const providers = defineProviders({
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
-			url: 'https://www.donationalerts.com/api/v1/user'
+			 url: 'https://www.donationalerts.com/api/v1/user/oauth'
 		},
 		tokenUrl: 'https://www.donationalerts.com/oauth/token'
 	},

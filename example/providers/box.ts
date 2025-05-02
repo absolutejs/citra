@@ -4,11 +4,7 @@ import { createOAuth2Client } from '../../src';
 import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
-if (
-	!env.BOX_CLIENT_ID ||
-	!env.BOX_CLIENT_SECRET ||
-	!env.BOX_REDIRECT_URI
-) {
+if (!env.BOX_CLIENT_ID || !env.BOX_CLIENT_SECRET || !env.BOX_REDIRECT_URI) {
 	throw new Error('Box OAuth2 credentials are not set in .env file');
 }
 
@@ -21,7 +17,7 @@ const boxOAuth2Client = createOAuth2Client('Box', {
 export const boxPlugin = new Elysia()
 	.get(
 		'/oauth2/box/authorization',
-		async ({ redirect, error, cookie: { state} }) => {
+		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
@@ -48,7 +44,7 @@ export const boxPlugin = new Elysia()
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state},
+			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
 			if (stored_state === undefined)

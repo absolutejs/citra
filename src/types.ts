@@ -50,12 +50,14 @@ export type RevocableProvider = {
 		: never;
 }[ProviderOption];
 
+export type ScopeRequiredProvider = OIDCProvider | 'Atlassian' | 'Discord' | 'DonationAlerts';
+
 export type BaseOAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
 		opts: { state: string } & (P extends PKCEProvider
 			? { codeVerifier: string }
 			: unknown) &
-			(P extends OIDCProvider | 'Atlassian' | 'Discord'
+			(P extends ScopeRequiredProvider
 				? { scope: NonEmptyArray<string> }
 				: { scope?: string[] }) & {
 				searchParams?: [string, string][];

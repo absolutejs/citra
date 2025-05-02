@@ -5,30 +5,35 @@ import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.COINBASE_CLIENT_ID ||
-	!env.COINBASE_CLIENT_SECRET ||
-	!env.COINBASE_REDIRECT_URI
+	!env.DONATION_ALERTS_CLIENT_ID ||
+	!env.DONATION_ALERTS_CLIENT_SECRET ||
+	!env.DONATION_ALERTS_REDIRECT_URI
 ) {
-	throw new Error('Coinbase OAuth2 credentials are not set in .env file');
+	throw new Error(
+		'DonationAlerts OAuth2 credentials are not set in .env file'
+	);
 }
 
-const coinbaseOAuth2Client = createOAuth2Client('Coinbase', {
-	clientId: env.COINBASE_CLIENT_ID,
-	clientSecret: env.COINBASE_CLIENT_SECRET,
-	redirectUri: env.COINBASE_REDIRECT_URI
+const donationAlertsOAuth2Client = createOAuth2Client('DonationAlerts', {
+	clientId: env.DONATION_ALERTS_CLIENT_ID,
+	clientSecret: env.DONATION_ALERTS_CLIENT_SECRET,
+	redirectUri: env.DONATION_ALERTS_REDIRECT_URI
 });
 
-export const coinbasePlugin = new Elysia()
+export const donationAlertsPlugin = new Elysia()
 	.get(
-		'/oauth2/coinbase/authorization',
+		'/oauth2/donationalerts/authorization',
 		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
-				await coinbaseOAuth2Client.createAuthorizationUrl({
-					state: currentState
+				await donationAlertsOAuth2Client.createAuthorizationUrl({
+					scope: [
+                        'oauth-user-show'
+                    ],
+                    state: currentState
 				});
 
 			state.set({
@@ -44,7 +49,7 @@ export const coinbasePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/coinb/callback', // Coinbase restricts the use of "coinbase" in the path
+		'/oauth2/donationalerts/callback',
 		async ({
 			error,
 			redirect,
@@ -65,10 +70,10 @@ export const coinbasePlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await coinbaseOAuth2Client.validateAuthorizationCode({
+					await donationAlertsOAuth2Client.validateAuthorizationCode({
 						code
 					});
-				console.log('\nCoinbase authorized:', oauthResponse);
+				console.log('\nDonationAlerts authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -87,14 +92,14 @@ export const coinbasePlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/coinbase/tokens',
+		'/oauth2/donationalerts/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await coinbaseOAuth2Client.refreshAccessToken(
+					await donationAlertsOAuth2Client.refreshAccessToken(
 						refresh_token
 					);
-				console.log('\nCoinbase token refreshed:', oauthResponse);
+				console.log('\nDonationAlerts token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -122,7 +127,7 @@ export const coinbasePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/coinbase/profile',
+		'/oauth2/donationalerts/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -134,8 +139,10 @@ export const coinbasePlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await coinbaseOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nCoinbase user profile:', userProfile);
+					await donationAlertsOAuth2Client.fetchUserProfile(
+						accessToken
+					);
+				console.log('\nDonationAlerts user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

@@ -21,7 +21,7 @@ import { dropboxPlugin } from './providers/dropbox';
 import { epicGamesPlugin } from './providers/epic-games';
 import { etsyPlugin } from './providers/etsy';
 import { figmaPlugin } from './providers/figma';
-import { giteaPlugin } from './providers/Gitea';
+import { giteaPlugin } from './providers/gitea';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)

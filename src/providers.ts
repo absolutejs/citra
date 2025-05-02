@@ -72,6 +72,7 @@ export const providers = defineProviders({
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Auth0: {
+		authorizationUrl: (config) => `https://${config.domain}/authorize`,
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
@@ -88,15 +89,14 @@ export const providers = defineProviders({
 			}),
 			url: (config) => `https://${config.domain}/oauth/revoke`
 		},
-		authorizationUrl: (config) => `https://${config.domain}/authorize`,
 		tokenUrl: (config) => `https://${config.domain}/oauth/token`
 	},
 	Authentik: {
+		authorizationUrl: (config) =>
+			`https://${config.baseURL}/oauth/authorize`,
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
-		authorizationUrl: (config) =>
-			`https://${config.baseURL}/oauth/authorize`,
 		tokenUrl: (config) => `https://${config.baseURL}/oauth/token`
 	},
 	Autodesk: {
@@ -292,6 +292,7 @@ export const providers = defineProviders({
 		tokenUrl: 'https://api.figma.com/v1/oauth/token'
 	},
 	Gitea: {
+		authorizationUrl: (config) => `${config.baseURL}/login/oauth/authorize`,
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
@@ -300,7 +301,6 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: (config) => `${config.baseURL}/api/v1/user`
 		},
-		authorizationUrl: (config) => `${config.baseURL}/login/oauth/authorize`,
 		tokenUrl: (config) => `${config.baseURL}/login/oauth/access_token`
 	},
 	GitHub: {
@@ -318,6 +318,7 @@ export const providers = defineProviders({
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	GitLab: {
+		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
 		isOIDC: false,
 		isPKCE: true,
 		isRefreshable: true,
@@ -330,7 +331,6 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: (config) => `${config.baseURL}/oauth/revoke`
 		},
-		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
 		tokenUrl: (config) => `${config.baseURL}/oauth/token`
 	},
 	Google: {

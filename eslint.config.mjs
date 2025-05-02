@@ -231,5 +231,18 @@ export default [
 		rules: {
 			'import/no-default-export': 'off'
 		}
+	},
+	{
+		files: ['src/providers.ts'],
+		rules: {
+			'absolute/sort-keys-fixable': [
+				'error',
+				{
+					caseSensitive: true,
+					natural: true,
+					order: 'asc'
+				}
+			]
+		}
 	}
 ];

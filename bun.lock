@@ -4,7 +4,7 @@
     "": {
       "name": "citra",
       "devDependencies": {
-        "@absolutejs/absolute": "0.3.1",
+        "@absolutejs/absolute": "0.4.0",
         "@elysiajs/static": "1.2.0",
         "@stylistic/eslint-plugin-ts": "4.2.0",
         "@types/bun": "1.2.10",
@@ -28,7 +28,7 @@
     },
   },
   "packages": {
-    "@absolutejs/absolute": ["@absolutejs/absolute@0.3.1", "", { "peerDependencies": { "elysia": ">= 1.2.0", "react": ">= 19.1.0", "react-dom": ">= 19.1.0" } }, "sha512-Jcd1d+gkZWqYsbBwULpjW3KMCOsB/5w4yfnD66DyfcZ1vmPUULw8DSftyk7vcgwIxsPVN2uSPkycspIjK8WhoA=="],
+    "@absolutejs/absolute": ["@absolutejs/absolute@0.4.0", "", { "peerDependencies": { "elysia": ">= 1.2.0", "react": ">= 19.1.0", "react-dom": ">= 19.1.0" } }, "sha512-8d28VCVz0+7P4nY5nj9UljyfYCD/iSxF8E68D0CSbIS062JXVN35bwGVH7gvhbOp4pnq471e25FVLP4lQ6CAhg=="],
 
     "@ampproject/remapping": ["@ampproject/remapping@2.3.0", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw=="],
 

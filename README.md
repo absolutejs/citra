@@ -14,28 +14,29 @@ There are 63 providers available through Citra
 
 Some providers have the tag (HTTPS Required) since the provider will only authorize over secure connections ... include steps for mkcert ...
 
-Some providers were either restricted or required payment to set up a client so they are not tested. 
+Some providers were either restricted (Untested: Restricted) or required payment (Untested: Paid) to set up a client so they are not tested. 
 
 If any issues occur please open one so it can be fixed.
 
 
-- 42 (untested: restricted)
-- Amazon Cognito (untested: TODO - needed cc)
+- 42 (Untested: Restricted)
+- Amazon Cognito (Untested: TODO - needed cc)
 - AniList
-- Apple  (untested: paid)
+- Apple (Untested: Paid)
 - Atlassian
 - Auth0
-- Authentik (untested)
+- Authentik (Untested)
 - Autodesk
 - Battlenet
 - Bitbucket
 - Box 
-- Bungie (untested: https)
-- Coinbase (untested: https)
+- Bungie (untested: https) (HTTPS Required)
+- Coinbase (untested: https) (HTTPS Required)
 - Discord
 - Donation Alerts
-- Dribble (untested: paid)
+- Dribble (Untested: Paid)
 - Dropbox
-- Epic Games (untested: https)
-- Etsy (untested: pending approval)
+- Epic Games (untested: https) (HTTPS Required)
+- Etsy (Untested: pending approval)
 - Facebook
+- Gitea (In Development)

@@ -40,3 +40,5 @@ new Elysia()
 			`Server error on ${request.method} ${request.url}: ${error.message}`
 		);
 	});
+
+	// TODO : avoid using localhost as per RFC 6749 https://datatracker.ietf.org/doc/html/rfc8252#section-8.3

@@ -292,16 +292,16 @@ export const providers = defineProviders({
 		tokenUrl: 'https://api.figma.com/v1/oauth/token'
 	},
 	Gitea: {
-		authorizationUrl: '${baseURL}/login/oauth/authorize',
-		isOIDC: false,
+		authorizationUrl: (config) => `${config.baseURL}/login/oauth/authorize`,
+		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
-			url: 'https://<YOUR_GITEA_DOMAIN>/api/v1/user'
+			url: (config) => `${config.baseURL}/api/v1/user`
 		},
-		tokenUrl: '${baseURL}/login/oauth/access_token'
+		tokenUrl: (config) => `${config.baseURL}/login/oauth/access_token`,
 	},
 	GitHub: {
 		authorizationUrl: 'https://github.com/login/oauth/authorize',

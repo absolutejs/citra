@@ -240,6 +240,7 @@ export type FigmaOAuth2Config = {
 	redirectUri: string;
 };
 export type GiteaOAuth2Config = {
+	baseURL: string;
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;

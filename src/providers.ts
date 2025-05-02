@@ -9,6 +9,7 @@ export const providers = defineProviders({
 		isOIDC: false,
 		isPKCE: false,
 		isRefreshable: true,
+		scopeRequired: false,
 		tokenUrl: 'https://api.intra.42.fr/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -21,6 +22,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: (config) => `https://${config.domain}/oauth2/revoke`
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://${domain}/oauth2/token'
 	},
 	AniList: {
@@ -41,6 +43,7 @@ export const providers = defineProviders({
 			method: 'POST',
 			url: 'https://graphql.anilist.co'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://anilist.co/api/v2/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -50,6 +53,7 @@ export const providers = defineProviders({
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
+		scopeRequired: false,
 		tokenUrl: 'https://appleid.apple.com/auth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -68,6 +72,7 @@ export const providers = defineProviders({
 			url: 'https://api.atlassian.com/me'
 		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+		scopeRequired: true,
 		tokenUrl: 'https://auth.atlassian.com/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -89,6 +94,7 @@ export const providers = defineProviders({
 			}),
 			url: (config) => `https://${config.domain}/oauth/revoke`
 		},
+		scopeRequired: false,
 		tokenUrl: (config) => `https://${config.domain}/oauth/token`
 	},
 	Authentik: {
@@ -97,6 +103,7 @@ export const providers = defineProviders({
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
+		scopeRequired: false,
 		tokenUrl: (config) => `https://${config.baseURL}/oauth/token`
 	},
 	Autodesk: {
@@ -110,6 +117,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.userprofile.autodesk.com/userinfo'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://developer.api.autodesk.com/authentication/v2/token'
 	},
 	Battlenet: {
@@ -125,6 +133,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://oauth.battle.net/userinfo'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://oauth.battle.net/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -139,6 +148,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.bitbucket.org/2.0/user'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://bitbucket.org/site/oauth2/access_token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -156,6 +166,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: 'https://api.box.com/oauth2/revoke'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.box.com/oauth2/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -172,6 +183,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://www.bungie.net/Platform/User/GetCurrentBungieNetUser'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://www.bungie.net/platform/app/oauth/token/'
 	},
 	Coinbase: {
@@ -185,6 +197,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.coinbase.com/v2/user'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.coinbase.com/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -198,6 +211,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://discord.com/api/users/@me'
 		},
+		scopeRequired: true,
 		tokenUrl: 'https://discord.com/api/oauth2/token'
 	},
 	DonationAlerts: {
@@ -210,6 +224,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://www.donationalerts.com/api/v1/user/oauth'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://www.donationalerts.com/oauth/token'
 	},
 	Dribbble: {
@@ -222,6 +237,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.dribbble.com/v2/user'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://dribbble.com/oauth/token'
 	},
 	Dropbox: {
@@ -238,6 +254,7 @@ export const providers = defineProviders({
 			authIn: 'header',
 			url: 'https://api.dropboxapi.com/2/auth/token/revoke'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.dropboxapi.com/oauth2/token'
 	},
 	EpicGames: {
@@ -250,6 +267,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.epicgames.dev/epic/oauth/v2/userInfo'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.epicgames.dev/epic/oauth/v1/token'
 	},
 	Etsy: {
@@ -262,6 +280,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://openapi.etsy.com/v3/application/users/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.etsy.com/v3/public/oauth/token'
 	},
 	Facebook: {
@@ -276,6 +295,7 @@ export const providers = defineProviders({
 			searchParams: [['fields', 'id,name,email,picture']],
 			url: 'https://graph.facebook.com/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://graph.facebook.com/v16.0/oauth/access_token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -289,6 +309,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.figma.com/v1/me'
 		},
+		scopeRequired: true,
 		tokenUrl: 'https://api.figma.com/v1/oauth/token'
 	},
 	Gitea: {
@@ -301,6 +322,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: (config) => `${config.baseURL}/api/v1/user`
 		},
+		scopeRequired: false,
 		tokenUrl: (config) => `${config.baseURL}/login/oauth/access_token`
 	},
 	GitHub: {
@@ -314,6 +336,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.github.com/user'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://github.com/login/oauth/access_token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -331,6 +354,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: (config) => `${config.baseURL}/oauth/revoke`
 		},
+		scopeRequired: false,
 		tokenUrl: (config) => `${config.baseURL}/oauth/token`
 	},
 	Google: {
@@ -349,6 +373,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: 'https://oauth2.googleapis.com/revoke'
 		},
+		scopeRequired: true,
 		tokenUrl: 'https://oauth2.googleapis.com/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -366,6 +391,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/revoke'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'
 	},
 	Kakao: {
@@ -379,6 +405,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://kapi.kakao.com/v2/user/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://kauth.kakao.com/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -396,6 +423,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: (config) => `${config.realmURL}/protocol/openid-connect/revoke`
 		},
+		scopeRequired: false,
 		tokenUrl: '${realmURL}/protocol/openid-connect/token'
 	},
 	Kick: {
@@ -411,6 +439,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: 'https://id.kick.com/oauth/revoke'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://id.kick.com/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -424,6 +453,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://lichess.org/api/account'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://lichess.org/api/token'
 	},
 	Line: {
@@ -441,6 +471,7 @@ export const providers = defineProviders({
 			url: 'https://api.line.me/v2/profile'
 		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+		scopeRequired: false,
 		tokenUrl: 'https://api.line.me/oauth2/v2.1/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -462,6 +493,7 @@ export const providers = defineProviders({
 			method: 'POST',
 			url: 'https://api.linear.app/graphql'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.linear.app/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -471,6 +503,7 @@ export const providers = defineProviders({
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
+		scopeRequired: false,
 		tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -488,6 +521,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: (config) => `${config.baseURL}/api/v1/oauth/revoke`
 		},
+		scopeRequired: false,
 		tokenUrl: '${baseURL}/api/v1/oauth/token'
 	},
 	MercadoLibre: {
@@ -500,6 +534,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.mercadolibre.com/users/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.mercadolibre.com/oauth/token'
 	},
 	MercadoPago: {
@@ -512,6 +547,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.mercadopago.com/v1/users/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.mercadopago.com/oauth/token'
 	},
 	MicrosoftEntraId: {
@@ -520,6 +556,7 @@ export const providers = defineProviders({
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
+		scopeRequired: false,
 		tokenUrl:
 			'https://${tenantId}.b2clogin.com/${tenantId}/oauth2/v2.0/token'
 	},
@@ -533,6 +570,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.myanimelist.net/v2/users/@me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://myanimelist.net/v1/oauth2/token'
 	},
 	Naver: {
@@ -545,6 +583,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://openapi.naver.com/v1/nid/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://nid.naver.com/oauth2.0/token'
 	},
 	Notion: {
@@ -557,6 +596,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.notion.com/v1/users/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.notion.com/v1/oauth/token'
 	},
 	Okta: {
@@ -568,6 +608,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: (config) => `https://${config.domain}/oauth2/default/v1/revoke`
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://${domain}/oauth2/default/v1/token'
 	},
 	Osu: {
@@ -580,6 +621,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://osu.ppy.sh/api/v2/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://osu.ppy.sh/oauth/token'
 	},
 	Patreon: {
@@ -592,6 +634,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://www.patreon.com/api/oauth2/v2/identity'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://www.patreon.com/api/oauth2/token'
 	},
 	Polar: {
@@ -604,6 +647,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://polarremote.com/oauth2/token'
 	},
 	Reddit: {
@@ -616,6 +660,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://oauth.reddit.com/api/v1/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://www.reddit.com/api/v1/access_token'
 	},
 	Roblox: {
@@ -628,6 +673,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://apis.roblox.com/oauth/v1/userinfo'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://oauth.roblox.com/v1/token'
 	},
 	Salesforce: {
@@ -636,6 +682,7 @@ export const providers = defineProviders({
 		isOIDC: false,
 		isPKCE: false,
 		isRefreshable: true,
+		scopeRequired: false,
 		tokenUrl: 'https://login.salesforce.com/services/oauth2/token'
 	},
 	Shikimori: {
@@ -648,6 +695,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://shikimori.one/api/users/whoami'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://shikimori.org/oauth/token'
 	},
 	Slack: {
@@ -660,6 +708,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://slack.com/api/users.identity'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://slack.com/api/openid.connect.token'
 	},
 	Spotify: {
@@ -672,6 +721,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.spotify.com/v1/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://accounts.spotify.com/api/token'
 	},
 	StartGG: {
@@ -692,6 +742,7 @@ export const providers = defineProviders({
 			method: 'POST',
 			url: 'https://api.start.gg/gql/alpha'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.start.gg/oauth/access_token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -706,6 +757,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://www.strava.com/api/v3/athlete'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://www.strava.com/api/v3/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -719,6 +771,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://<YOUR_DOMAIN>/webman/sso/SSOUserInfo.cgi'
 		},
+		scopeRequired: false,
 		tokenUrl: '${baseURL}/webman/sso/SSOAccessToken.cgi'
 	},
 	TikTok: {
@@ -739,6 +792,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: 'https://open.tiktokapis.com/v2/oauth/revoke/'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://open.tiktokapis.com/v2/oauth/token/',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -753,6 +807,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://tiltify.com/api/v3/me'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://v5api.tiltify.com/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -766,6 +821,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.tumblr.com/v2/user/info'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://api.tumblr.com/v2/oauth2/token'
 	},
 	Twitch: {
@@ -779,6 +835,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.twitch.tv/helix/users'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://id.twitch.tv/oauth2/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -797,6 +854,7 @@ export const providers = defineProviders({
 			url: 'https://api.twitter.com/2/users/me'
 		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+		scopeRequired: false,
 		tokenUrl: 'https://api.twitter.com/2/oauth2/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -811,6 +869,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.vk.com/method/users.get'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://oauth.vk.com/access_token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -823,6 +882,7 @@ export const providers = defineProviders({
 		isOIDC: false,
 		isPKCE: true,
 		isRefreshable: true,
+		scopeRequired: false,
 		tokenUrl: 'https://api.workos.com/sso/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -831,6 +891,7 @@ export const providers = defineProviders({
 		isOIDC: false,
 		isPKCE: false,
 		isRefreshable: true,
+		scopeRequired: false,
 		tokenUrl: 'https://api.login.yahoo.com/oauth2/get_token'
 	},
 	Yandex: {
@@ -839,6 +900,7 @@ export const providers = defineProviders({
 		isOIDC: false,
 		isPKCE: false,
 		isRefreshable: true,
+		scopeRequired: false,
 		tokenUrl: 'https://oauth.yandex.com/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -858,6 +920,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: 'https://zoom.us/oauth/revoke'
 		},
+		scopeRequired: false,
 		tokenUrl: 'https://zoom.us/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	}

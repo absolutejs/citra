@@ -22,6 +22,7 @@ import { facebookPlugin } from './providers/facebook';
 import { figmaPlugin } from './providers/figma';
 import { giteaPlugin } from './providers/gitea';
 import { githubPlugin } from './providers/github';
+import { gitlabPlugin } from './providers/gitlab';
 import { googlePlugin } from './providers/google';
 
 export const providersPlugin = new Elysia()
@@ -48,4 +49,5 @@ export const providersPlugin = new Elysia()
 	.use(figmaPlugin)
 	.use(giteaPlugin)
 	.use(githubPlugin)
+	.use(gitlabPlugin)
 	.use(googlePlugin);

@@ -56,11 +56,11 @@ export type RevocableProvider = {
 		: never;
 }[ProviderOption];
 
-export type ScopeRequiredProvider =
-	| OIDCProvider
-	| 'Atlassian'
-	| 'Discord'
-	| 'Figma';
+export type ScopeRequiredProvider = {
+	[K in ProviderOption]: (typeof providers)[K]['scopeRequired'] extends true
+		? K
+		: never;
+}[ProviderOption];
 
 export type BaseOAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
@@ -99,6 +99,7 @@ export type ProviderConfig = {
 	isPKCE: boolean;
 	isOIDC: boolean;
 	isRefreshable: boolean;
+	scopeRequired: boolean;
 
 	// TODO : remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

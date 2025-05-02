@@ -30,7 +30,6 @@ export const autodeskPlugin = new Elysia()
 			const authorizationUrl =
 				await autodeskOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-					scope: ['data:read', 'data:write'],
 					searchParams: [['access_type', 'offline']],
 					state: currentState
 				});

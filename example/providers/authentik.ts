@@ -32,7 +32,6 @@ export const authentikPlugin = new Elysia()
 			const authorizationUrl =
 				await authentikOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-					scope: ['email', 'profile', 'openid'],
 					state: currentState
 				});
 

@@ -20,40 +20,40 @@ const discordOAuth2Client = createOAuth2Client('Discord', {
 
 export const discordPlugin = new Elysia()
 	.get(
-			'/oauth2/discord/authorization',
-			async ({ redirect, error, cookie: { state, code_verifier } }) => {
-				if (state === undefined || code_verifier === undefined)
-					return error('Bad Request', 'Cookies are missing');
-	
-				const currentState = generateState();
-				const codeVerifier = generateCodeVerifier();
-				const authorizationUrl =
-					await discordOAuth2Client.createAuthorizationUrl({
-						codeVerifier,
-						scope: ['openid'],
-						state: currentState
-					});
-	
-				state.set({
-					httpOnly: true,
-					maxAge: COOKIE_DURATION,
-					path: '/',
-					sameSite: 'lax',
-					secure: true,
-					value: currentState
+		'/oauth2/discord/authorization',
+		async ({ redirect, error, cookie: { state, code_verifier } }) => {
+			if (state === undefined || code_verifier === undefined)
+				return error('Bad Request', 'Cookies are missing');
+
+			const currentState = generateState();
+			const codeVerifier = generateCodeVerifier();
+			const authorizationUrl =
+				await discordOAuth2Client.createAuthorizationUrl({
+					codeVerifier,
+					scope: ['openid'],
+					state: currentState
 				});
-				code_verifier.set({
-					httpOnly: true,
-					maxAge: COOKIE_DURATION,
-					path: '/',
-					sameSite: 'lax',
-					secure: true,
-					value: codeVerifier ?? ''
-				});
-	
-				return redirect(authorizationUrl.toString());
-			}
-		)
+
+			state.set({
+				httpOnly: true,
+				maxAge: COOKIE_DURATION,
+				path: '/',
+				sameSite: 'lax',
+				secure: true,
+				value: currentState
+			});
+			code_verifier.set({
+				httpOnly: true,
+				maxAge: COOKIE_DURATION,
+				path: '/',
+				sameSite: 'lax',
+				secure: true,
+				value: codeVerifier ?? ''
+			});
+
+			return redirect(authorizationUrl.toString());
+		}
+	)
 	.get(
 		'/oauth2/discord/callback',
 		async ({

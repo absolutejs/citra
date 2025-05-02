@@ -28,7 +28,6 @@ export const battlenetPlugin = new Elysia()
 			const currentState = generateState();
 			const authorizationUrl =
 				await battlenetOAuth2Client.createAuthorizationUrl({
-					scope: ['openid'],
 					state: currentState
 				});
 

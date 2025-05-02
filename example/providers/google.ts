@@ -30,7 +30,7 @@ export const googlePlugin = new Elysia()
 			const authorizationUrl =
 				await googleOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-					scope: ['email', 'profile', 'openid'],
+					scope: ['profile', 'openid'],
 					searchParams: [
 						['access_type', 'offline'],
 						['prompt', 'consent']

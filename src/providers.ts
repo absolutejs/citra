@@ -301,14 +301,14 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: (config) => `${config.baseURL}/api/v1/user`
 		},
-		tokenUrl: (config) => `${config.baseURL}/login/oauth/access_token`,
+		tokenUrl: (config) => `${config.baseURL}/login/oauth/access_token`
 	},
 	GitHub: {
 		authorizationUrl: 'https://github.com/login/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 		isPKCE: false,
-		isRefreshable: true,
+		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',

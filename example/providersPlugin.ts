@@ -22,6 +22,7 @@ import { epicGamesPlugin } from './providers/epic-games';
 import { etsyPlugin } from './providers/etsy';
 import { figmaPlugin } from './providers/figma';
 import { giteaPlugin } from './providers/gitea';
+import { githubPlugin } from './providers/github';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -46,4 +47,5 @@ export const providersPlugin = new Elysia()
 	.use(facebookPlugin)
 	.use(figmaPlugin)
 	.use(giteaPlugin)
+	.use(githubPlugin)
 	.use(googlePlugin);

@@ -41,4 +41,4 @@ new Elysia()
 		);
 	});
 
-	// TODO : avoid using localhost as per RFC 6749 https://datatracker.ietf.org/doc/html/rfc8252#section-8.3
+// TODO : avoid using localhost as per RFC 6749 https://datatracker.ietf.org/doc/html/rfc8252#section-8.3

@@ -40,3 +40,4 @@ If any issues occur please open one so it can be fixed.
 - Etsy (Untested: pending approval)
 - Facebook
 - Gitea (In Development)
+- Github

@@ -60,7 +60,7 @@ export type ScopeRequiredProvider =
 	| OIDCProvider
 	| 'Atlassian'
 	| 'Discord'
-	| 'Figma'
+	| 'Figma';
 
 export type BaseOAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(

@@ -1,36 +1,33 @@
 import { env } from 'process';
-import { Elysia, t } from 'elysia';
+import { Elysia } from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.DONATION_ALERTS_CLIENT_ID ||
-	!env.DONATION_ALERTS_CLIENT_SECRET ||
-	!env.DONATION_ALERTS_REDIRECT_URI
+	!env.DRIBBBLE_CLIENT_ID ||
+	!env.DRIBBBLE_CLIENT_SECRET ||
+	!env.DRIBBBLE_REDIRECT_URI
 ) {
-	throw new Error(
-		'DonationAlerts OAuth2 credentials are not set in .env file'
-	);
+	throw new Error('Dribbble OAuth2 credentials are not set in .env file');
 }
 
-const donationAlertsOAuth2Client = createOAuth2Client('DonationAlerts', {
-	clientId: env.DONATION_ALERTS_CLIENT_ID,
-	clientSecret: env.DONATION_ALERTS_CLIENT_SECRET,
-	redirectUri: env.DONATION_ALERTS_REDIRECT_URI
+const dribbbleOAuth2Client = createOAuth2Client('Dribbble', {
+	clientId: env.DRIBBBLE_CLIENT_ID,
+	clientSecret: env.DRIBBBLE_CLIENT_SECRET,
+	redirectUri: env.DRIBBBLE_REDIRECT_URI
 });
 
-export const donationAlertsPlugin = new Elysia()
+export const dribbblePlugin = new Elysia()
 	.get(
-		'/oauth2/donationalerts/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
-			if (state === undefined)
+		'/oauth2/dribbble/authorization',
+		async ({ redirect, error, cookie: { state, code_verifier } }) => {
+			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
-				await donationAlertsOAuth2Client.createAuthorizationUrl({
-					scope: ['oauth-user-show'],
+				await dribbbleOAuth2Client.createAuthorizationUrl({
 					state: currentState
 				});
 
@@ -47,7 +44,7 @@ export const donationAlertsPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/donationalerts/callback',
+		'/oauth2/dribbble/callback',
 		async ({
 			error,
 			redirect,
@@ -68,10 +65,10 @@ export const donationAlertsPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await donationAlertsOAuth2Client.validateAuthorizationCode({
+					await dribbbleOAuth2Client.validateAuthorizationCode({
 						code
 					});
-				console.log('\nDonationAlerts authorized:', oauthResponse);
+				console.log('\nDribbble authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -89,43 +86,8 @@ export const donationAlertsPlugin = new Elysia()
 			return redirect('/');
 		}
 	)
-	.post(
-		'/oauth2/donationalerts/tokens',
-		async ({ error, body: { refresh_token } }) => {
-			try {
-				const oauthResponse =
-					await donationAlertsOAuth2Client.refreshAccessToken(
-						refresh_token
-					);
-				console.log('\nDonationAlerts token refreshed:', oauthResponse);
-
-				return new Response(JSON.stringify(oauthResponse), {
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				});
-			} catch (err) {
-				if (err instanceof Error) {
-					return error(
-						'Internal Server Error',
-						`Failed to refresh access token: ${err.message}`
-					);
-				}
-
-				return error(
-					'Internal Server Error',
-					`Unexpected error: ${err}`
-				);
-			}
-		},
-		{
-			body: t.Object({
-				refresh_token: t.String()
-			})
-		}
-	)
 	.get(
-		'/oauth2/donationalerts/profile',
+		'/oauth2/dribbble/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -137,10 +99,8 @@ export const donationAlertsPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await donationAlertsOAuth2Client.fetchUserProfile(
-						accessToken
-					);
-				console.log('\nDonationAlerts user profile:', userProfile);
+					await dribbbleOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nDribbble user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

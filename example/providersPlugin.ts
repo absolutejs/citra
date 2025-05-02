@@ -16,6 +16,8 @@ import { coinbasePlugin } from './providers/coinbase';
 import { discordPlugin } from './providers/discord';
 import { bungiePlugin } from './providers/bungie';
 import { donationAlertsPlugin } from './providers/donationalerts';
+import { dribbblePlugin } from './providers/dribble';
+import { dropboxPlugin } from './providers/dropbox';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -33,5 +35,7 @@ export const providersPlugin = new Elysia()
 	.use(coinbasePlugin)
 	.use(discordPlugin)
 	.use(donationAlertsPlugin)
+	.use(dribbblePlugin)
+	.use(dropboxPlugin)
 	.use(googlePlugin)
 	.use(facebookPlugin);

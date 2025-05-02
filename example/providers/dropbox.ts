@@ -5,32 +5,30 @@ import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.DONATION_ALERTS_CLIENT_ID ||
-	!env.DONATION_ALERTS_CLIENT_SECRET ||
-	!env.DONATION_ALERTS_REDIRECT_URI
+	!env.DROPBOX_APP_KEY ||
+	!env.DROPBOX_APP_SECRET ||
+	!env.DROPBOX_REDIRECT_URI
 ) {
-	throw new Error(
-		'DonationAlerts OAuth2 credentials are not set in .env file'
-	);
+	throw new Error('Dropbox OAuth2 credentials are not set in .env file');
 }
 
-const donationAlertsOAuth2Client = createOAuth2Client('DonationAlerts', {
-	clientId: env.DONATION_ALERTS_CLIENT_ID,
-	clientSecret: env.DONATION_ALERTS_CLIENT_SECRET,
-	redirectUri: env.DONATION_ALERTS_REDIRECT_URI
+const dropboxOAuth2Client = createOAuth2Client('Dropbox', {
+	clientId: env.DROPBOX_APP_KEY,
+	clientSecret: env.DROPBOX_APP_SECRET,
+	redirectUri: env.DROPBOX_REDIRECT_URI
 });
 
-export const donationAlertsPlugin = new Elysia()
+export const dropboxPlugin = new Elysia()
 	.get(
-		'/oauth2/donationalerts/authorization',
+		'/oauth2/dropbox/authorization',
 		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
-				await donationAlertsOAuth2Client.createAuthorizationUrl({
-					scope: ['oauth-user-show'],
+				await dropboxOAuth2Client.createAuthorizationUrl({
+					searchParams: [['token_access_type', 'offline']],
 					state: currentState
 				});
 
@@ -47,7 +45,7 @@ export const donationAlertsPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/donationalerts/callback',
+		'/oauth2/dropbox/callback',
 		async ({
 			error,
 			redirect,
@@ -68,10 +66,10 @@ export const donationAlertsPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await donationAlertsOAuth2Client.validateAuthorizationCode({
+					await dropboxOAuth2Client.validateAuthorizationCode({
 						code
 					});
-				console.log('\nDonationAlerts authorized:', oauthResponse);
+				console.log('\nDropbox authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -90,14 +88,12 @@ export const donationAlertsPlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/donationalerts/tokens',
+		'/oauth2/dropbox/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await donationAlertsOAuth2Client.refreshAccessToken(
-						refresh_token
-					);
-				console.log('\nDonationAlerts token refreshed:', oauthResponse);
+					await dropboxOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nDropbox token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -124,8 +120,44 @@ export const donationAlertsPlugin = new Elysia()
 			})
 		}
 	)
+	.delete(
+		'/oauth2/dropbox/revocation',
+		async ({ error, query: { token_to_revoke } }) => {
+			if (!token_to_revoke)
+				return error(
+					'Bad Request',
+					'Token to revoke is required in query parameters'
+				);
+
+			try {
+				await dropboxOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nDropbox token revoked:', token_to_revoke);
+
+				return new Response(
+					`Token ${token_to_revoke} revoked successfully`,
+					{
+						headers: {
+							'Content-Type': 'text/plain'
+						}
+					}
+				);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to revoke token: ${err.message}`
+					);
+				}
+
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
+		}
+	)
 	.get(
-		'/oauth2/donationalerts/profile',
+		'/oauth2/dropbox/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -137,10 +169,8 @@ export const donationAlertsPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await donationAlertsOAuth2Client.fetchUserProfile(
-						accessToken
-					);
-				console.log('\nDonationAlerts user profile:', userProfile);
+					await dropboxOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nDropbox user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

@@ -12,12 +12,17 @@ To be a standardized javascript or typescript starting point for OAuth2 protocol
 
 There are 63 providers available through Citra
 
-Some providers were either restricted or required payment to set up a client so they are not tested. If any issues occur please open one so it can be fixed.
+Some providers have the tag (HTTPS Required) since the provider will only authorize over secure connections ... include steps for mkcert ...
 
-- 42 (untested)
+Some providers were either restricted or required payment to set up a client so they are not tested. 
+
+If any issues occur please open one so it can be fixed.
+
+
+- 42 (untested: restricted)
 - Amazon Cognito (untested)
 - AniList
-- Apple  (untested)
+- Apple  (untested: paid)
 - Atlassian
 - Auth0
 - Authentik (untested)
@@ -25,7 +30,8 @@ Some providers were either restricted or required payment to set up a client so 
 - Battlenet
 - Bitbucket
 - Box 
-- Bungie (test with https)
-- Coinbase (test with https)
+- Bungie (untested: https)
+- Coinbase (untested: https)
 - Discord
 - Donation Alerts
+- Dribble (untested: paid)

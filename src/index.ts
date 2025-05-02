@@ -83,6 +83,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 		async fetchUserProfile(accessToken: string) {
 			const { profileRequest } = meta;
 			if (!profileRequest) {
+				//TODO: Remove this check in the future
 				throw new Error(
 					'User profile request is not defined for this provider'
 				);
@@ -134,23 +135,39 @@ export const createOAuth2Client = <P extends ProviderOption>(
 		},
 
 		async revokeToken(token: string) {
-			if (!meta.tokenRevocationUrl) {
+			const { revocationRequest } = meta;
+
+			if (!revocationRequest) {
 				throw new Error(
-					'Token revocation URL is not defined for this provider'
+					'Token revocation request is not defined for this provider'
 				);
 			}
-			const tokenRevocationUrl = resolveUrl(meta.tokenRevocationUrl);
+			let { url, authIn, body } = revocationRequest;
+			body = body ?? new URLSearchParams();
+			const endpoint = resolveUrl(url);
 
-			const body = new URLSearchParams();
-			body.set('token', token);
-			Object.entries(meta.tokenRevocationBody ?? {}).forEach(
-				([key, value]) => body.set(key, value)
-			);
-			body.set('client_id', config.clientId);
-			if ('clientSecret' in config && config.clientSecret) {
-				body.set('client_secret', config.clientSecret);
+			let request: Request;
+			if (authIn === 'header') {
+				// Dropbox
+				request = new Request(endpoint.toString(), {
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'User-Agent': 'citra'
+					}
+				});
+			} else {
+				// RFC 7009
+				body.set('token', token);
+				Object.entries(meta.revocationRequest?.body ?? {}).forEach(
+					([key, value]) => body.set(key, value)
+				);
+				body.set('client_id', config.clientId);
+				if ('clientSecret' in config && config.clientSecret) {
+					body.set('client_secret', config.clientSecret);
+				}
+				request = createOAuth2Request(endpoint, body);
 			}
-			const request = createOAuth2Request(tokenRevocationUrl, body);
 
 			const response = await fetch(request);
 

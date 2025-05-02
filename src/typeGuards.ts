@@ -49,4 +49,4 @@ export const isRevocableProvider = (
 	provider: string
 ): provider is RevocableProvider =>
 	isValidProviderOption(provider) &&
-	providers[provider].tokenRevocationUrl !== undefined;
+	providers[provider].revocationRequest !== undefined;

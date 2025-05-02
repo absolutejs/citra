@@ -13,6 +13,14 @@ export type ProfileRequestConfig = {
 	searchParams?: [string, string][];
 };
 
+export type RevocationRequestConfig = {
+	// TODO: remove any type in favor of the actual config for this specific provider
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	url: string | ((config: any) => string);
+	authIn: 'body' | 'header';
+	body?: URLSearchParams;
+};
+
 export type DefineProviders = <
 	ProviderMap extends Record<string, ProviderConfig>
 >(
@@ -43,14 +51,16 @@ export type RefreshableProvider = {
 }[ProviderOption];
 
 export type RevocableProvider = {
-	[K in ProviderOption]: (typeof providers)[K] extends {
-		tokenRevocationUrl: string | ((config: ConfigFor<K>) => string);
-	}
+	[K in ProviderOption]: (typeof providers)[K]['revocationRequest'] extends RevocationRequestConfig
 		? K
 		: never;
 }[ProviderOption];
 
-export type ScopeRequiredProvider = OIDCProvider | 'Atlassian' | 'Discord' | 'DonationAlerts';
+export type ScopeRequiredProvider =
+	| OIDCProvider
+	| 'Atlassian'
+	| 'Discord'
+	| 'DonationAlerts';
 
 export type BaseOAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
@@ -95,8 +105,9 @@ export type ProviderConfig = {
 	authorizationUrl: string | ((config: any) => string);
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	tokenUrl: string | ((config: any) => string);
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	tokenRevocationUrl?: string | ((config: any) => string);
+
+	revocationRequest?: RevocationRequestConfig;
+
 	profileRequest?: ProfileRequestConfig;
 
 	/** Static query params added to the auth URL */
@@ -107,9 +118,6 @@ export type ProviderConfig = {
 
 	/** Static fields added to the refresh‑token request body */
 	refreshAccessTokenBody?: Record<string, string>;
-
-	/** Static fields added to the token‑revocation request body */
-	tokenRevocationBody?: Record<string, string>;
 };
 
 export type OAuth2TokenResponse = {

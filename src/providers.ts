@@ -17,7 +17,10 @@ export const providers = defineProviders({
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
-		tokenRevocationUrl: 'https://${domain}/oauth2/revoke',
+		revocationRequest: {
+			url: (config) => `https://${config.domain}/oauth2/revoke`,
+			authIn: 'body'
+		},
 		tokenUrl: 'https://${domain}/oauth2/token'
 	},
 	AniList: {
@@ -78,9 +81,14 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/userinfo`
 		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
-		tokenRevocationBody: { token_type_hint: 'refresh_token' },
 		authorizationUrl: (config) => `https://${config.domain}/authorize`,
-		tokenRevocationUrl: (config) => `https://${config.domain}/oauth/revoke`,
+		revocationRequest: {
+			url: (config) => `https://${config.domain}/oauth/revoke`,
+			authIn: 'body',
+			body: new URLSearchParams({
+				token_type_hint: 'refresh_token'
+			})
+		},
 		tokenUrl: (config) => `https://${config.domain}/oauth/token`
 	},
 	Authentik: {
@@ -144,7 +152,10 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.box.com/2.0/users/me'
 		},
-		tokenRevocationUrl: 'https://api.box.com/oauth2/revoke',
+		revocationRequest: {
+			url: 'https://api.box.com/oauth2/revoke',
+			authIn: 'body'
+		},
 		tokenUrl: 'https://api.box.com/oauth2/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -197,7 +208,7 @@ export const providers = defineProviders({
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
-			 url: 'https://www.donationalerts.com/api/v1/user/oauth'
+			url: 'https://www.donationalerts.com/api/v1/user/oauth'
 		},
 		tokenUrl: 'https://www.donationalerts.com/oauth/token'
 	},
@@ -220,10 +231,13 @@ export const providers = defineProviders({
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
-			method: 'GET',
+			method: 'POST',
 			url: 'https://api.dropboxapi.com/2/users/get_current_account'
 		},
-		tokenRevocationUrl: ' https://api.dropboxapi.com/2/auth/token/revoke',
+		revocationRequest: {
+			url: 'https://api.dropboxapi.com/2/auth/token/revoke',
+			authIn: 'header'
+		},
 		tokenUrl: 'https://api.dropboxapi.com/oauth2/token'
 	},
 	EpicGames: {
@@ -313,7 +327,10 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://gitlab.com/api/v4/user'
 		},
-		tokenRevocationUrl: '${baseURL}/oauth/revoke',
+		revocationRequest: {
+			url: (config) => `${config.baseURL}/oauth/revoke`,
+			authIn: 'body'
+		},
 		tokenUrl: '${baseURL}/oauth/token'
 	},
 	Google: {
@@ -328,7 +345,10 @@ export const providers = defineProviders({
 			searchParams: [['personFields', 'names,emailAddresses,photos']],
 			url: 'https://people.googleapis.com/v1/people/me'
 		},
-		tokenRevocationUrl: 'https://oauth2.googleapis.com/revoke',
+		revocationRequest: {
+			url: 'https://oauth2.googleapis.com/revoke',
+			authIn: 'body'
+		},
 		tokenUrl: 'https://oauth2.googleapis.com/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -342,8 +362,10 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://oauth.platform.intuit.com/oauth2/v1/userinfo'
 		},
-		tokenRevocationUrl:
-			'https://developer.API.intuit.com/v2/oauth2/tokens/revoke',
+		revocationRequest: {
+			url: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/revoke',
+			authIn: 'body'
+		},
 		tokenUrl: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'
 	},
 	Kakao: {
@@ -370,7 +392,11 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.kick.com/v1/user'
 		},
-		tokenRevocationUrl: '${realmURL}/protocol/openid-connect/revoke',
+		revocationRequest: {
+			url: (config) =>
+				`${config.realmURL}/protocol/openid-connect/revoke`,
+			authIn: 'body'
+		},
 		tokenUrl: '${realmURL}/protocol/openid-connect/token'
 	},
 	Kick: {
@@ -382,7 +408,10 @@ export const providers = defineProviders({
 		isOIDC: false,
 		isPKCE: true,
 		isRefreshable: true,
-		tokenRevocationUrl: 'https://id.kick.com/oauth/revoke',
+		revocationRequest: {
+			url: 'https://id.kick.com/oauth/revoke',
+			authIn: 'body'
+		},
 		tokenUrl: 'https://id.kick.com/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -456,7 +485,10 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://<YOUR_INSTANCE>/api/v1/accounts/verify_credentials'
 		},
-		tokenRevocationUrl: '${baseURL}/api/v1/oauth/revoke',
+		revocationRequest: {
+			url: (config) => `${config.baseURL}/api/v1/oauth/revoke`,
+			authIn: 'body'
+		},
 		tokenUrl: '${baseURL}/api/v1/oauth/token'
 	},
 	MercadoLibre: {
@@ -533,7 +565,11 @@ export const providers = defineProviders({
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
-		tokenRevocationUrl: 'https://${domain}/oauth2/default/v1/revoke',
+		revocationRequest: {
+			url: (config) =>
+				`https://${config.domain}/oauth2/default/v1/revoke`,
+			authIn: 'body'
+		},
 		tokenUrl: 'https://${domain}/oauth2/default/v1/token'
 	},
 	Osu: {
@@ -701,7 +737,10 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://open.douyin.com/oauth/userinfo'
 		},
-		tokenRevocationUrl: 'https://open.tiktokapis.com/v2/oauth/revoke/',
+		revocationRequest: {
+			url: 'https://open.tiktokapis.com/v2/oauth/revoke/',
+			authIn: 'body'
+		},
 		tokenUrl: 'https://open.tiktokapis.com/v2/oauth/token/',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -817,7 +856,10 @@ export const providers = defineProviders({
 			url: 'https://api.zoom.us/v2/users/me'
 		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
-		tokenRevocationUrl: 'https://zoom.us/oauth/revoke',
+		revocationRequest: {
+			url: 'https://zoom.us/oauth/revoke',
+			authIn: 'body'
+		},
 		tokenUrl: 'https://zoom.us/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	}

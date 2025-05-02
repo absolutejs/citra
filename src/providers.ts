@@ -191,7 +191,7 @@ export const providers = defineProviders({
 	Discord: {
 		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
 		isOIDC: false,
-		isPKCE: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -267,8 +267,8 @@ export const providers = defineProviders({
 	Facebook: {
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
-		isOIDC: false,
-		isPKCE: false,
+		isOIDC: true,
+		isPKCE: true,
 		isRefreshable: false,
 		profileRequest: {
 			authIn: 'query',
@@ -319,7 +319,7 @@ export const providers = defineProviders({
 	},
 	GitLab: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
-		isOIDC: false,
+		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
@@ -468,8 +468,8 @@ export const providers = defineProviders({
 	LinkedIn: {
 		authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
-		isOIDC: false,
-		isPKCE: false,
+		isOIDC: true,
+		isPKCE: true,
 		isRefreshable: true,
 		tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }

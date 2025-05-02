@@ -1,7 +1,7 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState } from '../../src/arctic-utils';
+import { generateCodeVerifier, generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -20,39 +20,49 @@ const discordOAuth2Client = createOAuth2Client('Discord', {
 
 export const discordPlugin = new Elysia()
 	.get(
-		'/oauth2/discord/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
-			if (state === undefined)
-				return error('Bad Request', 'Cookies are missing');
-
-			const currentState = generateState();
-			const authorizationUrl =
-				await discordOAuth2Client.createAuthorizationUrl({
-					scope: ['identify', 'email'],
-					state: currentState
+			'/oauth2/discord/authorization',
+			async ({ redirect, error, cookie: { state, code_verifier } }) => {
+				if (state === undefined || code_verifier === undefined)
+					return error('Bad Request', 'Cookies are missing');
+	
+				const currentState = generateState();
+				const codeVerifier = generateCodeVerifier();
+				const authorizationUrl =
+					await discordOAuth2Client.createAuthorizationUrl({
+						codeVerifier,
+						scope: ['openid'],
+						state: currentState
+					});
+	
+				state.set({
+					httpOnly: true,
+					maxAge: COOKIE_DURATION,
+					path: '/',
+					sameSite: 'lax',
+					secure: true,
+					value: currentState
 				});
-
-			state.set({
-				httpOnly: true,
-				maxAge: COOKIE_DURATION,
-				path: '/',
-				sameSite: 'lax',
-				secure: true,
-				value: currentState
-			});
-
-			return redirect(authorizationUrl.toString());
-		}
-	)
+				code_verifier.set({
+					httpOnly: true,
+					maxAge: COOKIE_DURATION,
+					path: '/',
+					sameSite: 'lax',
+					secure: true,
+					value: codeVerifier ?? ''
+				});
+	
+				return redirect(authorizationUrl.toString());
+			}
+		)
 	.get(
 		'/oauth2/discord/callback',
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state },
+			cookie: { state: stored_state, code_verifier },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined)
+			if (stored_state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -64,10 +74,15 @@ export const discordPlugin = new Elysia()
 
 			stored_state.remove();
 
+			const codeVerifier = code_verifier.value;
+			if (codeVerifier === undefined)
+				return error('Bad Request', 'Code verifier is missing');
+
 			try {
 				const oauthResponse =
 					await discordOAuth2Client.validateAuthorizationCode({
-						code
+						code,
+						codeVerifier
 					});
 				console.log('\nDiscord authorized:', oauthResponse);
 			} catch (err) {

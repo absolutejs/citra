@@ -20,6 +20,7 @@ import { dribbblePlugin } from './providers/dribble';
 import { dropboxPlugin } from './providers/dropbox';
 import { epicGamesPlugin } from './providers/epic-games';
 import { etsyPlugin } from './providers/etsy';
+import { figmaPlugin } from './providers/figma';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -42,4 +43,5 @@ export const providersPlugin = new Elysia()
 	.use(epicGamesPlugin)
 	.use(etsyPlugin)
 	.use(facebookPlugin)
+	.use(figmaPlugin)
 	.use(googlePlugin);

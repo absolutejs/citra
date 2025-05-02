@@ -282,7 +282,7 @@ export const providers = defineProviders({
 	Figma: {
 		authorizationUrl: 'https://www.figma.com/oauth',
 		isOIDC: false,
-		isPKCE: false,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',

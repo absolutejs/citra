@@ -20,7 +20,7 @@ If any issues occur please open one so it can be fixed.
 
 
 - 42 (untested: restricted)
-- Amazon Cognito (untested)
+- Amazon Cognito (test later)
 - AniList
 - Apple  (untested: paid)
 - Atlassian
@@ -35,3 +35,5 @@ If any issues occur please open one so it can be fixed.
 - Discord
 - Donation Alerts
 - Dribble (untested: paid)
+- Dropbox
+- Epic Games (untested: https)

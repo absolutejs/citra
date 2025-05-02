@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 import { fortyTwoPlugin } from './providers/42';
-import { amazonCognitoPlugin } from './providers/amazonCognito';
+import { amazonCognitoPlugin } from './providers/amazon-cognito';
 import { anilistPlugin } from './providers/anilist';
 import { applePlugin } from './providers/apple';
 import { atlassianPlugin } from './providers/atlassian';
@@ -15,9 +15,10 @@ import { boxPlugin } from './providers/box';
 import { coinbasePlugin } from './providers/coinbase';
 import { discordPlugin } from './providers/discord';
 import { bungiePlugin } from './providers/bungie';
-import { donationAlertsPlugin } from './providers/donationalerts';
+import { donationAlertsPlugin } from './providers/donation-alerts';
 import { dribbblePlugin } from './providers/dribble';
 import { dropboxPlugin } from './providers/dropbox';
+import { epicGamesPlugin } from './providers/epic-games';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -37,5 +38,6 @@ export const providersPlugin = new Elysia()
 	.use(donationAlertsPlugin)
 	.use(dribbblePlugin)
 	.use(dropboxPlugin)
+	.use(epicGamesPlugin)
 	.use(googlePlugin)
 	.use(facebookPlugin);

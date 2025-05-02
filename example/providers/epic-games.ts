@@ -1,36 +1,33 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState } from '../../src/arctic-utils';
+import { generateState} from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.DONATION_ALERTS_CLIENT_ID ||
-	!env.DONATION_ALERTS_CLIENT_SECRET ||
-	!env.DONATION_ALERTS_REDIRECT_URI
+	!env.EPIC_GAMES_CLIENT_ID ||
+	!env.EPIC_GAMES_CLIENT_SECRET ||
+	!env.EPIC_GAMES_REDIRECT_URI
 ) {
-	throw new Error(
-		'DonationAlerts OAuth2 credentials are not set in .env file'
-	);
+	throw new Error('Epic Games OAuth2 credentials are not set in .env file');
 }
 
-const donationAlertsOAuth2Client = createOAuth2Client('DonationAlerts', {
-	clientId: env.DONATION_ALERTS_CLIENT_ID,
-	clientSecret: env.DONATION_ALERTS_CLIENT_SECRET,
-	redirectUri: env.DONATION_ALERTS_REDIRECT_URI
+const epicGamesOAuth2Client = createOAuth2Client('EpicGames', {
+	clientId: env.EPIC_GAMES_CLIENT_ID,
+	clientSecret: env.EPIC_GAMES_CLIENT_SECRET,
+	redirectUri: env.EPIC_GAMES_REDIRECT_URI
 });
 
-export const donationAlertsPlugin = new Elysia()
+export const epicGamesPlugin = new Elysia()
 	.get(
-		'/oauth2/donationalerts/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
-			if (state === undefined)
+		'/oauth2/epicgames/authorization',
+		async ({ redirect, error, cookie: { state,} }) => {
+			if (state === undefined )
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
-				await donationAlertsOAuth2Client.createAuthorizationUrl({
-					scope: ['oauth-user-show'],
+				await epicGamesOAuth2Client.createAuthorizationUrl({
 					state: currentState
 				});
 
@@ -47,11 +44,11 @@ export const donationAlertsPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/donationalerts/callback',
+		'/oauth2/epicgames/callback',
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state },
+			cookie: { state: stored_state, },
 			query: { code, state: callback_state }
 		}) => {
 			if (stored_state === undefined)
@@ -68,10 +65,10 @@ export const donationAlertsPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await donationAlertsOAuth2Client.validateAuthorizationCode({
-						code
+					await epicGamesOAuth2Client.validateAuthorizationCode({
+						code,
 					});
-				console.log('\nDonationAlerts authorized:', oauthResponse);
+				console.log('\nEpic Games authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -90,14 +87,12 @@ export const donationAlertsPlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/donationalerts/tokens',
+		'/oauth2/epicgames/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await donationAlertsOAuth2Client.refreshAccessToken(
-						refresh_token
-					);
-				console.log('\nDonationAlerts token refreshed:', oauthResponse);
+					await epicGamesOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nEpic Games token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -125,7 +120,7 @@ export const donationAlertsPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/donationalerts/profile',
+		'/oauth2/epicgames/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -137,10 +132,8 @@ export const donationAlertsPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await donationAlertsOAuth2Client.fetchUserProfile(
-						accessToken
-					);
-				console.log('\nDonationAlerts user profile:', userProfile);
+					await epicGamesOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nEpic Games user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

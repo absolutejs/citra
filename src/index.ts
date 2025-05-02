@@ -55,23 +55,21 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 
 			if (meta.isPKCE) {
-				const verifier =
-					codeVerifier ??
-					(() => {
-						throw new Error(
-							'`codeVerifier` is required when `meta.isPKCE` is true'
-						);
-					})();
+				if(codeVerifier === undefined) {
+					throw new Error(
+						'`codeVerifier` is required when `meta.isPKCE` is true'
+					);
+				}
 
 				url.searchParams.set('code_challenge_method', 'S256');
 				url.searchParams.set(
 					'code_challenge',
-					await createS256CodeChallenge(verifier)
+					await createS256CodeChallenge(codeVerifier)
 				);
 			}
 
 			Object.entries(
-				meta.createAuthorizationURLSearchParams || {}
+				meta.createAuthorizationURLSearchParams ?? {}
 			).forEach(([key, value]) => url.searchParams.set(key, value));
 			searchParams.forEach(([key, value]) =>
 				url.searchParams.set(key, value)
@@ -91,10 +89,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			const { url, method, authIn, searchParams, body } = profileRequest;
 			const endpoint = new URL(resolveUrl(url));
-			if (searchParams) {
-				for (const [key, value] of searchParams) {
-					endpoint.searchParams.append(key, value);
-				}
+			for (const [key, value] of searchParams ?? []) {
+				endpoint.searchParams.append(key, value);
 			}
 
 			const headers: Record<string, string> = {};
@@ -121,12 +117,9 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			return response.json();
 		},
 		refreshAccessToken(refreshToken: string) {
-			const body = new URLSearchParams();
+			const body = new URLSearchParams(meta.refreshAccessTokenBody);
 			body.set('grant_type', 'refresh_token');
 			body.set('refresh_token', refreshToken);
-			Object.entries(meta.refreshAccessTokenBody ?? {}).forEach(
-				([key, value]) => body.set(key, value)
-			);
 			if ('clientSecret' in config && config.clientSecret) {
 				body.set('client_id', config.clientId);
 				body.set('client_secret', config.clientSecret);
@@ -143,8 +136,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					'Token revocation request is not defined for this provider'
 				);
 			}
-			let { url, authIn, body } = revocationRequest;
-			body = body ?? new URLSearchParams();
+			const { url, authIn, body } = revocationRequest;
+			const revokeBody = body ?? new URLSearchParams();
 			const endpoint = resolveUrl(url);
 
 			let request: Request;
@@ -159,15 +152,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				});
 			} else {
 				// RFC 7009
-				body.set('token', token);
-				Object.entries(meta.revocationRequest?.body ?? {}).forEach(
-					([key, value]) => body.set(key, value)
-				);
-				body.set('client_id', config.clientId);
-				if ('clientSecret' in config && config.clientSecret) {
-					body.set('client_secret', config.clientSecret);
-				}
-				request = createOAuth2Request(endpoint, body);
+				revokeBody.set('token', token);
+				revokeBody.set('client_id', config.clientId);
+				'clientSecret' in config &&
+					typeof config.clientSecret === 'string' &&
+					revokeBody.set('client_secret', config.clientSecret);
+
+				request = createOAuth2Request(endpoint, revokeBody);
 			}
 
 			const response = await fetch(request);
@@ -185,15 +176,12 @@ export const createOAuth2Client = <P extends ProviderOption>(
 		}) {
 			const { code, codeVerifier } = opts;
 
-			const body = new URLSearchParams();
+			const body = new URLSearchParams(meta.validateAuthorizationCodeBody);
 			body.set('grant_type', 'authorization_code');
 			body.set('code', code);
 			if (config.redirectUri) {
 				body.set('redirect_uri', config.redirectUri);
 			}
-			Object.entries(meta.validateAuthorizationCodeBody || {}).forEach(
-				([key, value]) => body.set(key, value)
-			);
 			if ('clientSecret' in config && config.clientSecret) {
 				body.set('client_id', config.clientId);
 				body.set('client_secret', config.clientSecret);
@@ -201,14 +189,12 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				body.set('client_id', config.clientId);
 			}
 			if (meta.isPKCE) {
-				const verifier =
-					codeVerifier ??
-					(() => {
-						throw new Error(
-							'`codeVerifier` is required when `meta.isPKCE` is true'
-						);
-					})();
-				body.set('code_verifier', verifier);
+				if(codeVerifier === undefined) {
+					throw new Error(
+						'`codeVerifier` is required when `meta.isPKCE` is true'
+					);
+				}
+				body.set('code_verifier', codeVerifier);
 			}
 
 			return postForm(tokenUrl, body);

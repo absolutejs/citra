@@ -1,16 +1,25 @@
-import { FormEvent, useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 import { providers } from '../../src/providers';
 import { isRefreshableProvider } from '../../src/typeGuards';
 import { RefreshableProvider } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
+import { Modal } from './Modal';
 import { ProviderDropdown } from './ProviderDropdown';
-import { useToast } from './Toast';
+import { useToast } from './ToastProvider';
 
 const refreshableProviders = Object.keys(providers).filter(
 	isRefreshableProvider
 );
 
-export const RefreshToken = () => {
+type RefreshModalProps = {
+	refreshModalOpen: boolean;
+	setRefreshModalOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export const RefreshModal = ({
+	refreshModalOpen,
+	setRefreshModalOpen
+}: RefreshModalProps) => {
 	const [currentProvider, setCurrentProvider] =
 		useState<RefreshableProvider>();
 	const [refreshToken, setRefreshToken] = useState<string>('');
@@ -50,35 +59,40 @@ export const RefreshToken = () => {
 	};
 
 	return (
-		<form style={formStyle} onSubmit={handleSubmit}>
-			<ProviderDropdown
-				setCurrentProvider={setCurrentProvider}
-				providerOptions={refreshableProviders}
-			/>
+		<Modal
+			isOpen={refreshModalOpen}
+			onClose={() => setRefreshModalOpen(false)}
+		>
+			<form style={formStyle} onSubmit={handleSubmit}>
+				<ProviderDropdown
+					setCurrentProvider={setCurrentProvider}
+					providerOptions={refreshableProviders}
+				/>
 
-			<input
-				type="text"
-				name="refresh_token"
-				placeholder="Enter refresh token"
-				value={refreshToken}
-				onChange={(event) => setRefreshToken(event.target.value)}
-				style={{
-					border: '1px solid #ccc',
-					borderRadius: '4px',
-					fontSize: '14px',
-					padding: '8px'
-				}}
-			/>
+				<input
+					type="text"
+					name="refresh_token"
+					placeholder="Enter refresh token"
+					value={refreshToken}
+					onChange={(event) => setRefreshToken(event.target.value)}
+					style={{
+						border: '1px solid #ccc',
+						borderRadius: '4px',
+						fontSize: '14px',
+						padding: '8px'
+					}}
+				/>
 
-			<button
-				type="submit"
-				disabled={!currentProvider || !refreshToken}
-				style={formButtonStyle(
-					currentProvider !== undefined && refreshToken !== ''
-				)}
-			>
-				Refresh Token
-			</button>
-		</form>
+				<button
+					type="submit"
+					disabled={!currentProvider || !refreshToken}
+					style={formButtonStyle(
+						currentProvider !== undefined && refreshToken !== ''
+					)}
+				>
+					Refresh Token
+				</button>
+			</form>
+		</Modal>
 	);
 };

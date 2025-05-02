@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Authorize } from '../components/Authorize';
-import { FetchProfile } from '../components/FetchProfile';
+import { AuthorizeModal } from '../components/AuthorizeModal';
+import { FetchProfileModal } from '../components/FetchProfileModal';
 import { Head } from '../components/Head';
-import { Modal } from '../components/Modal';
 import { Navbar } from '../components/Navbar';
-import { RefreshToken } from '../components/RefreshToken';
-import { RevokeToken } from '../components/RevokeToken';
-import { ToastProvider } from '../components/Toast';
+import { RefreshModal } from '../components/RefreshModal';
+import { RevokeModal } from '../components/RevokeModal';
+import { ToastProvider } from '../components/ToastProvider';
 import {
 	htmlDefault,
 	bodyDefault,
@@ -15,7 +14,7 @@ import {
 } from '../utils/styles';
 
 export const Example = () => {
-	const [authModalOpen, setAuthauthModalOpen] = useState(false);
+	const [authModalOpen, setAuthModalOpen] = useState(false);
 	const [refreshModalOpen, setRefreshModalOpen] = useState(false);
 	const [revokeModalOpen, setRevokeModalOpen] = useState(false);
 	const [profileModalOpen, setProfileModalOpen] = useState(false);
@@ -77,7 +76,7 @@ export const Example = () => {
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
-							onClick={() => setAuthauthModalOpen(true)}
+							onClick={() => setAuthModalOpen(true)}
 						>
 							Test OAuth2
 						</button>
@@ -114,37 +113,29 @@ export const Example = () => {
 					</nav>
 					<ToastProvider>
 						{authModalOpen === true && (
-							<Modal
-								isOpen={authModalOpen}
-								onClose={() => setAuthauthModalOpen(false)}
-							>
-								<Authorize />
-							</Modal>
+							<AuthorizeModal
+								authModalOpen={authModalOpen}
+								setAuthModalOpen={setAuthModalOpen}
+							/>
 						)}
 
 						{refreshModalOpen === true && (
-							<Modal
-								isOpen={refreshModalOpen}
-								onClose={() => setRefreshModalOpen(false)}
-							>
-								<RefreshToken />
-							</Modal>
+							<RefreshModal
+								refreshModalOpen={refreshModalOpen}
+								setRefreshModalOpen={setRefreshModalOpen}
+							/>
 						)}
 						{revokeModalOpen === true && (
-							<Modal
-								isOpen={revokeModalOpen}
-								onClose={() => setRevokeModalOpen(false)}
-							>
-								<RevokeToken />
-							</Modal>
+							<RevokeModal
+								revokeModalOpen={revokeModalOpen}
+								setRevokeModalOpen={setRevokeModalOpen}
+							/>
 						)}
 						{profileModalOpen === true && (
-							<Modal
-								isOpen={profileModalOpen}
-								onClose={() => setProfileModalOpen(false)}
-							>
-								<FetchProfile />
-							</Modal>
+							<FetchProfileModal
+								profileModalOpen={profileModalOpen}
+								setProfileModalOpen={setProfileModalOpen}
+							/>
 						)}
 					</ToastProvider>
 				</main>

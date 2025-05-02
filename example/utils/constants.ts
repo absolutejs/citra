@@ -12,3 +12,4 @@ export const MILLISECONDS_IN_A_DAY =
 export const COOKIE_MINUTES = 30;
 export const COOKIE_DURATION = SECONDS_IN_A_MINUTE * COOKIE_MINUTES;
 export const HALF = 0.5;
+export const TOAST_DURATION = 5000;

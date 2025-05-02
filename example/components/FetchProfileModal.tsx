@@ -1,14 +1,23 @@
-import { FormEvent, useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 import { providers } from '../../src/providers';
 import { isValidProviderOption } from '../../src/typeGuards';
 import { ProviderOption } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
+import { Modal } from './Modal';
 import { ProviderDropdown } from './ProviderDropdown';
-import { useToast } from './Toast';
+import { useToast } from './ToastProvider';
 
 const providerOptions = Object.keys(providers).filter(isValidProviderOption);
 
-export const FetchProfile = () => {
+type FetchProfileModalProps = {
+	profileModalOpen: boolean;
+	setProfileModalOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export const FetchProfileModal = ({
+	profileModalOpen,
+	setProfileModalOpen
+}: FetchProfileModalProps) => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
 	const [accessToken, setAccessToken] = useState<string>('');
 
@@ -47,35 +56,40 @@ export const FetchProfile = () => {
 	};
 
 	return (
-		<form style={formStyle} onSubmit={handleSubmit}>
-			<ProviderDropdown
-				setCurrentProvider={setCurrentProvider}
-				providerOptions={providerOptions}
-			/>
+		<Modal
+			isOpen={profileModalOpen}
+			onClose={() => setProfileModalOpen(false)}
+		>
+			<form style={formStyle} onSubmit={handleSubmit}>
+				<ProviderDropdown
+					setCurrentProvider={setCurrentProvider}
+					providerOptions={providerOptions}
+				/>
 
-			<input
-				type="text"
-				name="access_token"
-				placeholder="Enter access token"
-				value={accessToken}
-				onChange={(event) => setAccessToken(event.target.value)}
-				style={{
-					border: '1px solid #ccc',
-					borderRadius: '4px',
-					fontSize: '14px',
-					padding: '8px'
-				}}
-			/>
+				<input
+					type="text"
+					name="access_token"
+					placeholder="Enter access token"
+					value={accessToken}
+					onChange={(event) => setAccessToken(event.target.value)}
+					style={{
+						border: '1px solid #ccc',
+						borderRadius: '4px',
+						fontSize: '14px',
+						padding: '8px'
+					}}
+				/>
 
-			<button
-				type="submit"
-				disabled={!currentProvider || !accessToken}
-				style={formButtonStyle(
-					currentProvider !== undefined && accessToken !== ''
-				)}
-			>
-				Fetch Profile
-			</button>
-		</form>
+				<button
+					type="submit"
+					disabled={!currentProvider || !accessToken}
+					style={formButtonStyle(
+						currentProvider !== undefined && accessToken !== ''
+					)}
+				>
+					Fetch Profile
+				</button>
+			</form>
+		</Modal>
 	);
 };

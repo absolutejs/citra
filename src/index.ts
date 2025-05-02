@@ -55,7 +55,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 
 			if (meta.isPKCE) {
-				if(codeVerifier === undefined) {
+				if (codeVerifier === undefined) {
 					throw new Error(
 						'`codeVerifier` is required when `meta.isPKCE` is true'
 					);
@@ -154,9 +154,11 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				// RFC 7009
 				revokeBody.set('token', token);
 				revokeBody.set('client_id', config.clientId);
-				'clientSecret' in config &&
+				void (
+					'clientSecret' in config &&
 					typeof config.clientSecret === 'string' &&
-					revokeBody.set('client_secret', config.clientSecret);
+					revokeBody.set('client_secret', config.clientSecret)
+				);
 
 				request = createOAuth2Request(endpoint, revokeBody);
 			}
@@ -176,7 +178,9 @@ export const createOAuth2Client = <P extends ProviderOption>(
 		}) {
 			const { code, codeVerifier } = opts;
 
-			const body = new URLSearchParams(meta.validateAuthorizationCodeBody);
+			const body = new URLSearchParams(
+				meta.validateAuthorizationCodeBody
+			);
 			body.set('grant_type', 'authorization_code');
 			body.set('code', code);
 			if (config.redirectUri) {
@@ -189,7 +193,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				body.set('client_id', config.clientId);
 			}
 			if (meta.isPKCE) {
-				if(codeVerifier === undefined) {
+				if (codeVerifier === undefined) {
 					throw new Error(
 						'`codeVerifier` is required when `meta.isPKCE` is true'
 					);

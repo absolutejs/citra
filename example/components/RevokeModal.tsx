@@ -1,14 +1,23 @@
-import { FormEvent, useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 import { providers } from '../../src/providers';
 import { isRevocableProvider } from '../../src/typeGuards';
 import { RevocableProvider } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
+import { Modal } from './Modal';
 import { ProviderDropdown } from './ProviderDropdown';
-import { useToast } from './Toast';
+import { useToast } from './ToastProvider';
 
 const revocableProviders = Object.keys(providers).filter(isRevocableProvider);
 
-export const RevokeToken = () => {
+type RevokeModalProps = {
+	revokeModalOpen: boolean;
+	setRevokeModalOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export const RevokeModal = ({
+	revokeModalOpen,
+	setRevokeModalOpen
+}: RevokeModalProps) => {
 	const [currentProvider, setCurrentProvider] = useState<RevocableProvider>();
 	const [tokenToRevoke, setTokenToRevoke] = useState<string>('');
 
@@ -45,35 +54,40 @@ export const RevokeToken = () => {
 	};
 
 	return (
-		<form style={formStyle} onSubmit={handleSubmit}>
-			<ProviderDropdown
-				setCurrentProvider={setCurrentProvider}
-				providerOptions={revocableProviders}
-			/>
+		<Modal
+			isOpen={revokeModalOpen}
+			onClose={() => setRevokeModalOpen(false)}
+		>
+			<form style={formStyle} onSubmit={handleSubmit}>
+				<ProviderDropdown
+					setCurrentProvider={setCurrentProvider}
+					providerOptions={revocableProviders}
+				/>
 
-			<input
-				type="text"
-				name="token"
-				value={tokenToRevoke}
-				onChange={(event) => setTokenToRevoke(event.target.value)}
-				placeholder="Enter token to revoke"
-				style={{
-					border: '1px solid #ccc',
-					borderRadius: '4px',
-					fontSize: '14px',
-					padding: '8px'
-				}}
-			/>
+				<input
+					type="text"
+					name="token"
+					value={tokenToRevoke}
+					onChange={(event) => setTokenToRevoke(event.target.value)}
+					placeholder="Enter token to revoke"
+					style={{
+						border: '1px solid #ccc',
+						borderRadius: '4px',
+						fontSize: '14px',
+						padding: '8px'
+					}}
+				/>
 
-			<button
-				disabled={!currentProvider || !tokenToRevoke}
-				type="submit"
-				style={formButtonStyle(
-					currentProvider !== undefined && tokenToRevoke !== ''
-				)}
-			>
-				Revoke Token
-			</button>
-		</form>
+				<button
+					disabled={!currentProvider || !tokenToRevoke}
+					type="submit"
+					style={formButtonStyle(
+						currentProvider !== undefined && tokenToRevoke !== ''
+					)}
+				>
+					Revoke Token
+				</button>
+			</form>
+		</Modal>
 	);
 };

@@ -266,6 +266,7 @@ export type IntuitOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
+	environment: 'sandbox' | 'production';
 };
 export type KakaoOAuth2Config = {
 	clientId: string;

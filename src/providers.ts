@@ -1,4 +1,5 @@
 import { DefineProviders } from './types';
+import { env } from "node:process"
 
 export const defineProviders: DefineProviders = (providers) => providers;
 
@@ -379,19 +380,23 @@ export const providers = defineProviders({
 	},
 	Intuit: {
 		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
-		isOIDC: false,
+		isOIDC: true,
 		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
-			authIn: 'header',
-			method: 'GET',
-			url: 'https://oauth.platform.intuit.com/oauth2/v1/userinfo'
-		},
+			authIn:  "header",
+			method:  "GET",
+			url:     (config) =>
+				config.environment === "production"
+				  ? "https://accounts.platform.intuit.com/v1/openid_connect/userinfo"
+				  : "https://sandbox-accounts.platform.intuit.com/v1/openid_connect/userinfo"
+		  },
+		  
 		revocationRequest: {
 			authIn: 'body',
 			url: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/revoke'
 		},
-		scopeRequired: false,
+		scopeRequired: true,
 		tokenUrl: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'
 	},
 	Kakao: {

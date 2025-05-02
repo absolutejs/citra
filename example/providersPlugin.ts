@@ -24,6 +24,7 @@ import { giteaPlugin } from './providers/gitea';
 import { githubPlugin } from './providers/github';
 import { gitlabPlugin } from './providers/gitlab';
 import { googlePlugin } from './providers/google';
+import { intuitPlugin } from './providers/intuit';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -50,4 +51,5 @@ export const providersPlugin = new Elysia()
 	.use(giteaPlugin)
 	.use(githubPlugin)
 	.use(gitlabPlugin)
-	.use(googlePlugin);
+	.use(googlePlugin)
+	.use(intuitPlugin)

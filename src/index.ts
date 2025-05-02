@@ -116,6 +116,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			return response.json();
 		},
+		
 		refreshAccessToken(refreshToken: string) {
 			const body = new URLSearchParams(meta.refreshAccessTokenBody);
 			body.set('grant_type', 'refresh_token');

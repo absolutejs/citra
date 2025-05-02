@@ -20,7 +20,7 @@ If any issues occur please open one so it can be fixed.
 
 
 - 42 (untested: restricted)
-- Amazon Cognito (test later)
+- Amazon Cognito (untested: TODO - needed cc)
 - AniList
 - Apple  (untested: paid)
 - Atlassian
@@ -37,3 +37,4 @@ If any issues occur please open one so it can be fixed.
 - Dribble (untested: paid)
 - Dropbox
 - Epic Games (untested: https)
+- Etsy (untested: pending approval)

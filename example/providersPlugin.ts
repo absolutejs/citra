@@ -5,24 +5,24 @@ import { anilistPlugin } from './providers/anilist';
 import { applePlugin } from './providers/apple';
 import { atlassianPlugin } from './providers/atlassian';
 import { auth0Plugin } from './providers/auth0';
-import { facebookPlugin } from './providers/facebook';
-import { googlePlugin } from './providers/google';
 import { authentikPlugin } from './providers/authentik';
 import { autodeskPlugin } from './providers/autodesk';
 import { battlenetPlugin } from './providers/battlenet';
 import { bitbucketPlugin } from './providers/bitbucket';
 import { boxPlugin } from './providers/box';
+import { bungiePlugin } from './providers/bungie';
 import { coinbasePlugin } from './providers/coinbase';
 import { discordPlugin } from './providers/discord';
-import { bungiePlugin } from './providers/bungie';
 import { donationAlertsPlugin } from './providers/donation-alerts';
 import { dribbblePlugin } from './providers/dribble';
 import { dropboxPlugin } from './providers/dropbox';
 import { epicGamesPlugin } from './providers/epic-games';
 import { etsyPlugin } from './providers/etsy';
+import { facebookPlugin } from './providers/facebook';
 import { figmaPlugin } from './providers/figma';
 import { giteaPlugin } from './providers/gitea';
 import { githubPlugin } from './providers/github';
+import { googlePlugin } from './providers/google';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)

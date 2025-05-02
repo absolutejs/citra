@@ -28,8 +28,8 @@ export const discordPlugin = new Elysia()
 			const currentState = generateState();
 			const authorizationUrl =
 				await discordOAuth2Client.createAuthorizationUrl({
-					state: currentState,
-					scope: ['identify', 'email']
+					scope: ['identify', 'email'],
+					state: currentState
 				});
 
 			state.set({

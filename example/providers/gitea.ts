@@ -14,10 +14,10 @@ if (
 }
 
 const giteaOAuth2Client = createOAuth2Client('Gitea', {
+	baseURL: env.GITEA_BASE_URL,
 	clientId: env.GITEA_CLIENT_ID,
 	clientSecret: env.GITEA_CLIENT_SECRET,
-	redirectUri: env.GITEA_REDIRECT_URI,
-	baseURL: env.GITEA_BASE_URL
+	redirectUri: env.GITEA_REDIRECT_URI
 });
 
 export const giteaPlugin = new Elysia()

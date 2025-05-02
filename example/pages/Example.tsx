@@ -6,13 +6,13 @@ import { Modal } from '../components/Modal';
 import { Navbar } from '../components/Navbar';
 import { RefreshToken } from '../components/RefreshToken';
 import { RevokeToken } from '../components/RevokeToken';
+import { ToastProvider } from '../components/Toast';
 import {
 	htmlDefault,
 	bodyDefault,
 	mainDefault,
 	buttonStyle
 } from '../utils/styles';
-import { ToastProvider } from '../components/Toast';
 
 export const Example = () => {
 	const [authModalOpen, setAuthauthModalOpen] = useState(false);

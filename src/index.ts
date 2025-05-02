@@ -104,7 +104,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				endpoint.searchParams.append('access_token', accessToken);
 			}
 
-			const init: RequestInit = { method, headers };
+			const init: RequestInit = { headers, method };
 			if (method === 'POST' && body) {
 				headers['Content-Type'] = 'application/json';
 				init.body = JSON.stringify(body);
@@ -117,6 +117,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					`Failed to fetch user profile: ${response.status} ${response.statusText} - ${text}`
 				);
 			}
+
 			return response.json();
 		},
 		refreshAccessToken(refreshToken: string) {
@@ -150,11 +151,11 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			if (authIn === 'header') {
 				// Dropbox
 				request = new Request(endpoint.toString(), {
-					method: 'POST',
 					headers: {
 						Authorization: `Bearer ${token}`,
 						'User-Agent': 'citra'
-					}
+					},
+					method: 'POST'
 				});
 			} else {
 				// RFC 7009

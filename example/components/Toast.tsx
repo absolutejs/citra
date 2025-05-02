@@ -20,6 +20,7 @@ const ToastContext = createContext<ToastContextType | null>(null);
 export const useToast = (): ToastContextType => {
 	const ctx = useContext(ToastContext);
 	if (!ctx) throw new Error('useToast must be used within ToastProvider');
+
 	return ctx;
 };
 
@@ -40,7 +41,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
 		duration?: number;
 	}) => {
 		const id = Date.now();
-		setToasts((prev) => [...prev, { id, message, action, style }]);
+		setToasts((prev) => [...prev, { action, id, message, style }]);
 		if (duration > 0) setTimeout(() => removeToast(id), duration);
 	};
 
@@ -52,12 +53,12 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
 			{children}
 			<div
 				style={{
-					position: 'fixed',
+					alignItems: 'flex-end',
 					bottom: '1rem',
-					right: '1rem',
 					display: 'flex',
 					flexDirection: 'column',
-					alignItems: 'flex-end',
+					position: 'fixed',
+					right: '1rem',
 					zIndex: 10000
 				}}
 			>
@@ -65,19 +66,19 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
 					<div
 						key={id}
 						style={{
-							position: 'relative',
-							display: 'flex',
 							alignItems: 'flex-start',
-							gap: '1rem',
-							maxWidth: '300px',
-							padding: '0.75rem',
-							paddingRight: '2.5rem',
-							marginBottom: '0.625rem',
 							background: style?.background || '#333',
-							color: style?.color || '#fff',
 							borderRadius: '0.5rem',
 							boxShadow: '0px 4px 10px rgba(0,0,0,0.2)',
-							overflow: 'visible'
+							color: style?.color || '#fff',
+							display: 'flex',
+							gap: '1rem',
+							marginBottom: '0.625rem',
+							maxWidth: '300px',
+							overflow: 'visible',
+							padding: '0.75rem',
+							paddingRight: '2.5rem',
+							position: 'relative'
 						}}
 						onMouseEnter={(e) =>
 							((
@@ -96,62 +97,62 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
 					>
 						<div
 							style={{
-								flex: 1,
-								minWidth: 0,
-								maxHeight: '300px',
-								overflowY: 'auto',
+								boxSizing: 'border-box',
 								direction: 'rtl',
-								paddingLeft: '1rem',
-								boxSizing: 'border-box'
+								flex: 1,
+								maxHeight: '300px',
+								minWidth: 0,
+								overflowY: 'auto',
+								paddingLeft: '1rem'
 							}}
 						>
 							<span
 								style={{
-									display: 'block',
 									direction: 'ltr',
-									wordBreak: 'break-word',
+									display: 'block',
+									fontSize: '0.875rem',
 									overflowWrap: 'anywhere',
-									fontSize: '0.875rem'
+									wordBreak: 'break-word'
 								}}
 							>
 								{message}
 							</span>
 						</div>
 
-						{action && (
+						{action ? (
 							<button
 								onClick={() => {
 									action.onClick();
 									removeToast(id);
 								}}
 								style={{
-									padding: '0.375rem 0.625rem',
-									fontSize: '0.75rem',
 									background: '#007BFF',
-									color: '#fff',
 									border: 'none',
 									borderRadius: '0.25rem',
-									cursor: 'pointer'
+									color: '#fff',
+									cursor: 'pointer',
+									fontSize: '0.75rem',
+									padding: '0.375rem 0.625rem'
 								}}
 							>
 								{action.label}
 							</button>
-						)}
+						) : null}
 
 						<button
 							className="close-btn"
 							onClick={() => removeToast(id)}
 							style={{
-								position: 'absolute',
-								top: '0.5rem',
-								right: '0.5rem',
-								fontSize: '0.875rem',
-								fontWeight: 'bold',
 								background: 'transparent',
 								border: 'none',
 								color: 'inherit',
 								cursor: 'pointer',
+								fontSize: '0.875rem',
+								fontWeight: 'bold',
 								opacity: 0,
+								position: 'absolute',
+								right: '0.5rem',
+								top: '0.5rem',
 								transition: 'opacity 0.2s ease-in-out'
 							}}
 						>

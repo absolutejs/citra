@@ -31,9 +31,9 @@ export const RevokeToken = () => {
 		if (!response.ok) {
 			const errorText = await response.text();
 			addToast({
+				duration: 0,
 				message: `${errorText}`,
-				style: { background: '#f8d7da', color: '#721c24' },
-				duration: 0
+				style: { background: '#f8d7da', color: '#721c24' }
 			});
 
 			return;

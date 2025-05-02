@@ -14,10 +14,10 @@ if (
 }
 
 const authentikOAuth2Client = createOAuth2Client('Authentik', {
+	baseURL: env.AUTHENTIK_BASE_URL,
 	clientId: env.AUTHENTIK_CLIENT_ID,
 	clientSecret: env.AUTHENTIK_CLIENT_SECRET,
-	redirectUri: env.AUTHENTIK_REDIRECT_URI,
-	baseURL: env.AUTHENTIK_BASE_URL
+	redirectUri: env.AUTHENTIK_REDIRECT_URI
 });
 
 export const authentikPlugin = new Elysia()

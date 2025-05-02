@@ -19,6 +19,7 @@ import { donationAlertsPlugin } from './providers/donation-alerts';
 import { dribbblePlugin } from './providers/dribble';
 import { dropboxPlugin } from './providers/dropbox';
 import { epicGamesPlugin } from './providers/epic-games';
+import { etsyPlugin } from './providers/etsy';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -39,5 +40,6 @@ export const providersPlugin = new Elysia()
 	.use(dribbblePlugin)
 	.use(dropboxPlugin)
 	.use(epicGamesPlugin)
-	.use(googlePlugin)
-	.use(facebookPlugin);
+	.use(etsyPlugin)
+	.use(facebookPlugin)
+	.use(googlePlugin);

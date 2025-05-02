@@ -38,3 +38,4 @@ If any issues occur please open one so it can be fixed.
 - Dropbox
 - Epic Games (untested: https)
 - Etsy (untested: pending approval)
+- Facebook

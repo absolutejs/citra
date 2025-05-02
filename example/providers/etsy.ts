@@ -4,24 +4,20 @@ import { createOAuth2Client } from '../../src';
 import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
-if (
-	!env.ETSY_CLIENT_ID ||
-	!env.ETSY_CLIENT_SECRET ||
-	!env.ETSY_REDIRECT_URI
-) {
+if (!env.ETSY_KEYSTRING || !env.ETSY_SHARED_SECRET || !env.ETSY_REDIRECT_URI) {
 	throw new Error('Etsy OAuth2 credentials are not set in .env file');
 }
 
 const etsyOAuth2Client = createOAuth2Client('Etsy', {
-	clientId: env.ETSY_CLIENT_ID,
-	clientSecret: env.ETSY_CLIENT_SECRET,
+	clientId: env.ETSY_KEYSTRING,
+	clientSecret: env.ETSY_SHARED_SECRET,
 	redirectUri: env.ETSY_REDIRECT_URI
 });
 
 export const etsyPlugin = new Elysia()
 	.get(
 		'/oauth2/etsy/authorization',
-		async ({ redirect, error, cookie: { state} }) => {
+		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
@@ -51,7 +47,7 @@ export const etsyPlugin = new Elysia()
 			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined )
+			if (stored_state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)

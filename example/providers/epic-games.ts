@@ -1,7 +1,7 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState} from '../../src/arctic-utils';
+import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -21,8 +21,8 @@ const epicGamesOAuth2Client = createOAuth2Client('EpicGames', {
 export const epicGamesPlugin = new Elysia()
 	.get(
 		'/oauth2/epicgames/authorization',
-		async ({ redirect, error, cookie: { state,} }) => {
-			if (state === undefined )
+		async ({ redirect, error, cookie: { state } }) => {
+			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
@@ -48,7 +48,7 @@ export const epicGamesPlugin = new Elysia()
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state, },
+			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
 			if (stored_state === undefined)
@@ -66,7 +66,7 @@ export const epicGamesPlugin = new Elysia()
 			try {
 				const oauthResponse =
 					await epicGamesOAuth2Client.validateAuthorizationCode({
-						code,
+						code
 					});
 				console.log('\nEpic Games authorized:', oauthResponse);
 			} catch (err) {
@@ -91,7 +91,9 @@ export const epicGamesPlugin = new Elysia()
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await epicGamesOAuth2Client.refreshAccessToken(refresh_token);
+					await epicGamesOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
 				console.log('\nEpic Games token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {

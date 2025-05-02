@@ -97,7 +97,10 @@ export const donationAlertsPlugin = new Elysia()
 					await donationAlertsOAuth2Client.refreshAccessToken(
 						refresh_token
 					);
-				console.log('\nDonation Alerts token refreshed:', oauthResponse);
+				console.log(
+					'\nDonation Alerts token refreshed:',
+					oauthResponse
+				);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {

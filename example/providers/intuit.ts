@@ -5,188 +5,189 @@ import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-    !env.INTUIT_CLIENT_ID ||
-    !env.INTUIT_CLIENT_SECRET ||
-    !env.INTUIT_REDIRECT_URI 
+	!env.INTUIT_CLIENT_ID ||
+	!env.INTUIT_CLIENT_SECRET ||
+	!env.INTUIT_REDIRECT_URI
 ) {
-    throw new Error('Intuit OAuth2 credentials are not set in .env file');
+	throw new Error('Intuit OAuth2 credentials are not set in .env file');
 }
 
 const intuitOAuth2Client = createOAuth2Client('Intuit', {
-    clientId: env.INTUIT_CLIENT_ID,
-    clientSecret: env.INTUIT_CLIENT_SECRET,
-    redirectUri: env.INTUIT_REDIRECT_URI,
-    environment: process.env.NODE_ENV === 'production' ? 'production' : 'sandbox',
+	clientId: env.INTUIT_CLIENT_ID,
+	clientSecret: env.INTUIT_CLIENT_SECRET,
+	redirectUri: env.INTUIT_REDIRECT_URI,
+	environment:
+		process.env.NODE_ENV === 'production' ? 'production' : 'sandbox'
 });
 
 export const intuitPlugin = new Elysia()
-    .get(
-        '/oauth2/intuit/authorization',
-        async ({ redirect, error, cookie: { state, } }) => {
-            if (state === undefined )
-                return error('Bad Request', 'Cookies are missing');
+	.get(
+		'/oauth2/intuit/authorization',
+		async ({ redirect, error, cookie: { state } }) => {
+			if (state === undefined)
+				return error('Bad Request', 'Cookies are missing');
 
-            const currentState = generateState();
-            const authorizationUrl =
-                await intuitOAuth2Client.createAuthorizationUrl({
-                    state: currentState,
-                    scope: ['openid']
-                });
+			const currentState = generateState();
+			const authorizationUrl =
+				await intuitOAuth2Client.createAuthorizationUrl({
+					state: currentState,
+					scope: ['openid']
+				});
 
-            state.set({
-                httpOnly: true,
-                maxAge: COOKIE_DURATION,
-                path: '/',
-                sameSite: 'lax',
-                secure: true,
-                value: currentState
-            });
-        
-            return redirect(authorizationUrl.toString());
-        }
-    )
-    .get(
-        '/oauth2/intuit/callback',
-        async ({
-            error,
-            redirect,
-            cookie: { state: stored_state, },
-            query: { code, state: callback_state }
-        }) => {
-            if (stored_state === undefined)
-                return error('Bad Request', 'Cookies are missing');
+			state.set({
+				httpOnly: true,
+				maxAge: COOKIE_DURATION,
+				path: '/',
+				sameSite: 'lax',
+				secure: true,
+				value: currentState
+			});
 
-            if (code === undefined)
-                return error('Bad Request', 'Code is missing in query');
+			return redirect(authorizationUrl.toString());
+		}
+	)
+	.get(
+		'/oauth2/intuit/callback',
+		async ({
+			error,
+			redirect,
+			cookie: { state: stored_state },
+			query: { code, state: callback_state }
+		}) => {
+			if (stored_state === undefined)
+				return error('Bad Request', 'Cookies are missing');
 
-            if (callback_state !== stored_state.value) {
-                return error('Bad Request', 'Invalid state mismatch');
-            }
+			if (code === undefined)
+				return error('Bad Request', 'Code is missing in query');
 
-            stored_state.remove();
+			if (callback_state !== stored_state.value) {
+				return error('Bad Request', 'Invalid state mismatch');
+			}
 
-            try {
-                const oauthResponse =
-                    await intuitOAuth2Client.validateAuthorizationCode({
-                        code,
-                    });
-                console.log('\nIntuit authorized:', oauthResponse);
-            } catch (err) {
-                if (err instanceof Error) {
-                    return error(
-                        'Internal Server Error',
-                        `Failed to validate authorization code: ${err.message}`
-                    );
-                }
+			stored_state.remove();
 
-                return error(
-                    'Internal Server Error',
-                    `Unexpected error: ${err}`
-                );
-            }
+			try {
+				const oauthResponse =
+					await intuitOAuth2Client.validateAuthorizationCode({
+						code
+					});
+				console.log('\nIntuit authorized:', oauthResponse);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to validate authorization code: ${err.message}`
+					);
+				}
 
-            return redirect('/');
-        }
-    )
-    .post(
-        '/oauth2/intuit/tokens',
-        async ({ error, body: { refresh_token } }) => {
-            try {
-                const oauthResponse =
-                    await intuitOAuth2Client.refreshAccessToken(refresh_token);
-                console.log('\nIntuit token refreshed:', oauthResponse);
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 
-                return new Response(JSON.stringify(oauthResponse), {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-            } catch (err) {
-                if (err instanceof Error) {
-                    return error(
-                        'Internal Server Error',
-                        `Failed to refresh access token: ${err.message}`
-                    );
-                }
+			return redirect('/');
+		}
+	)
+	.post(
+		'/oauth2/intuit/tokens',
+		async ({ error, body: { refresh_token } }) => {
+			try {
+				const oauthResponse =
+					await intuitOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nIntuit token refreshed:', oauthResponse);
 
-                return error(
-                    'Internal Server Error',
-                    `Unexpected error: ${err}`
-                );
-            }
-        },
-        {
-            body: t.Object({
-                refresh_token: t.String()
-            })
-        }
-    )
-    .delete(
-        '/oauth2/intuit/revocation',
-        async ({ error, query: { token_to_revoke } }) => {
-            if (!token_to_revoke)
-                return error(
-                    'Bad Request',
-                    'Token to revoke is required in query parameters'
-                );
+				return new Response(JSON.stringify(oauthResponse), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to refresh access token: ${err.message}`
+					);
+				}
 
-            try {
-                await intuitOAuth2Client.revokeToken(token_to_revoke);
-                console.log('\nIntuit token revoked:', token_to_revoke);
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
+		},
+		{
+			body: t.Object({
+				refresh_token: t.String()
+			})
+		}
+	)
+	.delete(
+		'/oauth2/intuit/revocation',
+		async ({ error, query: { token_to_revoke } }) => {
+			if (!token_to_revoke)
+				return error(
+					'Bad Request',
+					'Token to revoke is required in query parameters'
+				);
 
-                return new Response(
-                    `Token ${token_to_revoke} revoked successfully`,
-                    {
-                        headers: {
-                            'Content-Type': 'text/plain'
-                        }
-                    }
-                );
-            } catch (err) {
-                if (err instanceof Error) {
-                    return error(
-                        'Internal Server Error',
-                        `Failed to revoke token: ${err.message}`
-                    );
-                }
+			try {
+				await intuitOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nIntuit token revoked:', token_to_revoke);
 
-                return error(
-                    'Internal Server Error',
-                    `Unexpected error: ${err}`
-                );
-            }
-        }
-    )
-    .get(
-        '/oauth2/intuit/profile',
-        async ({ error, headers: { authorization } }) => {
-            if (authorization === undefined)
-                return error(
-                    'Unauthorized',
-                    'Access token is missing in headers'
-                );
+				return new Response(
+					`Token ${token_to_revoke} revoked successfully`,
+					{
+						headers: {
+							'Content-Type': 'text/plain'
+						}
+					}
+				);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to revoke token: ${err.message}`
+					);
+				}
 
-            const accessToken = authorization.replace('Bearer ', '');
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
+		}
+	)
+	.get(
+		'/oauth2/intuit/profile',
+		async ({ error, headers: { authorization } }) => {
+			if (authorization === undefined)
+				return error(
+					'Unauthorized',
+					'Access token is missing in headers'
+				);
 
-            try {
-                const userProfile =
-                    await intuitOAuth2Client.fetchUserProfile(accessToken);
-                console.log('\nIntuit user profile:', userProfile);
+			const accessToken = authorization.replace('Bearer ', '');
 
-                return new Response(JSON.stringify(userProfile), {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-            } catch (err) {
-                if (err instanceof Error) {
-                    return error('Internal Server Error', `${err.message}`);
-                }
+			try {
+				const userProfile =
+					await intuitOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nIntuit user profile:', userProfile);
 
-                return error(
-                    'Internal Server Error',
-                    `Unexpected error: ${err}`
-                );
-            }
-        }
-    );
+				return new Response(JSON.stringify(userProfile), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			} catch (err) {
+				if (err instanceof Error) {
+					return error('Internal Server Error', `${err.message}`);
+				}
+
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
+		}
+	);

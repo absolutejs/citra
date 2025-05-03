@@ -1,6 +1,7 @@
-import { createOAuth2Request, createS256CodeChallenge } from './arctic-utils';
+import { createOAuth2Request, createS256CodeChallenge, postForm } from './arctic-utils';
 import { providers } from './providers';
 import { ConfigFor, OAuth2Client, ProviderOption } from './types';
+import { createOAuth2Error} from './utils';
 
 export const createOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
@@ -8,24 +9,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 ): OAuth2Client<P> => {
 	const meta = providers[providerName];
 
-	const resolveUrl = (urlProp: string | ((cfg: ConfigFor<P>) => string)) =>
-		typeof urlProp === 'function' ? urlProp(config) : urlProp;
-	const authorizationUrl = resolveUrl(meta.authorizationUrl);
-	const tokenUrl = resolveUrl(meta.tokenUrl);
+	const resolveConfigProp = <T>(
+		configProp: Exclude<T, Function> | ((cfg: ConfigFor<P>) => T)
+	) => (configProp instanceof Function ? configProp(config) : configProp);
 
-	const postForm = async (url: string, body: URLSearchParams) => {
-		const req = createOAuth2Request(url, body);
-		const res = await fetch(req);
-		if (!res.ok) {
-			const text = await res.text().catch(() => '[unreadable]');
-			throw new Error(
-				`HTTP ${res.status} ${res.statusText} for ${res.url}\n` +
-					`${text}`
-			);
-		}
+	const authorizationUrl = resolveConfigProp(meta.authorizationUrl);
+	const tokenUrl = resolveConfigProp(meta.tokenUrl);
 
-		return res.json();
-	};
 
 	return {
 		async createAuthorizationUrl(opts?: {
@@ -88,7 +78,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 
 			const { url, method, authIn, searchParams, body } = profileRequest;
-			const endpoint = new URL(resolveUrl(url));
+			const endpoint = new URL(resolveConfigProp(url));
 			for (const [key, value] of searchParams ?? []) {
 				endpoint.searchParams.append(key, value);
 			}
@@ -107,16 +97,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 
 			const response = await fetch(endpoint.toString(), init);
-			const text = await response.clone().text();
 			if (!response.ok) {
-				throw new Error(
-					`Failed to fetch user profile: ${response.status} ${response.statusText} - ${text}`
-				);
+				throw await createOAuth2Error(response);
 			}
 
 			return response.json();
 		},
-		
+
 		refreshAccessToken(refreshToken: string) {
 			const body = new URLSearchParams(meta.refreshAccessTokenBody);
 			body.set('grant_type', 'refresh_token');
@@ -137,9 +124,10 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					'Token revocation request is not defined for this provider'
 				);
 			}
-			const { url, authIn, body } = revocationRequest;
-			const revokeBody = body ?? new URLSearchParams();
-			const endpoint = resolveUrl(url);
+			const { url, authIn, body, headers } = revocationRequest;
+			const revocationBody = body ?? new URLSearchParams();
+			const endpoint = resolveConfigProp(url);
+			const revocationHeaders = headers && resolveConfigProp(headers);
 
 			let request: Request;
 			if (authIn === 'header') {
@@ -153,23 +141,25 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				});
 			} else {
 				// RFC 7009
-				revokeBody.set('token', token);
-				revokeBody.set('client_id', config.clientId);
+				revocationBody.set('token', token);
+				revocationBody.set('client_id', config.clientId);
 				void (
 					'clientSecret' in config &&
 					typeof config.clientSecret === 'string' &&
-					revokeBody.set('client_secret', config.clientSecret)
+					revocationBody.set('client_secret', config.clientSecret)
 				);
 
-				request = createOAuth2Request(endpoint, revokeBody);
+				request = createOAuth2Request(
+					endpoint,
+					revocationBody,
+					revocationHeaders
+				);
 			}
 
 			const response = await fetch(request);
 
 			if (!response.ok) {
-				throw new Error(
-					`Token revocation failed: ${response.status} ${response.statusText}`
-				);
+				throw await createOAuth2Error(response);
 			}
 		},
 

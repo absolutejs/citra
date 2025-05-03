@@ -8,7 +8,7 @@ export type ProfileRequestConfig = {
 	url: string | ((config: any) => string);
 	method: 'GET' | 'POST';
 	authIn: 'header' | 'query';
-	headers?: Record<string, string>;
+	headers?: HeadersInit;
 	body?: unknown;
 	searchParams?: [string, string][];
 };
@@ -18,6 +18,9 @@ export type RevocationRequestConfig = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	url: string | ((config: any) => string);
 	authIn: 'body' | 'header';
+	// TODO: remove any type in favor of the actual config for this specific provider
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	headers?: HeadersInit | ((config: any) => HeadersInit);
 	body?: URLSearchParams;
 };
 

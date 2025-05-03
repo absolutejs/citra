@@ -20,8 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-import { Buffer } from 'buffer';
 import { NUM_GENERATOR_BYTES } from './constants';
+import { createOAuth2Error, encodeBase64 } from './utils';
 
 /**
  * RFC‑7636 S256 code challenge
@@ -52,31 +52,23 @@ export const generateState =
 	createRandomBase64UrlGenerator(NUM_GENERATOR_BYTES);
 
 /**
- * Helper: convert ArrayBuffer or Uint8Array to URL‑safe Base64 (no padding).
+ * base64Url
+ *
+ * Convert binary data into URL‑safe Base64 (RFC 4648 §5):
+ * – replaces “+”→“-” and “/”→“_”
+ * – strips trailing “=” padding
  */
-const base64Url = (bytes: ArrayBuffer | Uint8Array) => {
-	const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-	let bin = '';
-	for (const b of arr) {
-		bin += String.fromCharCode(b);
-	}
-	let b64;
+const base64Url = (input: ArrayBuffer | Uint8Array): string =>
+	encodeBase64(input)
+		.replace(/\+/g, '-')
+		.replace(/\//g, '_')
+		.replace(/=+$/, '');
 
-	if (typeof btoa === 'function') {
-		// In browsers
-		b64 = btoa(bin);
-	} else if (typeof Buffer !== 'undefined') {
-		// In Node.js or other Buffer-aware environments
-		b64 = Buffer.from(arr).toString('base64');
-	} else {
-		// Neither btoa nor Buffer is available
-		throw new Error('No Base64 encoder available');
-	}
-
-	return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-};
-
-export const createOAuth2Request = (Url: string, body: URLSearchParams) => {
+export const createOAuth2Request = (
+	Url: string,
+	body: URLSearchParams,
+	headers?: HeadersInit
+) => {
 	const bodyBytes = new TextEncoder().encode(body.toString());
 	const request = new Request(Url, {
 		body: bodyBytes,
@@ -86,6 +78,22 @@ export const createOAuth2Request = (Url: string, body: URLSearchParams) => {
 	request.headers.set('Accept', 'application/json');
 	request.headers.set('User-Agent', 'citra');
 	request.headers.set('Content-Length', bodyBytes.byteLength.toString());
+	headers &&
+		Object.entries(headers).forEach(([key, value]) => {
+			request.headers.set(key, value);
+		});
+
+	console.log(request);
 
 	return request;
+};
+
+export const postForm = async (url: string, body: URLSearchParams) => {
+    const request = createOAuth2Request(url, body);
+    const response = await fetch(request);
+    if (!response.ok) {
+        throw await createOAuth2Error(response);
+    }
+
+    return response.json();
 };

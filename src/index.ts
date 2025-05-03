@@ -1,7 +1,11 @@
-import { createOAuth2Request, createS256CodeChallenge, postForm } from './arctic-utils';
+import {
+	createOAuth2Request,
+	createS256CodeChallenge,
+	postForm
+} from './arctic-utils';
 import { providers } from './providers';
 import { ConfigFor, OAuth2Client, ProviderOption } from './types';
-import { createOAuth2Error} from './utils';
+import { createOAuth2Error } from './utils';
 
 export const createOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
@@ -15,7 +19,6 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 	const authorizationUrl = resolveConfigProp(meta.authorizationUrl);
 	const tokenUrl = resolveConfigProp(meta.tokenUrl);
-
 
 	return {
 		async createAuthorizationUrl(opts?: {

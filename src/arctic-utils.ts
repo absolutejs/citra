@@ -89,11 +89,11 @@ export const createOAuth2Request = (
 };
 
 export const postForm = async (url: string, body: URLSearchParams) => {
-    const request = createOAuth2Request(url, body);
-    const response = await fetch(request);
-    if (!response.ok) {
-        throw await createOAuth2Error(response);
-    }
+	const request = createOAuth2Request(url, body);
+	const response = await fetch(request);
+	if (!response.ok) {
+		throw await createOAuth2Error(response);
+	}
 
-    return response.json();
+	return response.json();
 };

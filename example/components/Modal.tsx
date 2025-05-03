@@ -1,4 +1,4 @@
-import { ReactNode, MouseEvent, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef, MouseEvent } from 'react';
 
 type ModalProps = {
 	isOpen: boolean;
@@ -7,20 +7,16 @@ type ModalProps = {
 };
 
 export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
-	const backgroundRef = useRef<HTMLButtonElement>(null);
-
-	const handleBackgroundClick = (event: MouseEvent<HTMLButtonElement>) => {
-		if (event.target === event.currentTarget) {
-			onClose();
-		}
-	};
+	const dialogRef = useRef<HTMLDialogElement>(null);
 
 	useEffect(() => {
+		const dialogElement = dialogRef.current;
+		if (!dialogElement) return;
 		if (isOpen) {
+			dialogElement.showModal();
 			document.body.style.overflow = 'hidden';
-			// Focus the background div to ensure its onKeyDown gets events.
-			backgroundRef.current?.focus();
 		} else {
+			dialogElement.close();
 			document.body.style.overflow = '';
 		}
 	}, [isOpen]);
@@ -28,29 +24,35 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 	if (!isOpen) return null;
 
 	return (
-		<button
-			ref={backgroundRef}
-			tabIndex={0}
-			onKeyDown={(event) => {
-				if (event.key === 'Escape') {
+		<dialog
+			ref={dialogRef}
+			onCancel={(event) => {
+				event.preventDefault();
+				onClose();
+			}}
+			onClick={(event: MouseEvent<HTMLDialogElement>) => {
+				if (event.target === dialogRef.current) {
 					onClose();
 				}
 			}}
-			onClick={handleBackgroundClick}
 			style={{
-				alignItems: 'center',
-				backdropFilter: 'blur(4px)',
-				backgroundColor: 'rgba(0, 0, 0, 0.5)',
-				display: 'flex',
-				height: '100%',
-				justifyContent: 'center',
-				left: 0,
+				border: 'none',
+				borderRadius: '8px',
+				left: '50%',
+				padding: '0px',
 				position: 'fixed',
-				top: 0,
-				width: '100%',
-				zIndex: 1000
+				top: '50%',
+				transform: 'translate(-50%, -50%)'
 			}}
 		>
+			<style>
+				{`
+					dialog::backdrop {
+						background-color: rgba(0, 0, 0, 0.5);
+						backdrop-filter: blur(4px);
+					}
+				`}
+			</style>
 			<div
 				style={{
 					backgroundColor: '#fff',
@@ -59,11 +61,13 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 					padding: '20px',
 					position: 'relative'
 				}}
+				onClick={(event) => event.stopPropagation()}
 			>
 				<button
 					onClick={onClose}
+					aria-label="Close modal"
 					style={{
-						backgroundColor: 'transparent',
+						background: 'transparent',
 						border: 'none',
 						cursor: 'pointer',
 						fontSize: '16px',
@@ -71,12 +75,11 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 						right: '10px',
 						top: '10px'
 					}}
-					aria-label="Close modal"
 				>
 					&times;
 				</button>
 				{children}
 			</div>
-		</button>
+		</dialog>
 	);
 };

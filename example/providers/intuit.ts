@@ -15,9 +15,9 @@ if (
 const intuitOAuth2Client = createOAuth2Client('Intuit', {
 	clientId: env.INTUIT_CLIENT_ID,
 	clientSecret: env.INTUIT_CLIENT_SECRET,
-	redirectUri: env.INTUIT_REDIRECT_URI,
 	environment:
-		process.env.NODE_ENV === 'production' ? 'production' : 'sandbox'
+		process.env.NODE_ENV === 'production' ? 'production' : 'sandbox',
+	redirectUri: env.INTUIT_REDIRECT_URI
 });
 
 export const intuitPlugin = new Elysia()
@@ -30,8 +30,8 @@ export const intuitPlugin = new Elysia()
 			const currentState = generateState();
 			const authorizationUrl =
 				await intuitOAuth2Client.createAuthorizationUrl({
-					state: currentState,
-					scope: ['openid']
+					scope: ['openid'],
+					state: currentState
 				});
 
 			state.set({

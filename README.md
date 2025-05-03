@@ -41,3 +41,6 @@ If any issues occur please open one so it can be fixed.
 - Facebook
 - Gitea (In Development)
 - Github
+- Gitlab
+- Google 
+- Intuit

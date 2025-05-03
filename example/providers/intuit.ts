@@ -1,7 +1,7 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
+import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -15,8 +15,7 @@ if (
 const intuitOAuth2Client = createOAuth2Client('Intuit', {
 	clientId: env.INTUIT_CLIENT_ID,
 	clientSecret: env.INTUIT_CLIENT_SECRET,
-	environment:
-		process.env.NODE_ENV === 'production' ? 'production' : 'sandbox',
+	environment: env.NODE_ENV === 'production' ? 'production' : 'sandbox',
 	redirectUri: env.INTUIT_REDIRECT_URI
 });
 

@@ -13,9 +13,17 @@ export const createOAuth2Client = <P extends ProviderOption>(
 ): OAuth2Client<P> => {
 	const meta = providers[providerName];
 
+	const isConfigPropertyFunction = <T>(
+		configProperty: T | ((cfg: ConfigFor<P>) => T)
+	): configProperty is (cfg: ConfigFor<P>) => T =>
+		typeof configProperty === 'function';
+
 	const resolveConfigProp = <T>(
-		configProp: Exclude<T, Function> | ((cfg: ConfigFor<P>) => T)
-	) => (configProp instanceof Function ? configProp(config) : configProp);
+		configProperty: T | ((cfg: ConfigFor<P>) => T)
+	) =>
+		isConfigPropertyFunction(configProperty)
+			? configProperty(config)
+			: configProperty;
 
 	const authorizationUrl = resolveConfigProp(meta.authorizationUrl);
 	const tokenUrl = resolveConfigProp(meta.tokenUrl);

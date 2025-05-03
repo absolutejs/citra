@@ -1,4 +1,4 @@
-export const createOAuth2Error = async (response: Response): Promise<Error> => {
+export const createOAuth2Error = async (response: Response) => {
 	let details = '';
 	const clone = response.clone();
 
@@ -9,7 +9,7 @@ export const createOAuth2Error = async (response: Response): Promise<Error> => {
 			typeof payload === 'object' &&
 			Object.keys(payload).length > 0
 		) {
-			details = `\n${JSON.stringify(payload, null, 2)}`;
+			details = `\n${JSON.stringify(payload)}`;
 		}
 	} catch {
 		const text = await clone.text().catch(() => '[unreadable]');

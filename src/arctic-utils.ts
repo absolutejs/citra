@@ -54,11 +54,11 @@ export const generateState =
 /**
  * base64Url
  *
- * Convert binary data into URL‑safe Base64 (RFC 4648 §5):
+ * Convert binary data into URL-safe Base64 (RFC 4648 §5):
  * – replaces “+”→“-” and “/”→“_”
  * – strips trailing “=” padding
  */
-const base64Url = (input: ArrayBuffer | Uint8Array): string =>
+const base64Url = (input: ArrayBuffer | Uint8Array) =>
 	encodeBase64(input)
 		.replace(/\+/g, '-')
 		.replace(/\//g, '_')
@@ -78,12 +78,12 @@ export const createOAuth2Request = (
 	request.headers.set('Accept', 'application/json');
 	request.headers.set('User-Agent', 'citra');
 	request.headers.set('Content-Length', bodyBytes.byteLength.toString());
-	headers &&
+	void (
+		headers &&
 		Object.entries(headers).forEach(([key, value]) => {
 			request.headers.set(key, value);
-		});
-
-	console.log(request);
+		})
+	);
 
 	return request;
 };

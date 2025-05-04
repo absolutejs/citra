@@ -29,7 +29,7 @@ export const AuthorizeModal = ({
 			}}
 			onClose={() => {
 				setAuthModalOpen(false);
-				setCurrentProvider(undefined);
+				registerHost(null);
 			}}
 		>
 			<form

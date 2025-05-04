@@ -63,7 +63,7 @@ export const RevokeModal = ({
 			}}
 			onClose={() => {
 				setRevokeModalOpen(false);
-				setCurrentProvider(undefined);
+				registerHost(null);
 			}}
 		>
 			<form style={formStyle} onSubmit={handleSubmit}>

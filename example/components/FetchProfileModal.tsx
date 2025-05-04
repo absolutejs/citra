@@ -65,7 +65,7 @@ export const FetchProfileModal = ({
 			}}
 			onClose={() => {
 				setProfileModalOpen(false);
-				setCurrentProvider(undefined);
+				registerHost(null);
 			}}
 		>
 			<form style={formStyle} onSubmit={handleSubmit}>

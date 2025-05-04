@@ -68,7 +68,7 @@ export const RefreshModal = ({
 			}}
 			onClose={() => {
 				setRefreshModalOpen(false);
-				setCurrentProvider(undefined);
+				registerHost(null);
 			}}
 		>
 			<form style={formStyle} onSubmit={handleSubmit}>

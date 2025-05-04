@@ -276,7 +276,7 @@ export type KakaoOAuth2Config = {
 	clientSecret: string;
 	redirectUri: string;
 };
-export type KeyCloakOAuth2Config = {
+export type KeycloakOAuth2Config = {
 	realmURL: string;
 	clientId: string;
 	clientSecret: string | null;
@@ -488,7 +488,7 @@ export type ConfigMap = {
 	Google: GoogleOAuth2Config;
 	Intuit: IntuitOAuth2Config;
 	Kakao: KakaoOAuth2Config;
-	KeyCloak: KeyCloakOAuth2Config;
+	Keycloak: KeycloakOAuth2Config;
 	Kick: KickOAuth2Config;
 	Line: LINEOAuth2Config;
 	Lichess: LichessOAuth2Config;

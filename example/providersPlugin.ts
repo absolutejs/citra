@@ -26,6 +26,7 @@ import { gitlabPlugin } from './providers/gitlab';
 import { googlePlugin } from './providers/google';
 import { intuitPlugin } from './providers/intuit';
 import { kakaoPlugin } from './providers/kakao';
+import { keycloakPlugin } from './providers/keycloak';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -55,3 +56,4 @@ export const providersPlugin = new Elysia()
 	.use(googlePlugin)
 	.use(intuitPlugin)
 	.use(kakaoPlugin)
+	.use(keycloakPlugin)

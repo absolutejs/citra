@@ -417,8 +417,8 @@ export const providers = defineProviders({
 		tokenUrl: 'https://kauth.kakao.com/oauth/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
-	KeyCloak: {
-		authorizationUrl: '${realmURL}/protocol/openid-connect/auth',
+	Keycloak: {
+		authorizationUrl: (config) => `${config.realmURL}/protocol/openid-connect/auth`,
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
@@ -432,7 +432,7 @@ export const providers = defineProviders({
 			url: (config) => `${config.realmURL}/protocol/openid-connect/revoke`
 		},
 		scopeRequired: false,
-		tokenUrl: '${realmURL}/protocol/openid-connect/token'
+		tokenUrl: (config) => `${config.realmURL}/protocol/openid-connect/token`,
 	},
 	Kick: {
 		authorizationUrl: 'https://id.kick.com/oauth/authorize',

@@ -479,7 +479,7 @@ export const providers = defineProviders({
 			url: 'https://api.line.me/v2/profile'
 		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
-		scopeRequired: false,
+		scopeRequired: true,
 		tokenUrl: 'https://api.line.me/oauth2/v2.1/token',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -488,7 +488,7 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 		isPKCE: false,
-		isRefreshable: true,
+		isRefreshable:false,
 		profileRequest: {
 			authIn: 'header',
 			body: {
@@ -500,6 +500,10 @@ export const providers = defineProviders({
 			},
 			method: 'POST',
 			url: 'https://api.linear.app/graphql'
+		},
+		revocationRequest: {
+			url: 'https://api.linear.app/oauth/revoke',
+			authIn: 'header'
 		},
 		scopeRequired: false,
 		tokenUrl: 'https://api.linear.app/oauth/token',

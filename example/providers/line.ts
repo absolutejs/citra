@@ -18,7 +18,7 @@ const LINEOAuth2Client = createOAuth2Client('LINE', {
     redirectUri: env.LINE_REDIRECT_URI
 });
 
-export const LINEPlugin = new Elysia()
+export const linePlugin = new Elysia()
     .get(
         '/oauth2/line/authorization',
         async ({ redirect, error, cookie: { state, code_verifier } }) => {

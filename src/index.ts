@@ -75,7 +75,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			searchParams.forEach(([key, value]) =>
 				url.searchParams.set(key, value)
 			);
-			
+
 			return url;
 		},
 
@@ -142,7 +142,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			let request: Request;
 			if (authIn === 'header') {
-				// Dropbox
+				// Dropbox || Linear
 				request = new Request(endpoint.toString(), {
 					headers: {
 						Authorization: `Bearer ${token}`,

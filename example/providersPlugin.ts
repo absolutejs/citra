@@ -29,7 +29,8 @@ import { kakaoPlugin } from './providers/kakao';
 import { keycloakPlugin } from './providers/keycloak';
 import { kickPlugin } from './providers/kick';
 import { lichessPlugin } from './providers/lichess';
-import { LINEPlugin } from './providers/line';
+import { linePlugin } from './providers/line';
+import { linearPlugin } from './providers/linear';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -62,4 +63,5 @@ export const providersPlugin = new Elysia()
 	.use(keycloakPlugin)
 	.use(kickPlugin)
 	.use(lichessPlugin)
-	.use(LINEPlugin)
+	.use(linePlugin)
+	.use(linearPlugin)

@@ -50,3 +50,4 @@ If any issues occur please open one so it can be fixed.
 - Kick (Untested: Pending Approval)
 - Lichess
 - LINE
+- Linear

@@ -55,10 +55,18 @@ export const FetchProfileModal = ({
 		});
 	};
 
+	const { registerHost } = useToast();
+
 	return (
 		<Modal
 			isOpen={profileModalOpen}
-			onClose={() => setProfileModalOpen(false)}
+			onOpen={(dialogRef) => {
+				registerHost(dialogRef);
+			}}
+			onClose={() => {
+				setProfileModalOpen(false);
+				setCurrentProvider(undefined);
+			}}
 		>
 			<form style={formStyle} onSubmit={handleSubmit}>
 				<ProviderDropdown

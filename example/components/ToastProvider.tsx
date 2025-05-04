@@ -16,23 +16,6 @@ type Toast = {
 	style?: { background?: string; color?: string };
 };
 
-type ToastContextType = {
-	addToast: (props: {
-		message: string;
-		action?: Toast['action'];
-		style?: Toast['style'];
-		duration?: number;
-	}) => void;
-};
-
-const ToastContext = createContext<ToastContextType | null>(null);
-export const useToast = () => {
-	const ctx = useContext(ToastContext);
-	if (!ctx) throw new Error('useToast must be used within ToastProvider');
-	return ctx;
-};
-
-type ToastProviderProps = { children: ReactNode };
 type AddToastProps = {
 	message: string;
 	action?: Toast['action'];
@@ -40,7 +23,19 @@ type AddToastProps = {
 	duration?: number;
 };
 
-export const ToastProvider = ({ children }: ToastProviderProps) => {
+export type ToastContextType = {
+	addToast: (opts: AddToastProps) => void;
+	registerHost: (host: HTMLElement | null) => void;
+};
+
+export const ToastContext = createContext<ToastContextType | null>(null);
+export const useToast = () => {
+	const ctx = useContext(ToastContext);
+	if (!ctx) throw new Error('useToast must be used within ToastProvider');
+	return ctx;
+};
+
+export const ToastProvider = ({ children }: { children: ReactNode }) => {
 	const [toasts, setToasts] = useState<Toast[]>([]);
 	const [host, setHost] = useState<HTMLElement | null>(null);
 
@@ -55,40 +50,39 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
 		duration = TOAST_DURATION
 	}: AddToastProps) => {
 		const id = Date.now();
-		setToasts((prev) => [...prev, { action, id, message, style }]);
+		setToasts((prev) => [...prev, { id, message, action, style }]);
 		if (duration > 0) setTimeout(() => removeToast(id), duration);
 	};
 
 	const removeToast = (id: number) =>
 		setToasts((prev) => prev.filter((t) => t.id !== id));
 
-	const registerHost = (element: HTMLElement | null) => {
+	const registerHost = (element: HTMLElement | null) =>
 		setHost(element ?? document.body);
-	};
 
 	return (
-		<ToastContext.Provider value={{ addToast }}>
+		<ToastContext.Provider value={{ addToast, registerHost }}>
 			{children}
 			{host &&
 				createPortal(
 					<div
 						style={{
-							alignItems: 'flex-end',
+							position: 'fixed',
 							bottom: '1rem',
+							right: '1rem',
 							display: 'flex',
 							flexDirection: 'column',
-							position: 'fixed',
-							right: '1rem',
+							alignItems: 'flex-end',
 							zIndex: 10000
 						}}
 					>
-						{toasts.map(({ id, message, action, style }) => (
+						{toasts.map((t) => (
 							<Toast
-								key={id}
-								message={message}
-								action={action}
-								style={style}
-								removeToast={() => removeToast(id)}
+								key={t.id}
+								message={t.message}
+								action={t.action}
+								style={t.style}
+								removeToast={() => removeToast(t.id)}
 							/>
 						))}
 					</div>,

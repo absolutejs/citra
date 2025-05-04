@@ -58,10 +58,18 @@ export const RefreshModal = ({
 		});
 	};
 
+	const { registerHost } = useToast();
+
 	return (
 		<Modal
 			isOpen={refreshModalOpen}
-			onClose={() => setRefreshModalOpen(false)}
+			onOpen={(dialogRef) => {
+				registerHost(dialogRef);
+			}}
+			onClose={() => {
+				setRefreshModalOpen(false);
+				setCurrentProvider(undefined);
+			}}
 		>
 			<form style={formStyle} onSubmit={handleSubmit}>
 				<ProviderDropdown

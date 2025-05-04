@@ -5,6 +5,7 @@ import { ProviderOption } from '../../src/types';
 import { formButtonStyle, formStyle } from '../utils/styles';
 import { Modal } from './Modal';
 import { ProviderDropdown } from './ProviderDropdown';
+import { useToast } from './ToastProvider';
 
 const providerOptions = Object.keys(providers).filter(isValidProviderOption);
 
@@ -18,9 +19,19 @@ export const AuthorizeModal = ({
 	setAuthModalOpen
 }: AuthModalProps) => {
 	const [currentProvider, setCurrentProvider] = useState<ProviderOption>();
+	const { registerHost } = useToast();
 
 	return (
-		<Modal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)}>
+		<Modal
+			isOpen={authModalOpen}
+			onOpen={(dialogRef) => {
+				registerHost(dialogRef);
+			}}
+			onClose={() => {
+				setAuthModalOpen(false);
+				setCurrentProvider(undefined);
+			}}
+		>
 			<form
 				action={`/oauth2/${currentProvider?.toLowerCase()}/authorization`}
 				method="get"

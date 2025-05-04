@@ -5,7 +5,7 @@ import {
 } from './arctic-utils';
 import { providers } from './providers';
 import { ConfigFor, OAuth2Client, ProviderOption } from './types';
-import { createOAuth2Error } from './utils';
+import { createOAuth2FetchError } from './utils';
 
 export const createOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
@@ -109,7 +109,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			const response = await fetch(endpoint.toString(), init);
 			if (!response.ok) {
-				throw await createOAuth2Error(response);
+				throw await createOAuth2FetchError(response);
 			}
 
 			return response.json();
@@ -170,7 +170,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			const response = await fetch(request);
 
 			if (!response.ok) {
-				throw await createOAuth2Error(response);
+				throw await createOAuth2FetchError(response);
 			}
 		},
 

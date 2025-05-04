@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 import { NUM_GENERATOR_BYTES } from './constants';
-import { createOAuth2Error, encodeBase64 } from './utils';
+import { createOAuth2FetchError, encodeBase64 } from './utils';
 
 /**
  * RFC‑7636 S256 code challenge
@@ -38,9 +38,9 @@ export const createS256CodeChallenge = async (codeVerifier: string) => {
  * from `length` bytes of cryptographically-secure random data.
  */
 const createRandomBase64UrlGenerator = (length: number) => () => {
-	const buf = crypto.getRandomValues(new Uint8Array(length));
+	const buffer = crypto.getRandomValues(new Uint8Array(length));
 
-	return base64Url(buf);
+	return base64Url(buffer);
 };
 
 /** 32-byte code verifier for PKCE */
@@ -92,7 +92,7 @@ export const postForm = async (url: string, body: URLSearchParams) => {
 	const request = createOAuth2Request(url, body);
 	const response = await fetch(request);
 	if (!response.ok) {
-		throw await createOAuth2Error(response);
+		throw await createOAuth2FetchError(response);
 	}
 
 	return response.json();

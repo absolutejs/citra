@@ -1,4 +1,4 @@
-export const createOAuth2Error = async (response: Response) => {
+export const createOAuth2FetchError = async (response: Response) => {
 	let details = '';
 	const clone = response.clone();
 
@@ -25,7 +25,7 @@ export const createOAuth2Error = async (response: Response) => {
 
 export const encodeBase64 = (
 	input: string | ArrayBuffer | Uint8Array
-): string => {
+)=> {
 	let raw = '';
 	if (typeof input === 'string') {
 		raw = input;

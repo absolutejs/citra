@@ -1,5 +1,5 @@
-import Elysia from 'elysia';
-export declare const facebookPlugin: Elysia<"", {
+import { Elysia } from 'elysia';
+export declare const auth0Plugin: Elysia<"", {
     decorator: {};
     store: {};
     derive: {};
@@ -14,7 +14,7 @@ export declare const facebookPlugin: Elysia<"", {
     parser: {};
 }, {
     oauth2: {
-        facebook: {
+        auth0: {
             authorization: {
                 get: {
                     body: unknown;
@@ -31,7 +31,7 @@ export declare const facebookPlugin: Elysia<"", {
     };
 } & {
     oauth2: {
-        facebook: {
+        auth0: {
             callback: {
                 get: {
                     body: unknown;
@@ -49,7 +49,53 @@ export declare const facebookPlugin: Elysia<"", {
     };
 } & {
     oauth2: {
-        facebook: {
+        auth0: {
+            tokens: {
+                post: {
+                    body: {
+                        refresh_token: string;
+                    };
+                    params: {};
+                    query: unknown;
+                    headers: unknown;
+                    response: {
+                        200: Response;
+                        500: `Unexpected error: ${string}` | `Failed to refresh access token: ${string}`;
+                        422: {
+                            type: "validation";
+                            on: string;
+                            summary?: string;
+                            message?: string;
+                            found?: unknown;
+                            property?: string;
+                            expected?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+} & {
+    oauth2: {
+        auth0: {
+            revocation: {
+                delete: {
+                    body: unknown;
+                    params: {};
+                    query: unknown;
+                    headers: unknown;
+                    response: {
+                        200: Response;
+                        500: `Unexpected error: ${string}` | `Failed to revoke token: ${string}`;
+                        400: "Token to revoke is required in query parameters";
+                    };
+                };
+            };
+        };
+    };
+} & {
+    oauth2: {
+        auth0: {
             profile: {
                 get: {
                     body: unknown;

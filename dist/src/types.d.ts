@@ -1,11 +1,18 @@
 import { providers } from './providers';
+type NonEmptyArray<T> = [T, ...T[]];
 export type ProfileRequestConfig = {
-    url: string;
+    url: string | ((config: any) => string);
     method: 'GET' | 'POST';
     authIn: 'header' | 'query';
-    headers?: Record<string, string>;
+    headers?: HeadersInit;
     body?: unknown;
     searchParams?: [string, string][];
+};
+export type RevocationRequestConfig = {
+    url: string | ((config: any) => string);
+    authIn: 'body' | 'header';
+    headers?: HeadersInit | ((config: any) => HeadersInit);
+    body?: URLSearchParams;
 };
 export type DefineProviders = <ProviderMap extends Record<string, ProviderConfig>>(providerMap: ProviderMap) => {
     [ProviderName in keyof ProviderMap]: ProviderMap[ProviderName] & ProviderConfig;
@@ -21,15 +28,18 @@ export type RefreshableProvider = {
     [K in ProviderOption]: (typeof providers)[K]['isRefreshable'] extends true ? K : never;
 }[ProviderOption];
 export type RevocableProvider = {
-    [K in ProviderOption]: (typeof providers)[K]['tokenRevocationUrl'] extends string ? K : never;
+    [K in ProviderOption]: (typeof providers)[K]['revocationRequest'] extends RevocationRequestConfig ? K : never;
+}[ProviderOption];
+export type ScopeRequiredProvider = {
+    [K in ProviderOption]: (typeof providers)[K]['scopeRequired'] extends true ? K : never;
 }[ProviderOption];
 export type BaseOAuth2Client<P extends ProviderOption> = {
     createAuthorizationUrl(opts: {
         state: string;
     } & (P extends PKCEProvider ? {
         codeVerifier: string;
-    } : unknown) & (P extends OIDCProvider ? {
-        scope: string[];
+    } : unknown) & (P extends ScopeRequiredProvider ? {
+        scope: NonEmptyArray<string>;
     } : {
         scope?: string[];
     }) & {
@@ -53,9 +63,10 @@ export type ProviderConfig = {
     isPKCE: boolean;
     isOIDC: boolean;
     isRefreshable: boolean;
-    authorizationUrl: string;
-    tokenUrl: string;
-    tokenRevocationUrl?: string;
+    scopeRequired: boolean;
+    authorizationUrl: string | ((config: any) => string);
+    tokenUrl: string | ((config: any) => string);
+    revocationRequest?: RevocationRequestConfig;
     profileRequest?: ProfileRequestConfig;
     /** Static query params added to the auth URL */
     createAuthorizationURLSearchParams?: Record<string, string>;
@@ -63,8 +74,6 @@ export type ProviderConfig = {
     validateAuthorizationCodeBody?: Record<string, string>;
     /** Static fields added to the refresh‑token request body */
     refreshAccessTokenBody?: Record<string, string>;
-    /** Static fields added to the token‑revocation request body */
-    tokenRevocationBody?: Record<string, string>;
 };
 export type OAuth2TokenResponse = {
     access_token: string;
@@ -185,6 +194,7 @@ export type FigmaOAuth2Config = {
     redirectUri: string;
 };
 export type GiteaOAuth2Config = {
+    baseURL: string;
     clientId: string;
     clientSecret: string;
     redirectUri: string;
@@ -209,6 +219,7 @@ export type IntuitOAuth2Config = {
     clientId: string;
     clientSecret: string;
     redirectUri: string;
+    environment: 'sandbox' | 'production';
 };
 export type KakaoOAuth2Config = {
     clientId: string;
@@ -464,3 +475,4 @@ export type ConfigMap = {
     Zoom: ZoomOAuth2Config;
 };
 export type ConfigFor<P extends keyof typeof providers> = P extends keyof ConfigMap ? ConfigMap[P] : never;
+export {};

@@ -1,5 +1,5 @@
-import Elysia from 'elysia';
-export declare const facebookPlugin: Elysia<"", {
+import { Elysia } from 'elysia';
+export declare const battlenetPlugin: Elysia<"", {
     decorator: {};
     store: {};
     derive: {};
@@ -14,7 +14,7 @@ export declare const facebookPlugin: Elysia<"", {
     parser: {};
 }, {
     oauth2: {
-        facebook: {
+        battlenet: {
             authorization: {
                 get: {
                     body: unknown;
@@ -31,7 +31,7 @@ export declare const facebookPlugin: Elysia<"", {
     };
 } & {
     oauth2: {
-        facebook: {
+        battlenet: {
             callback: {
                 get: {
                     body: unknown;
@@ -40,7 +40,7 @@ export declare const facebookPlugin: Elysia<"", {
                     headers: unknown;
                     response: {
                         200: import("undici-types").Response;
-                        400: "Cookies are missing" | "Code is missing in query" | "Invalid state mismatch" | "Code verifier is missing";
+                        400: "Cookies are missing" | "Code is missing in query" | "Invalid state mismatch";
                         500: `Failed to validate authorization code: ${string}` | `Unexpected error: ${string}`;
                     };
                 };
@@ -49,7 +49,7 @@ export declare const facebookPlugin: Elysia<"", {
     };
 } & {
     oauth2: {
-        facebook: {
+        battlenet: {
             profile: {
                 get: {
                     body: unknown;

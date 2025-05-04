@@ -7,3 +7,4 @@ export declare const MILLISECONDS_IN_A_DAY: number;
 export declare const COOKIE_MINUTES = 30;
 export declare const COOKIE_DURATION: number;
 export declare const HALF = 0.5;
+export declare const TOAST_DURATION = 5000;

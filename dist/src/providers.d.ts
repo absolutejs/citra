@@ -9,6 +9,7 @@ export declare const providers: {
         isOIDC: false;
         isPKCE: false;
         isRefreshable: true;
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -19,7 +20,11 @@ export declare const providers: {
         isOIDC: true;
         isPKCE: true;
         isRefreshable: true;
-        tokenRevocationUrl: string;
+        revocationRequest: {
+            authIn: "body";
+            url: (config: any) => string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     AniList: {
@@ -42,6 +47,7 @@ export declare const providers: {
             method: "POST";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -55,6 +61,7 @@ export declare const providers: {
         isOIDC: true;
         isPKCE: true;
         isRefreshable: true;
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -77,59 +84,68 @@ export declare const providers: {
         refreshAccessTokenBody: {
             grant_type: string;
         };
+        scopeRequired: true;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
     } & import("./types").ProviderConfig;
     Auth0: {
-        authorizationUrl: string;
+        authorizationUrl: (config: any) => string;
         isOIDC: true;
         isPKCE: true;
         isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: (config: any) => string;
+        };
         refreshAccessTokenBody: {
             grant_type: string;
         };
-        tokenRevocationBody: {
-            token_type_hint: string;
+        revocationRequest: {
+            authIn: "body";
+            body: URLSearchParams;
+            url: (config: any) => string;
         };
-        tokenRevocationUrl: string;
-        tokenUrl: string;
+        scopeRequired: false;
+        tokenUrl: (config: any) => string;
     } & import("./types").ProviderConfig;
     Authentik: {
-        authorizationUrl: string;
+        authorizationUrl: (config: any) => string;
         isOIDC: true;
         isPKCE: true;
         isRefreshable: true;
-        tokenUrl: string;
+        scopeRequired: false;
+        tokenUrl: (config: any) => string;
     } & import("./types").ProviderConfig;
     Autodesk: {
         authorizationUrl: string;
-        createAuthorizationURLSearchParams: {
-            response_type: string;
-        };
-        isOIDC: false;
-        isPKCE: false;
-        isRefreshable: true;
-        tokenUrl: string;
-        validateAuthorizationCodeBody: {
-            grant_type: string;
-        };
-    } & import("./types").ProviderConfig;
-    Battlenet: {
-        authorizationUrl: string;
-        createAuthorizationURLSearchParams: {
-            response_type: string;
-            scope: string;
-        };
-        isOIDC: false;
-        isPKCE: false;
+        isOIDC: true;
+        isPKCE: true;
         isRefreshable: true;
         profileRequest: {
             authIn: "header";
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
+        tokenUrl: string;
+    } & import("./types").ProviderConfig;
+    Battlenet: {
+        authorizationUrl: string;
+        createAuthorizationURLSearchParams: {
+            response_type: string;
+        };
+        isOIDC: true;
+        isPKCE: false;
+        isRefreshable: false;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -148,6 +164,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -163,7 +180,11 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
-        tokenRevocationUrl: string;
+        revocationRequest: {
+            authIn: "body";
+            url: string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -182,6 +203,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Coinbase: {
@@ -197,6 +219,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -205,13 +228,14 @@ export declare const providers: {
     Discord: {
         authorizationUrl: string;
         isOIDC: false;
-        isPKCE: false;
+        isPKCE: true;
         isRefreshable: true;
         profileRequest: {
             authIn: "header";
             method: "GET";
             url: string;
         };
+        scopeRequired: true;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     DonationAlerts: {
@@ -224,6 +248,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Dribbble: {
@@ -236,6 +261,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Dropbox: {
@@ -245,10 +271,14 @@ export declare const providers: {
         isRefreshable: true;
         profileRequest: {
             authIn: "header";
-            method: "GET";
+            method: "POST";
             url: string;
         };
-        tokenRevocationUrl: string;
+        revocationRequest: {
+            authIn: "header";
+            url: string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     EpicGames: {
@@ -261,6 +291,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Etsy: {
@@ -273,6 +304,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Facebook: {
@@ -280,8 +312,8 @@ export declare const providers: {
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
-        isOIDC: false;
-        isPKCE: false;
+        isOIDC: true;
+        isPKCE: true;
         isRefreshable: false;
         profileRequest: {
             authIn: "query";
@@ -289,6 +321,7 @@ export declare const providers: {
             searchParams: [string, string][];
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -297,18 +330,6 @@ export declare const providers: {
     Figma: {
         authorizationUrl: string;
         isOIDC: false;
-        isPKCE: false;
-        isRefreshable: true;
-        profileRequest: {
-            authIn: "header";
-            method: "GET";
-            url: string;
-        };
-        tokenUrl: string;
-    } & import("./types").ProviderConfig;
-    Gitea: {
-        authorizationUrl: string;
-        isOIDC: false;
         isPKCE: true;
         isRefreshable: true;
         profileRequest: {
@@ -316,7 +337,21 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: true;
         tokenUrl: string;
+    } & import("./types").ProviderConfig;
+    Gitea: {
+        authorizationUrl: (config: any) => string;
+        isOIDC: true;
+        isPKCE: true;
+        isRefreshable: true;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            url: (config: any) => string;
+        };
+        scopeRequired: false;
+        tokenUrl: (config: any) => string;
     } & import("./types").ProviderConfig;
     GitHub: {
         authorizationUrl: string;
@@ -325,20 +360,21 @@ export declare const providers: {
         };
         isOIDC: false;
         isPKCE: false;
-        isRefreshable: true;
+        isRefreshable: false;
         profileRequest: {
             authIn: "header";
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
         };
     } & import("./types").ProviderConfig;
     GitLab: {
-        authorizationUrl: string;
-        isOIDC: false;
+        authorizationUrl: (config: any) => string;
+        isOIDC: true;
         isPKCE: true;
         isRefreshable: true;
         profileRequest: {
@@ -346,8 +382,12 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
-        tokenRevocationUrl: string;
-        tokenUrl: string;
+        revocationRequest: {
+            authIn: "body";
+            url: (config: any) => string;
+        };
+        scopeRequired: false;
+        tokenUrl: (config: any) => string;
     } & import("./types").ProviderConfig;
     Google: {
         authorizationUrl: string;
@@ -357,7 +397,17 @@ export declare const providers: {
         isOIDC: true;
         isPKCE: true;
         isRefreshable: true;
-        tokenRevocationUrl: string;
+        profileRequest: {
+            authIn: "header";
+            method: "GET";
+            searchParams: [string, string][];
+            url: string;
+        };
+        revocationRequest: {
+            authIn: "body";
+            url: string;
+        };
+        scopeRequired: true;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -365,15 +415,22 @@ export declare const providers: {
     } & import("./types").ProviderConfig;
     Intuit: {
         authorizationUrl: string;
-        isOIDC: false;
+        isOIDC: true;
         isPKCE: false;
         isRefreshable: true;
         profileRequest: {
             authIn: "header";
             method: "GET";
+            url: (config: any) => "https://accounts.platform.intuit.com/v1/openid_connect/userinfo" | "https://sandbox-accounts.platform.intuit.com/v1/openid_connect/userinfo";
+        };
+        revocationRequest: {
+            authIn: "body";
+            headers: (config: any) => {
+                Authorization: string;
+            };
             url: string;
         };
-        tokenRevocationUrl: string;
+        scopeRequired: true;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Kakao: {
@@ -389,6 +446,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -404,7 +462,11 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
-        tokenRevocationUrl: string;
+        revocationRequest: {
+            authIn: "body";
+            url: (config: any) => string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Kick: {
@@ -416,7 +478,11 @@ export declare const providers: {
         isOIDC: false;
         isPKCE: true;
         isRefreshable: true;
-        tokenRevocationUrl: string;
+        revocationRequest: {
+            authIn: "body";
+            url: string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -432,6 +498,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Line: {
@@ -451,6 +518,7 @@ export declare const providers: {
         refreshAccessTokenBody: {
             grant_type: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -476,6 +544,7 @@ export declare const providers: {
             method: "POST";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -486,9 +555,10 @@ export declare const providers: {
         createAuthorizationURLSearchParams: {
             response_type: string;
         };
-        isOIDC: false;
-        isPKCE: false;
+        isOIDC: true;
+        isPKCE: true;
         isRefreshable: true;
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -504,7 +574,11 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
-        tokenRevocationUrl: string;
+        revocationRequest: {
+            authIn: "body";
+            url: (config: any) => string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     MercadoLibre: {
@@ -517,6 +591,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     MercadoPago: {
@@ -529,6 +604,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     MicrosoftEntraId: {
@@ -536,6 +612,7 @@ export declare const providers: {
         isOIDC: true;
         isPKCE: true;
         isRefreshable: true;
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     MyAnimeList: {
@@ -548,6 +625,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Naver: {
@@ -560,6 +638,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Notion: {
@@ -572,6 +651,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Okta: {
@@ -579,7 +659,11 @@ export declare const providers: {
         isOIDC: true;
         isPKCE: true;
         isRefreshable: true;
-        tokenRevocationUrl: string;
+        revocationRequest: {
+            authIn: "body";
+            url: (config: any) => string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Osu: {
@@ -592,6 +676,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Patreon: {
@@ -604,6 +689,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Polar: {
@@ -616,6 +702,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Reddit: {
@@ -628,6 +715,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Roblox: {
@@ -640,6 +728,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Salesforce: {
@@ -647,6 +736,7 @@ export declare const providers: {
         isOIDC: false;
         isPKCE: false;
         isRefreshable: true;
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Shikimori: {
@@ -659,6 +749,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Slack: {
@@ -671,6 +762,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Spotify: {
@@ -683,6 +775,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     StartGG: {
@@ -705,6 +798,7 @@ export declare const providers: {
             method: "POST";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -723,6 +817,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -738,6 +833,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     TikTok: {
@@ -754,7 +850,11 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
-        tokenRevocationUrl: string;
+        revocationRequest: {
+            authIn: "body";
+            url: string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -773,6 +873,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -788,6 +889,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Twitch: {
@@ -803,6 +905,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -825,6 +928,7 @@ export declare const providers: {
         refreshAccessTokenBody: {
             grant_type: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -843,6 +947,7 @@ export declare const providers: {
             method: "GET";
             url: string;
         };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -857,6 +962,7 @@ export declare const providers: {
         isOIDC: false;
         isPKCE: true;
         isRefreshable: true;
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -867,6 +973,7 @@ export declare const providers: {
         isOIDC: false;
         isPKCE: false;
         isRefreshable: true;
+        scopeRequired: false;
         tokenUrl: string;
     } & import("./types").ProviderConfig;
     Yandex: {
@@ -877,6 +984,7 @@ export declare const providers: {
         isOIDC: false;
         isPKCE: false;
         isRefreshable: true;
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;
@@ -898,7 +1006,11 @@ export declare const providers: {
         refreshAccessTokenBody: {
             grant_type: string;
         };
-        tokenRevocationUrl: string;
+        revocationRequest: {
+            authIn: "body";
+            url: string;
+        };
+        scopeRequired: false;
         tokenUrl: string;
         validateAuthorizationCodeBody: {
             grant_type: string;

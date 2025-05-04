@@ -51,3 +51,4 @@ If any issues occur please open one so it can be fixed.
 - Lichess
 - LINE
 - Linear
+- LinkedIn (In Development)

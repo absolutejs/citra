@@ -203,6 +203,9 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				body.set('code_verifier', codeVerifier);
 			}
 
+			console.log('→ token‑exchange body:', body.toString());
+
+
 			return postForm(tokenUrl, body);
 		}
 	};

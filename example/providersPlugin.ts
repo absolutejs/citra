@@ -31,6 +31,7 @@ import { kickPlugin } from './providers/kick';
 import { lichessPlugin } from './providers/lichess';
 import { linePlugin } from './providers/line';
 import { linearPlugin } from './providers/linear';
+import { linkedinPlugin } from './providers/linkedin';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -65,3 +66,4 @@ export const providersPlugin = new Elysia()
 	.use(lichessPlugin)
 	.use(linePlugin)
 	.use(linearPlugin)
+	.use(linkedinPlugin)

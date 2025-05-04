@@ -515,7 +515,7 @@ export const providers = defineProviders({
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
-		scopeRequired: false,
+		scopeRequired: true, // Has to be at least one (not including 'openid')
 		tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},

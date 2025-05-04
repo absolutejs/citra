@@ -25,6 +25,7 @@ import { githubPlugin } from './providers/github';
 import { gitlabPlugin } from './providers/gitlab';
 import { googlePlugin } from './providers/google';
 import { intuitPlugin } from './providers/intuit';
+import { kakaoPlugin } from './providers/kakao';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -52,4 +53,5 @@ export const providersPlugin = new Elysia()
 	.use(githubPlugin)
 	.use(gitlabPlugin)
 	.use(googlePlugin)
-	.use(intuitPlugin);
+	.use(intuitPlugin)
+	.use(kakaoPlugin)

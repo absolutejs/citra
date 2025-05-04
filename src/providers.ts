@@ -405,8 +405,8 @@ export const providers = defineProviders({
 	Kakao: {
 		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
-		isOIDC: false,
-		isPKCE: false,
+		isOIDC: true,
+		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',

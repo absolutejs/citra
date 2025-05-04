@@ -37,10 +37,11 @@ If any issues occur please open one so it can be fixed.
 - Dribble (Untested: Paid)
 - Dropbox
 - Epic Games (untested: https) (HTTPS Required)
-- Etsy (Untested: pending approval)
+- Etsy (Untested: Pending Approval)
 - Facebook
 - Gitea (In Development)
 - Github
 - Gitlab
 - Google 
 - Intuit
+- Kakao

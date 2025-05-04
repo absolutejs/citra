@@ -75,7 +75,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			searchParams.forEach(([key, value]) =>
 				url.searchParams.set(key, value)
 			);
-
+			
 			return url;
 		},
 

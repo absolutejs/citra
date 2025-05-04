@@ -452,25 +452,25 @@ export const providers = defineProviders({
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Lichess: {
-		authorizationUrl: 'https://lichess.org/oauth',
-		isOIDC: false,
-		isPKCE: true,
-		isRefreshable: true,
+		authorizationUrl: 'https://lichess.org/oauth/authorize',
+		tokenUrl:         'https://lichess.org/api/token',
+		isOIDC:           false,
+		isPKCE:           true,
+		isRefreshable:    false,
 		profileRequest: {
-			authIn: 'header',
-			method: 'GET',
-			url: 'https://lichess.org/api/account'
+		  authIn:  'header',
+		  method:  'GET',
+		  url:     'https://lichess.org/api/account'
 		},
-		scopeRequired: false,
-		tokenUrl: 'https://lichess.org/api/token'
-	},
-	Line: {
+		scopeRequired:    false,
+	  },
+	LINE: {
 		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
 		createAuthorizationURLSearchParams: {
 			code_challenge_method: 'S256',
 			response_type: 'code'
 		},
-		isOIDC: false,
+		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
 		profileRequest: {

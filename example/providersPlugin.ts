@@ -27,6 +27,9 @@ import { googlePlugin } from './providers/google';
 import { intuitPlugin } from './providers/intuit';
 import { kakaoPlugin } from './providers/kakao';
 import { keycloakPlugin } from './providers/keycloak';
+import { kickPlugin } from './providers/kick';
+import { lichessPlugin } from './providers/lichess';
+import { LINEPlugin } from './providers/line';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -57,3 +60,6 @@ export const providersPlugin = new Elysia()
 	.use(intuitPlugin)
 	.use(kakaoPlugin)
 	.use(keycloakPlugin)
+	.use(kickPlugin)
+	.use(lichessPlugin)
+	.use(LINEPlugin)

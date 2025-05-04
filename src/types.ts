@@ -287,16 +287,18 @@ export type KickOAuth2Config = {
 	clientSecret: string;
 	redirectUri: string;
 };
+
+export type LichessOAuth2Config = {
+	clientId: string;
+	redirectUri: string;
+};
+
 export type LINEOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type LichessOAuth2Config = {
-	clientId: string;
-	clientSecret: string;
-	redirectUri: string;
-};
+
 export type LinearOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
@@ -490,8 +492,8 @@ export type ConfigMap = {
 	Kakao: KakaoOAuth2Config;
 	Keycloak: KeycloakOAuth2Config;
 	Kick: KickOAuth2Config;
-	Line: LINEOAuth2Config;
 	Lichess: LichessOAuth2Config;
+	LINE: LINEOAuth2Config;
 	Linear: LinearOAuth2Config;
 	LinkedIn: LinkedInOAuth2Config;
 	Mastodon: MastodonOAuth2Config;

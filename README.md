@@ -14,7 +14,8 @@ There are 63 providers available through Citra
 
 Some providers have the tag (HTTPS Required) since the provider will only authorize over secure connections ... include steps for mkcert ...
 
-Some providers were either restricted (Untested: Restricted) or required payment (Untested: Paid) to set up a client so they are not tested. 
+Some providers had restrictive steps in their signup process that prevented current testing of them. (Untested: Reason)
+
 
 If any issues occur please open one so it can be fixed.
 
@@ -30,13 +31,13 @@ If any issues occur please open one so it can be fixed.
 - Battlenet
 - Bitbucket
 - Box 
-- Bungie (untested: https) (HTTPS Required)
-- Coinbase (untested: https) (HTTPS Required)
+- Bungie (Untested: https) (HTTPS Required)
+- Coinbase (Untested: https) (HTTPS Required)
 - Discord
 - Donation Alerts
 - Dribble (Untested: Paid)
 - Dropbox
-- Epic Games (untested: https) (HTTPS Required)
+- Epic Games (Untested: https) (HTTPS Required)
 - Etsy (Untested: Pending Approval)
 - Facebook
 - Gitea (In Development)
@@ -45,3 +46,7 @@ If any issues occur please open one so it can be fixed.
 - Google 
 - Intuit
 - Kakao
+- Keycloak (Untested: Self Hosted)
+- Kick (Untested: Pending Approval)
+- Lichess
+- LINE

@@ -32,10 +32,15 @@ export const ToastContext = createContext<ToastContextType | null>(null);
 export const useToast = () => {
 	const ctx = useContext(ToastContext);
 	if (!ctx) throw new Error('useToast must be used within ToastProvider');
+
 	return ctx;
 };
 
-export const ToastProvider = ({ children }: { children: ReactNode }) => {
+type ToastProviderProps = {
+	children: ReactNode;
+};
+
+export const ToastProvider = ({ children }: ToastProviderProps) => {
 	const [toasts, setToasts] = useState<Toast[]>([]);
 	const [host, setHost] = useState<HTMLElement | null>(null);
 
@@ -50,12 +55,12 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 		duration = TOAST_DURATION
 	}: AddToastProps) => {
 		const id = Date.now();
-		setToasts((prev) => [...prev, { id, message, action, style }]);
+		setToasts((prev) => [...prev, { action, id, message, style }]);
 		if (duration > 0) setTimeout(() => removeToast(id), duration);
 	};
 
 	const removeToast = (id: number) =>
-		setToasts((prev) => prev.filter((t) => t.id !== id));
+		setToasts((prev) => prev.filter((toast) => toast.id !== id));
 
 	const registerHost = (element: HTMLElement | null) =>
 		setHost(element ?? document.body);
@@ -63,26 +68,26 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 	return (
 		<ToastContext.Provider value={{ addToast, registerHost }}>
 			{children}
-			{host &&
+			{host !== null &&
 				createPortal(
 					<div
 						style={{
-							position: 'fixed',
+							alignItems: 'flex-end',
 							bottom: '1rem',
-							right: '1rem',
 							display: 'flex',
 							flexDirection: 'column',
-							alignItems: 'flex-end',
+							position: 'fixed',
+							right: '1rem',
 							zIndex: 10000
 						}}
 					>
-						{toasts.map((t) => (
+						{toasts.map((toast) => (
 							<Toast
-								key={t.id}
-								message={t.message}
-								action={t.action}
-								style={t.style}
-								removeToast={() => removeToast(t.id)}
+								key={toast.id}
+								message={toast.message}
+								action={toast.action}
+								style={toast.style}
+								removeToast={() => removeToast(toast.id)}
 							/>
 						))}
 					</div>,

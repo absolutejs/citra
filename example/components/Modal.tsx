@@ -36,15 +36,15 @@ export const Modal = ({ isOpen, onClose, onOpen, children }: ModalProps) => {
 				if (event.target === dialogRef.current) onClose();
 			}}
 			style={{
-				position: 'fixed',
-				inset: 0,
-				display: 'flex',
 				alignItems: 'center',
-				justifyContent: 'center',
 				border: 'none',
+				borderRadius: '8px',
+				display: 'flex',
+				inset: 0,
+				justifyContent: 'center',
+				margin: 'auto',
 				padding: '0px',
-				 margin: 'auto', 
-				 borderRadius: '8px',
+				position: 'fixed'
 			}}
 		>
 			<style>{`
@@ -67,13 +67,13 @@ export const Modal = ({ isOpen, onClose, onOpen, children }: ModalProps) => {
 					onClick={() => dialogRef.current?.close()}
 					aria-label="Close modal"
 					style={{
-						position: 'absolute',
-						top: '10px',
-						right: '10px',
 						background: 'transparent',
 						border: 'none',
+						cursor: 'pointer',
 						fontSize: '16px',
-						cursor: 'pointer'
+						position: 'absolute',
+						right: '10px',
+						top: '10px'
 					}}
 				>
 					&times;

@@ -23,9 +23,7 @@ export const createOAuth2FetchError = async (response: Response) => {
 	);
 };
 
-export const encodeBase64 = (
-	input: string | ArrayBuffer | Uint8Array
-)=> {
+export const encodeBase64 = (input: string | ArrayBuffer | Uint8Array) => {
 	let raw = '';
 	if (typeof input === 'string') {
 		raw = input;

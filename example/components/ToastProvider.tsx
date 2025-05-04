@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import {
+	createContext,
+	useContext,
+	useState,
+	useEffect,
+	ReactNode
+} from 'react';
+import { createPortal } from 'react-dom';
 import { TOAST_DURATION } from '../utils/constants';
 import { Toast } from './Toast';
 
@@ -22,7 +29,6 @@ const ToastContext = createContext<ToastContextType | null>(null);
 export const useToast = () => {
 	const ctx = useContext(ToastContext);
 	if (!ctx) throw new Error('useToast must be used within ToastProvider');
-
 	return ctx;
 };
 
@@ -36,6 +42,11 @@ type AddToastProps = {
 
 export const ToastProvider = ({ children }: ToastProviderProps) => {
 	const [toasts, setToasts] = useState<Toast[]>([]);
+	const [host, setHost] = useState<HTMLElement | null>(null);
+
+	useEffect(() => {
+		setHost(document.body);
+	}, []);
 
 	const addToast = ({
 		message,
@@ -49,32 +60,40 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
 	};
 
 	const removeToast = (id: number) =>
-		setToasts((prev) => prev.filter((toast) => toast.id !== id));
+		setToasts((prev) => prev.filter((t) => t.id !== id));
+
+	const registerHost = (element: HTMLElement | null) => {
+		setHost(element ?? document.body);
+	};
 
 	return (
 		<ToastContext.Provider value={{ addToast }}>
 			{children}
-			<div
-				style={{
-					alignItems: 'flex-end',
-					bottom: '1rem',
-					display: 'flex',
-					flexDirection: 'column',
-					position: 'fixed',
-					right: '1rem',
-					zIndex: 10000
-				}}
-			>
-				{toasts.map(({ id, message, action, style }) => (
-					<Toast
-						key={id}
-						message={message}
-						action={action}
-						style={style}
-						removeToast={() => removeToast(id)}
-					/>
-				))}
-			</div>
+			{host &&
+				createPortal(
+					<div
+						style={{
+							alignItems: 'flex-end',
+							bottom: '1rem',
+							display: 'flex',
+							flexDirection: 'column',
+							position: 'fixed',
+							right: '1rem',
+							zIndex: 10000
+						}}
+					>
+						{toasts.map(({ id, message, action, style }) => (
+							<Toast
+								key={id}
+								message={message}
+								action={action}
+								style={style}
+								removeToast={() => removeToast(id)}
+							/>
+						))}
+					</div>,
+					host
+				)}
 		</ToastContext.Provider>
 	);
 };

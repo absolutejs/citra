@@ -313,6 +313,7 @@ export type MastodonOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
+	baseURL: string;
 };
 export type MercadoLibreOAuth2Config = {
 	clientId: string;

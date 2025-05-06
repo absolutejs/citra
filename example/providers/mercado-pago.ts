@@ -1,37 +1,33 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
+import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.GITEA_CLIENT_ID ||
-	!env.GITEA_CLIENT_SECRET ||
-	!env.GITEA_REDIRECT_URI ||
-	!env.GITEA_BASE_URL
+	!env.MERCADO_PAGO_CLIENT_ID ||
+	!env.MERCADO_PAGO_CLIENT_SECRET ||
+	!env.MERCADO_PAGO_REDIRECT_URI
 ) {
-	throw new Error('Gitea OAuth2 credentials are not set in .env file');
+	throw new Error('Mercado Pago OAuth2 credentials are not set in .env file');
 }
 
-const giteaOAuth2Client = createOAuth2Client('Gitea', {
-	baseURL: env.GITEA_BASE_URL,
-	clientId: env.GITEA_CLIENT_ID,
-	clientSecret: env.GITEA_CLIENT_SECRET,
-	redirectUri: env.GITEA_REDIRECT_URI
+const mercadoPagoOAuth2Client = createOAuth2Client('MercadoPago', {
+	clientId: env.MERCADO_PAGO_CLIENT_ID,
+	clientSecret: env.MERCADO_PAGO_CLIENT_SECRET,
+	redirectUri: env.MERCADO_PAGO_REDIRECT_URI
 });
 
-export const giteaPlugin = new Elysia()
+export const mercadoPagoPlugin = new Elysia()
 	.get(
-		'/oauth2/gitea/authorization',
-		async ({ redirect, error, cookie: { state, code_verifier } }) => {
-			if (state === undefined || code_verifier === undefined)
+		'/oauth2/mercadopago/authorization',
+		async ({ redirect, error, cookie: { state } }) => {
+			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
-			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await giteaOAuth2Client.createAuthorizationUrl({
-					codeVerifier,
+				await mercadoPagoOAuth2Client.createAuthorizationUrl({
 					state: currentState
 				});
 
@@ -43,27 +39,19 @@ export const giteaPlugin = new Elysia()
 				secure: true,
 				value: currentState
 			});
-			code_verifier.set({
-				httpOnly: true,
-				maxAge: COOKIE_DURATION,
-				path: '/',
-				sameSite: 'lax',
-				secure: true,
-				value: codeVerifier
-			});
 
 			return redirect(authorizationUrl.toString());
 		}
 	)
 	.get(
-		'/oauth2/gitea/callback',
+		'/oauth2/mercadopago/callback',
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state, code_verifier },
+			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined || code_verifier === undefined)
+			if (stored_state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -75,17 +63,12 @@ export const giteaPlugin = new Elysia()
 
 			stored_state.remove();
 
-			const codeVerifier = code_verifier.value;
-			if (codeVerifier === undefined)
-				return error('Bad Request', 'Code verifier is missing');
-
 			try {
 				const oauthResponse =
-					await giteaOAuth2Client.validateAuthorizationCode({
-						code,
-						codeVerifier
+					await mercadoPagoOAuth2Client.validateAuthorizationCode({
+						code
 					});
-				console.log('\nGitea authorized:', oauthResponse);
+				console.log('\nMercado Pago authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -104,12 +87,14 @@ export const giteaPlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/gitea/tokens',
+		'/oauth2/mercadopago/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await giteaOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nGitea token refreshed:', oauthResponse);
+					await mercadoPagoOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
+				console.log('\nMercado Pago token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -137,7 +122,7 @@ export const giteaPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/gitea/profile',
+		'/oauth2/mercadoPago/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -149,8 +134,8 @@ export const giteaPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await giteaOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nGitea user profile:', userProfile);
+					await mercadoPagoOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nMercado Pago user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

@@ -205,7 +205,6 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			console.log('→ token‑exchange body:', body.toString());
 
-
 			return postForm(tokenUrl, body);
 		}
 	};

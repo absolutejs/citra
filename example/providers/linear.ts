@@ -21,17 +21,15 @@ const linearOAuth2Client = createOAuth2Client('Linear', {
 export const linearPlugin = new Elysia()
 	.get(
 		'/oauth2/linear/authorization',
-		async ({ redirect, error, cookie: { state,  } }) => {
-			if (state === undefined )
+		async ({ redirect, error, cookie: { state } }) => {
+			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
 				await linearOAuth2Client.createAuthorizationUrl({
 					state: currentState,
-                    searchParams: [
-                        ['prompt', 'consent']
-                    ]
+					searchParams: [['prompt', 'consent']]
 				});
 
 			state.set({
@@ -54,7 +52,7 @@ export const linearPlugin = new Elysia()
 			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined )
+			if (stored_state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -69,7 +67,7 @@ export const linearPlugin = new Elysia()
 			try {
 				const oauthResponse =
 					await linearOAuth2Client.validateAuthorizationCode({
-						code,
+						code
 					});
 				console.log('\nLinear authorized:', oauthResponse);
 			} catch (err) {
@@ -89,7 +87,7 @@ export const linearPlugin = new Elysia()
 			return redirect('/');
 		}
 	)
-    .delete(
+	.delete(
 		'/oauth2/linear/revocation',
 		async ({ error, query: { token_to_revoke } }) => {
 			if (!token_to_revoke)

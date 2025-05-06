@@ -5,24 +5,24 @@ import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.GITEA_CLIENT_ID ||
-	!env.GITEA_CLIENT_SECRET ||
-	!env.GITEA_REDIRECT_URI ||
-	!env.GITEA_BASE_URL
+	!env.MASTODON_CLIENT_ID ||
+	!env.MASTODON_CLIENT_SECRET ||
+	!env.MASTODON_REDIRECT_URI ||
+	!env.MASTODON_BASE_URL
 ) {
-	throw new Error('Gitea OAuth2 credentials are not set in .env file');
+	throw new Error('Mastodon OAuth2 credentials are not set in .env file');
 }
 
-const giteaOAuth2Client = createOAuth2Client('Gitea', {
-	baseURL: env.GITEA_BASE_URL,
-	clientId: env.GITEA_CLIENT_ID,
-	clientSecret: env.GITEA_CLIENT_SECRET,
-	redirectUri: env.GITEA_REDIRECT_URI
+const mastodonOAuth2Client = createOAuth2Client('Mastodon', {
+	clientId: env.MASTODON_CLIENT_ID,
+	clientSecret: env.MASTODON_CLIENT_SECRET,
+	redirectUri: env.MASTODON_REDIRECT_URI,
+	baseURL: env.MASTODON_BASE_URL
 });
 
-export const giteaPlugin = new Elysia()
+export const mastodonPlugin = new Elysia()
 	.get(
-		'/oauth2/gitea/authorization',
+		'/oauth2/mastodon/authorization',
 		async ({ redirect, error, cookie: { state, code_verifier } }) => {
 			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
@@ -30,7 +30,7 @@ export const giteaPlugin = new Elysia()
 			const currentState = generateState();
 			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await giteaOAuth2Client.createAuthorizationUrl({
+				await mastodonOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
 					state: currentState
 				});
@@ -56,7 +56,7 @@ export const giteaPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/gitea/callback',
+		'/oauth2/mastodon/callback',
 		async ({
 			error,
 			redirect,
@@ -81,11 +81,11 @@ export const giteaPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await giteaOAuth2Client.validateAuthorizationCode({
+					await mastodonOAuth2Client.validateAuthorizationCode({
 						code,
 						codeVerifier
 					});
-				console.log('\nGitea authorized:', oauthResponse);
+				console.log('\nMastodon authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -103,24 +103,32 @@ export const giteaPlugin = new Elysia()
 			return redirect('/');
 		}
 	)
-	.post(
-		'/oauth2/gitea/tokens',
-		async ({ error, body: { refresh_token } }) => {
-			try {
-				const oauthResponse =
-					await giteaOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nGitea token refreshed:', oauthResponse);
+	.delete(
+		'/oauth2/mastodon/revocation',
+		async ({ error, query: { token_to_revoke } }) => {
+			if (!token_to_revoke)
+				return error(
+					'Bad Request',
+					'Token to revoke is required in query parameters'
+				);
 
-				return new Response(JSON.stringify(oauthResponse), {
-					headers: {
-						'Content-Type': 'application/json'
+			try {
+				await mastodonOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nMastodon token revoked:', token_to_revoke);
+
+				return new Response(
+					`Token ${token_to_revoke} revoked successfully`,
+					{
+						headers: {
+							'Content-Type': 'text/plain'
+						}
 					}
-				});
+				);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
 						'Internal Server Error',
-						`Failed to refresh access token: ${err.message}`
+						`Failed to revoke token: ${err.message}`
 					);
 				}
 
@@ -129,15 +137,10 @@ export const giteaPlugin = new Elysia()
 					`Unexpected error: ${err}`
 				);
 			}
-		},
-		{
-			body: t.Object({
-				refresh_token: t.String()
-			})
 		}
 	)
 	.get(
-		'/oauth2/gitea/profile',
+		'/oauth2/mastodon/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -149,8 +152,8 @@ export const giteaPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await giteaOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nGitea user profile:', userProfile);
+					await mastodonOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nMastodon user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

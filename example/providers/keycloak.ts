@@ -8,7 +8,7 @@ if (
 	!env.KEYCLOAK_CLIENT_ID ||
 	!env.KEYCLOAK_CLIENT_SECRET ||
 	!env.KEYCLOAK_REDIRECT_URI ||
-    !env.KEYCLOAK_REALM_URL
+	!env.KEYCLOAK_REALM_URL
 ) {
 	throw new Error('Keycloak OAuth2 credentials are not set in .env file');
 }
@@ -17,7 +17,7 @@ const keycloakOAuth2Client = createOAuth2Client('Keycloak', {
 	clientId: env.KEYCLOAK_CLIENT_ID,
 	clientSecret: env.KEYCLOAK_CLIENT_SECRET,
 	redirectUri: env.KEYCLOAK_REDIRECT_URI,
-    realmURL: env.KEYCLOAK_REALM_URL
+	realmURL: env.KEYCLOAK_REALM_URL
 });
 
 export const keycloakPlugin = new Elysia()
@@ -49,7 +49,7 @@ export const keycloakPlugin = new Elysia()
 				path: '/',
 				sameSite: 'lax',
 				secure: true,
-				value: codeVerifier ?? ''
+				value: codeVerifier
 			});
 
 			return redirect(authorizationUrl.toString());
@@ -108,7 +108,9 @@ export const keycloakPlugin = new Elysia()
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await keycloakOAuth2Client.refreshAccessToken(refresh_token);
+					await keycloakOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
 				console.log('\nKeycloak token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {

@@ -52,7 +52,7 @@ export const googlePlugin = new Elysia()
 				path: '/',
 				sameSite: 'lax',
 				secure: true,
-				value: codeVerifier ?? ''
+				value: codeVerifier
 			});
 
 			return redirect(authorizationUrl.toString());

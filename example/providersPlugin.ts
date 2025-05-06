@@ -32,6 +32,9 @@ import { lichessPlugin } from './providers/lichess';
 import { linePlugin } from './providers/line';
 import { linearPlugin } from './providers/linear';
 import { linkedinPlugin } from './providers/linkedin';
+import { mastodonPlugin } from './providers/mastodon';
+import { mercadoLibrePlugin } from './providers/mercado-libre';
+import { mercadoPagoPlugin } from './providers/mercado-pago';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -67,3 +70,6 @@ export const providersPlugin = new Elysia()
 	.use(linePlugin)
 	.use(linearPlugin)
 	.use(linkedinPlugin)
+	.use(mastodonPlugin)
+	.use(mercadoLibrePlugin)
+	.use(mercadoPagoPlugin);

@@ -4,11 +4,7 @@ import { createOAuth2Client } from '../../src';
 import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
-if (
-	!env.KICK_CLIENT_ID ||
-	!env.KICK_CLIENT_SECRET ||
-	!env.KICK_REDIRECT_URI
-) {
+if (!env.KICK_CLIENT_ID || !env.KICK_CLIENT_SECRET || !env.KICK_REDIRECT_URI) {
 	throw new Error('Kick OAuth2 credentials are not set in .env file');
 }
 
@@ -47,7 +43,7 @@ export const kickPlugin = new Elysia()
 				path: '/',
 				sameSite: 'lax',
 				secure: true,
-				value: codeVerifier ?? ''
+				value: codeVerifier
 			});
 
 			return redirect(authorizationUrl.toString());

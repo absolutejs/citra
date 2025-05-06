@@ -418,7 +418,8 @@ export const providers = defineProviders({
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Keycloak: {
-		authorizationUrl: (config) => `${config.realmURL}/protocol/openid-connect/auth`,
+		authorizationUrl: (config) =>
+			`${config.realmURL}/protocol/openid-connect/auth`,
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
@@ -432,7 +433,7 @@ export const providers = defineProviders({
 			url: (config) => `${config.realmURL}/protocol/openid-connect/revoke`
 		},
 		scopeRequired: false,
-		tokenUrl: (config) => `${config.realmURL}/protocol/openid-connect/token`,
+		tokenUrl: (config) => `${config.realmURL}/protocol/openid-connect/token`
 	},
 	Kick: {
 		authorizationUrl: 'https://id.kick.com/oauth/authorize',
@@ -453,17 +454,17 @@ export const providers = defineProviders({
 	},
 	Lichess: {
 		authorizationUrl: 'https://lichess.org/oauth/authorize',
-		tokenUrl:         'https://lichess.org/api/token',
-		isOIDC:           false,
-		isPKCE:           true,
-		isRefreshable:    false,
+		tokenUrl: 'https://lichess.org/api/token',
+		isOIDC: false,
+		isPKCE: true,
+		isRefreshable: false,
 		profileRequest: {
-		  authIn:  'header',
-		  method:  'GET',
-		  url:     'https://lichess.org/api/account'
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://lichess.org/api/account'
 		},
-		scopeRequired:    false,
-	  },
+		scopeRequired: false
+	},
 	LINE: {
 		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
 		createAuthorizationURLSearchParams: {
@@ -488,7 +489,7 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 		isPKCE: false,
-		isRefreshable:false,
+		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
 			body: {
@@ -520,21 +521,22 @@ export const providers = defineProviders({
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Mastodon: {
-		authorizationUrl: '${baseURL}/api/v1/oauth/authorize',
-		isOIDC: false,
-		isPKCE: true,
-		isRefreshable: true,
+		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
+		tokenUrl: (config) => `${config.baseURL}/oauth/token`,
+		revocationRequest: {
+			authIn: 'body',
+			url: (config) => `${config.baseURL}/oauth/revoke`
+		},
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
-			url: 'https://<YOUR_INSTANCE>/api/v1/accounts/verify_credentials'
+			url: (config) =>
+				`${config.baseURL}/api/v1/accounts/verify_credentials`
 		},
-		revocationRequest: {
-			authIn: 'body',
-			url: (config) => `${config.baseURL}/api/v1/oauth/revoke`
-		},
-		scopeRequired: false,
-		tokenUrl: '${baseURL}/api/v1/oauth/token'
+		isOIDC: false,
+		isPKCE: true,
+		isRefreshable: false,
+		scopeRequired: false
 	},
 	MercadoLibre: {
 		authorizationUrl: 'https://auth.mercadolibre.com/authorization',

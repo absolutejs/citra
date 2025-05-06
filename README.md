@@ -51,4 +51,7 @@ If any issues occur please open one so it can be fixed.
 - Lichess
 - LINE
 - Linear
-- LinkedIn (In Development)
+- LinkedIn (Untested: Pending Approval)
+- Mastodon
+- Mercado Libre (Untested: Country Restricted)
+- Mercado Pago (Untested: Country Restricted) 

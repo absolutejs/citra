@@ -40,6 +40,9 @@ import { myAnimeListPlugin } from './providers/myanimelist';
 import { naverPlugin } from './providers/naver';
 import { notionPlugin } from './providers/notion';
 import { oktaPlugin } from './providers/okta';
+import { osuPlugin } from './providers/osu';
+import { patreonPlugin } from './providers/patreon';
+import { polarPlugin } from './providers/polar';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -83,3 +86,6 @@ export const providersPlugin = new Elysia()
 	.use(naverPlugin)
 	.use(notionPlugin)
 	.use(oktaPlugin)
+	.use(osuPlugin)
+	.use(patreonPlugin)
+	.use(polarPlugin);

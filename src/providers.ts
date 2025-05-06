@@ -827,7 +827,6 @@ export const providers = defineProviders({
 	Osu: {
 		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -844,7 +843,6 @@ export const providers = defineProviders({
 	Patreon: {
 		authorizationUrl: 'https://www.patreon.com/oauth2/authorize',
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -861,7 +859,6 @@ export const providers = defineProviders({
 	Polar: {
 		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -870,7 +867,7 @@ export const providers = defineProviders({
 		},
 		scopeRequired: false,
 		tokenRequest: {
-			authIn: 'body',
+			authIn: 'header',
 			encoding: 'form',
 			url: 'https://polarremote.com/v2/oauth2/token'
 		}

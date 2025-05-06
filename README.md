@@ -58,3 +58,5 @@ If any issues occur with a provider please open one so it can be fixed.
 - Naver (In Development)
 - Notion
 - Okta
+- Osu
+- Patreon

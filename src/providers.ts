@@ -566,13 +566,15 @@ export const providers = defineProviders({
 	},
 	MicrosoftEntraId: {
 		authorizationUrl:
-			'https://${tenantId}.b2clogin.com/${tenantId}/oauth2/v2.0/authorize',
+			(config) =>
+				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/authorize`,
 		isOIDC: true,
 		isPKCE: true,
 		isRefreshable: true,
 		scopeRequired: false,
 		tokenUrl:
-			'https://${tenantId}.b2clogin.com/${tenantId}/oauth2/v2.0/token'
+			(config) =>
+				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/token`
 	},
 	MyAnimeList: {
 		authorizationUrl: 'https://myanimelist.net/v1/oauth2/authorize',

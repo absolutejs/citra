@@ -54,4 +54,5 @@ If any issues occur please open one so it can be fixed.
 - LinkedIn (Untested: Pending Approval)
 - Mastodon
 - Mercado Libre (Untested: Country Restricted)
-- Mercado Pago (Untested: Country Restricted) 
+- Mercado Pago (Untested: Country Restricted)
+- Microsoft Entra ID (Untested: TODO - needed cc) 

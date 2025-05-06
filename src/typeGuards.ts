@@ -1,6 +1,8 @@
 import { providers } from './providers';
 import {
+	ConfigFor,
 	OAuth2TokenResponse,
+	ProviderOption,
 	RefreshableProvider,
 	RevocableProvider
 } from './types';
@@ -50,3 +52,12 @@ export const isRevocableProvider = (
 ): provider is RevocableProvider =>
 	isValidProviderOption(provider) &&
 	providers[provider].revocationRequest !== undefined;
+
+export const hasClientSecret = <P extends ProviderOption>(
+	cfg: ConfigFor<P>
+): cfg is ConfigFor<P> & { clientSecret: string } => {
+	if (typeof cfg !== 'object' || cfg === null) return false;
+	const secret = Reflect.get(cfg, 'clientSecret');
+
+	return typeof secret === 'string';
+};

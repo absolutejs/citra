@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 import { NUM_GENERATOR_BYTES } from './constants';
-import { createOAuth2FetchError, encodeBase64 } from './utils';
+import { encodeBase64 } from './utils';
 
 /**
  * RFC‑7636 S256 code challenge
@@ -63,37 +63,3 @@ const base64Url = (input: ArrayBuffer | Uint8Array) =>
 		.replace(/\+/g, '-')
 		.replace(/\//g, '_')
 		.replace(/=+$/, '');
-
-export const createOAuth2Request = (
-	Url: string,
-	body: URLSearchParams,
-	headers?: HeadersInit
-) => {
-	const bodyBytes = new TextEncoder().encode(body.toString());
-	const request = new Request(Url, {
-		body: bodyBytes,
-		method: 'POST'
-	});
-	request.headers.set('Content-Type', 'application/x-www-form-urlencoded');
-	request.headers.set('Accept', 'application/json');
-	request.headers.set('User-Agent', 'citra');
-	request.headers.set('Content-Length', bodyBytes.byteLength.toString());
-	void (
-		headers &&
-		Object.entries(headers).forEach(([key, value]) => {
-			request.headers.set(key, value);
-		})
-	);
-
-	return request;
-};
-
-export const postForm = async (url: string, body: URLSearchParams) => {
-	const request = createOAuth2Request(url, body);
-	const response = await fetch(request);
-	if (!response.ok) {
-		throw await createOAuth2FetchError(response);
-	}
-
-	return response.json();
-};

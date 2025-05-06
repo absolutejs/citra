@@ -43,6 +43,15 @@ export type DefineProviders = <
 
 export type ProviderOption = keyof typeof providers;
 
+export type OAuth2RequestOptions = {
+	url: string;
+	body: Record<string, unknown> | URLSearchParams;
+	authIn: 'header' | 'body';
+	encoding: 'form' | 'json';
+	clientId: string;
+	clientSecret?: string;
+};
+
 export type PKCEProvider = {
 	[K in ProviderOption]: (typeof providers)[K]['PKCEMethod'] extends
 		| 'S256'

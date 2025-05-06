@@ -1,11 +1,13 @@
-import {
-	createOAuth2Request,
-	createS256CodeChallenge,
-	postForm
-} from './arctic-utils';
+import { createS256CodeChallenge } from './arctic-utils';
 import { providers } from './providers';
-import { ConfigFor, OAuth2Client, ProviderOption } from './types';
-import { createOAuth2FetchError, postJsonWithBasic } from './utils';
+import { hasClientSecret } from './typeGuards';
+import {
+	ConfigFor,
+	OAuth2Client,
+	OAuth2RequestOptions,
+	ProviderOption
+} from './types';
+import { createOAuth2FetchError, createOAuth2Request } from './utils';
 
 export const createOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
@@ -140,34 +142,54 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			return response.json();
 		},
 
-		refreshAccessToken(refreshToken: string) {
-			const body = new URLSearchParams(meta.refreshAccessTokenBody);
-			body.set('grant_type', 'refresh_token');
-			body.set('refresh_token', refreshToken);
-			if ('clientSecret' in config && config.clientSecret) {
-				body.set('client_id', config.clientId);
-				body.set('client_secret', config.clientSecret);
+		async refreshAccessToken(refreshToken: string) {
+			const { authIn, encoding } = meta.tokenRequest;
+
+			const params = new URLSearchParams(meta.refreshAccessTokenBody);
+			params.set('grant_type', 'refresh_token');
+			params.set('refresh_token', refreshToken);
+
+			const { clientId } = config;
+			let clientSecret: string | undefined;
+			if (hasClientSecret(config)) {
+				clientSecret = config.clientSecret;
+				params.set('client_id', clientId);
+				params.set('client_secret', clientSecret);
 			}
 
-			return postForm(tokenUrl, body);
+			const request = createOAuth2Request({
+				authIn,
+				body: params,
+				clientId,
+				clientSecret,
+				encoding,
+				url: tokenUrl
+			});
+
+			const response = await fetch(request);
+			if (!response.ok) {
+				throw await createOAuth2FetchError(response);
+			}
+
+			return response.json();
 		},
 
 		async revokeToken(token: string) {
 			const { revocationRequest } = meta;
-
 			if (!revocationRequest) {
 				throw new Error(
 					'Token revocation request is not defined for this provider'
 				);
 			}
-			const { url, authIn, body, headers } = revocationRequest;
-			const revocationBody = body ?? new URLSearchParams();
+
+			const { url, authIn, body } = revocationRequest;
 			const endpoint = resolveConfigProp(url);
-			const revocationHeaders = headers && resolveConfigProp(headers);
+			const revocationBody = body ?? new URLSearchParams();
+			revocationBody.set('token', token);
 
 			let request: Request;
+
 			if (authIn === 'header') {
-				// Dropbox || Linear
 				request = new Request(endpoint.toString(), {
 					headers: {
 						Authorization: `Bearer ${token}`,
@@ -176,24 +198,29 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					method: 'POST'
 				});
 			} else {
-				// RFC 7009
-				revocationBody.set('token', token);
-				revocationBody.set('client_id', config.clientId);
-				void (
-					'clientSecret' in config &&
-					typeof config.clientSecret === 'string' &&
-					revocationBody.set('client_secret', config.clientSecret)
-				);
+				const { clientId } = config;
+				const clientSecret = hasClientSecret(config)
+					? config.clientSecret
+					: undefined;
 
-				request = createOAuth2Request(
-					endpoint,
-					revocationBody,
-					revocationHeaders
-				);
+				revocationBody.set('client_id', clientId);
+				if (clientSecret) {
+					revocationBody.set('client_secret', clientSecret);
+				}
+
+				const options: OAuth2RequestOptions = {
+					authIn: 'body',
+					body: revocationBody,
+					clientId,
+					clientSecret,
+					encoding: 'form',
+					url: endpoint.toString()
+				};
+
+				request = createOAuth2Request(options);
 			}
 
 			const response = await fetch(request);
-
 			if (!response.ok) {
 				throw await createOAuth2FetchError(response);
 			}
@@ -206,57 +233,52 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			const { code, codeVerifier } = opts;
 			const { authIn, encoding } = meta.tokenRequest;
 
-			const bodyObj: Record<string, unknown> = {};
-			const validateBody = meta.validateAuthorizationCodeBody ?? {};
-			for (const key in validateBody) {
-				bodyObj[key] = validateBody[key];
+			const bodyObj: Record<string, string> = {};
+			const defaults = meta.validateAuthorizationCodeBody ?? {};
+			for (const key in defaults) {
+				const value = defaults[key];
+				if (typeof value === 'string') {
+					bodyObj[key] = value;
+				}
 			}
 			bodyObj.grant_type = 'authorization_code';
 			bodyObj.code = code;
 			if (config.redirectUri) bodyObj.redirect_uri = config.redirectUri;
-
-			if (
-				authIn === 'header' &&
-				encoding === 'json' &&
-				'clientSecret' in config &&
-				config.clientSecret
-			) {
-				return postJsonWithBasic(
-					tokenUrl,
-					bodyObj,
-					config.clientId,
-					config.clientSecret
-				);
-			}
-
-			if (authIn === 'header' && encoding === 'json') {
-				throw new Error(
-					'provider configuration must include a clientSecret'
-				);
-			}
-
-			if (meta.PKCEMethod !== undefined && codeVerifier === undefined) {
-				throw new Error(
-					'`codeVerifier` is required when `meta.isPKCE` is true'
-				);
-			}
-
-			const params = new URLSearchParams(
-				meta.validateAuthorizationCodeBody
-			);
-			params.set('grant_type', 'authorization_code');
-			params.set('code', code);
-			if (config.redirectUri)
-				params.set('redirect_uri', config.redirectUri);
-			params.set('client_id', config.clientId);
-			if ('clientSecret' in config && config.clientSecret) {
-				params.set('client_secret', config.clientSecret);
-			}
 			if (meta.PKCEMethod !== undefined) {
-				params.set('code_verifier', codeVerifier!);
+				if (codeVerifier === undefined)
+					throw new Error(
+						'codeVerifier required when PKCE is enabled'
+					);
+				bodyObj.code_verifier = codeVerifier;
 			}
 
-			return postForm(tokenUrl, params);
+			let payload: Record<string, string> | URLSearchParams;
+			if (encoding === 'json') {
+				payload = bodyObj;
+			} else {
+				const params = new URLSearchParams();
+				for (const [key, value] of Object.entries(bodyObj)) {
+					params.set(key, value);
+				}
+				payload = params;
+			}
+
+			const request = createOAuth2Request({
+				authIn,
+				body: payload,
+				clientId: config.clientId,
+				clientSecret:
+					'clientSecret' in config && config.clientSecret
+						? config.clientSecret
+						: undefined,
+				encoding,
+				url: tokenUrl
+			});
+
+			const response = await fetch(request);
+			if (!response.ok) throw await createOAuth2FetchError(response);
+
+			return response.json();
 		}
 	};
 };

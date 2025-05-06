@@ -16,8 +16,8 @@ if (
 const oktaOAuth2Client = createOAuth2Client('Okta', {
 	clientId: env.OKTA_CLIENT_ID,
 	clientSecret: env.OKTA_CLIENT_SECRET,
-	redirectUri: env.OKTA_REDIRECT_URI,
-	domain: env.OKTA_DOMAIN
+	domain: env.OKTA_DOMAIN,
+	redirectUri: env.OKTA_REDIRECT_URI
 });
 
 export const oktaPlugin = new Elysia()

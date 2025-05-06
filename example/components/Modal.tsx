@@ -23,7 +23,7 @@ export const Modal = ({ isOpen, onClose, onOpen, children }: ModalProps) => {
 			onClose();
 			document.body.style.overflow = '';
 		}
-	}, [isOpen]);
+	}, [isOpen, onClose, onOpen]);
 
 	return (
 		<dialog

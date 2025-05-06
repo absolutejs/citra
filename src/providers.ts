@@ -659,7 +659,7 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
 		isRefreshable: true,
-		PKCEMethod: 'S256', 
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',

@@ -15,12 +15,12 @@ export const createOAuth2FetchError = async (response: Response) => {
 	return new Error(prefix);
 };
 
-export async function postJsonWithBasic(
+export const postJsonWithBasic = async (
 	url: string,
 	body: Record<string, unknown>,
 	clientId: string,
 	clientSecret: string
-) {
+) => {
 	const credentials = encodeBase64(`${clientId}:${clientSecret}`);
 	const response = await fetch(url, {
 		body: JSON.stringify(body),
@@ -34,10 +34,10 @@ export async function postJsonWithBasic(
 	if (!response.ok) throw await createOAuth2FetchError(response);
 
 	return response.json();
-}
+};
 
 export const encodeBase64 = (input: string | ArrayBuffer | Uint8Array) => {
-	let raw = '';
+	let raw;
 
 	if (typeof input === 'string') {
 		raw = input;

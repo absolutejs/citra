@@ -1,5 +1,5 @@
 import { env } from 'process';
-import { Elysia, t } from 'elysia';
+import { Elysia } from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';

@@ -83,34 +83,42 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 		async fetchUserProfile(accessToken: string) {
 			const { profileRequest } = meta;
-			const { url, method, authIn, searchParams, body, headers } =
-				profileRequest;
+			const {
+				url,
+				method,
+				authIn,
+				searchParams,
+				body: profileBody,
+				headers
+			} = profileRequest;
 
 			const endpoint = new URL(resolveConfigProp(url));
 			for (const [key, value] of searchParams ?? []) {
 				endpoint.searchParams.append(key, value);
 			}
 
-			const profileBody = body;
-
-			const profileHeaders: Record<string, string> = {};
-			if (headers) {
-				const rawHeaders = resolveConfigProp(headers);
-				if (rawHeaders instanceof Headers) {
-					rawHeaders.forEach((value, key) => {
-						if (value) profileHeaders[key] = value;
-					});
-				} else if (Array.isArray(rawHeaders)) {
-					for (const [key, value] of rawHeaders) {
-						if (value) profileHeaders[key] = value;
-					}
-				} else {
-					for (const key in rawHeaders) {
-						const value = rawHeaders[key];
-						if (value) profileHeaders[key] = value;
-					}
-				}
+			const rawHeaders = headers ? resolveConfigProp(headers) : undefined;
+			let headerEntries: [string, string][] = [];
+			if (rawHeaders instanceof Headers) {
+				headerEntries = Array.from(rawHeaders.entries());
 			}
+			if (Array.isArray(rawHeaders)) {
+				headerEntries = rawHeaders;
+			}
+			if (
+				rawHeaders &&
+				typeof rawHeaders === 'object' &&
+				!(rawHeaders instanceof Headers) &&
+				!Array.isArray(rawHeaders)
+			) {
+				headerEntries = Object.entries(rawHeaders);
+			}
+
+			const filteredEntries = headerEntries.filter(
+				([, value]) => value !== ''
+			);
+			const profileHeaders: Record<string, string> =
+				Object.fromEntries(filteredEntries);
 
 			if (authIn === 'header') {
 				profileHeaders.Authorization = `Bearer ${accessToken}`;
@@ -198,62 +206,57 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			const { code, codeVerifier } = opts;
 			const { authIn, encoding } = meta.tokenRequest;
 
-			if (authIn === 'header' && encoding === 'json') {
-				if (!('clientSecret' in config) || !config.clientSecret) {
-					throw new Error(
-						'provider configuration must include a clientSecret'
-					);
-				}
-				const { clientId } = config;
-				const { clientSecret } = config;
-				const { redirectUri } = config;
+			const bodyObj: Record<string, unknown> = {};
+			const validateBody = meta.validateAuthorizationCodeBody ?? {};
+			for (const key in validateBody) {
+				bodyObj[key] = validateBody[key];
+			}
+			bodyObj.grant_type = 'authorization_code';
+			bodyObj.code = code;
+			if (config.redirectUri) bodyObj.redirect_uri = config.redirectUri;
 
-				const body: Record<string, unknown> = {};
-				if (meta.validateAuthorizationCodeBody) {
-					for (const [k, v] of Object.entries(
-						meta.validateAuthorizationCodeBody
-					)) {
-						body[k] = v;
-					}
-				}
-				body.grant_type = 'authorization_code';
-				body.code = code;
-				if (redirectUri) {
-					body.redirect_uri = redirectUri;
-				}
-
+			if (
+				authIn === 'header' &&
+				encoding === 'json' &&
+				'clientSecret' in config &&
+				config.clientSecret
+			) {
 				return postJsonWithBasic(
 					tokenUrl,
-					body,
-					clientId,
-					clientSecret
+					bodyObj,
+					config.clientId,
+					config.clientSecret
 				);
 			}
 
-			const body = new URLSearchParams(
-				meta.validateAuthorizationCodeBody
-			);
-			body.set('grant_type', 'authorization_code');
-			body.set('code', code);
-			if (config.redirectUri) {
-				body.set('redirect_uri', config.redirectUri);
-			}
-			if ('clientSecret' in config && config.clientSecret) {
-				body.set('client_id', config.clientId);
-				body.set('client_secret', config.clientSecret);
-			} else {
-				body.set('client_id', config.clientId);
-			}
-			if (meta.PKCEMethod !== undefined) {
-				if (codeVerifier === undefined) {
-					throw new Error(
-						'`codeVerifier` is required when `meta.isPKCE` is true'
-					);
-				}
-				body.set('code_verifier', codeVerifier);
+			if (authIn === 'header' && encoding === 'json') {
+				throw new Error(
+					'provider configuration must include a clientSecret'
+				);
 			}
 
-			return postForm(tokenUrl, body);
+			if (meta.PKCEMethod !== undefined && codeVerifier === undefined) {
+				throw new Error(
+					'`codeVerifier` is required when `meta.isPKCE` is true'
+				);
+			}
+
+			const params = new URLSearchParams(
+				meta.validateAuthorizationCodeBody
+			);
+			params.set('grant_type', 'authorization_code');
+			params.set('code', code);
+			if (config.redirectUri)
+				params.set('redirect_uri', config.redirectUri);
+			params.set('client_id', config.clientId);
+			if ('clientSecret' in config && config.clientSecret) {
+				params.set('client_secret', config.clientSecret);
+			}
+			if (meta.PKCEMethod !== undefined) {
+				params.set('code_verifier', codeVerifier!);
+			}
+
+			return postForm(tokenUrl, params);
 		}
 	};
 };

@@ -44,43 +44,46 @@ export const createOAuth2Request = ({
 		'User-Agent': 'citra'
 	});
 
-	let payload: string;
+	if (authIn === 'header') {
+		if (!clientSecret) {
+			throw new Error('clientSecret required for header auth');
+		}
+		headers.set(
+			'Authorization',
+			`Basic ${encodeBase64(`${clientId}:${clientSecret}`)}`
+		);
+	}
 
 	if (encoding === 'json') {
 		headers.set('Content-Type', 'application/json');
-		payload = JSON.stringify(body);
-	} else {
-		headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-		let params: URLSearchParams;
-		if (body instanceof URLSearchParams) {
-			params = body;
-		} else {
-			const entries = Object.entries(body).filter(
-				(entry): entry is [string, string] =>
-					typeof entry[1] === 'string'
-			);
-			params = new URLSearchParams(entries);
-		}
-
-		if (authIn === 'body') {
-			params.set('client_id', clientId);
-			if (clientSecret) {
-				params.set('client_secret', clientSecret);
-			}
-		}
-
-		payload = params.toString();
+		return new Request(url, {
+			body: JSON.stringify(body),
+			headers,
+			method: 'POST'
+		});
 	}
 
-	if (authIn === 'header') {
-		if (!clientSecret)
-			throw new Error('clientSecret required for header auth');
-		const creds = encodeBase64(`${clientId}:${clientSecret}`);
-		headers.set('Authorization', `Basic ${creds}`);
+	headers.set('Content-Type', 'application/x-www-form-urlencoded');
+
+	const entries =
+		body instanceof URLSearchParams
+			? Array.from(body.entries())
+			: Object.entries(body).filter(
+					(entry): entry is [string, string] =>
+						typeof entry[1] === 'string'
+				);
+
+	const params = new URLSearchParams(entries);
+
+	if (authIn === 'body') {
+		params.set('client_id', clientId);
+		void (clientSecret && params.set('client_secret', clientSecret));
 	}
 
 	return new Request(url, {
-		body: payload, headers, method: 'POST'
+		body: params.toString(),
+		headers,
+		method: 'POST'
 	});
 };

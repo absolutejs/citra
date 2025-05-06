@@ -1,12 +1,7 @@
 import { createS256CodeChallenge } from './arctic-utils';
 import { providers } from './providers';
 import { hasClientSecret } from './typeGuards';
-import {
-	ConfigFor,
-	OAuth2Client,
-	OAuth2RequestOptions,
-	ProviderOption
-} from './types';
+import { ConfigFor, OAuth2Client, ProviderOption } from './types';
 import { createOAuth2FetchError, createOAuth2Request } from './utils';
 
 export const createOAuth2Client = <P extends ProviderOption>(
@@ -150,9 +145,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			params.set('refresh_token', refreshToken);
 
 			const { clientId } = config;
-			let clientSecret: string | undefined;
+			let clientSecretValue: string | undefined;
+
 			if (hasClientSecret(config)) {
-				clientSecret = config.clientSecret;
+				// destructure inside the guard
+				const { clientSecret } = config;
+				clientSecretValue = clientSecret;
+
 				params.set('client_id', clientId);
 				params.set('client_secret', clientSecret);
 			}
@@ -161,7 +160,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				authIn,
 				body: params,
 				clientId,
-				clientSecret,
+				clientSecret: clientSecretValue,
 				encoding,
 				url: tokenUrl
 			});
@@ -187,37 +186,36 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			const revocationBody = body ?? new URLSearchParams();
 			revocationBody.set('token', token);
 
+			const { clientId } = config;
+			const clientSecret = hasClientSecret(config)
+				? config.clientSecret
+				: undefined;
+
 			let request: Request;
-
-			if (authIn === 'header') {
-				request = new Request(endpoint.toString(), {
-					headers: {
-						Authorization: `Bearer ${token}`,
-						'User-Agent': 'citra'
-					},
-					method: 'POST'
-				});
-			} else {
-				const { clientId } = config;
-				const clientSecret = hasClientSecret(config)
-					? config.clientSecret
-					: undefined;
-
+			if (authIn === 'body') {
 				revocationBody.set('client_id', clientId);
-				if (clientSecret) {
-					revocationBody.set('client_secret', clientSecret);
-				}
+				void (
+					clientSecret &&
+					revocationBody.set('client_secret', clientSecret)
+				);
 
-				const options: OAuth2RequestOptions = {
+				request = createOAuth2Request({
 					authIn: 'body',
 					body: revocationBody,
 					clientId,
 					clientSecret,
 					encoding: 'form',
 					url: endpoint.toString()
-				};
-
-				request = createOAuth2Request(options);
+				});
+			} else {
+				const headers = new Headers({
+					Authorization: `Bearer ${token}`,
+					'User-Agent': 'citra'
+				});
+				request = new Request(endpoint.toString(), {
+					headers,
+					method: 'POST'
+				});
 			}
 
 			const response = await fetch(request);
@@ -237,31 +235,26 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			const defaults = meta.validateAuthorizationCodeBody ?? {};
 			for (const key in defaults) {
 				const value = defaults[key];
-				if (typeof value === 'string') {
-					bodyObj[key] = value;
-				}
+				if (typeof value !== 'string') continue;
+				bodyObj[key] = value;
 			}
+
 			bodyObj.grant_type = 'authorization_code';
 			bodyObj.code = code;
-			if (config.redirectUri) bodyObj.redirect_uri = config.redirectUri;
+			if (config.redirectUri) {
+				bodyObj.redirect_uri = config.redirectUri;
+			}
 			if (meta.PKCEMethod !== undefined) {
-				if (codeVerifier === undefined)
+				if (!codeVerifier) {
 					throw new Error(
 						'codeVerifier required when PKCE is enabled'
 					);
+				}
 				bodyObj.code_verifier = codeVerifier;
 			}
 
-			let payload: Record<string, string> | URLSearchParams;
-			if (encoding === 'json') {
-				payload = bodyObj;
-			} else {
-				const params = new URLSearchParams();
-				for (const [key, value] of Object.entries(bodyObj)) {
-					params.set(key, value);
-				}
-				payload = params;
-			}
+			const payload =
+				encoding === 'json' ? bodyObj : new URLSearchParams(bodyObj);
 
 			const request = createOAuth2Request({
 				authIn,
@@ -276,7 +269,9 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			});
 
 			const response = await fetch(request);
-			if (!response.ok) throw await createOAuth2FetchError(response);
+			if (!response.ok) {
+				throw await createOAuth2FetchError(response);
+			}
 
 			return response.json();
 		}

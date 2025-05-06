@@ -802,7 +802,8 @@ export const providers = defineProviders({
 		}
 	},
 	Okta: {
-		authorizationUrl: 'https://${domain}/oauth2/default/v1/authorize',
+		authorizationUrl: (config) =>
+			`https://${config.domain}/oauth2/default/v1/authorize`,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -816,7 +817,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			url: (config) => `https://${config.domain}/oauth2/default/v1/revoke`
 		},
-		scopeRequired: false,
+		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',

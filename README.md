@@ -56,3 +56,5 @@ If any issues occur with a provider please open one so it can be fixed.
 - Microsoft Entra ID (Untested: TODO - needed cc) 
 - MyAnimeList
 - Naver (In Development)
+- Notion
+- Okta

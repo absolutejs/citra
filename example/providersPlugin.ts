@@ -39,6 +39,7 @@ import { microsoftEntraIDPlugin } from './providers/microsoft-entra-id';
 import { myAnimeListPlugin } from './providers/myanimelist';
 import { naverPlugin } from './providers/naver';
 import { notionPlugin } from './providers/notion';
+import { oktaPlugin } from './providers/okta';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -80,4 +81,5 @@ export const providersPlugin = new Elysia()
 	.use(microsoftEntraIDPlugin)
 	.use(myAnimeListPlugin)
 	.use(naverPlugin)
-	.use(notionPlugin);
+	.use(notionPlugin)
+	.use(oktaPlugin)

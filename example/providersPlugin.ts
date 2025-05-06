@@ -35,6 +35,10 @@ import { linkedinPlugin } from './providers/linkedin';
 import { mastodonPlugin } from './providers/mastodon';
 import { mercadoLibrePlugin } from './providers/mercado-libre';
 import { mercadoPagoPlugin } from './providers/mercado-pago';
+import { microsoftEntraIDPlugin } from './providers/microsoft-entra-id';
+import { myAnimeListPlugin } from './providers/myanimelist';
+import { naverPlugin } from './providers/naver';
+import { notionPlugin } from './providers/notion';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -72,4 +76,8 @@ export const providersPlugin = new Elysia()
 	.use(linkedinPlugin)
 	.use(mastodonPlugin)
 	.use(mercadoLibrePlugin)
-	.use(mercadoPagoPlugin);
+	.use(mercadoPagoPlugin)
+	.use(microsoftEntraIDPlugin)
+	.use(myAnimeListPlugin)
+	.use(naverPlugin)
+	.use(notionPlugin);

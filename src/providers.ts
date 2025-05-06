@@ -8,29 +8,46 @@ export const providers = defineProviders({
 		authorizationUrl: 'https://api.intra.42.fr/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://api.intra.42.fr/v2/me'
+		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.intra.42.fr/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.intra.42.fr/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	AmazonCognito: {
 		authorizationUrl: 'https://${domain}/oauth2/authorize',
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: (config) => `https://${config.domain}/oauth2/userInfo`
+		},
 		revocationRequest: {
 			authIn: 'body',
 			url: (config) => `https://${config.domain}/oauth2/revoke`
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://${domain}/oauth2/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) => `https://${config.domain}/oauth2/token`
+		}
 	},
 	AniList: {
 		authorizationUrl: 'https://anilist.co/api/v2/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -45,17 +62,30 @@ export const providers = defineProviders({
 			url: 'https://graphql.anilist.co'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://anilist.co/api/v2/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://anilist.co/api/v2/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Apple: {
 		authorizationUrl: 'https://appleid.apple.com/auth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://appleid.apple.com/auth/userinfo'
+		},
 		scopeRequired: false,
-		tokenUrl: 'https://appleid.apple.com/auth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://appleid.apple.com/auth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Atlassian: {
@@ -65,7 +95,7 @@ export const providers = defineProviders({
 			prompt: 'consent'
 		},
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -74,14 +104,18 @@ export const providers = defineProviders({
 		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
 		scopeRequired: true,
-		tokenUrl: 'https://auth.atlassian.com/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://auth.atlassian.com/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Auth0: {
 		authorizationUrl: (config) => `https://${config.domain}/authorize`,
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -96,30 +130,47 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth/revoke`
 		},
 		scopeRequired: false,
-		tokenUrl: (config) => `https://${config.domain}/oauth/token`
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) => `https://${config.domain}/oauth/token`
+		}
 	},
 	Authentik: {
 		authorizationUrl: (config) =>
 			`https://${config.baseURL}/oauth/authorize`,
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: (config) => `https://${config.baseURL}/api/v3/user/`
+		},
 		scopeRequired: false,
-		tokenUrl: (config) => `https://${config.baseURL}/oauth/token`
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) => `https://${config.baseURL}/oauth/token`
+		}
 	},
 	Autodesk: {
 		authorizationUrl:
 			'https://developer.api.autodesk.com/authentication/v2/authorize',
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://api.userprofile.autodesk.com/userinfo'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://developer.api.autodesk.com/authentication/v2/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://developer.api.autodesk.com/authentication/v2/token'
+		}
 	},
 	Battlenet: {
 		authorizationUrl: 'https://oauth.battle.net/authorize',
@@ -127,7 +178,7 @@ export const providers = defineProviders({
 			response_type: 'code'
 		},
 		isOIDC: true,
-		isPKCE: false,
+
 		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
@@ -135,14 +186,17 @@ export const providers = defineProviders({
 			url: 'https://oauth.battle.net/userinfo'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://oauth.battle.net/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://oauth.battle.net/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Bitbucket: {
 		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -150,13 +204,16 @@ export const providers = defineProviders({
 			url: 'https://api.bitbucket.org/2.0/user'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://bitbucket.org/site/oauth2/access_token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://bitbucket.org/site/oauth2/access_token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Box: {
 		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -168,13 +225,16 @@ export const providers = defineProviders({
 			url: 'https://api.box.com/oauth2/revoke'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.box.com/oauth2/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.box.com/oauth2/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Bungie: {
 		authorizationUrl: 'https://www.bungie.net/en/OAuth/Authorize',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -185,13 +245,17 @@ export const providers = defineProviders({
 			url: 'https://www.bungie.net/Platform/User/GetCurrentBungieNetUser'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://www.bungie.net/platform/app/oauth/token/'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://www.bungie.net/Platform/App/OAuth/token'
+		}
 	},
 	Coinbase: {
 		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -199,26 +263,34 @@ export const providers = defineProviders({
 			url: 'https://api.coinbase.com/v2/user'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.coinbase.com/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.coinbase.com/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Discord: {
 		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://discord.com/api/users/@me'
 		},
 		scopeRequired: true,
-		tokenUrl: 'https://discord.com/api/oauth2/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://discord.com/api/oauth2/token'
+		}
 	},
 	DonationAlerts: {
 		authorizationUrl: 'https://www.donationalerts.com/oauth/authorize',
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -226,12 +298,16 @@ export const providers = defineProviders({
 			url: 'https://www.donationalerts.com/api/v1/user/oauth'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://www.donationalerts.com/oauth/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://www.donationalerts.com/oauth/token'
+		}
 	},
 	Dribbble: {
 		authorizationUrl: 'https://dribbble.com/oauth/authorize',
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
@@ -239,12 +315,15 @@ export const providers = defineProviders({
 			url: 'https://api.dribbble.com/v2/user'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://dribbble.com/oauth/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://dribbble.com/oauth/token'
+		}
 	},
 	Dropbox: {
 		authorizationUrl: 'https://www.dropbox.com/oauth2/authorize',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -256,12 +335,15 @@ export const providers = defineProviders({
 			url: 'https://api.dropboxapi.com/2/auth/token/revoke'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.dropboxapi.com/oauth2/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.dropboxapi.com/oauth2/token'
+		}
 	},
 	EpicGames: {
 		authorizationUrl: 'https://www.epicgames.com/id/authorize',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -269,12 +351,15 @@ export const providers = defineProviders({
 			url: 'https://api.epicgames.dev/epic/oauth/v2/userInfo'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.epicgames.dev/epic/oauth/v1/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.epicgames.dev/epic/oauth/v1/token'
+		}
 	},
 	Etsy: {
 		authorizationUrl: 'https://www.etsy.com/oauth/connect',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -282,14 +367,18 @@ export const providers = defineProviders({
 			url: 'https://openapi.etsy.com/v3/application/users/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.etsy.com/v3/public/oauth/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.etsy.com/v3/public/oauth/token'
+		}
 	},
 	Facebook: {
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: false,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'query',
 			method: 'GET',
@@ -297,40 +386,52 @@ export const providers = defineProviders({
 			url: 'https://graph.facebook.com/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://graph.facebook.com/v16.0/oauth/access_token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://graph.facebook.com/v16.0/oauth/access_token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Figma: {
 		authorizationUrl: 'https://www.figma.com/oauth',
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://api.figma.com/v1/me'
 		},
 		scopeRequired: true,
-		tokenUrl: 'https://api.figma.com/v1/oauth/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.figma.com/v1/oauth/token'
+		}
 	},
 	Gitea: {
 		authorizationUrl: (config) => `${config.baseURL}/login/oauth/authorize`,
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: (config) => `${config.baseURL}/api/v1/user`
 		},
 		scopeRequired: false,
-		tokenUrl: (config) => `${config.baseURL}/login/oauth/access_token`
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) => `${config.baseURL}/login/oauth/access_token`
+		}
 	},
 	GitHub: {
 		authorizationUrl: 'https://github.com/login/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
@@ -338,14 +439,18 @@ export const providers = defineProviders({
 			url: 'https://api.github.com/user'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://github.com/login/oauth/access_token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://github.com/login/oauth/access_token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	GitLab: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -356,14 +461,18 @@ export const providers = defineProviders({
 			url: (config) => `${config.baseURL}/oauth/revoke`
 		},
 		scopeRequired: false,
-		tokenUrl: (config) => `${config.baseURL}/oauth/token`
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) => `${config.baseURL}/oauth/token`
+		}
 	},
 	Google: {
 		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -375,13 +484,16 @@ export const providers = defineProviders({
 			url: 'https://oauth2.googleapis.com/revoke'
 		},
 		scopeRequired: true,
-		tokenUrl: 'https://oauth2.googleapis.com/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://oauth2.googleapis.com/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Intuit: {
 		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
 		isOIDC: true,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -400,29 +512,37 @@ export const providers = defineProviders({
 			url: 'https://developer.api.intuit.com/v2/oauth2/tokens/revoke'
 		},
 		scopeRequired: true,
-		tokenUrl: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'
+		}
 	},
 	Kakao: {
 		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://kapi.kakao.com/v2/user/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://kauth.kakao.com/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://kauth.kakao.com/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Keycloak: {
 		authorizationUrl: (config) =>
 			`${config.realmURL}/protocol/openid-connect/auth`,
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -433,7 +553,11 @@ export const providers = defineProviders({
 			url: (config) => `${config.realmURL}/protocol/openid-connect/revoke`
 		},
 		scopeRequired: false,
-		tokenUrl: (config) => `${config.realmURL}/protocol/openid-connect/token`
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) => `${config.realmURL}/protocol/openid-connect/token`
+		}
 	},
 	Kick: {
 		authorizationUrl: 'https://id.kick.com/oauth/authorize',
@@ -442,28 +566,41 @@ export const providers = defineProviders({
 			response_type: 'code'
 		},
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://id.kick.com/v1/user'
+		},
 		revocationRequest: {
 			authIn: 'body',
 			url: 'https://id.kick.com/oauth/revoke'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://id.kick.com/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://id.kick.com/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Lichess: {
 		authorizationUrl: 'https://lichess.org/oauth/authorize',
-		tokenUrl: 'https://lichess.org/api/token',
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: false,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://lichess.org/api/account'
 		},
-		scopeRequired: false
+		scopeRequired: false,
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://lichess.org/api/token'
+		}
 	},
 	LINE: {
 		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
@@ -472,8 +609,8 @@ export const providers = defineProviders({
 			response_type: 'code'
 		},
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -481,14 +618,17 @@ export const providers = defineProviders({
 		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
 		scopeRequired: true,
-		tokenUrl: 'https://api.line.me/oauth2/v2.1/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.line.me/oauth2/v2.1/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Linear: {
 		authorizationUrl: 'https://linear.app/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
@@ -503,58 +643,79 @@ export const providers = defineProviders({
 			url: 'https://api.linear.app/graphql'
 		},
 		revocationRequest: {
-			url: 'https://api.linear.app/oauth/revoke',
-			authIn: 'header'
+			authIn: 'header',
+			url: 'https://api.linear.app/oauth/revoke'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.linear.app/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.linear.app/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	LinkedIn: {
 		authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256', 
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://api.linkedin.com/v2/me'
+		},
 		scopeRequired: true, // Has to be at least one (not including 'openid')
-		tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://www.linkedin.com/oauth/v2/accessToken'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Mastodon: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
-		tokenUrl: (config) => `${config.baseURL}/oauth/token`,
-		revocationRequest: {
-			authIn: 'body',
-			url: (config) => `${config.baseURL}/oauth/revoke`
-		},
+		isOIDC: false,
+		isRefreshable: false,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: (config) =>
 				`${config.baseURL}/api/v1/accounts/verify_credentials`
 		},
-		isOIDC: false,
-		isPKCE: true,
-		isRefreshable: false,
-		scopeRequired: false
+		revocationRequest: {
+			authIn: 'body',
+			url: (config) => `${config.baseURL}/oauth/revoke`
+		},
+		scopeRequired: false,
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) => `${config.baseURL}/oauth/token`
+		}
 	},
 	MercadoLibre: {
 		authorizationUrl: 'https://auth.mercadolibre.com/authorization',
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://api.mercadolibre.com/users/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.mercadolibre.com/oauth/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.mercadolibre.com/oauth/token'
+		}
 	},
 	MercadoPago: {
 		authorizationUrl: 'https://auth.mercadopago.com/authorization',
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -562,37 +723,52 @@ export const providers = defineProviders({
 			url: 'https://api.mercadopago.com/v1/users/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.mercadopago.com/oauth/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.mercadopago.com/oauth/token'
+		}
 	},
 	MicrosoftEntraId: {
-		authorizationUrl:
-			(config) =>
-				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/authorize`,
+		authorizationUrl: (config) =>
+			`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/authorize`,
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: (config) =>
+				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/openid/userinfo`
+		},
 		scopeRequired: false,
-		tokenUrl:
-			(config) =>
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) =>
 				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/token`
+		}
 	},
 	MyAnimeList: {
 		authorizationUrl: 'https://myanimelist.net/v1/oauth2/authorize',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
+		PKCEMethod: 'plain',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://api.myanimelist.net/v2/users/@me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://myanimelist.net/v1/oauth2/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://myanimelist.net/v1/oauth2/token'
+		}
 	},
 	Naver: {
 		authorizationUrl: 'https://nid.naver.com/oauth2.0/authorize',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -600,37 +776,57 @@ export const providers = defineProviders({
 			url: 'https://openapi.naver.com/v1/nid/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://nid.naver.com/oauth2.0/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://nid.naver.com/oauth2.0/token'
+		}
 	},
 	Notion: {
 		authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
 		isOIDC: false,
-		isPKCE: false,
-		isRefreshable: true,
+		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
+			headers: {
+				'Notion-Version': '2022-06-28'
+			},
 			method: 'GET',
 			url: 'https://api.notion.com/v1/users/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.notion.com/v1/oauth/token'
+		tokenRequest: {
+			authIn: 'header',
+			encoding: 'json',
+			url: 'https://api.notion.com/v1/oauth/token'
+		}
 	},
 	Okta: {
 		authorizationUrl: 'https://${domain}/oauth2/default/v1/authorize',
 		isOIDC: true,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: (config) =>
+				`https://${config.domain}/oauth2/default/v1/userinfo`
+		},
 		revocationRequest: {
 			authIn: 'body',
 			url: (config) => `https://${config.domain}/oauth2/default/v1/revoke`
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://${domain}/oauth2/default/v1/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) => `https://${config.domain}/oauth2/default/v1/token`
+		}
 	},
 	Osu: {
 		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -638,12 +834,16 @@ export const providers = defineProviders({
 			url: 'https://osu.ppy.sh/api/v2/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://osu.ppy.sh/oauth/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://osu.ppy.sh/oauth/token'
+		}
 	},
 	Patreon: {
 		authorizationUrl: 'https://www.patreon.com/oauth2/authorize',
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -651,12 +851,16 @@ export const providers = defineProviders({
 			url: 'https://www.patreon.com/api/oauth2/v2/identity'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://www.patreon.com/api/oauth2/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://www.patreon.com/api/oauth2/token'
+		}
 	},
 	Polar: {
 		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -664,12 +868,16 @@ export const providers = defineProviders({
 			url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://polarremote.com/oauth2/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://polarremote.com/v2/oauth2/token'
+		}
 	},
 	Reddit: {
 		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -677,12 +885,16 @@ export const providers = defineProviders({
 			url: 'https://oauth.reddit.com/api/v1/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://www.reddit.com/api/v1/access_token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://www.reddit.com/api/v1/access_token'
+		}
 	},
 	Roblox: {
 		authorizationUrl: 'https://www.roblox.com/oauth/authorize',
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -690,21 +902,32 @@ export const providers = defineProviders({
 			url: 'https://apis.roblox.com/oauth/v1/userinfo'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://oauth.roblox.com/v1/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://apis.roblox.com/oauth/v1/token'
+		}
 	},
 	Salesforce: {
 		authorizationUrl:
 			'https://login.salesforce.com/services/oauth2/authorize',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://login.salesforce.com/services/oauth2/userinfo'
+		},
 		scopeRequired: false,
-		tokenUrl: 'https://login.salesforce.com/services/oauth2/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://login.salesforce.com/services/oauth2/token'
+		}
 	},
 	Shikimori: {
 		authorizationUrl: 'https://shikimori.org/oauth/authorize',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -712,12 +935,15 @@ export const providers = defineProviders({
 			url: 'https://shikimori.one/api/users/whoami'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://shikimori.org/oauth/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://shikimori.org/oauth/token'
+		}
 	},
 	Slack: {
 		authorizationUrl: 'https://slack.com/openid/connect/authorize',
 		isOIDC: true,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'query',
@@ -725,26 +951,34 @@ export const providers = defineProviders({
 			url: 'https://slack.com/api/users.identity'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://slack.com/api/openid.connect.token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://slack.com/api/openid.connect.token'
+		}
 	},
 	Spotify: {
 		authorizationUrl: 'https://accounts.spotify.com/authorize',
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://api.spotify.com/v1/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://accounts.spotify.com/api/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://accounts.spotify.com/api/token'
+		}
 	},
 	StartGG: {
 		authorizationUrl: 'https://start.gg/oauth/authoriz',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -759,14 +993,18 @@ export const providers = defineProviders({
 			url: 'https://api.start.gg/gql/alpha'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.start.gg/oauth/access_token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.start.gg/oauth/access_token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Strava: {
 		authorizationUrl: 'https://www.strava.com/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -774,21 +1012,32 @@ export const providers = defineProviders({
 			url: 'https://www.strava.com/api/v3/athlete'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://www.strava.com/api/v3/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://www.strava.com/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Synology: {
-		authorizationUrl: '${baseURL}/webman/sso/SSOOauth.cgi',
+		authorizationUrl: (config) =>
+			`${config.baseURL}/webman/sso/SSOOauth.cgi?client_id=${config.clientId}&response_type=code&redirect_uri=${config.redirectUri}`,
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
-			url: 'https://<YOUR_DOMAIN>/webman/sso/SSOUserInfo.cgi'
+			url: (config) =>
+				`${config.baseURL}/webman/sso/SSOUserInfo.cgi?client_id=${config.clientId}&access_token=${config.accessToken}`
 		},
 		scopeRequired: false,
-		tokenUrl: '${baseURL}/webman/sso/SSOAccessToken.cgi'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: (config) =>
+				`${config.baseURL}/webman/sso/SSOAccessToken.cgi?client_id=${config.clientId}&client_secret=${config.clientSecret}`
+		}
 	},
 	TikTok: {
 		authorizationUrl: 'https://www.tiktok.com/v2/auth/authorize',
@@ -797,8 +1046,8 @@ export const providers = defineProviders({
 			response_type: 'code'
 		},
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'query',
 			method: 'GET',
@@ -809,14 +1058,18 @@ export const providers = defineProviders({
 			url: 'https://open.tiktokapis.com/v2/oauth/revoke/'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://open.tiktokapis.com/v2/oauth/token/',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://open.tiktokapis.com/v2/oauth/token/'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Tiltify: {
 		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorizeze',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -824,13 +1077,17 @@ export const providers = defineProviders({
 			url: 'https://tiltify.com/api/v3/me'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://v5api.tiltify.com/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://v5api.tiltify.com/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Tumblr: {
 		authorizationUrl: 'https://www.tumblr.com/oauth2/authorize',
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -838,13 +1095,16 @@ export const providers = defineProviders({
 			url: 'https://api.tumblr.com/v2/user/info'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.tumblr.com/v2/oauth2/token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.tumblr.com/v2/oauth2/token'
+		}
 	},
 	Twitch: {
 		authorizationUrl: 'https://id.twitch.tv/oauth2/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -852,7 +1112,11 @@ export const providers = defineProviders({
 			url: 'https://api.twitch.tv/helix/users'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://id.twitch.tv/oauth2/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://id.twitch.tv/oauth2/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Twitter: {
@@ -862,8 +1126,8 @@ export const providers = defineProviders({
 			response_type: 'code'
 		},
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -871,14 +1135,18 @@ export const providers = defineProviders({
 		},
 		refreshAccessTokenBody: { grant_type: 'refresh_token' },
 		scopeRequired: false,
-		tokenUrl: 'https://api.twitter.com/2/oauth2/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.twitter.com/2/oauth2/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	VK: {
 		authorizationUrl: 'https://oauth.vk.com/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
+
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'query',
@@ -886,7 +1154,11 @@ export const providers = defineProviders({
 			url: 'https://api.vk.com/method/users.get'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://oauth.vk.com/access_token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://oauth.vk.com/access_token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	WorkOS: {
@@ -896,36 +1168,61 @@ export const providers = defineProviders({
 			response_type: 'code'
 		},
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://api.workos.com/sso/userinfo'
+		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.workos.com/sso/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.workos.com/sso/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Yahoo: {
 		authorizationUrl: 'https://api.login.yahoo.com/oauth2/request_auth',
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://api.login.yahoo.com/openid/v1/userinfo'
+		},
 		scopeRequired: false,
-		tokenUrl: 'https://api.login.yahoo.com/oauth2/get_token'
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://api.login.yahoo.com/oauth2/get_token'
+		}
 	},
 	Yandex: {
 		authorizationUrl: 'https://oauth.yandex.com/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: false,
 		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://login.yandex.ru/info'
+		},
 		scopeRequired: false,
-		tokenUrl: 'https://oauth.yandex.com/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://oauth.yandex.com/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Zoom: {
 		authorizationUrl: 'https://zoom.us/oauth/authorize',
 		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -937,7 +1234,11 @@ export const providers = defineProviders({
 			url: 'https://zoom.us/oauth/revoke'
 		},
 		scopeRequired: false,
-		tokenUrl: 'https://zoom.us/oauth/token',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			url: 'https://zoom.us/oauth/token'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	}
 });

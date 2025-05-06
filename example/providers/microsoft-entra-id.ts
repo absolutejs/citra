@@ -5,24 +5,26 @@ import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.MASTODON_CLIENT_ID ||
-	!env.MASTODON_CLIENT_SECRET ||
-	!env.MASTODON_REDIRECT_URI ||
-	!env.MASTODON_BASE_URL
+	!env.MICROSOFT_ENTRA_ID_CLIENT_ID ||
+	!env.MICROSOFT_ENTRA_ID_CLIENT_SECRET ||
+	!env.MICROSOFT_ENTRA_ID_REDIRECT_URI ||
+	!env.MICROSOFT_ENTRA_ID_TENANT_ID
 ) {
-	throw new Error('Mastodon OAuth2 credentials are not set in .env file');
+	throw new Error(
+		'Microsoft Entra ID OAuth2 credentials are not set in .env file'
+	);
 }
 
-const mastodonOAuth2Client = createOAuth2Client('Mastodon', {
-	baseURL: env.MASTODON_BASE_URL,
-	clientId: env.MASTODON_CLIENT_ID,
-	clientSecret: env.MASTODON_CLIENT_SECRET,
-	redirectUri: env.MASTODON_REDIRECT_URI
+const microsoftEntraIDOAuth2Client = createOAuth2Client('MicrosoftEntraId', {
+	clientId: env.MICROSOFT_ENTRA_ID_CLIENT_ID,
+	clientSecret: env.MICROSOFT_ENTRA_ID_CLIENT_SECRET,
+	redirectUri: env.MICROSOFT_ENTRA_ID_REDIRECT_URI,
+	tenantId: env.MICROSOFT_ENTRA_ID_TENANT_ID
 });
 
-export const mastodonPlugin = new Elysia()
+export const microsoftEntraIDPlugin = new Elysia()
 	.get(
-		'/oauth2/mastodon/authorization',
+		'/oauth2/microsoftentraid/authorization',
 		async ({ redirect, error, cookie: { state, code_verifier } }) => {
 			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
@@ -30,7 +32,7 @@ export const mastodonPlugin = new Elysia()
 			const currentState = generateState();
 			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await mastodonOAuth2Client.createAuthorizationUrl({
+				await microsoftEntraIDOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
 					state: currentState
 				});
@@ -56,7 +58,7 @@ export const mastodonPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/mastodon/callback',
+		'/oauth2/microsoftentraid/callback',
 		async ({
 			error,
 			redirect,
@@ -81,11 +83,13 @@ export const mastodonPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await mastodonOAuth2Client.validateAuthorizationCode({
-						code,
-						codeVerifier
-					});
-				console.log('\nMastodon authorized:', oauthResponse);
+					await microsoftEntraIDOAuth2Client.validateAuthorizationCode(
+						{
+							code,
+							codeVerifier
+						}
+					);
+				console.log('\nMicrosoft Entra ID authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -103,32 +107,29 @@ export const mastodonPlugin = new Elysia()
 			return redirect('/');
 		}
 	)
-	.delete(
-		'/oauth2/mastodon/revocation',
-		async ({ error, query: { token_to_revoke } }) => {
-			if (!token_to_revoke)
-				return error(
-					'Bad Request',
-					'Token to revoke is required in query parameters'
-				);
-
+	.post(
+		'/oauth2/microsoftentraid/tokens',
+		async ({ error, body: { refresh_token } }) => {
 			try {
-				await mastodonOAuth2Client.revokeToken(token_to_revoke);
-				console.log('\nMastodon token revoked:', token_to_revoke);
-
-				return new Response(
-					`Token ${token_to_revoke} revoked successfully`,
-					{
-						headers: {
-							'Content-Type': 'text/plain'
-						}
-					}
+				const oauthResponse =
+					await microsoftEntraIDOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
+				console.log(
+					'\nMicrosoft Entra ID token refreshed:',
+					oauthResponse
 				);
+
+				return new Response(JSON.stringify(oauthResponse), {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
 						'Internal Server Error',
-						`Failed to revoke token: ${err.message}`
+						`Failed to refresh access token: ${err.message}`
 					);
 				}
 
@@ -137,10 +138,15 @@ export const mastodonPlugin = new Elysia()
 					`Unexpected error: ${err}`
 				);
 			}
+		},
+		{
+			body: t.Object({
+				refresh_token: t.String()
+			})
 		}
 	)
 	.get(
-		'/oauth2/mastodon/profile',
+		'/oauth2/microsoftentraid/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -152,8 +158,10 @@ export const mastodonPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await mastodonOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nMastodon user profile:', userProfile);
+					await microsoftEntraIDOAuth2Client.fetchUserProfile(
+						accessToken
+					);
+				console.log('\nMicrosoft Entra ID user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

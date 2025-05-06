@@ -16,9 +16,7 @@ Some providers have the tag (HTTPS Required) since the provider will only author
 
 Some providers had restrictive steps in their signup process that prevented current testing of them. (Untested: Reason)
 
-
-If any issues occur please open one so it can be fixed.
-
+If any issues occur with a provider please open one so it can be fixed.
 
 - 42 (Untested: Restricted)
 - Amazon Cognito (Untested: TODO - needed cc)
@@ -56,3 +54,5 @@ If any issues occur please open one so it can be fixed.
 - Mercado Libre (Untested: Country Restricted)
 - Mercado Pago (Untested: Country Restricted)
 - Microsoft Entra ID (Untested: TODO - needed cc) 
+- MyAnimeList
+- Naver (In Development)

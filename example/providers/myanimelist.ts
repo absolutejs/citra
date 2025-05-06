@@ -5,24 +5,22 @@ import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.MICROSOFT_ENTRA_ID_CLIENT_ID ||
-	!env.MICROSOFT_ENTRA_ID_CLIENT_SECRET ||
-	!env.MICROSOFT_ENTRA_ID_REDIRECT_URI || 
-    !env.MICROSOFT_ENTRA_ID_TENANT_ID
+	!env.MY_ANIME_LIST_CLIENT_ID ||
+	!env.MY_ANIME_LIST_CLIENT_SECRET ||
+	!env.MY_ANIME_LIST_REDIRECT_URI
 ) {
-	throw new Error('Microsoft Entra ID OAuth2 credentials are not set in .env file');
+	throw new Error('MyAnimeList OAuth2 credentials are not set in .env file');
 }
 
-const microsoftEntraIDOAuth2Client = createOAuth2Client('MicrosoftEntraId', {
-	clientId: env.MICROSOFT_ENTRA_ID_CLIENT_ID,
-	clientSecret: env.MICROSOFT_ENTRA_ID_CLIENT_SECRET,
-	redirectUri: env.MICROSOFT_ENTRA_ID_REDIRECT_URI,
-    tenantId: env.MICROSOFT_ENTRA_ID_TENANT_ID
+const myAnimeListOAuth2Client = createOAuth2Client('MyAnimeList', {
+	clientId: env.MY_ANIME_LIST_CLIENT_ID,
+	clientSecret: env.MY_ANIME_LIST_CLIENT_SECRET,
+	redirectUri: env.MY_ANIME_LIST_REDIRECT_URI
 });
 
-export const microsoftEntraIDPlugin = new Elysia()
+export const myAnimeListPlugin = new Elysia()
 	.get(
-		'/oauth2/microsoftentraid/authorization',
+		'/oauth2/myanimelist/authorization',
 		async ({ redirect, error, cookie: { state, code_verifier } }) => {
 			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
@@ -30,7 +28,7 @@ export const microsoftEntraIDPlugin = new Elysia()
 			const currentState = generateState();
 			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await microsoftEntraIDOAuth2Client.createAuthorizationUrl({
+				await myAnimeListOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
 					state: currentState
 				});
@@ -56,7 +54,7 @@ export const microsoftEntraIDPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/microsoftentraid/callback',
+		'/oauth2/myanimelist/callback',
 		async ({
 			error,
 			redirect,
@@ -81,11 +79,11 @@ export const microsoftEntraIDPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await microsoftEntraIDOAuth2Client.validateAuthorizationCode({
+					await myAnimeListOAuth2Client.validateAuthorizationCode({
 						code,
 						codeVerifier
 					});
-				console.log('\nMicrosoft Entra ID authorized:', oauthResponse);
+				console.log('\nMyAnimeList authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -104,12 +102,14 @@ export const microsoftEntraIDPlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/microsoftentraid/tokens',
+		'/oauth2/myanimelist/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await microsoftEntraIDOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nMicrosoft Entra ID token refreshed:', oauthResponse);
+					await myAnimeListOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
+				console.log('\nMyAnimeList token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -137,7 +137,7 @@ export const microsoftEntraIDPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/microsoftentraid/profile',
+		'/oauth2/myanimelist/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -149,8 +149,8 @@ export const microsoftEntraIDPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await microsoftEntraIDOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nMicrosoft Entra ID user profile:', userProfile);
+					await myAnimeListOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nMyAnimeList user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

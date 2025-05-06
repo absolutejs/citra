@@ -24,6 +24,14 @@ export type RevocationRequestConfig = {
 	body?: URLSearchParams;
 };
 
+export type TokenRequestConfig = {
+	// TODO: remove any type in favor of the actual config for this specific provider
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	url: string | ((config: any) => string);
+	authIn: 'body' | 'header';
+	encoding: 'form' | 'json';
+};
+
 export type DefineProviders = <
 	ProviderMap extends Record<string, ProviderConfig>
 >(
@@ -36,7 +44,9 @@ export type DefineProviders = <
 export type ProviderOption = keyof typeof providers;
 
 export type PKCEProvider = {
-	[K in ProviderOption]: (typeof providers)[K]['isPKCE'] extends true
+	[K in ProviderOption]: (typeof providers)[K]['PKCEMethod'] extends
+		| 'S256'
+		| 'plain'
 		? K
 		: never;
 }[ProviderOption];
@@ -99,7 +109,7 @@ export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
 	(P extends RevocableProvider ? RevocableOAuth2Client : unknown);
 
 export type ProviderConfig = {
-	isPKCE: boolean;
+	PKCEMethod?: 'S256' | 'plain';
 	isOIDC: boolean;
 	isRefreshable: boolean;
 	scopeRequired: boolean;
@@ -107,12 +117,12 @@ export type ProviderConfig = {
 	// TODO : remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	authorizationUrl: string | ((config: any) => string);
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	tokenUrl: string | ((config: any) => string);
+
+	tokenRequest: TokenRequestConfig;
 
 	revocationRequest?: RevocationRequestConfig;
 
-	profileRequest?: ProfileRequestConfig;
+	profileRequest: ProfileRequestConfig;
 
 	/** Static query params added to the auth URL */
 	createAuthorizationURLSearchParams?: Record<string, string>;

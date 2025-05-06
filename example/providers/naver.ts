@@ -1,37 +1,33 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
+import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.MASTODON_CLIENT_ID ||
-	!env.MASTODON_CLIENT_SECRET ||
-	!env.MASTODON_REDIRECT_URI ||
-	!env.MASTODON_BASE_URL
+	!env.NAVER_CLIENT_ID ||
+	!env.NAVER_CLIENT_SECRET ||
+	!env.NAVER_REDIRECT_URI
 ) {
-	throw new Error('Mastodon OAuth2 credentials are not set in .env file');
+	throw new Error('Naver OAuth2 credentials are not set in .env file');
 }
 
-const mastodonOAuth2Client = createOAuth2Client('Mastodon', {
-	baseURL: env.MASTODON_BASE_URL,
-	clientId: env.MASTODON_CLIENT_ID,
-	clientSecret: env.MASTODON_CLIENT_SECRET,
-	redirectUri: env.MASTODON_REDIRECT_URI
+const naverOAuth2Client = createOAuth2Client('Naver', {
+	clientId: env.NAVER_CLIENT_ID,
+	clientSecret: env.NAVER_CLIENT_SECRET,
+	redirectUri: env.NAVER_REDIRECT_URI
 });
 
-export const mastodonPlugin = new Elysia()
+export const naverPlugin = new Elysia()
 	.get(
-		'/oauth2/mastodon/authorization',
-		async ({ redirect, error, cookie: { state, code_verifier } }) => {
-			if (state === undefined || code_verifier === undefined)
+		'/oauth2/naver/authorization',
+		async ({ redirect, error, cookie: { state } }) => {
+			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
-			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await mastodonOAuth2Client.createAuthorizationUrl({
-					codeVerifier,
+				await naverOAuth2Client.createAuthorizationUrl({
 					state: currentState
 				});
 
@@ -43,27 +39,19 @@ export const mastodonPlugin = new Elysia()
 				secure: true,
 				value: currentState
 			});
-			code_verifier.set({
-				httpOnly: true,
-				maxAge: COOKIE_DURATION,
-				path: '/',
-				sameSite: 'lax',
-				secure: true,
-				value: codeVerifier
-			});
 
 			return redirect(authorizationUrl.toString());
 		}
 	)
 	.get(
-		'/oauth2/mastodon/callback',
+		'/oauth2/naver/callback',
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state, code_verifier },
+			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined || code_verifier === undefined)
+			if (stored_state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -75,17 +63,12 @@ export const mastodonPlugin = new Elysia()
 
 			stored_state.remove();
 
-			const codeVerifier = code_verifier.value;
-			if (codeVerifier === undefined)
-				return error('Bad Request', 'Code verifier is missing');
-
 			try {
 				const oauthResponse =
-					await mastodonOAuth2Client.validateAuthorizationCode({
-						code,
-						codeVerifier
+					await naverOAuth2Client.validateAuthorizationCode({
+						code
 					});
-				console.log('\nMastodon authorized:', oauthResponse);
+				console.log('\nNaver authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -103,32 +86,24 @@ export const mastodonPlugin = new Elysia()
 			return redirect('/');
 		}
 	)
-	.delete(
-		'/oauth2/mastodon/revocation',
-		async ({ error, query: { token_to_revoke } }) => {
-			if (!token_to_revoke)
-				return error(
-					'Bad Request',
-					'Token to revoke is required in query parameters'
-				);
-
+	.post(
+		'/oauth2/naver/tokens',
+		async ({ error, body: { refresh_token } }) => {
 			try {
-				await mastodonOAuth2Client.revokeToken(token_to_revoke);
-				console.log('\nMastodon token revoked:', token_to_revoke);
+				const oauthResponse =
+					await naverOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nNaver token refreshed:', oauthResponse);
 
-				return new Response(
-					`Token ${token_to_revoke} revoked successfully`,
-					{
-						headers: {
-							'Content-Type': 'text/plain'
-						}
+				return new Response(JSON.stringify(oauthResponse), {
+					headers: {
+						'Content-Type': 'application/json'
 					}
-				);
+				});
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
 						'Internal Server Error',
-						`Failed to revoke token: ${err.message}`
+						`Failed to refresh access token: ${err.message}`
 					);
 				}
 
@@ -137,10 +112,15 @@ export const mastodonPlugin = new Elysia()
 					`Unexpected error: ${err}`
 				);
 			}
+		},
+		{
+			body: t.Object({
+				refresh_token: t.String()
+			})
 		}
 	)
 	.get(
-		'/oauth2/mastodon/profile',
+		'/oauth2/naver/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -152,8 +132,8 @@ export const mastodonPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await mastodonOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nMastodon user profile:', userProfile);
+					await naverOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nNaver user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

@@ -5,7 +5,7 @@ import {
 } from './arctic-utils';
 import { providers } from './providers';
 import { ConfigFor, OAuth2Client, ProviderOption } from './types';
-import { createOAuth2FetchError } from './utils';
+import { createOAuth2FetchError, postJsonWithBasic } from './utils';
 
 export const createOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
@@ -26,7 +26,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			: configProperty;
 
 	const authorizationUrl = resolveConfigProp(meta.authorizationUrl);
-	const tokenUrl = resolveConfigProp(meta.tokenUrl);
+	const tokenUrl = resolveConfigProp(meta.tokenRequest.url);
 
 	return {
 		async createAuthorizationUrl(opts?: {
@@ -55,18 +55,20 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				url.searchParams.set('scope', scope.join(' '));
 			}
 
-			if (meta.isPKCE) {
+			if (meta.PKCEMethod !== undefined) {
 				if (codeVerifier === undefined) {
 					throw new Error(
 						'`codeVerifier` is required when `meta.isPKCE` is true'
 					);
 				}
 
-				url.searchParams.set('code_challenge_method', 'S256');
-				url.searchParams.set(
-					'code_challenge',
-					await createS256CodeChallenge(codeVerifier)
-				);
+				const codeChallenge =
+					meta.PKCEMethod === 'S256'
+						? await createS256CodeChallenge(codeVerifier)
+						: codeVerifier;
+
+				url.searchParams.set('code_challenge_method', meta.PKCEMethod);
+				url.searchParams.set('code_challenge', codeChallenge);
 			}
 
 			Object.entries(
@@ -81,30 +83,45 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 		async fetchUserProfile(accessToken: string) {
 			const { profileRequest } = meta;
-			if (!profileRequest) {
-				//TODO: Remove this check in the future
-				throw new Error(
-					'User profile request is not defined for this provider'
-				);
-			}
+			const { url, method, authIn, searchParams, body, headers } =
+				profileRequest;
 
-			const { url, method, authIn, searchParams, body } = profileRequest;
 			const endpoint = new URL(resolveConfigProp(url));
 			for (const [key, value] of searchParams ?? []) {
 				endpoint.searchParams.append(key, value);
 			}
 
-			const headers: Record<string, string> = {};
+			const profileBody = body;
+
+			const profileHeaders: Record<string, string> = {};
+			if (headers) {
+				const rawHeaders = resolveConfigProp(headers);
+				if (rawHeaders instanceof Headers) {
+					rawHeaders.forEach((value, key) => {
+						if (value) profileHeaders[key] = value;
+					});
+				} else if (Array.isArray(rawHeaders)) {
+					for (const [key, value] of rawHeaders) {
+						if (value) profileHeaders[key] = value;
+					}
+				} else {
+					for (const key in rawHeaders) {
+						const value = rawHeaders[key];
+						if (value) profileHeaders[key] = value;
+					}
+				}
+			}
+
 			if (authIn === 'header') {
-				headers.Authorization = `Bearer ${accessToken}`;
+				profileHeaders.Authorization = `Bearer ${accessToken}`;
 			} else {
 				endpoint.searchParams.append('access_token', accessToken);
 			}
 
-			const init: RequestInit = { headers, method };
-			if (method === 'POST' && body) {
-				headers['Content-Type'] = 'application/json';
-				init.body = JSON.stringify(body);
+			const init: RequestInit = { headers: profileHeaders, method };
+			if (method === 'POST' && profileBody) {
+				profileHeaders['Content-Type'] = 'application/json';
+				init.body = JSON.stringify(profileBody);
 			}
 
 			const response = await fetch(endpoint.toString(), init);
@@ -174,11 +191,44 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 		},
 
-		validateAuthorizationCode(opts: {
+		async validateAuthorizationCode(opts: {
 			code: string;
 			codeVerifier?: string;
 		}) {
 			const { code, codeVerifier } = opts;
+			const { authIn, encoding } = meta.tokenRequest;
+
+			if (authIn === 'header' && encoding === 'json') {
+				if (!('clientSecret' in config) || !config.clientSecret) {
+					throw new Error(
+						'provider configuration must include a clientSecret'
+					);
+				}
+				const { clientId } = config;
+				const { clientSecret } = config;
+				const { redirectUri } = config;
+
+				const body: Record<string, unknown> = {};
+				if (meta.validateAuthorizationCodeBody) {
+					for (const [k, v] of Object.entries(
+						meta.validateAuthorizationCodeBody
+					)) {
+						body[k] = v;
+					}
+				}
+				body.grant_type = 'authorization_code';
+				body.code = code;
+				if (redirectUri) {
+					body.redirect_uri = redirectUri;
+				}
+
+				return postJsonWithBasic(
+					tokenUrl,
+					body,
+					clientId,
+					clientSecret
+				);
+			}
 
 			const body = new URLSearchParams(
 				meta.validateAuthorizationCodeBody
@@ -194,7 +244,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			} else {
 				body.set('client_id', config.clientId);
 			}
-			if (meta.isPKCE) {
+			if (meta.PKCEMethod !== undefined) {
 				if (codeVerifier === undefined) {
 					throw new Error(
 						'`codeVerifier` is required when `meta.isPKCE` is true'
@@ -202,8 +252,6 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				}
 				body.set('code_verifier', codeVerifier);
 			}
-
-			console.log('→ token‑exchange body:', body.toString());
 
 			return postForm(tokenUrl, body);
 		}

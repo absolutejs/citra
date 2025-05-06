@@ -5,30 +5,29 @@ import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.LINEAR_CLIENT_ID ||
-	!env.LINEAR_CLIENT_SECRET ||
-	!env.LINEAR_REDIRECT_URI
+	!env.NOTION_CLIENT_ID ||
+	!env.NOTION_CLIENT_SECRET ||
+	!env.NOTION_REDIRECT_URI
 ) {
-	throw new Error('Linear OAuth2 credentials are not set in .env file');
+	throw new Error('Notion OAuth2 credentials are not set in .env file');
 }
 
-const linearOAuth2Client = createOAuth2Client('Linear', {
-	clientId: env.LINEAR_CLIENT_ID,
-	clientSecret: env.LINEAR_CLIENT_SECRET,
-	redirectUri: env.LINEAR_REDIRECT_URI
+const notionOAuth2Client = createOAuth2Client('Notion', {
+	clientId: env.NOTION_CLIENT_ID,
+	clientSecret: env.NOTION_CLIENT_SECRET,
+	redirectUri: env.NOTION_REDIRECT_URI
 });
 
-export const linearPlugin = new Elysia()
+export const notionPlugin = new Elysia()
 	.get(
-		'/oauth2/linear/authorization',
+		'/oauth2/notion/authorization',
 		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
-				await linearOAuth2Client.createAuthorizationUrl({
-					searchParams: [['prompt', 'consent']],
+				await notionOAuth2Client.createAuthorizationUrl({
 					state: currentState
 				});
 
@@ -45,7 +44,7 @@ export const linearPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/linear/callback',
+		'/oauth2/notion/callback',
 		async ({
 			error,
 			redirect,
@@ -66,10 +65,10 @@ export const linearPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await linearOAuth2Client.validateAuthorizationCode({
+					await notionOAuth2Client.validateAuthorizationCode({
 						code
 					});
-				console.log('\nLinear authorized:', oauthResponse);
+				console.log('\nNotion authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -87,44 +86,8 @@ export const linearPlugin = new Elysia()
 			return redirect('/');
 		}
 	)
-	.delete(
-		'/oauth2/linear/revocation',
-		async ({ error, query: { token_to_revoke } }) => {
-			if (!token_to_revoke)
-				return error(
-					'Bad Request',
-					'Token to revoke is required in query parameters'
-				);
-
-			try {
-				await linearOAuth2Client.revokeToken(token_to_revoke);
-				console.log('\nLinear token revoked:', token_to_revoke);
-
-				return new Response(
-					`Token ${token_to_revoke} revoked successfully`,
-					{
-						headers: {
-							'Content-Type': 'text/plain'
-						}
-					}
-				);
-			} catch (err) {
-				if (err instanceof Error) {
-					return error(
-						'Internal Server Error',
-						`Failed to revoke token: ${err.message}`
-					);
-				}
-
-				return error(
-					'Internal Server Error',
-					`Unexpected error: ${err}`
-				);
-			}
-		}
-	)
 	.get(
-		'/oauth2/linear/profile',
+		'/oauth2/notion/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -136,8 +99,8 @@ export const linearPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await linearOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nLinear user profile:', userProfile);
+					await notionOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nNotion user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

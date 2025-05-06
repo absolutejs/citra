@@ -16,8 +16,8 @@ if (
 const keycloakOAuth2Client = createOAuth2Client('Keycloak', {
 	clientId: env.KEYCLOAK_CLIENT_ID,
 	clientSecret: env.KEYCLOAK_CLIENT_SECRET,
-	redirectUri: env.KEYCLOAK_REDIRECT_URI,
-	realmURL: env.KEYCLOAK_REALM_URL
+	realmURL: env.KEYCLOAK_REALM_URL,
+	redirectUri: env.KEYCLOAK_REDIRECT_URI
 });
 
 export const keycloakPlugin = new Elysia()

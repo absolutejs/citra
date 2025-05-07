@@ -6,7 +6,6 @@ export const defineProviders: DefineProviders = (providers) => providers;
 export const providers = defineProviders({
 	'42': {
 		authorizationUrl: 'https://api.intra.42.fr/oauth/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -45,9 +44,7 @@ export const providers = defineProviders({
 	},
 	AniList: {
 		authorizationUrl: 'https://anilist.co/api/v2/oauth/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -71,7 +68,6 @@ export const providers = defineProviders({
 	},
 	Apple: {
 		authorizationUrl: 'https://appleid.apple.com/auth/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -174,11 +170,7 @@ export const providers = defineProviders({
 	},
 	Battlenet: {
 		authorizationUrl: 'https://oauth.battle.net/authorize',
-		createAuthorizationURLSearchParams: {
-			response_type: 'code'
-		},
 		isOIDC: true,
-
 		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
@@ -195,7 +187,6 @@ export const providers = defineProviders({
 	},
 	Bitbucket: {
 		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -253,7 +244,6 @@ export const providers = defineProviders({
 	},
 	Coinbase: {
 		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 
 		isRefreshable: true,
@@ -375,7 +365,6 @@ export const providers = defineProviders({
 	},
 	Facebook: {
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
 		isRefreshable: false,
 		PKCEMethod: 'S256',
@@ -429,7 +418,6 @@ export const providers = defineProviders({
 	},
 	GitHub: {
 		authorizationUrl: 'https://github.com/login/oauth/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 
 		isRefreshable: false,
@@ -469,7 +457,6 @@ export const providers = defineProviders({
 	},
 	Google: {
 		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -520,7 +507,6 @@ export const providers = defineProviders({
 	},
 	Kakao: {
 		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -561,10 +547,6 @@ export const providers = defineProviders({
 	},
 	Kick: {
 		authorizationUrl: 'https://id.kick.com/oauth/authorize',
-		createAuthorizationURLSearchParams: {
-			code_challenge_method: 'S256',
-			response_type: 'code'
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -604,10 +586,6 @@ export const providers = defineProviders({
 	},
 	LINE: {
 		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
-		createAuthorizationURLSearchParams: {
-			code_challenge_method: 'S256',
-			response_type: 'code'
-		},
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -627,7 +605,6 @@ export const providers = defineProviders({
 	},
 	Linear: {
 		authorizationUrl: 'https://linear.app/oauth/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -656,7 +633,6 @@ export const providers = defineProviders({
 	},
 	LinkedIn: {
 		authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -858,26 +834,25 @@ export const providers = defineProviders({
 	},
 	Polar: {
 		authorizationUrl: 'https://polar.sh/oauth2/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: true,
 		isPKCE: true,
-		PKCEMethod: 'S256',
 		isRefreshable: true,
-		scopeRequired: true,
-		tokenRequest: {
-			authIn: 'body',
-			encoding: 'form',
-			method: 'POST',
-			url: 'https://api.polar.sh/v1/oauth2/token'
-		},
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://api.polar.sh/v1/oauth2/userinfo'
 		},
 		revocationRequest: {
-			url: 'https://api.polar.sh/v1/oauth2/revoke',
-			authIn: 'body'
+			authIn: 'body',
+			url: 'https://api.polar.sh/v1/oauth2/revoke'
+		},
+		scopeRequired: true,
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			method: 'POST',
+			url: 'https://api.polar.sh/v1/oauth2/token'
 		}
 	},
 	PolarAccessLink: {
@@ -886,37 +861,37 @@ export const providers = defineProviders({
 		isPKCE: false,
 		isRefreshable: false,
 		profileRequest: {
-		  authIn: 'header',
-		  method: 'GET',
-		  url: 'https://www.polaraccesslink.com/v3/users/me'
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://www.polaraccesslink.com/v3/users/me'
 		},
+		scopeRequired: false,
 		tokenRequest: {
-		  authIn: 'header',
-		  encoding: 'form',
-		  method: 'POST',
-		  url: 'https://polarremote.com/v2/oauth2/token'
-		},
-		scopeRequired: false
-	  },
-	  PolarTeamPro: {
+			authIn: 'header',
+			encoding: 'form',
+			method: 'POST',
+			url: 'https://polarremote.com/v2/oauth2/token'
+		}
+	},
+	PolarTeamPro: {
 		authorizationUrl: 'https://auth.polar.com/oauth/authorize',
 		isOIDC: false,
 		isPKCE: true,
-		PKCEMethod: 'S256',
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
-		  authIn: 'header',
-		  method: 'GET',
-		  url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>' // TODO: Implement Polar AccessLink profile request which needs an additional user ID parameter
+			authIn: 'header',
+			method: 'GET',
+			url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>' // TODO: Implement Polar AccessLink profile request which needs an additional user ID parameter
 		},
+		scopeRequired: false,
 		tokenRequest: {
-		  authIn: 'header',
-		  encoding: 'form',
-		  method: 'POST',
-		  url: 'https://auth.polar.com/oauth/token'
-		},
-		scopeRequired: false
-	  },
+			authIn: 'header',
+			encoding: 'form',
+			method: 'POST',
+			url: 'https://auth.polar.com/oauth/token'
+		}
+	},
 	Reddit: {
 		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
 		isOIDC: false,
@@ -1018,9 +993,7 @@ export const providers = defineProviders({
 	},
 	StartGG: {
 		authorizationUrl: 'https://start.gg/oauth/authoriz',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -1044,9 +1017,7 @@ export const providers = defineProviders({
 	},
 	Strava: {
 		authorizationUrl: 'https://www.strava.com/oauth/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -1083,10 +1054,6 @@ export const providers = defineProviders({
 	},
 	TikTok: {
 		authorizationUrl: 'https://www.tiktok.com/v2/auth/authorize',
-		createAuthorizationURLSearchParams: {
-			code_challenge_method: 'S256',
-			response_type: 'code'
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1109,9 +1076,7 @@ export const providers = defineProviders({
 	},
 	Tiltify: {
 		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorizeze',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -1145,7 +1110,6 @@ export const providers = defineProviders({
 	},
 	Twitch: {
 		authorizationUrl: 'https://id.twitch.tv/oauth2/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1163,10 +1127,6 @@ export const providers = defineProviders({
 	},
 	Twitter: {
 		authorizationUrl: 'https://twitter.com/i/oauth2/authorize',
-		createAuthorizationURLSearchParams: {
-			code_challenge_method: 'S256',
-			response_type: 'code'
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1186,9 +1146,7 @@ export const providers = defineProviders({
 	},
 	VK: {
 		authorizationUrl: 'https://oauth.vk.com/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'query',
@@ -1205,10 +1163,6 @@ export const providers = defineProviders({
 	},
 	WorkOS: {
 		authorizationUrl: 'https://api.workos.com/sso/authorize',
-		createAuthorizationURLSearchParams: {
-			code_challenge_method: 'S256',
-			response_type: 'code'
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1243,7 +1197,6 @@ export const providers = defineProviders({
 	},
 	Yandex: {
 		authorizationUrl: 'https://oauth.yandex.com/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1261,7 +1214,6 @@ export const providers = defineProviders({
 	},
 	Zoom: {
 		authorizationUrl: 'https://zoom.us/oauth/authorize',
-		createAuthorizationURLSearchParams: { response_type: 'code' },
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',

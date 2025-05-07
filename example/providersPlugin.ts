@@ -92,4 +92,4 @@ export const providersPlugin = new Elysia()
 	.use(patreonPlugin)
 	.use(polarPlugin)
 	.use(polarAccessLinkPlugin)
-	.use(polarTeamProPlugin)
+	.use(polarTeamProPlugin);

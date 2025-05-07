@@ -1,7 +1,7 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState } from '../../src/arctic-utils';
+import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -21,13 +21,16 @@ const polarOAuth2Client = createOAuth2Client('Polar', {
 export const polarPlugin = new Elysia()
 	.get(
 		'/oauth2/polar/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
-			if (state === undefined)
+		async ({ redirect, error, cookie: { state, code_verifier } }) => {
+			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
+			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
 				await polarOAuth2Client.createAuthorizationUrl({
+					codeVerifier,
+					scope: ['openid'],
 					state: currentState
 				});
 
@@ -39,6 +42,14 @@ export const polarPlugin = new Elysia()
 				secure: true,
 				value: currentState
 			});
+			code_verifier.set({
+				httpOnly: true,
+				maxAge: COOKIE_DURATION,
+				path: '/',
+				sameSite: 'lax',
+				secure: true,
+				value: codeVerifier
+			});
 
 			return redirect(authorizationUrl.toString());
 		}
@@ -48,10 +59,10 @@ export const polarPlugin = new Elysia()
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state },
+			cookie: { state: stored_state, code_verifier },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined)
+			if (stored_state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -63,10 +74,15 @@ export const polarPlugin = new Elysia()
 
 			stored_state.remove();
 
+			const codeVerifier = code_verifier.value;
+			if (codeVerifier === undefined)
+				return error('Bad Request', 'Code verifier is missing');
+
 			try {
 				const oauthResponse =
 					await polarOAuth2Client.validateAuthorizationCode({
-						code
+						code,
+						codeVerifier
 					});
 				console.log('\nPolar authorized:', oauthResponse);
 			} catch (err) {
@@ -117,6 +133,42 @@ export const polarPlugin = new Elysia()
 			body: t.Object({
 				refresh_token: t.String()
 			})
+		}
+	)
+	.delete(
+		'/oauth2/polar/revocation',
+		async ({ error, query: { token_to_revoke } }) => {
+			if (!token_to_revoke)
+				return error(
+					'Bad Request',
+					'Token to revoke is required in query parameters'
+				);
+
+			try {
+				await polarOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nPolar token revoked:', token_to_revoke);
+
+				return new Response(
+					`Token ${token_to_revoke} revoked successfully`,
+					{
+						headers: {
+							'Content-Type': 'text/plain'
+						}
+					}
+				);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to revoke token: ${err.message}`
+					);
+				}
+
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
 		}
 	)
 	.get(

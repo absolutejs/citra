@@ -60,3 +60,6 @@ If any issues occur with a provider please open one so it can be fixed.
 - Okta
 - Osu
 - Patreon
+- Polar
+- Polar Flow
+- Polar Team Pro (Untested: Paid)

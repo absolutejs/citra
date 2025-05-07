@@ -857,25 +857,32 @@ export const providers = defineProviders({
 		}
 	},
 	Polar: {
-		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
-		isOIDC: false,
+		authorizationUrl: 'https://polar.sh/oauth2/authorize',
+		createAuthorizationURLSearchParams: { response_type: 'code' },
+		isOIDC: true,
+		isPKCE: true,
+		PKCEMethod: 'S256',
 		isRefreshable: true,
+		scopeRequired: true,
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'form',
+			method: 'POST',
+			url: 'https://api.polar.sh/v1/oauth2/token'
+		},
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
-			url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>'
+			url: 'https://api.polar.sh/v1/oauth2/userinfo'
 		},
-		scopeRequired: false,
-		tokenRequest: {
-			authIn: 'header',
-			encoding: 'form',
-			url: 'https://polarremote.com/v2/oauth2/token'
+		revocationRequest: {
+			url: 'https://api.polar.sh/v1/oauth2/revoke',
+			authIn: 'body'
 		}
 	},
 	Reddit: {
 		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',

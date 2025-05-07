@@ -87,11 +87,9 @@ export const providers = defineProviders({
 	Atlassian: {
 		authorizationUrl: 'https://auth.atlassian.com/authorize',
 		createAuthorizationURLSearchParams: {
-			audience: 'api.atlassian.com',
-			prompt: 'consent'
+			audience: 'api.atlassian.com'
 		},
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',

@@ -29,6 +29,9 @@ export const atlassianPlugin = new Elysia()
 			const authorizationUrl =
 				await atlassianOAuth2Client.createAuthorizationUrl({
 					scope: ['read:me', 'offline_access'],
+					searchParams: [
+						['prompt', 'consent'],
+					],
 					state: currentState
 				});
 

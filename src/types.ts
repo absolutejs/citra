@@ -538,7 +538,7 @@ export type ConfigMap = {
 	Patreon: PatreonOAuth2Config;
 	Polar: PolarOAuth2Config;
 	PolarAccessLink: PolarAccessLinkOAuth2Config;
-	PolarTeamProOAuth: PolarTeamProOAuthOAuth2Config;
+	PolarTeamPro: PolarTeamProOAuthOAuth2Config;
 	Reddit: RedditOAuth2Config;
 	Roblox: RobloxOAuth2Config;
 	Salesforce: SalesforceOAuth2Config;

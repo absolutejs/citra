@@ -10,7 +10,7 @@ To be a standardized javascript or typescript starting point for OAuth2 protocol
 
 ## Avaiable Providers
 
-There are 63 providers available through Citra
+There are 65 providers available through Citra
 
 Some providers have the tag (HTTPS Required) since the provider will only authorize over secure connections ... include steps for mkcert ...
 
@@ -61,5 +61,5 @@ If any issues occur with a provider please open one so it can be fixed.
 - Osu
 - Patreon
 - Polar
-- Polar AccessLink
+- Polar AccessLink (In Development)
 - Polar Team Pro (Untested: Paid)

@@ -44,6 +44,7 @@ import { osuPlugin } from './providers/osu';
 import { patreonPlugin } from './providers/patreon';
 import { polarPlugin } from './providers/polar';
 import { polarAccessLinkPlugin } from './providers/polar-accesslink';
+import { polarTeamProPlugin } from './providers/polar-team-pro';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -90,4 +91,5 @@ export const providersPlugin = new Elysia()
 	.use(osuPlugin)
 	.use(patreonPlugin)
 	.use(polarPlugin)
-	.use(polarAccessLinkPlugin);
+	.use(polarAccessLinkPlugin)
+	.use(polarTeamProPlugin)

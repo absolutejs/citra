@@ -61,5 +61,5 @@ If any issues occur with a provider please open one so it can be fixed.
 - Osu
 - Patreon
 - Polar
-- Polar Flow
+- Polar AccessLink
 - Polar Team Pro (Untested: Paid)

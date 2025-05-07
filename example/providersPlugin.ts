@@ -45,6 +45,7 @@ import { patreonPlugin } from './providers/patreon';
 import { polarPlugin } from './providers/polar';
 import { polarAccessLinkPlugin } from './providers/polar-accesslink';
 import { polarTeamProPlugin } from './providers/polar-team-pro';
+import { robloxPlugin } from './providers/roblox';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -92,4 +93,5 @@ export const providersPlugin = new Elysia()
 	.use(patreonPlugin)
 	.use(polarPlugin)
 	.use(polarAccessLinkPlugin)
-	.use(polarTeamProPlugin);
+	.use(polarTeamProPlugin)
+	.use(robloxPlugin);

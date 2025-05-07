@@ -907,16 +907,16 @@ export const providers = defineProviders({
 		}
 	},
 	Roblox: {
-		authorizationUrl: 'https://www.roblox.com/oauth/authorize',
-		isOIDC: false,
-
+		authorizationUrl: 'https://apis.roblox.com/oauth/v1/authorize',
+		isOIDC: true,
+		PKCEMethod: 'S256',
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://apis.roblox.com/oauth/v1/userinfo'
 		},
-		scopeRequired: false,
+		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',

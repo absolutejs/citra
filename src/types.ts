@@ -386,6 +386,16 @@ export type PolarOAuth2Config = {
 	clientSecret: string;
 	redirectUri: string;
 };
+export type PolarAccessLinkOAuth2Config = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
+export type PolarTeamProOAuthOAuth2Config = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
 export type RedditOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
@@ -527,6 +537,8 @@ export type ConfigMap = {
 	Osu: OsuOAuth2Config;
 	Patreon: PatreonOAuth2Config;
 	Polar: PolarOAuth2Config;
+	PolarAccessLink: PolarAccessLinkOAuth2Config;
+	PolarTeamProOAuth: PolarTeamProOAuthOAuth2Config;
 	Reddit: RedditOAuth2Config;
 	Roblox: RobloxOAuth2Config;
 	Salesforce: SalesforceOAuth2Config;

@@ -43,6 +43,7 @@ import { oktaPlugin } from './providers/okta';
 import { osuPlugin } from './providers/osu';
 import { patreonPlugin } from './providers/patreon';
 import { polarPlugin } from './providers/polar';
+import { polarAccessLinkPlugin } from './providers/polar-accesslink';
 
 export const providersPlugin = new Elysia()
 	.use(fortyTwoPlugin)
@@ -88,4 +89,5 @@ export const providersPlugin = new Elysia()
 	.use(oktaPlugin)
 	.use(osuPlugin)
 	.use(patreonPlugin)
-	.use(polarPlugin);
+	.use(polarPlugin)
+	.use(polarAccessLinkPlugin);

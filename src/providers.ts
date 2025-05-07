@@ -880,6 +880,43 @@ export const providers = defineProviders({
 			authIn: 'body'
 		}
 	},
+	PolarAccessLink: {
+		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
+		isOIDC: false,
+		isPKCE: false,
+		isRefreshable: false,
+		profileRequest: {
+		  authIn: 'header',
+		  method: 'GET',
+		  url: 'https://www.polaraccesslink.com/v3/users/me'
+		},
+		tokenRequest: {
+		  authIn: 'header',
+		  encoding: 'form',
+		  method: 'POST',
+		  url: 'https://polarremote.com/v2/oauth2/token'
+		},
+		scopeRequired: false
+	  },
+	  PolarTeamPro: {
+		authorizationUrl: 'https://auth.polar.com/oauth/authorize',
+		isOIDC: false,
+		isPKCE: true,
+		PKCEMethod: 'S256',
+		isRefreshable: true,
+		profileRequest: {
+		  authIn: 'header',
+		  method: 'GET',
+		  url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>' // TODO: Implement Polar AccessLink profile request which needs an additional user ID parameter
+		},
+		tokenRequest: {
+		  authIn: 'header',
+		  encoding: 'form',
+		  method: 'POST',
+		  url: 'https://auth.polar.com/oauth/token'
+		},
+		scopeRequired: false
+	  },
 	Reddit: {
 		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
 		isOIDC: false,

@@ -63,5 +63,5 @@ If any issues occur with a provider please open one so it can be fixed.
 - Polar
 - Polar AccessLink (In Development)
 - Polar Team Pro (Untested: Paid)
-- Reddit (TODO)
+- Reddit
 - Roblox

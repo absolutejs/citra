@@ -899,9 +899,9 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://oauth.reddit.com/api/v1/me'
 		},
-		scopeRequired: false,
+		scopeRequired: true,
 		tokenRequest: {
-			authIn: 'body',
+			authIn: 'header',
 			encoding: 'form',
 			url: 'https://www.reddit.com/api/v1/access_token'
 		}
@@ -909,8 +909,8 @@ export const providers = defineProviders({
 	Roblox: {
 		authorizationUrl: 'https://apis.roblox.com/oauth/v1/authorize',
 		isOIDC: true,
-		PKCEMethod: 'S256',
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',

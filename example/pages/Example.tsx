@@ -19,11 +19,11 @@ export const Example = () => {
 	const [revokeModalOpen, setRevokeModalOpen] = useState(false);
 	const [profileModalOpen, setProfileModalOpen] = useState(false);
 
-	// This is a fix for the Facebook OAuth2 flow to remove the hash
-	// fragment from the URL after the redirect.
+	// Remove harmless OAuth fragments inserted by Facebook and Reddit
 	useEffect(() => {
-		if (window.location.hash === '#_=_') {
-			// Remove the fragment without reloading
+		const { hash } = window.location;
+		if (hash === '#_=_' || hash === '#_') {
+			// Strip the fragment without reloading the page
 			window.history.replaceState(
 				null,
 				document.title,

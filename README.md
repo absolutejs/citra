@@ -60,6 +60,8 @@ All providers have their proper environment variables listed in `env.example`. F
 
 ## Building the Authorization URL
 
+Generate the authorization URL from the provider metadata (including a PKCE verifier when required). You can redirect to this URL to initiate the OAuth2 flow.
+
 ```ts
 const codeVerifier = crypto.randomUUID();
 const authUrl = await googleClient.createAuthorizationUrl({
@@ -86,8 +88,10 @@ return new Response(null, {
 Exchange the code, and optionally the verifier, for an OAuth2TokenResponse:
 
 ```ts
-const params = new URLSearchParams(window.location.search);
-const code = params.get('code')!;
+const url = new URL(request.url);
+const code = url.searchParams.get('code');
+if (!code) throw new Error('Authorization code is required but missing');
+
 const tokenResponse = await googleClient.validateAuthorizationCode({
 	code,
 	codeVerifier
@@ -95,6 +99,8 @@ const tokenResponse = await googleClient.validateAuthorizationCode({
 ```
 
 ## Fetching the User Profile
+
+Exchange the `user_access_token` for the user information on the profile API route for the provider 
 
 ```ts
 const profile = await googleClient.fetchUserProfile(tokenResponse.access_token);
@@ -107,12 +113,16 @@ If supported by the provider, you can refresh and revoke tokens:
 
 ```ts
 const { refresh_token, access_token } = tokenResponse;
+
 if (refresh_token) {
 	const newTokens = await googleClient.refreshAccessToken(refresh_token);
 }
 
-// To revoke an access or refresh token:
-await googleClient.revokeToken(access_token);
+// Example check to see if provider has a revoke route. In practice `googleClient` will know `revokeToken` does exist, and conversly it will error if it is a provider without the revoke route 
+if (isRevocableProvider(googleClient)) {
+    // To revoke an access or refresh token:
+    await googleClient.revokeToken(access_token);
+}
 ```
 
 ## Types

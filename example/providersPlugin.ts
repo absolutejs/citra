@@ -55,6 +55,7 @@ import { startggPlugin } from './providers/start.gg';
 import { stravaPlugin } from './providers/strava';
 import { tiktokPlugin } from './providers/tiktok';
 import { tiltifyPlugin } from './providers/tiltify';
+import { tumblrPlugin } from './providers/tumblr';
 
 const allProviders = [
 	fortyTwoPlugin,
@@ -112,7 +113,8 @@ const allProviders = [
 	startggPlugin,
 	stravaPlugin,
 	tiktokPlugin,
-	tiltifyPlugin
+	tiltifyPlugin,
+	tumblrPlugin
 ];
 
 export const providersPlugin = (app: Elysia) => {

@@ -81,3 +81,4 @@ If any issues occur with a provider please open one so it can be fixed.
 - Twitter (Untested: Paid)
 - VK (Public Domain Only) (Untested: localhost Not Supported)
 - WorkOS (In Development)
+- Yahoo (Untested: https) (HTTPS Required)

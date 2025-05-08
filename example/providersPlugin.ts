@@ -59,6 +59,7 @@ import { tumblrPlugin } from './providers/tumblr';
 import { twitchPlugin } from './providers/twitch';
 import { vkPlugin } from './providers/vk';
 import { workOSPlugin } from './providers/workos';
+import { yahooPlugin } from './providers/yahoo';
 
 const allProviders = [
 	fortyTwoPlugin,
@@ -120,7 +121,8 @@ const allProviders = [
 	tumblrPlugin,
 	twitchPlugin,
 	vkPlugin,
-	workOSPlugin
+	workOSPlugin,
+	yahooPlugin
 ];
 
 export const providersPlugin = (app: Elysia) => {

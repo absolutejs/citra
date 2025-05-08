@@ -1144,15 +1144,15 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.twitter.com/2/users/me'
 		},
+		revocationRequest: {
+			authIn: 'header',
+			url: 'https://api.twitter.com/2/oauth2/revoke'
+		},
 		scopeRequired: false,
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.twitter.com/2/oauth2/token'
-		},
-		revocationRequest: {
-			authIn: 'header',
-			url: 'https://api.twitter.com/2/oauth2/revoke'
 		}
 	},
 	VK: {
@@ -1190,12 +1190,17 @@ export const providers = defineProviders({
 	},
 	Yahoo: {
 		authorizationUrl: 'https://api.login.yahoo.com/oauth2/request_auth',
-		isOIDC: false,
+		isOIDC: true,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://api.login.yahoo.com/openid/v1/userinfo'
+		},
+		revocationRequest: {
+			authIn: 'header',
+			url: 'https://api.login.yahoo.com/oauth2/revoke'
 		},
 		scopeRequired: false,
 		tokenRequest: {

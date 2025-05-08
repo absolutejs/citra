@@ -5,22 +5,22 @@ import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.WORK_OS_CLIENT_ID ||
-	!env.WORK_OS_CLIENT_SECRET ||
-	!env.WORK_OS_REDIRECT_URI
+	!env.YAHOO_CLIENT_ID ||
+	!env.YAHOO_CLIENT_SECRET ||
+	!env.YAHOO_REDIRECT_URI
 ) {
-	throw new Error('WorkOS OAuth2 credentials are not set in .env file');
+	throw new Error('Yahoo OAuth2 credentials are not set in .env file');
 }
 
-const workOSOAuth2Client = createOAuth2Client('WorkOS', {
-	clientId: env.WORK_OS_CLIENT_ID,
-	clientSecret: env.WORK_OS_CLIENT_SECRET,
-	redirectUri: env.WORK_OS_REDIRECT_URI
+const yahooOAuth2Client = createOAuth2Client('Yahoo', {
+	clientId: env.YAHOO_CLIENT_ID,
+	clientSecret: env.YAHOO_CLIENT_SECRET,
+	redirectUri: env.YAHOO_REDIRECT_URI
 });
 
-export const workOSPlugin = new Elysia()
+export const yahooPlugin = new Elysia()
 	.get(
-		'/oauth2/workos/authorization',
+		'/oauth2/yahoo/authorization',
 		async ({ redirect, error, cookie: { state, code_verifier } }) => {
 			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
@@ -28,8 +28,13 @@ export const workOSPlugin = new Elysia()
 			const currentState = generateState();
 			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await workOSOAuth2Client.createAuthorizationUrl({
+				await yahooOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
+					scope: ['profile', 'openid'],
+					searchParams: [
+						['access_type', 'offline'],
+						['prompt', 'consent']
+					],
 					state: currentState
 				});
 
@@ -54,7 +59,7 @@ export const workOSPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/workos/callback',
+		'/oauth2/yahoo/callback',
 		async ({
 			error,
 			redirect,
@@ -82,11 +87,11 @@ export const workOSPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await workOSOAuth2Client.validateAuthorizationCode({
+					await yahooOAuth2Client.validateAuthorizationCode({
 						code,
 						codeVerifier
 					});
-				console.log('\nWorkOS authorized:', oauthResponse);
+				console.log('\nYahoo authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -105,12 +110,12 @@ export const workOSPlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/workos/tokens',
+		'/oauth2/yahoo/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await workOSOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nWorkOS token refreshed:', oauthResponse);
+					await yahooOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nYahoo token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -137,8 +142,44 @@ export const workOSPlugin = new Elysia()
 			})
 		}
 	)
+	.delete(
+		'/oauth2/yahoo/revocation',
+		async ({ error, query: { token_to_revoke } }) => {
+			if (!token_to_revoke)
+				return error(
+					'Bad Request',
+					'Token to revoke is required in query parameters'
+				);
+
+			try {
+				await yahooOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nYahoo token revoked:', token_to_revoke);
+
+				return new Response(
+					`Token ${token_to_revoke} revoked successfully`,
+					{
+						headers: {
+							'Content-Type': 'text/plain'
+						}
+					}
+				);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to revoke token: ${err.message}`
+					);
+				}
+
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
+		}
+	)
 	.get(
-		'/oauth2/workos/profile',
+		'/oauth2/yahoo/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -150,8 +191,8 @@ export const workOSPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await workOSOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nWorkOS user profile:', userProfile);
+					await yahooOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nYahoo user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

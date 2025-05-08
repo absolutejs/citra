@@ -77,10 +77,6 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				url.searchParams.set(key, value)
 			);
 
-			console.log(
-				`[OAuth2] ${providerName} authorization URL: ${url.toString()}`
-			);
-			
 			return url;
 		},
 

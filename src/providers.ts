@@ -1006,7 +1006,7 @@ export const providers = defineProviders({
 		}
 	},
 	StartGG: {
-		authorizationUrl: 'https://start.gg/oauth/authoriz',
+		authorizationUrl: 'https://start.gg/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {

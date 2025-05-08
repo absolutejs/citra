@@ -69,3 +69,4 @@ If any issues occur with a provider please open one so it can be fixed.
 - Shikimori (Untested: Region Restricted)
 - Slack (Untested: https) (HTTPS Required)
 - Spotify
+- start.gg

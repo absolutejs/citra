@@ -16,6 +16,8 @@ Some providers have the tag (HTTPS Required) since the provider will only author
 
 Some providers had restrictive steps in their signup process that prevented current testing of them. (Untested: Reason)
 
+The TikTok provider can not be used with `localhost` or `127.0.0.1` it must be on a hosted https server
+
 If any issues occur with a provider please open one so it can be fixed.
 
 - 42 (Untested: Restricted)
@@ -72,3 +74,4 @@ If any issues occur with a provider please open one so it can be fixed.
 - start.gg
 - Strava
 - Synology (Untested: Self Hosted)
+- TikTok (localhost Not Supported) (Untested: localhost Not Supported)

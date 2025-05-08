@@ -68,8 +68,11 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				url.searchParams.set('code_challenge', codeChallenge);
 			}
 
+			const { createAuthorizationURLSearchParams } = meta;
+
+
 			Object.entries(
-				meta.createAuthorizationURLSearchParams ?? {}
+				resolveConfigProp(createAuthorizationURLSearchParams) ?? {}
 			).forEach(([key, value]) => url.searchParams.set(key, value));
 			searchParams.forEach(([key, value]) =>
 				url.searchParams.set(key, value)

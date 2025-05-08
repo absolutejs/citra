@@ -833,9 +833,8 @@ export const providers = defineProviders({
 	Polar: {
 		authorizationUrl: 'https://polar.sh/oauth2/authorize',
 		isOIDC: true,
-		isPKCE: true,
-		isRefreshable: true,
 		PKCEMethod: 'S256',
+		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -849,14 +848,13 @@ export const providers = defineProviders({
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',
-			method: 'POST',
 			url: 'https://api.polar.sh/v1/oauth2/token'
 		}
 	},
 	PolarAccessLink: {
 		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
 		isOIDC: false,
-		isPKCE: false,
+		PKCEMethod: 'S256',
 		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
@@ -867,14 +865,12 @@ export const providers = defineProviders({
 		tokenRequest: {
 			authIn: 'header',
 			encoding: 'form',
-			method: 'POST',
 			url: 'https://polarremote.com/v2/oauth2/token'
 		}
 	},
 	PolarTeamPro: {
 		authorizationUrl: 'https://auth.polar.com/oauth/authorize',
 		isOIDC: false,
-		isPKCE: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
 		profileRequest: {
@@ -886,7 +882,6 @@ export const providers = defineProviders({
 		tokenRequest: {
 			authIn: 'header',
 			encoding: 'form',
-			method: 'POST',
 			url: 'https://auth.polar.com/oauth/token'
 		}
 	},
@@ -1072,6 +1067,9 @@ export const providers = defineProviders({
 	},
 	TikTok: {
 		authorizationUrl: 'https://www.tiktok.com/v2/auth/authorize',
+		createAuthorizationURLSearchParams: (config) => ({
+			client_key: config.clientId
+		  }),
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',

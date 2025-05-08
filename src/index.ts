@@ -92,7 +92,9 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			} = profileRequest;
 
 			const endpoint = new URL(resolveConfigProp(url));
-			for (const [key, value] of searchParams ?? []) {
+			const params = new URLSearchParams(searchParams);
+
+			for (const [key, value] of params.entries()) {
 				endpoint.searchParams.append(key, value);
 			}
 
@@ -183,7 +185,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				);
 			}
 
-			const { url, authIn, body, headers } = revocationRequest;
+			const { url, authIn, body, headers, tokenParamName } = revocationRequest;
 			const endpoint = resolveConfigProp(url);
 			const revocationBody = body ?? new URLSearchParams();
 			const revocationHeaders = new Headers(
@@ -233,7 +235,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					clientSecret,
 					encoding: 'form',
 					headers: revocationHeaders,
-					url: `${endpoint.toString()}?access_token=${token}` // This is for Strava the only one that uses query
+					url: `${endpoint.toString()}?${tokenParamName}=${token}`
 				});
 			}
 

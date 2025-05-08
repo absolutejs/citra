@@ -75,3 +75,6 @@ If any issues occur with a provider please open one so it can be fixed.
 - Strava
 - Synology (Untested: Self Hosted)
 - TikTok (localhost Not Supported) (Untested: localhost Not Supported)
+- Tiltify
+- Tumblr
+- Twitch

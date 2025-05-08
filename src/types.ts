@@ -1,6 +1,7 @@
 import { providers } from './providers';
 
 type NonEmptyArray<T> = [T, ...T[]];
+type URLSearchParamsInit = string | Record<string, string> | string[][] | URLSearchParams
 
 export type ProfileRequestConfig = {
 	// TODO: remove any type in favor of the actual config for this specific provider
@@ -8,9 +9,9 @@ export type ProfileRequestConfig = {
 	url: string | ((config: any) => string);
 	method: 'GET' | 'POST';
 	authIn: 'header' | 'query';
-	headers?: HeadersInit;
+	headers?: HeadersInit | ((config: any) => HeadersInit);
 	body?: unknown;
-	searchParams?: [string, string][];
+	searchParams?: URLSearchParamsInit;
 };
 
 export type RevocationRequestConfig = {
@@ -22,6 +23,7 @@ export type RevocationRequestConfig = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	headers?: HeadersInit | ((config: any) => HeadersInit);
 	body?: URLSearchParams;
+	tokenParamName?: 'token' | 'access_token' | 'refresh_token';
 };
 
 export type TokenRequestConfig = {

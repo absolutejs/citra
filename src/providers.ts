@@ -1022,6 +1022,7 @@ export const providers = defineProviders({
 			body: new URLSearchParams({
 				token_type_hint: 'access_token'
 			}),
+			tokenParamName: 'access_token',
 			url: 'https://www.strava.com/oauth/deauthorize'
 		},
 		scopeRequired: false,
@@ -1108,11 +1109,14 @@ export const providers = defineProviders({
 	},
 	Twitch: {
 		authorizationUrl: 'https://id.twitch.tv/oauth2/authorize',
-		isOIDC: false,
+		isOIDC: true,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
+			headers: (config) => ({
+				'Client-Id': config.clientId
+			}),
 			url: 'https://api.twitch.tv/helix/users'
 		},
 		scopeRequired: false,
@@ -1120,6 +1124,14 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://id.twitch.tv/oauth2/token'
+		},
+		revocationRequest: {
+			url: 'https://id.twitch.tv/oauth2/revoke',
+			authIn: 'query',
+			headers: (config) => ({
+				'Client-Id': config.clientId
+			}),
+			tokenParamName: 'token'
 		}
 	},
 	Twitter: {

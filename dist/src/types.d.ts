@@ -1,25 +1,48 @@
 import { providers } from './providers';
 type NonEmptyArray<T> = [T, ...T[]];
+type URLSearchParamsInit = string | Record<string, string> | string[][] | URLSearchParams;
 export type ProfileRequestConfig = {
     url: string | ((config: any) => string);
     method: 'GET' | 'POST';
     authIn: 'header' | 'query';
-    headers?: HeadersInit;
+    headers?: HeadersInit | ((config: any) => HeadersInit);
     body?: unknown;
-    searchParams?: [string, string][];
+    searchParams?: URLSearchParamsInit;
 };
-export type RevocationRequestConfig = {
+type BaseRevocation = {
     url: string | ((config: any) => string);
-    authIn: 'body' | 'header';
     headers?: HeadersInit | ((config: any) => HeadersInit);
     body?: URLSearchParams;
+};
+type QueryRevocation = BaseRevocation & {
+    authIn: 'query' | 'body';
+    tokenParamName: 'token' | 'access_token' | 'refresh_token';
+};
+type BodyOrHeaderRevocation = BaseRevocation & {
+    authIn: 'header';
+    tokenParamName?: never;
+};
+export type RevocationRequestConfig = QueryRevocation | BodyOrHeaderRevocation;
+export type TokenRequestConfig = {
+    url: string | ((config: any) => string);
+    authIn: 'body' | 'header';
+    encoding: 'form' | 'json';
 };
 export type DefineProviders = <ProviderMap extends Record<string, ProviderConfig>>(providerMap: ProviderMap) => {
     [ProviderName in keyof ProviderMap]: ProviderMap[ProviderName] & ProviderConfig;
 };
 export type ProviderOption = keyof typeof providers;
+export type OAuth2RequestOptions = {
+    url: string;
+    body: Record<string, unknown> | URLSearchParams;
+    authIn: 'header' | 'body' | 'query';
+    encoding: 'form' | 'json';
+    headers?: HeadersInit;
+    clientId: string;
+    clientSecret?: string;
+};
 export type PKCEProvider = {
-    [K in ProviderOption]: (typeof providers)[K]['isPKCE'] extends true ? K : never;
+    [K in ProviderOption]: (typeof providers)[K]['PKCEMethod'] extends 'S256' | 'plain' ? K : never;
 }[ProviderOption];
 export type OIDCProvider = {
     [K in ProviderOption]: (typeof providers)[K]['isOIDC'] extends true ? K : never;
@@ -60,16 +83,16 @@ export type RevocableOAuth2Client = {
 };
 export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> & (P extends RefreshableProvider ? RefreshableOAuth2Client : unknown) & (P extends RevocableProvider ? RevocableOAuth2Client : unknown);
 export type ProviderConfig = {
-    isPKCE: boolean;
+    PKCEMethod?: 'S256' | 'plain';
     isOIDC: boolean;
     isRefreshable: boolean;
     scopeRequired: boolean;
     authorizationUrl: string | ((config: any) => string);
-    tokenUrl: string | ((config: any) => string);
+    tokenRequest: TokenRequestConfig;
     revocationRequest?: RevocationRequestConfig;
-    profileRequest?: ProfileRequestConfig;
+    profileRequest: ProfileRequestConfig;
     /** Static query params added to the auth URL */
-    createAuthorizationURLSearchParams?: Record<string, string>;
+    createAuthorizationURLSearchParams?: Record<string, string> | ((config: any) => Record<string, string>);
     /** Static fields added to the authorization‑code exchange body */
     validateAuthorizationCodeBody?: Record<string, string>;
     /** Static fields added to the refresh‑token request body */
@@ -226,7 +249,7 @@ export type KakaoOAuth2Config = {
     clientSecret: string;
     redirectUri: string;
 };
-export type KeyCloakOAuth2Config = {
+export type KeycloakOAuth2Config = {
     realmURL: string;
     clientId: string;
     clientSecret: string | null;
@@ -237,12 +260,11 @@ export type KickOAuth2Config = {
     clientSecret: string;
     redirectUri: string;
 };
-export type LINEOAuth2Config = {
+export type LichessOAuth2Config = {
     clientId: string;
-    clientSecret: string;
     redirectUri: string;
 };
-export type LichessOAuth2Config = {
+export type LINEOAuth2Config = {
     clientId: string;
     clientSecret: string;
     redirectUri: string;
@@ -261,6 +283,7 @@ export type MastodonOAuth2Config = {
     clientId: string;
     clientSecret: string;
     redirectUri: string;
+    baseURL: string;
 };
 export type MercadoLibreOAuth2Config = {
     clientId: string;
@@ -310,6 +333,16 @@ export type PatreonOAuth2Config = {
     redirectUri: string;
 };
 export type PolarOAuth2Config = {
+    clientId: string;
+    clientSecret: string;
+    redirectUri: string;
+};
+export type PolarAccessLinkOAuth2Config = {
+    clientId: string;
+    clientSecret: string;
+    redirectUri: string;
+};
+export type PolarTeamProOAuthOAuth2Config = {
     clientId: string;
     clientSecret: string;
     redirectUri: string;
@@ -437,10 +470,10 @@ export type ConfigMap = {
     Google: GoogleOAuth2Config;
     Intuit: IntuitOAuth2Config;
     Kakao: KakaoOAuth2Config;
-    KeyCloak: KeyCloakOAuth2Config;
+    Keycloak: KeycloakOAuth2Config;
     Kick: KickOAuth2Config;
-    Line: LINEOAuth2Config;
     Lichess: LichessOAuth2Config;
+    LINE: LINEOAuth2Config;
     Linear: LinearOAuth2Config;
     LinkedIn: LinkedInOAuth2Config;
     Mastodon: MastodonOAuth2Config;
@@ -454,6 +487,8 @@ export type ConfigMap = {
     Osu: OsuOAuth2Config;
     Patreon: PatreonOAuth2Config;
     Polar: PolarOAuth2Config;
+    PolarAccessLink: PolarAccessLinkOAuth2Config;
+    PolarTeamPro: PolarTeamProOAuthOAuth2Config;
     Reddit: RedditOAuth2Config;
     Roblox: RobloxOAuth2Config;
     Salesforce: SalesforceOAuth2Config;

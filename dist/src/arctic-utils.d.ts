@@ -6,5 +6,3 @@ export declare const createS256CodeChallenge: (codeVerifier: string) => Promise<
 export declare const generateCodeVerifier: () => string;
 /** 32-byte state parameter for OAuth2 */
 export declare const generateState: () => string;
-export declare const createOAuth2Request: (Url: string, body: URLSearchParams, headers?: HeadersInit) => Request;
-export declare const postForm: (url: string, body: URLSearchParams) => Promise<any>;

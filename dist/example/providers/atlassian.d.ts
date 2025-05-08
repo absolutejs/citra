@@ -40,7 +40,7 @@ export declare const atlassianPlugin: Elysia<"", {
                     headers: unknown;
                     response: {
                         200: import("undici-types").Response;
-                        400: "Cookies are missing" | "Code is missing in query" | "Invalid state mismatch";
+                        400: "Cookies are missing" | "Code is missing in query" | `Invalid state mismatch: expected "undefined", got "${string}"` | `Invalid state mismatch: expected "${string}", got "undefined"` | `Invalid state mismatch: expected "${string}", got "${string}"`;
                         500: `Failed to validate authorization code: ${string}` | `Unexpected error: ${string}`;
                     };
                 };

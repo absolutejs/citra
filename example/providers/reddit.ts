@@ -121,6 +121,42 @@ export const redditPlugin = new Elysia()
 			})
 		}
 	)
+	.delete(
+		'/oauth2/reddit/revocation',
+		async ({ error, query: { token_to_revoke } }) => {
+			if (!token_to_revoke)
+				return error(
+					'Bad Request',
+					'Token to revoke is required in query parameters'
+				);
+
+			try {
+				await redditOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nGoogle token revoked:', token_to_revoke);
+
+				return new Response(
+					`Token ${token_to_revoke} revoked successfully`,
+					{
+						headers: {
+							'Content-Type': 'text/plain'
+						}
+					}
+				);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to revoke token: ${err.message}`
+					);
+				}
+
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
+		}
+	)
 	.get(
 		'/oauth2/reddit/profile',
 		async ({ error, headers: { authorization } }) => {

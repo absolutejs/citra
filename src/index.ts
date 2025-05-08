@@ -181,9 +181,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				);
 			}
 
-			const { url, authIn, body } = revocationRequest;
+			const { url, authIn, body, headers } = revocationRequest;
 			const endpoint = resolveConfigProp(url);
 			const revocationBody = body ?? new URLSearchParams();
+			const revocationHeaders = new Headers(
+				headers && resolveConfigProp(headers)
+			);
+
 			revocationBody.set('token', token);
 
 			const { clientId } = config;
@@ -204,17 +208,21 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					body: revocationBody,
 					clientId,
 					clientSecret,
+					headers: revocationHeaders,
 					encoding: 'form',
 					url: endpoint.toString()
 				});
 			} else {
-				const headers = new Headers({
-					Authorization: `Bearer ${token}`,
-					'User-Agent': 'citra'
-				});
-				request = new Request(endpoint.toString(), {
-					headers,
-					method: 'POST'
+				revocationHeaders?.set('Authorization', `Bearer ${token}`);
+
+				request = createOAuth2Request({
+					authIn: 'header',
+					body: revocationBody,
+					clientId,
+					clientSecret,
+					headers: revocationHeaders,
+					encoding: 'form',
+					url: endpoint.toString()
 				});
 			}
 

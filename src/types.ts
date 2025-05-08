@@ -48,6 +48,7 @@ export type OAuth2RequestOptions = {
 	body: Record<string, unknown> | URLSearchParams;
 	authIn: 'header' | 'body';
 	encoding: 'form' | 'json';
+	headers?: HeadersInit;
 	clientId: string;
 	clientSecret?: string;
 };

@@ -35,36 +35,50 @@ export const createOAuth2Request = ({
 	url,
 	body,
 	authIn,
+	headers,
 	encoding,
 	clientId,
 	clientSecret
 }: OAuth2RequestOptions) => {
-	const headers = new Headers({
+	const oauthHeaders = new Headers({
 		Accept: 'application/json',
 		'User-Agent': 'citra'
 	});
+
+	if (headers) {
+		for (const [key, value] of Object.entries(headers)) {
+			oauthHeaders.set(key, value);
+		}
+	}
 
 	if (authIn === 'header') {
 		if (!clientSecret) {
 			throw new Error('clientSecret required for header auth');
 		}
-		headers.set(
+		oauthHeaders.set(
 			'Authorization',
 			`Basic ${encodeBase64(`${clientId}:${clientSecret}`)}`
 		);
 	}
 
 	if (encoding === 'json') {
-		headers.set('Content-Type', 'application/json');
+		oauthHeaders.set('Content-Type', 'application/json');
+
+		console.log('[OAuth2Request]: ', {
+			url,
+			body,
+			oauthHeaders,
+			method: 'POST'
+		});
 
 		return new Request(url, {
 			body: JSON.stringify(body),
-			headers,
+			headers: oauthHeaders,
 			method: 'POST'
 		});
 	}
 
-	headers.set('Content-Type', 'application/x-www-form-urlencoded');
+	oauthHeaders.set('Content-Type', 'application/x-www-form-urlencoded');
 
 	const entries =
 		body instanceof URLSearchParams
@@ -81,9 +95,16 @@ export const createOAuth2Request = ({
 		void (clientSecret && params.set('client_secret', clientSecret));
 	}
 
+	console.log('[OAuth2Request]: ', {
+		url,
+		body,
+		oauthHeaders,
+		method: 'POST'
+	});
+
 	return new Request(url, {
 		body: params.toString(),
-		headers,
+		headers: oauthHeaders,
 		method: 'POST'
 	});
 };

@@ -904,6 +904,13 @@ export const providers = defineProviders({
 			authIn: 'header',
 			encoding: 'form',
 			url: 'https://www.reddit.com/api/v1/access_token'
+		},
+		revocationRequest: {
+			authIn: 'header',
+			url: 'https://www.reddit.com/api/v1/revoke_token',
+			body: new URLSearchParams({
+				token_type_hint: 'refresh_token'
+			})
 		}
 	},
 	Roblox: {

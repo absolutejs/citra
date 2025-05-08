@@ -833,8 +833,8 @@ export const providers = defineProviders({
 	Polar: {
 		authorizationUrl: 'https://polar.sh/oauth2/authorize',
 		isOIDC: true,
-		PKCEMethod: 'S256',
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -854,8 +854,8 @@ export const providers = defineProviders({
 	PolarAccessLink: {
 		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
 		isOIDC: false,
-		PKCEMethod: 'S256',
 		isRefreshable: false,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
@@ -929,22 +929,22 @@ export const providers = defineProviders({
 		authorizationUrl:
 			'https://login.salesforce.com/services/oauth2/authorize',
 		isOIDC: true,
-		PKCEMethod: 'S256',
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://login.salesforce.com/services/oauth2/userinfo'
+		},
+		revocationRequest: {
+			authIn: 'header',
+			url: 'https://login.salesforce.com/services/oauth2/revoke'
 		},
 		scopeRequired: false,
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://login.salesforce.com/services/oauth2/token'
-		},
-		revocationRequest: {
-			url: 'https://login.salesforce.com/services/oauth2/revoke',
-			authIn: 'header'
 		}
 	},
 	Shikimori: {
@@ -972,15 +972,15 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://slack.com/api/users.identity'
 		},
+		revocationRequest: {
+			authIn: 'body',
+			url: 'https://slack.com/api/auth.revoke'
+		},
 		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://slack.com/api/openid.connect.token'
-		},
-		revocationRequest: {
-			url: 'https://slack.com/api/auth.revoke',
-			authIn: 'body'
 		}
 	},
 	Spotify: {
@@ -1027,22 +1027,22 @@ export const providers = defineProviders({
 	Strava: {
 		authorizationUrl: 'https://www.strava.com/oauth/authorize',
 		isOIDC: false,
-		PKCEMethod: 'S256',
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://www.strava.com/api/v3/athlete'
+		},
+		revocationRequest: {
+			authIn: 'body',
+			url: 'https://www.strava.com/oauth/deauthorize'
 		},
 		scopeRequired: false,
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://www.strava.com/oauth/token'
-		},
-		revocationRequest: {
-			url: 'https://www.strava.com/oauth/deauthorize',
-			authIn: 'body'
 		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
@@ -1069,7 +1069,7 @@ export const providers = defineProviders({
 		authorizationUrl: 'https://www.tiktok.com/v2/auth/authorize',
 		createAuthorizationURLSearchParams: (config) => ({
 			client_key: config.clientId
-		  }),
+		}),
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',

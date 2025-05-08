@@ -70,7 +70,6 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			const { createAuthorizationURLSearchParams } = meta;
 
-
 			Object.entries(
 				resolveConfigProp(createAuthorizationURLSearchParams) ?? {}
 			).forEach(([key, value]) => url.searchParams.set(key, value));

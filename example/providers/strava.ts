@@ -30,8 +30,8 @@ export const stravaPlugin = new Elysia()
 			const authorizationUrl =
 				await stravaOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-					state: currentState,
-					searchParams: [['approval_prompt', 'force']]
+					searchParams: [['approval_prompt', 'force']],
+					state: currentState
 				});
 
 			state.set({

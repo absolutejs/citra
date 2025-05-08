@@ -28,8 +28,8 @@ export const slackPlugin = new Elysia()
 			const currentState = generateState();
 			const authorizationUrl =
 				await slackOAuth2Client.createAuthorizationUrl({
-					state: currentState,
-					scope: ['openid']
+					scope: ['openid'],
+					state: currentState
 				});
 
 			state.set({

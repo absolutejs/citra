@@ -117,5 +117,6 @@ export const providersPlugin = (app: Elysia) => {
 	for (const p of allProviders) {
 		app.use(p);
 	}
+
 	return app;
 };

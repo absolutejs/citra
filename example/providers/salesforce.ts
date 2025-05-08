@@ -30,9 +30,9 @@ export const salesforcePlugin = new Elysia()
 			const authorizationUrl =
 				await salesforceOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-					state: currentState,
 					scope: ['offline_access', 'openid'],
-					searchParams: [['prompt', 'consent']]
+					searchParams: [['prompt', 'consent']],
+					state: currentState
 				});
 
 			state.set({

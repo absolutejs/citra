@@ -135,9 +135,11 @@ export type ProviderConfig = {
 	profileRequest: ProfileRequestConfig;
 
 	/** Static query params added to the auth URL */
-	// TODO: remove any type in favor of the actual config for this specific provider
+	// TODO : remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	createAuthorizationURLSearchParams?: Record<string, string> | ((config:any) => Record<string, string>);
+	createAuthorizationURLSearchParams?:
+		| Record<string, string>
+		| ((config: any) => Record<string, string>);
 
 	/** Static fields added to the authorization‑code exchange body */
 	validateAuthorizationCodeBody?: Record<string, string>;

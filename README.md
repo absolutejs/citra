@@ -10,13 +10,15 @@ To be a standardized javascript or typescript starting point for OAuth2 protocol
 
 ## Avaiable Providers
 
-There are 65 providers available through Citra
+There are 60 providers available through Citra
 
 Some providers have the tag (HTTPS Required) since the provider will only authorize over secure connections ... include steps for mkcert ...
 
-Some providers had restrictive steps in their signup process that prevented current testing of them. (Untested: Reason)
+Some providers (23) had restrictive steps in their signup process that prevented current testing of them. (Untested: Reason)
 
-Some providers can not be used with `localhost` or `127.0.0.1` it must be on a hosted on a public domain using tls
+The providers marked (In Development) are OAuth providers that were started to be set up but have failed some portion of testing
+
+Some providers can not be used with `localhost` or `127.0.0.1` (Public Domain Only) they must be used on a hosted on a public domain using tls
 
 If any issues occur with a provider please open one so it can be fixed.
 

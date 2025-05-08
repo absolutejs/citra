@@ -56,7 +56,7 @@ const googleClient = createOAuth2Client('Google', {
 });
 ```
 
-All providers have their proper environment variables listed in `env.example`. Feel free to copy that into your project, remove `.example` from the name, and uncomment out the providers you need. 
+All providers have their proper environment variables listed in `env.example`. Feel free to copy that into your project, remove `.example` from the name, and uncomment out the providers you need.
 
 ## Building the Authorization URL
 
@@ -73,7 +73,12 @@ const authUrl = await googleClient.createAuthorizationUrl({
 });
 
 // redirect to the generated authorization URL
-window.location.href = authUrl;
+return new Response(null, {
+	status: 302,
+	headers: {
+		Location: authUrl.toString()
+	}
+});
 ```
 
 ## Handling the Callback

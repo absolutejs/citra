@@ -185,7 +185,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				);
 			}
 
-			const { url, authIn, body, headers, tokenParamName } = revocationRequest;
+			const { url, authIn, body, headers, tokenParamName } =
+				revocationRequest;
 			const endpoint = resolveConfigProp(url);
 			const revocationBody = body ?? new URLSearchParams();
 			const revocationHeaders = new Headers(

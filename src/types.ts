@@ -1,7 +1,11 @@
 import { providers } from './providers';
 
 type NonEmptyArray<T> = [T, ...T[]];
-type URLSearchParamsInit = string | Record<string, string> | string[][] | URLSearchParams
+type URLSearchParamsInit =
+	| string
+	| Record<string, string>
+	| string[][]
+	| URLSearchParams;
 
 export type ProfileRequestConfig = {
 	// TODO: remove any type in favor of the actual config for this specific provider
@@ -9,22 +13,34 @@ export type ProfileRequestConfig = {
 	url: string | ((config: any) => string);
 	method: 'GET' | 'POST';
 	authIn: 'header' | 'query';
+	// TODO: remove any type in favor of the actual config for this specific provider
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	headers?: HeadersInit | ((config: any) => HeadersInit);
 	body?: unknown;
 	searchParams?: URLSearchParamsInit;
 };
 
-export type RevocationRequestConfig = {
+type BaseRevocation = {
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	url: string | ((config: any) => string);
-	authIn: 'body' | 'header' | 'query';
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	headers?: HeadersInit | ((config: any) => HeadersInit);
 	body?: URLSearchParams;
-	tokenParamName?: 'token' | 'access_token' | 'refresh_token';
 };
+
+type QueryRevocation = BaseRevocation & {
+	authIn: 'query';
+	tokenParamName: 'token' | 'access_token' | 'refresh_token';
+};
+
+type BodyOrHeaderRevocation = BaseRevocation & {
+	authIn: 'body' | 'header';
+	tokenParamName?: never;
+};
+
+export type RevocationRequestConfig = QueryRevocation | BodyOrHeaderRevocation;
 
 export type TokenRequestConfig = {
 	// TODO: remove any type in favor of the actual config for this specific provider

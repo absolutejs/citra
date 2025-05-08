@@ -1113,25 +1113,25 @@ export const providers = defineProviders({
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
-			method: 'GET',
 			headers: (config) => ({
 				'Client-Id': config.clientId
 			}),
+			method: 'GET',
 			url: 'https://api.twitch.tv/helix/users'
+		},
+		revocationRequest: {
+			authIn: 'query',
+			headers: (config) => ({
+				'Client-Id': config.clientId
+			}),
+			tokenParamName: 'token',
+			url: 'https://id.twitch.tv/oauth2/revoke'
 		},
 		scopeRequired: false,
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://id.twitch.tv/oauth2/token'
-		},
-		revocationRequest: {
-			url: 'https://id.twitch.tv/oauth2/revoke',
-			authIn: 'query',
-			headers: (config) => ({
-				'Client-Id': config.clientId
-			}),
-			tokenParamName: 'token'
 		}
 	},
 	Twitter: {

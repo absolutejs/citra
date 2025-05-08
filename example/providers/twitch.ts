@@ -28,8 +28,8 @@ export const twitchPlugin = new Elysia()
 			const currentState = generateState();
 			const authorizationUrl =
 				await twitchOAuth2Client.createAuthorizationUrl({
-					state: currentState,
-					searchParams: [['force_verify', 'true']]
+					searchParams: [['force_verify', 'true']],
+					state: currentState
 				});
 
 			state.set({

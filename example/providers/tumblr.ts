@@ -28,8 +28,8 @@ export const tumblrPlugin = new Elysia()
 			const currentState = generateState();
 			const authorizationUrl =
 				await tumblrOAuth2Client.createAuthorizationUrl({
-					state: currentState,
-					scope: ['offline_access']
+					scope: ['offline_access'],
+					state: currentState
 				});
 
 			state.set({

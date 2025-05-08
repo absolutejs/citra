@@ -1149,12 +1149,16 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.twitter.com/2/oauth2/token'
+		},
+		revocationRequest: {
+			authIn: 'header',
+			url: 'https://api.twitter.com/2/oauth2/revoke'
 		}
 	},
 	VK: {
 		authorizationUrl: 'https://oauth.vk.com/authorize',
 		isOIDC: false,
-		isRefreshable: true,
+		isRefreshable: false,
 		profileRequest: {
 			authIn: 'query',
 			method: 'GET',

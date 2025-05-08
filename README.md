@@ -78,3 +78,4 @@ If any issues occur with a provider please open one so it can be fixed.
 - Tiltify
 - Tumblr
 - Twitch
+- Twitter (Untested: Paid)

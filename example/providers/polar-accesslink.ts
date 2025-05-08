@@ -9,7 +9,9 @@ if (
 	!env.POLAR_ACCESSLINK_CLIENT_SECRET ||
 	!env.POLAR_ACCESSLINK_REDIRECT_URI
 ) {
-	throw new Error('Polar AccessLink OAuth2 credentials are not set in .env file');
+	throw new Error(
+		'Polar AccessLink OAuth2 credentials are not set in .env file'
+	);
 }
 
 const polarAccessLinkOAuth2Client = createOAuth2Client('PolarAccessLink', {
@@ -82,10 +84,12 @@ export const polarAccessLinkPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await polarAccessLinkOAuth2Client.validateAuthorizationCode({
-						code,
-						codeVerifier
-					});
+					await polarAccessLinkOAuth2Client.validateAuthorizationCode(
+						{
+							code,
+							codeVerifier
+						}
+					);
 				console.log('\nPolar AccessLink authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
@@ -117,7 +121,9 @@ export const polarAccessLinkPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await polarAccessLinkOAuth2Client.fetchUserProfile(accessToken);
+					await polarAccessLinkOAuth2Client.fetchUserProfile(
+						accessToken
+					);
 				console.log('\nPolar AccessLink user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {

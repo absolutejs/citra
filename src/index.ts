@@ -190,8 +190,6 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				headers && resolveConfigProp(headers)
 			);
 
-			revocationBody.set('token', token);
-
 			const { clientId } = config;
 			const clientSecret = hasClientSecret(config)
 				? config.clientSecret
@@ -199,6 +197,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			let request: Request;
 			if (authIn === 'body') {
+				revocationBody.set('token', token);
 				revocationBody.set('client_id', clientId);
 				void (
 					clientSecret &&
@@ -214,7 +213,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					headers: revocationHeaders,
 					url: endpoint.toString()
 				});
-			} else {
+			} else if (authIn === 'header') {
 				revocationHeaders?.set('Authorization', `Bearer ${token}`);
 
 				request = createOAuth2Request({
@@ -225,6 +224,16 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					encoding: 'form',
 					headers: revocationHeaders,
 					url: endpoint.toString()
+				});
+			} else {
+				request = createOAuth2Request({
+					authIn: 'query',
+					body: revocationBody,
+					clientId,
+					clientSecret,
+					encoding: 'form',
+					headers: revocationHeaders,
+					url: `${endpoint.toString()}?access_token=${token}` // This is for Strava the only one that uses query
 				});
 			}
 

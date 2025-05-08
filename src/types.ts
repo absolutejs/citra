@@ -17,7 +17,7 @@ export type RevocationRequestConfig = {
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	url: string | ((config: any) => string);
-	authIn: 'body' | 'header';
+	authIn: 'body' | 'header' | 'query';
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	headers?: HeadersInit | ((config: any) => HeadersInit);
@@ -46,7 +46,7 @@ export type ProviderOption = keyof typeof providers;
 export type OAuth2RequestOptions = {
 	url: string;
 	body: Record<string, unknown> | URLSearchParams;
-	authIn: 'header' | 'body';
+	authIn: 'header' | 'body' | 'query';
 	encoding: 'form' | 'json';
 	headers?: HeadersInit;
 	clientId: string;
@@ -135,10 +135,10 @@ export type ProviderConfig = {
 	profileRequest: ProfileRequestConfig;
 
 	/** Static query params added to the auth URL */
-	// TODO : remove any type in favor of the actual config for this specific provider
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	createAuthorizationURLSearchParams?:
 		| Record<string, string>
+		// TODO : remove any type in favor of the actual config for this specific provider
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		| ((config: any) => Record<string, string>);
 
 	/** Static fields added to the authorization‑code exchange body */

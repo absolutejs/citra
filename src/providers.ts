@@ -1035,7 +1035,10 @@ export const providers = defineProviders({
 			url: 'https://www.strava.com/api/v3/athlete'
 		},
 		revocationRequest: {
-			authIn: 'body',
+			authIn: 'query',
+			body: new URLSearchParams({
+				token_type_hint: 'access_token'
+			}),
 			url: 'https://www.strava.com/oauth/deauthorize'
 		},
 		scopeRequired: false,

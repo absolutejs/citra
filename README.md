@@ -22,7 +22,7 @@ Citra is a curated collection of OAuth 2.0 provider configurations, each bundled
 
 ## Why Citra?
 
-- **Interchangeability**: All OAuth 2.0 providers follow the same authorization flow, and Citra abstracts this process into a unified interface (see [interchangeability issue](https://github.com/pilcrowonpaper/arctic/issues/299)).
+- **Interchangeability**: All OAuth 2.0 providers follow the same authorization flow, and Citra abstracts this process into a unified interface (see [arctic interchangeability issue](https://github.com/pilcrowonpaper/arctic/issues/299)).
 - **Type Safety**: Leverage TypeScript generics and type guards to catch configuration mistakes at compile time.
 
 Inspired by Arctic, Citra reduces boilerplate and minimizes integration errors by enforcing a uniform configuration approach.
@@ -55,6 +55,8 @@ const googleClient = createOAuth2Client('Google', {
 	redirectUri: 'https://yourapp.com/auth/callback'
 });
 ```
+
+All providers have their proper environment variables listed in `env.example`. Feel free to copy that into your project, remove `.example` from the name, and uncomment out the providers you need. 
 
 ## Building the Authorization URL
 

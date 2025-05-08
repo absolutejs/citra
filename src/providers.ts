@@ -18,8 +18,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.intra.42.fr/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	AmazonCognito: {
 		authorizationUrl: 'https://${domain}/oauth2/authorize',
@@ -63,8 +62,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://anilist.co/api/v2/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Apple: {
 		authorizationUrl: 'https://appleid.apple.com/auth/authorize',
@@ -81,8 +79,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://appleid.apple.com/auth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Atlassian: {
 		authorizationUrl: 'https://auth.atlassian.com/authorize',
@@ -102,8 +99,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://auth.atlassian.com/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Auth0: {
 		authorizationUrl: (config) => `https://${config.domain}/authorize`,
@@ -180,8 +176,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://oauth.battle.net/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Bitbucket: {
 		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
@@ -197,8 +192,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://bitbucket.org/site/oauth2/access_token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Box: {
 		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
@@ -218,8 +212,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.box.com/oauth2/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Bungie: {
 		authorizationUrl: 'https://www.bungie.net/en/OAuth/Authorize',
@@ -255,8 +248,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.coinbase.com/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Discord: {
 		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
@@ -377,8 +369,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://graph.facebook.com/v16.0/oauth/access_token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Figma: {
 		authorizationUrl: 'https://www.figma.com/oauth',
@@ -429,8 +420,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://github.com/login/oauth/access_token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	GitLab: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
@@ -473,8 +463,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://oauth2.googleapis.com/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Intuit: {
 		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
@@ -518,8 +507,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://kauth.kakao.com/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Keycloak: {
 		authorizationUrl: (config) =>
@@ -562,8 +550,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://id.kick.com/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Lichess: {
 		authorizationUrl: 'https://lichess.org/oauth/authorize',
@@ -598,8 +585,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.line.me/oauth2/v2.1/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Linear: {
 		authorizationUrl: 'https://linear.app/oauth/authorize',
@@ -626,8 +612,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.linear.app/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	LinkedIn: {
 		authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
@@ -644,8 +629,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://www.linkedin.com/oauth/v2/accessToken'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Mastodon: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
@@ -1021,8 +1005,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.start.gg/oauth/access_token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Strava: {
 		authorizationUrl: 'https://www.strava.com/oauth/authorize',
@@ -1046,8 +1029,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://www.strava.com/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Synology: {
 		authorizationUrl: (config) =>
@@ -1090,8 +1072,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://open.tiktokapis.com/v2/oauth/token/'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Tiltify: {
 		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorizeze',
@@ -1107,8 +1088,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://v5api.tiltify.com/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Tumblr: {
 		authorizationUrl: 'https://www.tumblr.com/oauth2/authorize',
@@ -1141,8 +1121,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://id.twitch.tv/oauth2/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Twitter: {
 		authorizationUrl: 'https://twitter.com/i/oauth2/authorize',
@@ -1160,8 +1139,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.twitter.com/2/oauth2/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	VK: {
 		authorizationUrl: 'https://oauth.vk.com/authorize',
@@ -1177,8 +1155,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://oauth.vk.com/access_token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	WorkOS: {
 		authorizationUrl: 'https://api.workos.com/sso/authorize',
@@ -1195,8 +1172,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://api.workos.com/sso/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Yahoo: {
 		authorizationUrl: 'https://api.login.yahoo.com/oauth2/request_auth',
@@ -1228,8 +1204,7 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://oauth.yandex.com/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	},
 	Zoom: {
 		authorizationUrl: 'https://zoom.us/oauth/authorize',
@@ -1251,7 +1226,6 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://zoom.us/oauth/token'
-		},
-		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
+		}
 	}
 });

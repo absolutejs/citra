@@ -1173,7 +1173,7 @@ export const providers = defineProviders({
 	},
 	WorkOS: {
 		authorizationUrl: 'https://api.workos.com/sso/authorize',
-		isOIDC: false,
+		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
 		profileRequest: {

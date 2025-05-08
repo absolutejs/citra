@@ -58,6 +58,7 @@ import { tiltifyPlugin } from './providers/tiltify';
 import { tumblrPlugin } from './providers/tumblr';
 import { twitchPlugin } from './providers/twitch';
 import { vkPlugin } from './providers/vk';
+import { workOSPlugin } from './providers/workos';
 
 const allProviders = [
 	fortyTwoPlugin,
@@ -118,7 +119,8 @@ const allProviders = [
 	tiltifyPlugin,
 	tumblrPlugin,
 	twitchPlugin,
-	vkPlugin
+	vkPlugin,
+	workOSPlugin
 ];
 
 export const providersPlugin = (app: Elysia) => {

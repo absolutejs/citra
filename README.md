@@ -79,4 +79,5 @@ If any issues occur with a provider please open one so it can be fixed.
 - Tumblr
 - Twitch
 - Twitter (Untested: Paid)
-- VK (Public Domain Only)
+- VK (Public Domain Only) (Untested: localhost Not Supported)
+- WorkOS (In Development)

@@ -3,7 +3,6 @@ drizzle/
 tests/
 node_modules/
 *.log
-src/ 
 .DS_Store
 **/*.env
 
@@ -30,7 +29,6 @@ example
 tests
 test
 docs
-src
 .DS_Store
 test
 tsconfig.cjs.json
@@ -45,5 +43,9 @@ trace
 
 build.ts
 .scannerwork
-src
 server
+
+src/**
+
+!dist/src/
+!dist/src/**

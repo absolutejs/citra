@@ -10,6 +10,7 @@
 - [Handling the Callback](#handling-the-callback)
 - [Fetching the User Profile](#fetching-the-user-profile)
 - [Refreshing and Revoking Tokens](#refreshing-and-revoking-tokens)
+- [Types](#types)
 - [Provider Tags](#provider-tags)
 - [Available Providers](#available-providers)
 - [Contributing](#contributing)
@@ -55,7 +56,7 @@ const googleClient = createOAuth2Client('Google', {
 });
 ```
 
-### Building the Authorization URL
+## Building the Authorization URL
 
 ```ts
 const codeVerifier = crypto.randomUUID();
@@ -73,7 +74,7 @@ const authUrl = await googleClient.createAuthorizationUrl({
 window.location.href = authUrl;
 ```
 
-### Handling the Callback
+## Handling the Callback
 
 Exchange the code, and optionally the verifier, for an OAuth2TokenResponse:
 
@@ -86,14 +87,14 @@ const tokenResponse = await googleClient.validateAuthorizationCode({
 });
 ```
 
-### Fetching the User Profile
+## Fetching the User Profile
 
 ```ts
 const profile = await googleClient.fetchUserProfile(tokenResponse.access_token);
 console.log(profile);
 ```
 
-### Refreshing and Revoking Tokens
+## Refreshing and Revoking Tokens
 
 If supported by the provider, you can refresh and revoke tokens:
 

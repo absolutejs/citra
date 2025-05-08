@@ -1047,16 +1047,15 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			url: 'https://www.strava.com/oauth/deauthorize',
-			authIn: 'body',
-		  },
+			authIn: 'body'
+		},
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Synology: {
 		authorizationUrl: (config) =>
 			`${config.baseURL}/webman/sso/SSOOauth.cgi?client_id=${config.clientId}&response_type=code&redirect_uri=${config.redirectUri}`,
 		isOIDC: false,
-		isRefreshable: true,
-		PKCEMethod: 'S256',
+		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',

@@ -1,33 +1,33 @@
 import { env } from 'process';
-import { Elysia, t } from 'elysia';
+import { Elysia } from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.STARTGG_CLIENT_ID ||
-	!env.STARTGG_CLIENT_SECRET ||
-	!env.STARTGG_REDIRECT_URI
+	!env.SYNOLOGY_CLIENT_ID ||
+	!env.SYNOLOGY_CLIENT_SECRET ||
+	!env.SYNOLOGY_REDIRECT_URI
 ) {
-	throw new Error('start.gg OAuth2 credentials are not set in .env file');
+	throw new Error('Synology OAuth2 credentials are not set in .env file');
 }
 
-const startggOAuth2Client = createOAuth2Client('StartGG', {
-	clientId: env.STARTGG_CLIENT_ID,
-	clientSecret: env.STARTGG_CLIENT_SECRET,
-	redirectUri: env.STARTGG_REDIRECT_URI
+const synologyOAuth2Client = createOAuth2Client('Synology', {
+	clientId: env.SYNOLOGY_CLIENT_ID,
+	clientSecret: env.SYNOLOGY_CLIENT_SECRET,
+	redirectUri: env.SYNOLOGY_REDIRECT_URI
 });
 
-export const startggPlugin = new Elysia()
+export const synologyPlugin = new Elysia()
 	.get(
-		'/oauth2/startgg/authorization',
+		'/oauth2/synology/authorization',
 		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
-				await startggOAuth2Client.createAuthorizationUrl({
+				await synologyOAuth2Client.createAuthorizationUrl({
 					state: currentState
 				});
 
@@ -44,7 +44,7 @@ export const startggPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/startgg/callback',
+		'/oauth2/synology/callback',
 		async ({
 			error,
 			redirect,
@@ -68,10 +68,10 @@ export const startggPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await startggOAuth2Client.validateAuthorizationCode({
+					await synologyOAuth2Client.validateAuthorizationCode({
 						code
 					});
-				console.log('\nstart.gg authorized:', oauthResponse);
+				console.log('\nSynology authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -89,41 +89,8 @@ export const startggPlugin = new Elysia()
 			return redirect('/');
 		}
 	)
-	.post(
-		'/oauth2/startgg/tokens',
-		async ({ error, body: { refresh_token } }) => {
-			try {
-				const oauthResponse =
-					await startggOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nstart.gg token refreshed:', oauthResponse);
-
-				return new Response(JSON.stringify(oauthResponse), {
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				});
-			} catch (err) {
-				if (err instanceof Error) {
-					return error(
-						'Internal Server Error',
-						`Failed to refresh access token: ${err.message}`
-					);
-				}
-
-				return error(
-					'Internal Server Error',
-					`Unexpected error: ${err}`
-				);
-			}
-		},
-		{
-			body: t.Object({
-				refresh_token: t.String()
-			})
-		}
-	)
 	.get(
-		'/oauth2/startgg/profile',
+		'/oauth2/synology/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -135,8 +102,8 @@ export const startggPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await startggOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nstart.gg user profile:', userProfile);
+					await synologyOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nSynology user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

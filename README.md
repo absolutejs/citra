@@ -71,3 +71,4 @@ If any issues occur with a provider please open one so it can be fixed.
 - Spotify
 - start.gg
 - Strava
+- Synology (Untested: Self Hosted)

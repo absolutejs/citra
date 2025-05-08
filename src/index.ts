@@ -42,6 +42,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			const url = new URL(authorizationUrl);
 			url.searchParams.set('response_type', 'code');
 			url.searchParams.set('client_id', config.clientId);
+
 			if (config.redirectUri) {
 				url.searchParams.set('redirect_uri', config.redirectUri);
 			}
@@ -200,7 +201,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			let request: Request;
 			if (authIn === 'body') {
-				revocationBody.set('token', token);
+				revocationBody.set(tokenParamName, token);
 				revocationBody.set('client_id', clientId);
 				void (
 					clientSecret &&

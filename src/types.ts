@@ -31,12 +31,12 @@ type BaseRevocation = {
 };
 
 type QueryRevocation = BaseRevocation & {
-	authIn: 'query';
+	authIn: 'query' | 'body';
 	tokenParamName: 'token' | 'access_token' | 'refresh_token';
 };
 
 type BodyOrHeaderRevocation = BaseRevocation & {
-	authIn: 'body' | 'header';
+	authIn: 'header';
 	tokenParamName?: never;
 };
 

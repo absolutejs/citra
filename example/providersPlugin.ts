@@ -60,6 +60,7 @@ import { twitchPlugin } from './providers/twitch';
 import { vkPlugin } from './providers/vk';
 import { workOSPlugin } from './providers/workos';
 import { yahooPlugin } from './providers/yahoo';
+import { yandexPlugin } from './providers/yandex';
 
 const allProviders = [
 	fortyTwoPlugin,
@@ -122,7 +123,8 @@ const allProviders = [
 	twitchPlugin,
 	vkPlugin,
 	workOSPlugin,
-	yahooPlugin
+	yahooPlugin,
+	yandexPlugin
 ];
 
 export const providersPlugin = (app: Elysia) => {

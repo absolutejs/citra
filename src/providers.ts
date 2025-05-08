@@ -32,6 +32,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: (config) => `https://${config.domain}/oauth2/revoke`
 		},
 		scopeRequired: false,
@@ -117,6 +118,7 @@ export const providers = defineProviders({
 			body: new URLSearchParams({
 				token_type_hint: 'refresh_token'
 			}),
+			tokenParamName: 'token',
 			url: (config) => `https://${config.domain}/oauth/revoke`
 		},
 		scopeRequired: false,
@@ -205,6 +207,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: 'https://api.box.com/oauth2/revoke'
 		},
 		scopeRequired: false,
@@ -434,6 +437,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: (config) => `${config.baseURL}/oauth/revoke`
 		},
 		scopeRequired: false,
@@ -456,6 +460,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: 'https://oauth2.googleapis.com/revoke'
 		},
 		scopeRequired: true,
@@ -483,6 +488,7 @@ export const providers = defineProviders({
 			headers: (config) => ({
 				Authorization: `Basic ${encodeBase64(`${config.clientId}:${config.clientSecret}`)}`
 			}),
+			tokenParamName: 'token',
 			url: 'https://developer.api.intuit.com/v2/oauth2/tokens/revoke'
 		},
 		scopeRequired: true,
@@ -522,6 +528,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: (config) => `${config.realmURL}/protocol/openid-connect/revoke`
 		},
 		scopeRequired: false,
@@ -543,6 +550,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: 'https://id.kick.com/oauth/revoke'
 		},
 		scopeRequired: false,
@@ -644,6 +652,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: (config) => `${config.baseURL}/oauth/revoke`
 		},
 		scopeRequired: false,
@@ -773,6 +782,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: (config) => `https://${config.domain}/oauth2/default/v1/revoke`
 		},
 		scopeRequired: true,
@@ -826,6 +836,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: 'https://api.polar.sh/v1/oauth2/revoke'
 		},
 		scopeRequired: true,
@@ -958,6 +969,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: 'https://slack.com/api/auth.revoke'
 		},
 		scopeRequired: true,
@@ -1066,6 +1078,7 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: 'https://open.tiktokapis.com/v2/oauth/revoke/'
 		},
 		scopeRequired: false,
@@ -1211,12 +1224,22 @@ export const providers = defineProviders({
 	},
 	Yandex: {
 		authorizationUrl: 'https://oauth.yandex.com/authorize',
+		createAuthorizationURLSearchParams: {
+			device_id: crypto.randomUUID(),
+			device_name: `${navigator.platform ?? 'Unknown'} — ${(navigator.userAgent.split(')')[0] || '').split('(').pop() || 'Unknown'}`
+		},
 		isOIDC: false,
 		isRefreshable: true,
+		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
 			url: 'https://login.yandex.ru/info'
+		},
+		revocationRequest: {
+			authIn: 'body',
+			tokenParamName: 'access_token',
+			url: 'https://oauth.yandex.com/revoke_token'
 		},
 		scopeRequired: false,
 		tokenRequest: {
@@ -1238,6 +1261,7 @@ export const providers = defineProviders({
 
 		revocationRequest: {
 			authIn: 'body',
+			tokenParamName: 'token',
 			url: 'https://zoom.us/oauth/revoke'
 		},
 		scopeRequired: false,

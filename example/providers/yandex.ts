@@ -5,22 +5,22 @@ import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.YAHOO_CLIENT_ID ||
-	!env.YAHOO_CLIENT_SECRET ||
-	!env.YAHOO_REDIRECT_URI
+	!env.YANDEX_CLIENT_ID ||
+	!env.YANDEX_CLIENT_SECRET ||
+	!env.YANDEX_REDIRECT_URI
 ) {
-	throw new Error('Yahoo OAuth2 credentials are not set in .env file');
+	throw new Error('Yandex OAuth2 credentials are not set in .env file');
 }
 
-const yahooOAuth2Client = createOAuth2Client('Yahoo', {
-	clientId: env.YAHOO_CLIENT_ID,
-	clientSecret: env.YAHOO_CLIENT_SECRET,
-	redirectUri: env.YAHOO_REDIRECT_URI
+const yandexOAuth2Client = createOAuth2Client('Yandex', {
+	clientId: env.YANDEX_CLIENT_ID,
+	clientSecret: env.YANDEX_CLIENT_SECRET,
+	redirectUri: env.YANDEX_REDIRECT_URI
 });
 
-export const yahooPlugin = new Elysia()
+export const yandexPlugin = new Elysia()
 	.get(
-		'/oauth2/yahoo/authorization',
+		'/oauth2/yandex/authorization',
 		async ({ redirect, error, cookie: { state, code_verifier } }) => {
 			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
@@ -28,8 +28,10 @@ export const yahooPlugin = new Elysia()
 			const currentState = generateState();
 			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await yahooOAuth2Client.createAuthorizationUrl({
+				await yandexOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
+					searchParams: [['force_confirm', 'yes']],
+
 					state: currentState
 				});
 
@@ -54,7 +56,7 @@ export const yahooPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/yahoo/callback',
+		'/oauth2/yandex/callback',
 		async ({
 			error,
 			redirect,
@@ -82,11 +84,11 @@ export const yahooPlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await yahooOAuth2Client.validateAuthorizationCode({
+					await yandexOAuth2Client.validateAuthorizationCode({
 						code,
 						codeVerifier
 					});
-				console.log('\nYahoo authorized:', oauthResponse);
+				console.log('\nYandex authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -105,12 +107,12 @@ export const yahooPlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/yahoo/tokens',
+		'/oauth2/yandex/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await yahooOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nYahoo token refreshed:', oauthResponse);
+					await yandexOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nYandex token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -138,7 +140,7 @@ export const yahooPlugin = new Elysia()
 		}
 	)
 	.delete(
-		'/oauth2/yahoo/revocation',
+		'/oauth2/yandex/revocation',
 		async ({ error, query: { token_to_revoke } }) => {
 			if (!token_to_revoke)
 				return error(
@@ -147,8 +149,8 @@ export const yahooPlugin = new Elysia()
 				);
 
 			try {
-				await yahooOAuth2Client.revokeToken(token_to_revoke);
-				console.log('\nYahoo token revoked:', token_to_revoke);
+				await yandexOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nYandex token revoked:', token_to_revoke);
 
 				return new Response(
 					`Token ${token_to_revoke} revoked successfully`,
@@ -174,7 +176,7 @@ export const yahooPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/yahoo/profile',
+		'/oauth2/yandex/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -186,8 +188,8 @@ export const yahooPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await yahooOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nYahoo user profile:', userProfile);
+					await yandexOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nYandex user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

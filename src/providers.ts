@@ -1075,13 +1075,13 @@ export const providers = defineProviders({
 		}
 	},
 	Tiltify: {
-		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorizeze',
+		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
 			method: 'GET',
-			url: 'https://tiltify.com/api/v3/me'
+			url: 'https://v5api.tiltify.com/api/public/current-user'
 		},
 		scopeRequired: false,
 		tokenRequest: {
@@ -1093,7 +1093,6 @@ export const providers = defineProviders({
 	Tumblr: {
 		authorizationUrl: 'https://www.tumblr.com/oauth2/authorize',
 		isOIDC: false,
-
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',

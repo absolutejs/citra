@@ -54,6 +54,7 @@ import { spotifyPlugin } from './providers/spotify';
 import { startggPlugin } from './providers/start.gg';
 import { stravaPlugin } from './providers/strava';
 import { tiktokPlugin } from './providers/tiktok';
+import { tiltifyPlugin } from './providers/tiltify';
 
 const allProviders = [
 	fortyTwoPlugin,
@@ -110,7 +111,8 @@ const allProviders = [
 	spotifyPlugin,
 	startggPlugin,
 	stravaPlugin,
-	tiktokPlugin
+	tiktokPlugin,
+	tiltifyPlugin
 ];
 
 export const providersPlugin = (app: Elysia) => {

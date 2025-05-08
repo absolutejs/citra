@@ -40,13 +40,10 @@ export const createOAuth2Request = ({
 	clientId,
 	clientSecret
 }: OAuth2RequestOptions) => {
-	const oauthHeaders = new Headers({
-		Accept: 'application/json',
-		'User-Agent': 'citra'
-	});
+	const oauthHeaders = new Headers(headers);
 
-	for (const [key, value] of Object.entries(headers ?? {}))
-		oauthHeaders.set(key, value);
+	oauthHeaders.set('Accept', 'application/json');
+	oauthHeaders.set('User-Agent', 'citra');
 
 	if (authIn === 'header') {
 		if (!clientSecret) {

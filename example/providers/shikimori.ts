@@ -5,29 +5,29 @@ import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.BUNGIE_CLIENT_ID ||
-	!env.BUNGIE_CLIENT_SECRET ||
-	!env.BUNGIE_REDIRECT_URI
+	!env.SHIKIMORI_CLIENT_ID ||
+	!env.SHIKIMORI_CLIENT_SECRET ||
+	!env.SHIKIMORI_REDIRECT_URI
 ) {
-	throw new Error('Bungie OAuth2 credentials are not set in .env file');
+	throw new Error('Shikimori OAuth2 credentials are not set in .env file');
 }
 
-const bungieOAuth2Client = createOAuth2Client('Bungie', {
-	clientId: env.BUNGIE_CLIENT_ID,
-	clientSecret: env.BUNGIE_CLIENT_SECRET,
-	redirectUri: env.BUNGIE_REDIRECT_URI
+const shikimoriOAuth2Client = createOAuth2Client('Shikimori', {
+	clientId: env.SHIKIMORI_CLIENT_ID,
+	clientSecret: env.SHIKIMORI_CLIENT_SECRET,
+	redirectUri: env.SHIKIMORI_REDIRECT_URI
 });
 
-export const bungiePlugin = new Elysia()
+export const shikimoriPlugin = new Elysia()
 	.get(
-		'/oauth2/bungie/authorization',
+		'/oauth2/shikimori/authorization',
 		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
-				await bungieOAuth2Client.createAuthorizationUrl({
+				await shikimoriOAuth2Client.createAuthorizationUrl({
 					state: currentState
 				});
 
@@ -44,7 +44,7 @@ export const bungiePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/bungie/callback',
+		'/oauth2/shikimori/callback',
 		async ({
 			error,
 			redirect,
@@ -68,10 +68,10 @@ export const bungiePlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await bungieOAuth2Client.validateAuthorizationCode({
+					await shikimoriOAuth2Client.validateAuthorizationCode({
 						code
 					});
-				console.log('\nBungie authorized:', oauthResponse);
+				console.log('\nShikimori authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -90,12 +90,14 @@ export const bungiePlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/bungie/tokens',
+		'/oauth2/shikimori/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await bungieOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nBungie token refreshed:', oauthResponse);
+					await shikimoriOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
+				console.log('\nShikimori token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -123,7 +125,7 @@ export const bungiePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/bungie/profile',
+		'/oauth2/shikimori/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -135,8 +137,8 @@ export const bungiePlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await bungieOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nBungie user profile:', userProfile);
+					await shikimoriOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nShikimori user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

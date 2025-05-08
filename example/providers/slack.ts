@@ -5,30 +5,31 @@ import { generateState } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.BUNGIE_CLIENT_ID ||
-	!env.BUNGIE_CLIENT_SECRET ||
-	!env.BUNGIE_REDIRECT_URI
+	!env.SLACK_CLIENT_ID ||
+	!env.SLACK_CLIENT_SECRET ||
+	!env.SLACK_REDIRECT_URI
 ) {
-	throw new Error('Bungie OAuth2 credentials are not set in .env file');
+	throw new Error('Slack OAuth2 credentials are not set in .env file');
 }
 
-const bungieOAuth2Client = createOAuth2Client('Bungie', {
-	clientId: env.BUNGIE_CLIENT_ID,
-	clientSecret: env.BUNGIE_CLIENT_SECRET,
-	redirectUri: env.BUNGIE_REDIRECT_URI
+const slackOAuth2Client = createOAuth2Client('Slack', {
+	clientId: env.SLACK_CLIENT_ID,
+	clientSecret: env.SLACK_CLIENT_SECRET,
+	redirectUri: env.SLACK_REDIRECT_URI
 });
 
-export const bungiePlugin = new Elysia()
+export const slackPlugin = new Elysia()
 	.get(
-		'/oauth2/bungie/authorization',
+		'/oauth2/slack/authorization',
 		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
-				await bungieOAuth2Client.createAuthorizationUrl({
-					state: currentState
+				await slackOAuth2Client.createAuthorizationUrl({
+					state: currentState,
+					scope: ['openid']
 				});
 
 			state.set({
@@ -44,7 +45,7 @@ export const bungiePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/bungie/callback',
+		'/oauth2/slack/callback',
 		async ({
 			error,
 			redirect,
@@ -68,10 +69,10 @@ export const bungiePlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await bungieOAuth2Client.validateAuthorizationCode({
+					await slackOAuth2Client.validateAuthorizationCode({
 						code
 					});
-				console.log('\nBungie authorized:', oauthResponse);
+				console.log('\nSlack authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -90,12 +91,12 @@ export const bungiePlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/bungie/tokens',
+		'/oauth2/slack/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await bungieOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nBungie token refreshed:', oauthResponse);
+					await slackOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nSlack token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -122,8 +123,44 @@ export const bungiePlugin = new Elysia()
 			})
 		}
 	)
+	.delete(
+		'/oauth2/slack/revocation',
+		async ({ error, query: { token_to_revoke } }) => {
+			if (!token_to_revoke)
+				return error(
+					'Bad Request',
+					'Token to revoke is required in query parameters'
+				);
+
+			try {
+				await slackOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nSlack token revoked:', token_to_revoke);
+
+				return new Response(
+					`Token ${token_to_revoke} revoked successfully`,
+					{
+						headers: {
+							'Content-Type': 'text/plain'
+						}
+					}
+				);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to revoke token: ${err.message}`
+					);
+				}
+
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
+		}
+	)
 	.get(
-		'/oauth2/bungie/profile',
+		'/oauth2/slack/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -135,8 +172,8 @@ export const bungiePlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await bungieOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nBungie user profile:', userProfile);
+					await slackOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nSlack user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

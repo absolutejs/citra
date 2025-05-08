@@ -1,33 +1,35 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState } from '../../src/arctic-utils';
+import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.BUNGIE_CLIENT_ID ||
-	!env.BUNGIE_CLIENT_SECRET ||
-	!env.BUNGIE_REDIRECT_URI
+	!env.SPOTIFY_CLIENT_ID ||
+	!env.SPOTIFY_CLIENT_SECRET ||
+	!env.SPOTIFY_REDIRECT_URI
 ) {
-	throw new Error('Bungie OAuth2 credentials are not set in .env file');
+	throw new Error('Spotify OAuth2 credentials are not set in .env file');
 }
 
-const bungieOAuth2Client = createOAuth2Client('Bungie', {
-	clientId: env.BUNGIE_CLIENT_ID,
-	clientSecret: env.BUNGIE_CLIENT_SECRET,
-	redirectUri: env.BUNGIE_REDIRECT_URI
+const spotifyOAuth2Client = createOAuth2Client('Spotify', {
+	clientId: env.SPOTIFY_CLIENT_ID,
+	clientSecret: env.SPOTIFY_CLIENT_SECRET,
+	redirectUri: env.SPOTIFY_REDIRECT_URI
 });
 
-export const bungiePlugin = new Elysia()
+export const spotifyPlugin = new Elysia()
 	.get(
-		'/oauth2/bungie/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
-			if (state === undefined)
+		'/oauth2/spotify/authorization',
+		async ({ redirect, error, cookie: { state, code_verifier } }) => {
+			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
+			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await bungieOAuth2Client.createAuthorizationUrl({
+				await spotifyOAuth2Client.createAuthorizationUrl({
+					codeVerifier,
 					state: currentState
 				});
 
@@ -39,19 +41,27 @@ export const bungiePlugin = new Elysia()
 				secure: true,
 				value: currentState
 			});
+			code_verifier.set({
+				httpOnly: true,
+				maxAge: COOKIE_DURATION,
+				path: '/',
+				sameSite: 'lax',
+				secure: true,
+				value: codeVerifier
+			});
 
 			return redirect(authorizationUrl.toString());
 		}
 	)
 	.get(
-		'/oauth2/bungie/callback',
+		'/oauth2/spotify/callback',
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state },
+			cookie: { state: stored_state, code_verifier },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined)
+			if (stored_state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -66,12 +76,17 @@ export const bungiePlugin = new Elysia()
 
 			stored_state.remove();
 
+			const codeVerifier = code_verifier.value;
+			if (codeVerifier === undefined)
+				return error('Bad Request', 'Code verifier is missing');
+
 			try {
 				const oauthResponse =
-					await bungieOAuth2Client.validateAuthorizationCode({
-						code
+					await spotifyOAuth2Client.validateAuthorizationCode({
+						code,
+						codeVerifier
 					});
-				console.log('\nBungie authorized:', oauthResponse);
+				console.log('\nSpotify authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -90,12 +105,12 @@ export const bungiePlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/bungie/tokens',
+		'/oauth2/spotify/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await bungieOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nBungie token refreshed:', oauthResponse);
+					await spotifyOAuth2Client.refreshAccessToken(refresh_token);
+				console.log('\nSpotify token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -123,7 +138,7 @@ export const bungiePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/bungie/profile',
+		'/oauth2/spotify/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -135,8 +150,8 @@ export const bungiePlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await bungieOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nBungie user profile:', userProfile);
+					await spotifyOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nSpotify user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

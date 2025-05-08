@@ -48,6 +48,9 @@ import { polarTeamProPlugin } from './providers/polar-team-pro';
 import { redditPlugin } from './providers/reddit';
 import { robloxPlugin } from './providers/roblox';
 import { salesforcePlugin } from './providers/salesforce';
+import { shikimoriPlugin } from './providers/shikimori';
+import { slackPlugin } from './providers/slack';
+import { spotifyPlugin } from './providers/spotify';
 
 const allProviders = [
 	fortyTwoPlugin,
@@ -98,7 +101,10 @@ const allProviders = [
 	polarTeamProPlugin,
 	redditPlugin,
 	robloxPlugin,
-	salesforcePlugin
+	salesforcePlugin,
+	shikimoriPlugin,
+	slackPlugin,
+	spotifyPlugin
 ];
 
 export const providersPlugin = (app: Elysia) => {

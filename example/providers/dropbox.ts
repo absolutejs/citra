@@ -59,7 +59,10 @@ export const dropboxPlugin = new Elysia()
 				return error('Bad Request', 'Code is missing in query');
 
 			if (callback_state !== stored_state.value) {
-				return error('Bad Request', 'Invalid state mismatch');
+				return error(
+					'Bad Request',
+					`Invalid state mismatch: expected "${stored_state.value}", got "${callback_state}"`
+				);
 			}
 
 			stored_state.remove();

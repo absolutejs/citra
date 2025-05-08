@@ -977,11 +977,15 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://slack.com/api/users.identity'
 		},
-		scopeRequired: false,
+		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://slack.com/api/openid.connect.token'
+		},
+		revocationRequest: {
+			url: 'https://slack.com/api/auth.revoke',
+			authIn: 'body'
 		}
 	},
 	Spotify: {

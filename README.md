@@ -51,8 +51,8 @@ If any issues occur with a provider please open one so it can be fixed.
 - Linear
 - LinkedIn (Untested: Pending Approval)
 - Mastodon
-- Mercado Libre (Untested: Country Restricted)
-- Mercado Pago (Untested: Country Restricted)
+- Mercado Libre (Untested: Region Restricted)
+- Mercado Pago (Untested: Region Restricted)
 - Microsoft Entra ID (Untested: TODO - needed cc) 
 - MyAnimeList
 - Naver (In Development)
@@ -65,3 +65,7 @@ If any issues occur with a provider please open one so it can be fixed.
 - Polar Team Pro (Untested: Paid)
 - Reddit
 - Roblox
+- Salesforce
+- Shikimori (Untested: Region Restricted)
+- Slack (Untested: https) (HTTPS Required)
+- Spotify

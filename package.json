@@ -13,7 +13,7 @@
 	"scripts": {
 		"build": "rm -rf dist && bun build src/index.ts --outdir dist --minify --splitting --target=bun --external react --external react-dom --external elysia && tsc --emitDeclarationOnly --project tsconfig.json",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"format": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json,mjs}\"",
+		"format": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json,mjs,md}\"",
 		"dev": "bun run --watch example/server.ts",
 		"lint": "eslint ./src ./example ./eslint.config.mjs",
 		"typecheck": "bun run tsc --noEmit",

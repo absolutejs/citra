@@ -112,7 +112,6 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: (config) => `https://${config.domain}/userinfo`
 		},
-
 		revocationRequest: {
 			authIn: 'body',
 			body: new URLSearchParams({

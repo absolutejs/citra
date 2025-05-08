@@ -899,18 +899,18 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://oauth.reddit.com/api/v1/me'
 		},
+		revocationRequest: {
+			authIn: 'header',
+			body: new URLSearchParams({
+				token_type_hint: 'refresh_token'
+			}),
+			url: 'https://www.reddit.com/api/v1/revoke_token'
+		},
 		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'header',
 			encoding: 'form',
 			url: 'https://www.reddit.com/api/v1/access_token'
-		},
-		revocationRequest: {
-			authIn: 'header',
-			url: 'https://www.reddit.com/api/v1/revoke_token',
-			body: new URLSearchParams({
-				token_type_hint: 'refresh_token'
-			})
 		}
 	},
 	Roblox: {

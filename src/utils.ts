@@ -45,11 +45,8 @@ export const createOAuth2Request = ({
 		'User-Agent': 'citra'
 	});
 
-	if (headers) {
-		for (const [key, value] of Object.entries(headers)) {
-			oauthHeaders.set(key, value);
-		}
-	}
+	for (const [key, value] of Object.entries(headers ?? {}))
+		oauthHeaders.set(key, value);
 
 	if (authIn === 'header') {
 		if (!clientSecret) {
@@ -63,13 +60,6 @@ export const createOAuth2Request = ({
 
 	if (encoding === 'json') {
 		oauthHeaders.set('Content-Type', 'application/json');
-
-		console.log('[OAuth2Request]: ', {
-			url,
-			body,
-			oauthHeaders,
-			method: 'POST'
-		});
 
 		return new Request(url, {
 			body: JSON.stringify(body),
@@ -94,13 +84,6 @@ export const createOAuth2Request = ({
 		params.set('client_id', clientId);
 		void (clientSecret && params.set('client_secret', clientSecret));
 	}
-
-	console.log('[OAuth2Request]: ', {
-		url,
-		body,
-		oauthHeaders,
-		method: 'POST'
-	});
 
 	return new Request(url, {
 		body: params.toString(),

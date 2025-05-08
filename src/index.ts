@@ -208,8 +208,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					body: revocationBody,
 					clientId,
 					clientSecret,
-					headers: revocationHeaders,
 					encoding: 'form',
+					headers: revocationHeaders,
 					url: endpoint.toString()
 				});
 			} else {
@@ -220,8 +220,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					body: revocationBody,
 					clientId,
 					clientSecret,
-					headers: revocationHeaders,
 					encoding: 'form',
+					headers: revocationHeaders,
 					url: endpoint.toString()
 				});
 			}

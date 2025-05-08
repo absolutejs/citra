@@ -85,7 +85,7 @@ return new Response(null, {
 
 ## Handling the Callback
 
-Exchange the code, and optionally the verifier, for an OAuth2TokenResponse:
+Exchange the `code`, and optionally the `verifier`, for an OAuth2TokenResponse:
 
 ```ts
 const url = new URL(request.url);

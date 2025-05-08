@@ -1,7 +1,7 @@
 import { env } from 'process';
 import { Elysia } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState } from '../../src/arctic-utils';
+import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -9,9 +9,7 @@ if (
 	!env.POLAR_ACCESSLINK_CLIENT_SECRET ||
 	!env.POLAR_ACCESSLINK_REDIRECT_URI
 ) {
-	throw new Error(
-		'Polar AccessLink OAuth2 credentials are not set in .env file'
-	);
+	throw new Error('Polar AccessLink OAuth2 credentials are not set in .env file');
 }
 
 const polarAccessLinkOAuth2Client = createOAuth2Client('PolarAccessLink', {
@@ -23,13 +21,15 @@ const polarAccessLinkOAuth2Client = createOAuth2Client('PolarAccessLink', {
 export const polarAccessLinkPlugin = new Elysia()
 	.get(
 		'/oauth2/polaraccesslink/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
-			if (state === undefined)
+		async ({ redirect, error, cookie: { state, code_verifier } }) => {
+			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
+			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
 				await polarAccessLinkOAuth2Client.createAuthorizationUrl({
+					codeVerifier,
 					state: currentState
 				});
 
@@ -41,6 +41,14 @@ export const polarAccessLinkPlugin = new Elysia()
 				secure: true,
 				value: currentState
 			});
+			code_verifier.set({
+				httpOnly: true,
+				maxAge: COOKIE_DURATION,
+				path: '/',
+				sameSite: 'lax',
+				secure: true,
+				value: codeVerifier
+			});
 
 			return redirect(authorizationUrl.toString());
 		}
@@ -50,10 +58,10 @@ export const polarAccessLinkPlugin = new Elysia()
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state },
+			cookie: { state: stored_state, code_verifier },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined)
+			if (stored_state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -68,13 +76,16 @@ export const polarAccessLinkPlugin = new Elysia()
 
 			stored_state.remove();
 
+			const codeVerifier = code_verifier.value;
+			if (codeVerifier === undefined)
+				return error('Bad Request', 'Code verifier is missing');
+
 			try {
 				const oauthResponse =
-					await polarAccessLinkOAuth2Client.validateAuthorizationCode(
-						{
-							code
-						}
-					);
+					await polarAccessLinkOAuth2Client.validateAuthorizationCode({
+						code,
+						codeVerifier
+					});
 				console.log('\nPolar AccessLink authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
@@ -93,7 +104,6 @@ export const polarAccessLinkPlugin = new Elysia()
 			return redirect('/');
 		}
 	)
-	// Not Currently Supported
 	.get(
 		'/oauth2/polaraccesslink/profile',
 		async ({ error, headers: { authorization } }) => {
@@ -107,9 +117,7 @@ export const polarAccessLinkPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await polarAccessLinkOAuth2Client.fetchUserProfile(
-						accessToken
-					);
+					await polarAccessLinkOAuth2Client.fetchUserProfile(accessToken);
 				console.log('\nPolar AccessLink user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {

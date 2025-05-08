@@ -100,7 +100,7 @@ const tokenResponse = await googleClient.validateAuthorizationCode({
 
 ## Fetching the User Profile
 
-Exchange the `user_access_token` for the user information on the profile API route for the provider 
+Exchange the `user_access_token` for the user information on the profile API route for the provider
 
 ```ts
 const profile = await googleClient.fetchUserProfile(tokenResponse.access_token);
@@ -118,10 +118,10 @@ if (refresh_token) {
 	const newTokens = await googleClient.refreshAccessToken(refresh_token);
 }
 
-// Example check to see if provider has a revoke route. In practice `googleClient` will know `revokeToken` does exist, and conversly it will error if it is a provider without the revoke route 
+// Example check to see if provider has a revoke route. In practice `googleClient` will know `revokeToken` does exist, and conversly it will error if it is a provider without the revoke route
 if (isRevocableProvider(googleClient)) {
-    // To revoke an access or refresh token:
-    await googleClient.revokeToken(access_token);
+	// To revoke an access or refresh token:
+	await googleClient.revokeToken(access_token);
 }
 ```
 

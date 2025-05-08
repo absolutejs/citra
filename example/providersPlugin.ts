@@ -52,6 +52,7 @@ import { shikimoriPlugin } from './providers/shikimori';
 import { slackPlugin } from './providers/slack';
 import { spotifyPlugin } from './providers/spotify';
 import { startggPlugin } from './providers/start.gg';
+import { stravaPlugin } from './providers/strava';
 
 const allProviders = [
 	fortyTwoPlugin,
@@ -106,7 +107,8 @@ const allProviders = [
 	shikimoriPlugin,
 	slackPlugin,
 	spotifyPlugin,
-	startggPlugin
+	startggPlugin,
+	stravaPlugin
 ];
 
 export const providersPlugin = (app: Elysia) => {

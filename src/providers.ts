@@ -1032,6 +1032,7 @@ export const providers = defineProviders({
 	Strava: {
 		authorizationUrl: 'https://www.strava.com/oauth/authorize',
 		isOIDC: false,
+		PKCEMethod: 'S256',
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -1044,6 +1045,10 @@ export const providers = defineProviders({
 			encoding: 'form',
 			url: 'https://www.strava.com/oauth/token'
 		},
+		revocationRequest: {
+			url: 'https://www.strava.com/oauth/deauthorize',
+			authIn: 'body',
+		  },
 		validateAuthorizationCodeBody: { grant_type: 'authorization_code' }
 	},
 	Synology: {

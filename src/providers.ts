@@ -93,7 +93,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.atlassian.com/me'
 		},
-		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+
 		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'body',
@@ -111,7 +111,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: (config) => `https://${config.domain}/userinfo`
 		},
-		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+
 		revocationRequest: {
 			authIn: 'body',
 			body: new URLSearchParams({
@@ -579,7 +579,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.line.me/v2/profile'
 		},
-		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+
 		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'body',
@@ -1132,7 +1132,6 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.twitter.com/2/users/me'
 		},
-		refreshAccessTokenBody: { grant_type: 'refresh_token' },
 		scopeRequired: false,
 		tokenRequest: {
 			authIn: 'body',
@@ -1215,7 +1214,7 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.zoom.us/v2/users/me'
 		},
-		refreshAccessTokenBody: { grant_type: 'refresh_token' },
+
 		revocationRequest: {
 			authIn: 'body',
 			url: 'https://zoom.us/oauth/revoke'

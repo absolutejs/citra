@@ -1260,6 +1260,9 @@ export const providers = defineProviders({
 		},
 		revocationRequest: {
 			authIn: 'query',
+			headers: (config) => ({
+				Authorization: `Basic ${btoa(`${config.clientId}:${config.clientSecret}`)}`
+			}),
 			tokenParamName: 'token',
 			url: 'https://zoom.us/oauth/revoke'
 		},

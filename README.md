@@ -83,3 +83,4 @@ If any issues occur with a provider please open one so it can be fixed.
 - WorkOS (In Development)
 - Yahoo (Untested: https) (HTTPS Required)
 - Yandex
+- Zoom

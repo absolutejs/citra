@@ -61,6 +61,7 @@ import { vkPlugin } from './providers/vk';
 import { workOSPlugin } from './providers/workos';
 import { yahooPlugin } from './providers/yahoo';
 import { yandexPlugin } from './providers/yandex';
+import { zoomPlugin } from './providers/zoom';
 
 const allProviders = [
 	fortyTwoPlugin,
@@ -124,7 +125,8 @@ const allProviders = [
 	vkPlugin,
 	workOSPlugin,
 	yahooPlugin,
-	yandexPlugin
+	yandexPlugin,
+	zoomPlugin
 ];
 
 export const providersPlugin = (app: Elysia) => {

@@ -47,53 +47,63 @@ import { polarAccessLinkPlugin } from './providers/polar-accesslink';
 import { polarTeamProPlugin } from './providers/polar-team-pro';
 import { redditPlugin } from './providers/reddit';
 import { robloxPlugin } from './providers/roblox';
+import { salesforcePlugin } from './providers/salesforce';
 
-export const providersPlugin = new Elysia()
-	.use(fortyTwoPlugin)
-	.use(amazonCognitoPlugin)
-	.use(anilistPlugin)
-	.use(applePlugin)
-	.use(atlassianPlugin)
-	.use(auth0Plugin)
-	.use(authentikPlugin)
-	.use(autodeskPlugin)
-	.use(battlenetPlugin)
-	.use(bitbucketPlugin)
-	.use(boxPlugin)
-	.use(bungiePlugin)
-	.use(coinbasePlugin)
-	.use(discordPlugin)
-	.use(donationAlertsPlugin)
-	.use(dribbblePlugin)
-	.use(dropboxPlugin)
-	.use(epicGamesPlugin)
-	.use(etsyPlugin)
-	.use(facebookPlugin)
-	.use(figmaPlugin)
-	.use(giteaPlugin)
-	.use(githubPlugin)
-	.use(gitlabPlugin)
-	.use(googlePlugin)
-	.use(intuitPlugin)
-	.use(kakaoPlugin)
-	.use(keycloakPlugin)
-	.use(kickPlugin)
-	.use(lichessPlugin)
-	.use(linePlugin)
-	.use(linearPlugin)
-	.use(linkedinPlugin)
-	.use(mastodonPlugin)
-	.use(mercadoLibrePlugin)
-	.use(mercadoPagoPlugin)
-	.use(microsoftEntraIDPlugin)
-	.use(myAnimeListPlugin)
-	.use(naverPlugin)
-	.use(notionPlugin)
-	.use(oktaPlugin)
-	.use(osuPlugin)
-	.use(patreonPlugin)
-	.use(polarPlugin)
-	.use(polarAccessLinkPlugin)
-	.use(polarTeamProPlugin)
-	.use(redditPlugin)
-	.use(robloxPlugin);
+const allProviders = [
+	fortyTwoPlugin,
+	amazonCognitoPlugin,
+	anilistPlugin,
+	applePlugin,
+	atlassianPlugin,
+	auth0Plugin,
+	authentikPlugin,
+	autodeskPlugin,
+	battlenetPlugin,
+	bitbucketPlugin,
+	boxPlugin,
+	bungiePlugin,
+	coinbasePlugin,
+	discordPlugin,
+	donationAlertsPlugin,
+	dribbblePlugin,
+	dropboxPlugin,
+	epicGamesPlugin,
+	etsyPlugin,
+	facebookPlugin,
+	figmaPlugin,
+	giteaPlugin,
+	githubPlugin,
+	gitlabPlugin,
+	googlePlugin,
+	intuitPlugin,
+	kakaoPlugin,
+	keycloakPlugin,
+	kickPlugin,
+	lichessPlugin,
+	linePlugin,
+	linearPlugin,
+	linkedinPlugin,
+	mastodonPlugin,
+	mercadoLibrePlugin,
+	mercadoPagoPlugin,
+	microsoftEntraIDPlugin,
+	myAnimeListPlugin,
+	naverPlugin,
+	notionPlugin,
+	oktaPlugin,
+	osuPlugin,
+	patreonPlugin,
+	polarPlugin,
+	polarAccessLinkPlugin,
+	polarTeamProPlugin,
+	redditPlugin,
+	robloxPlugin,
+	salesforcePlugin
+];
+
+export const providersPlugin = (app: Elysia) => {
+	for (const p of allProviders) {
+		app.use(p);
+	}
+	return app;
+};

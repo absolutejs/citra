@@ -933,7 +933,8 @@ export const providers = defineProviders({
 	Salesforce: {
 		authorizationUrl:
 			'https://login.salesforce.com/services/oauth2/authorize',
-		isOIDC: false,
+		isOIDC: true,
+		PKCEMethod: 'S256',
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -945,6 +946,10 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://login.salesforce.com/services/oauth2/token'
+		},
+		revocationRequest: {
+			url: 'https://login.salesforce.com/services/oauth2/revoke',
+			authIn: 'header'
 		}
 	},
 	Shikimori: {

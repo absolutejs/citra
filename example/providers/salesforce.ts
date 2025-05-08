@@ -1,36 +1,38 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState } from '../../src/arctic-utils';
+import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.REDDIT_CLIENT_ID ||
-	!env.REDDIT_CLIENT_SECRET ||
-	!env.REDDIT_REDIRECT_URI
+	!env.SALESFORCE_CONSUMER_KEY ||
+	!env.SALESFORCE_CONSUMER_SECRET ||
+	!env.SALESFORCE_REDIRECT_URI
 ) {
-	throw new Error('Reddit OAuth2 credentials are not set in .env file');
+	throw new Error('Salesforce OAuth2 credentials are not set in .env file');
 }
 
-const redditOAuth2Client = createOAuth2Client('Reddit', {
-	clientId: env.REDDIT_CLIENT_ID,
-	clientSecret: env.REDDIT_CLIENT_SECRET,
-	redirectUri: env.REDDIT_REDIRECT_URI
+const salesforceOAuth2Client = createOAuth2Client('Salesforce', {
+	clientId: env.SALESFORCE_CONSUMER_KEY,
+	clientSecret: env.SALESFORCE_CONSUMER_SECRET,
+	redirectUri: env.SALESFORCE_REDIRECT_URI
 });
 
-export const redditPlugin = new Elysia()
+export const salesforcePlugin = new Elysia()
 	.get(
-		'/oauth2/reddit/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
-			if (state === undefined)
+		'/oauth2/salesforce/authorization',
+		async ({ redirect, error, cookie: { state, code_verifier } }) => {
+			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
+			const codeVerifier = generateCodeVerifier();
 			const authorizationUrl =
-				await redditOAuth2Client.createAuthorizationUrl({
-					scope: ['identity'],
-					searchParams: [['duration', 'permanent']],
-					state: currentState
+				await salesforceOAuth2Client.createAuthorizationUrl({
+					codeVerifier,
+					state: currentState,
+					scope: ['offline_access', 'openid'],
+					searchParams: [['prompt', 'consent']]
 				});
 
 			state.set({
@@ -41,19 +43,27 @@ export const redditPlugin = new Elysia()
 				secure: true,
 				value: currentState
 			});
+			code_verifier.set({
+				httpOnly: true,
+				maxAge: COOKIE_DURATION,
+				path: '/',
+				sameSite: 'lax',
+				secure: true,
+				value: codeVerifier
+			});
 
 			return redirect(authorizationUrl.toString());
 		}
 	)
 	.get(
-		'/oauth2/reddit/callback',
+		'/oauth2/salesforce/callback',
 		async ({
 			error,
 			redirect,
-			cookie: { state: stored_state },
+			cookie: { state: stored_state, code_verifier },
 			query: { code, state: callback_state }
 		}) => {
-			if (stored_state === undefined)
+			if (stored_state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
@@ -65,12 +75,17 @@ export const redditPlugin = new Elysia()
 
 			stored_state.remove();
 
+			const codeVerifier = code_verifier.value;
+			if (codeVerifier === undefined)
+				return error('Bad Request', 'Code verifier is missing');
+
 			try {
 				const oauthResponse =
-					await redditOAuth2Client.validateAuthorizationCode({
-						code
+					await salesforceOAuth2Client.validateAuthorizationCode({
+						code,
+						codeVerifier
 					});
-				console.log('\nReddit authorized:', oauthResponse);
+				console.log('\nSalesforce authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -89,12 +104,14 @@ export const redditPlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/reddit/tokens',
+		'/oauth2/salesforce/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await redditOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nReddit token refreshed:', oauthResponse);
+					await salesforceOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
+				console.log('\nSalesforce token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -122,7 +139,7 @@ export const redditPlugin = new Elysia()
 		}
 	)
 	.delete(
-		'/oauth2/reddit/revocation',
+		'/oauth2/salesforce/revocation',
 		async ({ error, query: { token_to_revoke } }) => {
 			if (!token_to_revoke)
 				return error(
@@ -131,8 +148,8 @@ export const redditPlugin = new Elysia()
 				);
 
 			try {
-				await redditOAuth2Client.revokeToken(token_to_revoke);
-				console.log('\nReddit token revoked:', token_to_revoke);
+				await salesforceOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nSalesforce token revoked:', token_to_revoke);
 
 				return new Response(
 					`Token ${token_to_revoke} revoked successfully`,
@@ -158,7 +175,7 @@ export const redditPlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/reddit/profile',
+		'/oauth2/salesforce/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
 				return error(
@@ -170,8 +187,8 @@ export const redditPlugin = new Elysia()
 
 			try {
 				const userProfile =
-					await redditOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nReddit user profile:', userProfile);
+					await salesforceOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nSalesforce user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

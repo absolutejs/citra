@@ -47,3 +47,6 @@ package-lock.json
 
 # index files
 **/indexes/*
+
+# dist folder
+/dist

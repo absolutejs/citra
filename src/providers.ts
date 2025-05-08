@@ -1258,9 +1258,8 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.zoom.us/v2/users/me'
 		},
-
 		revocationRequest: {
-			authIn: 'body',
+			authIn: 'query',
 			tokenParamName: 'token',
 			url: 'https://zoom.us/oauth/revoke'
 		},

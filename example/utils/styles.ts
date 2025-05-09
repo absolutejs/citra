@@ -75,3 +75,19 @@ export const formButtonStyle = (isFullOpacity?: boolean): CSSProperties => ({
 	opacity: isFullOpacity ? 1 : HALF,
 	padding: '8px 16px'
 });
+
+export const headingStyle: CSSProperties = {
+	color: '#333',
+	fontSize: '2.5rem',
+	marginBottom: '20px',
+	textAlign: 'center'
+}
+
+export const paragraphStyle: CSSProperties = {
+	color: '#333',
+	fontSize: '1.2rem',
+	lineHeight: '1.5',
+	marginBottom: '20px',
+	maxWidth: '600px',
+	textAlign: 'center'
+}

@@ -10,7 +10,9 @@ import {
 	htmlDefault,
 	bodyDefault,
 	mainDefault,
-	buttonStyle
+	buttonStyle,
+	headingStyle,
+	paragraphStyle
 } from '../utils/styles';
 
 export const Home = () => {
@@ -39,24 +41,12 @@ export const Home = () => {
 				<Navbar />
 				<main style={mainDefault}>
 					<h1
-						style={{
-							color: '#333',
-							fontSize: '2.5rem',
-							marginBottom: '20px',
-							textAlign: 'center'
-						}}
+						style={headingStyle}
 					>
 						Welcome to Citra Example
 					</h1>
 					<p
-						style={{
-							color: '#333',
-							fontSize: '1.2rem',
-							lineHeight: '1.5',
-							marginBottom: '20px',
-							maxWidth: '600px',
-							textAlign: 'center'
-						}}
+						style={paragraphStyle}
 					>
 						Citra is a lightweight TypeScript OAuth2 client library
 						that makes it easy to authorize users, refresh, and

@@ -25,7 +25,11 @@ const homeIndex = manifest['HomeIndex'];
 const testingIndex = manifest['TestingIndex'];
 const documentationIndex = manifest['DocumentationIndex'];
 
-if (homeIndex === undefined || testingIndex === undefined || documentationIndex === undefined) {
+if (
+	homeIndex === undefined ||
+	testingIndex === undefined ||
+	documentationIndex === undefined
+) {
 	throw new Error('Missing index file in manifest');
 }
 
@@ -38,7 +42,9 @@ new Elysia()
 	)
 	.get('/', () => handleReactPageRequest(Home, homeIndex))
 	.get('/testing', () => handleReactPageRequest(Testing, testingIndex))
-	.get('/documentation', () => handleReactPageRequest(Documentation, documentationIndex))
+	.get('/documentation', () =>
+		handleReactPageRequest(Documentation, documentationIndex)
+	)
 	.use(providersPlugin)
 	.use(networkingPlugin)
 	.on('error', (error) => {

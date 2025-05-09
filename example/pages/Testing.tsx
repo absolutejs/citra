@@ -9,7 +9,15 @@ export const Testing = () => {
 			<Head />
 			<body style={bodyDefault}>
 				<Navbar />
-				<main style={mainDefault}></main>
+				<main style={mainDefault}>
+					<h1>Citra currently supports 60 OAuth 2.0 providers</h1>
+					<p>
+						Below is a list of all supported providers. The
+						providers inclue any relevant information tags as well
+						as their current status. You can help keep Citra up to
+						date by testing providers using this screen.
+					</p>
+				</main>
 			</body>
 		</html>
 	);

@@ -264,7 +264,7 @@ Conditional types for narrowing providers by feature:
 - **BaseOAuth2Client<P>**  
   Core methods available on every OAuth2 client
 
-	**Note:** In TypeScript, `T & unknown` simplifies to `T`.
+    **Note:** In TypeScript, `T & unknown` simplifies to `T`.
 
     ```ts
     export type BaseOAuth2Client<P extends ProviderOption> = {

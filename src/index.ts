@@ -26,18 +26,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 	const tokenUrl = resolveConfigProp(meta.tokenRequest.url);
 
 	return {
-		async createAuthorizationUrl(opts?: {
+		async createAuthorizationUrl(opts: {
 			state?: string;
 			scope?: string[];
 			searchParams?: [string, string][];
 			codeVerifier?: string;
 		}) {
-			const {
-				state,
-				scope = [],
-				searchParams = [],
-				codeVerifier
-			} = opts ?? {};
+			const { state, scope = [], searchParams = [], codeVerifier } = opts;
 
 			const url = new URL(authorizationUrl);
 			url.searchParams.set('response_type', 'code');
@@ -81,7 +76,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			return url;
 		},
 
-		async fetchUserProfile(accessToken: string) {
+		async fetchUserProfile(accessToken) {
 			const { profileRequest } = meta;
 			const {
 				url,

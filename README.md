@@ -204,7 +204,7 @@ Citra’s TypeScript definitions let you configure and consume OAuth2 providers 
 
         - `authorizationUrl`: The authorization endpoint’s URL, or a function that receives the provider’s config and returns the URL.
         - `profileRequest`: user-info fetch settings
-        - `revocationRequest?`: optional token revocation settings if the provider supports revocation
+        - `revocationRequest`: optional token revocation settings if the provider supports revocation
         - `tokenRequest`: token exchange/refresh settings
 
     4. **Static additions** (optional)
@@ -262,7 +262,9 @@ Conditional types for narrowing providers by feature:
 ### Client Types
 
 - **BaseOAuth2Client<P>**  
-  Core methods available on every OAuth2 client:
+  Core methods available on every OAuth2 client
+
+	**Note:** In TypeScript, `T & unknown` simplifies to `T`.
 
     ```ts
     export type BaseOAuth2Client<P extends ProviderOption> = {
@@ -331,7 +333,7 @@ Conditional types for narrowing providers by feature:
 
 - **OAuth2Client<P>**
 
-    The full client type returned by `createOAuth2Client()`. Note in typescript type `T & unknown` resolves to `T`:
+    The full client type returned by `createOAuth2Client()`.
 
     ```ts
     export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &

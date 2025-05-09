@@ -63,7 +63,10 @@ All providers have their proper environment variables listed in `env.example`. F
 Generate the authorization URL from the provider metadata (including a PKCE verifier when required). You can redirect to this URL to initiate the OAuth2 flow.
 
 ```ts
-const codeVerifier = crypto.randomUUID();
+import { generateState, generateCodeVerifier } from 'citra';
+
+const currentState = generateState();
+const codeVerifier = generateCodeVerifier();
 const authUrl = await googleClient.createAuthorizationUrl({
 	codeVerifier,
 	scope: ['profile', 'openid'],
@@ -73,6 +76,18 @@ const authUrl = await googleClient.createAuthorizationUrl({
 	],
 	state: currentState
 });
+
+// store state and PKCE verifier in HttpOnly cookies so we can authenticate on callback
+const headers = new Headers();
+headers.set('Location', authUrl.toString());
+headers.append(
+	'Set-Cookie',
+	`oauth_state=${currentState}; HttpOnly; Path=/; Secure; SameSite=Lax`
+);
+headers.append(
+	'Set-Cookie',
+	`pkce_code_verifier=${codeVerifier}; HttpOnly; Path=/; Secure; SameSite=Lax`
+);
 
 // redirect to the generated authorization URL
 return new Response(null, {
@@ -88,9 +103,33 @@ return new Response(null, {
 Exchange the `code`, and optionally the `verifier`, for an OAuth2TokenResponse:
 
 ```ts
-const url = new URL(request.url);
-const code = url.searchParams.get('code');
-if (!code) throw new Error('Authorization code is required but missing');
+const params = new URL(request.url).searchParams;
+const code = params.get('code');
+const callback_state = params.get('state');
+
+const cookieHeader = request.headers.get('cookie') ?? '';
+const cookies = parse(cookieHeader);
+const stored_state = cookies['state'];
+const code_verifier = cookies['code_verifier'];
+
+if (stored_state === undefined || code_verifier === undefined) {
+	return new Response('Cookies are missing', { status: 400 });
+}
+
+if (code === undefined) {
+	return new Response('Code is missing in query', { status: 400 });
+}
+
+if (callback_state === undefined || stored_state.value === undefined) {
+	return new Response('State parameter is missing', { status: 400 });
+}
+
+if (callback_state !== stored_state.value) {
+	return new Response(
+		`Invalid state mismatch: expected "${stored_state.value}", got "${callback_state}"`,
+		{ status: 400 }
+	);
+}
 
 const tokenResponse = await googleClient.validateAuthorizationCode({
 	code,
@@ -114,11 +153,12 @@ If supported by the provider, you can refresh and revoke tokens:
 ```ts
 const { refresh_token, access_token } = tokenResponse;
 
+// Example check to see if provider has a refresh or revoke route. In practice `googleClient` will know `refreshToken` and `revokeToken` does exist, and conversly it will error if it is a provider without said routes
+
 if (refresh_token) {
 	const newTokens = await googleClient.refreshAccessToken(refresh_token);
 }
 
-// Example check to see if provider has a revoke route. In practice `googleClient` will know `revokeToken` does exist, and conversly it will error if it is a provider without the revoke route
 if (isRevocableProvider(googleClient)) {
 	// To revoke an access or refresh token:
 	await googleClient.revokeToken(access_token);
@@ -156,7 +196,7 @@ Citra’s TypeScript definitions let you configure and consume OAuth2 providers 
         - `isRefreshable`: allows token refresh
         - `scopeRequired`: enforces at least one explicit scope
 
-    2. **PKCE support** (optional)
+    2. **PKCE support**
 
         - `PKCEMethod`: either `'S256'` or `'plain'` when PKCE is supported
 

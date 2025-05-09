@@ -1,3 +1,12 @@
+import { CSSProperties } from 'react';
+
+const linkStyle: CSSProperties = {
+	textDecoration: 'none',
+	color: '#fff',
+	fontSize: '1.2rem',
+	fontWeight: 'bold'
+};
+
 export const Navbar = () => (
 	<header
 		style={{
@@ -27,7 +36,22 @@ export const Navbar = () => (
 				alt="Citra Logo"
 				style={{ height: '100px', marginRight: '10px' }}
 			/>
-			Citra Example
+			Citra
 		</a>
+
+		<nav
+			style={{
+				display: 'flex',
+				gap: '20px'
+			}}
+		>
+			<a href="/documentation" style={linkStyle}>
+				Documentation
+			</a>
+
+			<a href="/testing" style={linkStyle}>
+				Testing
+			</a>
+		</nav>
 	</header>
 );

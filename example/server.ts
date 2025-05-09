@@ -5,8 +5,10 @@ import {
 } from '@absolutejs/absolute';
 import { staticPlugin } from '@elysiajs/static';
 import { Elysia } from 'elysia';
-import { Example } from './pages/Example';
+import { Home } from './pages/Home';
 import { providersPlugin } from './providersPlugin';
+import { Testing } from './pages/Testing';
+import { Documentation } from './pages/Documentation';
 
 const manifest = await build({
 	assetsDir: 'example/assets',
@@ -19,9 +21,12 @@ if (manifest === null) {
 	throw new Error('Build manifest is null');
 }
 
-const exampleIndex = manifest['ExampleIndex'];
-if (exampleIndex === undefined) {
-	throw new Error('ExampleIndex is not defined in the manifest');
+const homeIndex = manifest['HomeIndex'];
+const testingIndex = manifest['TestingIndex'];
+const documentationIndex = manifest['DocumentationIndex'];
+
+if (homeIndex === undefined || testingIndex === undefined || documentationIndex === undefined) {
+	throw new Error('Missing index file in manifest');
 }
 
 new Elysia()
@@ -31,7 +36,9 @@ new Elysia()
 			prefix: ''
 		})
 	)
-	.get('/', () => handleReactPageRequest(Example, exampleIndex))
+	.get('/', () => handleReactPageRequest(Home, homeIndex))
+	.get('/testing', () => handleReactPageRequest(Testing, testingIndex))
+	.get('/documentation', () => handleReactPageRequest(Documentation, documentationIndex))
 	.use(providersPlugin)
 	.use(networkingPlugin)
 	.on('error', (error) => {
@@ -41,4 +48,4 @@ new Elysia()
 		);
 	});
 
-// TODO : avoid using localhost as per RFC 6749 https://datatracker.ietf.org/doc/html/rfc8252#section-8.3
+// TODO : avoid using localhost as per RFC 8252 8.3 https://datatracker.ietf.org/doc/html/rfc8252#section-8.3

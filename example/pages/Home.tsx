@@ -13,7 +13,7 @@ import {
 	buttonStyle
 } from '../utils/styles';
 
-export const Example = () => {
+export const Home = () => {
 	const [authModalOpen, setAuthModalOpen] = useState(false);
 	const [refreshModalOpen, setRefreshModalOpen] = useState(false);
 	const [revokeModalOpen, setRevokeModalOpen] = useState(false);

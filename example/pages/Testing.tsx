@@ -11,7 +11,7 @@ const legendWrapperStyle: CSSProperties = {
 	border: '1px solid #ddd',
 	borderRadius: '8px',
 	boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-	margin: '0 auto 1rem',
+	margin: '0 auto 2rem',
 	maxWidth: '800px',
 	padding: '20px',
 	width: '100%'
@@ -74,9 +74,9 @@ export const Testing = () => {
 					<h1
 						style={{
 							color: '#222',
-							fontSize: '2rem',
+							fontSize: '2.25rem',
 							fontWeight: 600,
-							margin: '0 0 1rem',
+							margin: '2rem 0',
 							textAlign: 'center'
 						}}
 					>
@@ -86,7 +86,7 @@ export const Testing = () => {
 
 					<p
 						style={{
-							margin: '0 auto 1rem',
+							margin: '0 auto 2rem',
 							maxWidth: '800px',
 							textAlign: 'center',
 							backgroundColor: '#fff',
@@ -138,7 +138,7 @@ export const Testing = () => {
 							gap: '12px',
 							gridTemplateColumns:
 								'repeat(auto-fill, minmax(180px, 1fr))',
-							margin: '0 auto',
+							margin: '0 auto 2rem',
 							maxWidth: '800px',
 							width: '100%'
 						}}

@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction, useState } from 'react';
-import { providers } from '../../src/providers';
-import { isValidProviderOption } from '../../src/typeGuards';
-import { ProviderOption } from '../../src/types';
-import { formButtonStyle, formStyle } from '../utils/styles';
-import { Modal } from './Modal';
-import { ProviderDropdown } from './ProviderDropdown';
-import { useToast } from './ToastProvider';
+import { providers } from '../../../src/providers';
+import { isValidProviderOption } from '../../../src/typeGuards';
+import { ProviderOption } from '../../../src/types';
+import { formStyle, formButtonStyle } from '../../utils/styles';
+import { Modal } from '../utils/Modal';
+import { ProviderDropdown } from '../utils/ProviderDropdown';
+import { useToast } from '../utils/ToastProvider';
 
 const providerOptions = Object.keys(providers).filter(isValidProviderOption);
 

@@ -1,5 +1,5 @@
-import { Head } from '../components/Head';
-import { Navbar } from '../components/Navbar';
+import { Head } from '../components/page/Head';
+import { Navbar } from '../components/page/Navbar';
 
 import { htmlDefault, bodyDefault, mainDefault } from '../utils/styles';
 

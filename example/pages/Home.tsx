@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { AuthorizeModal } from '../components/AuthorizeModal';
-import { FetchProfileModal } from '../components/FetchProfileModal';
-import { Head } from '../components/Head';
-import { Navbar } from '../components/Navbar';
-import { RefreshModal } from '../components/RefreshModal';
-import { RevokeModal } from '../components/RevokeModal';
-import { ToastProvider } from '../components/ToastProvider';
+import { useState, useEffect } from 'react';
+import { AuthorizeModal } from '../components/home/AuthorizeModal';
+import { FetchProfileModal } from '../components/home/FetchProfileModal';
+import { RefreshModal } from '../components/home/RefreshModal';
+import { RevokeModal } from '../components/home/RevokeModal';
+import { Head } from '../components/page/Head';
+import { Navbar } from '../components/page/Navbar';
+import { ToastProvider } from '../components/utils/ToastProvider';
 import {
 	htmlDefault,
 	bodyDefault,

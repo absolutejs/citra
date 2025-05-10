@@ -1,11 +1,11 @@
-import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
-import { providers } from '../../src/providers';
-import { isRevocableProvider } from '../../src/typeGuards';
-import { RevocableProvider } from '../../src/types';
-import { formButtonStyle, formStyle } from '../utils/styles';
-import { Modal } from './Modal';
-import { ProviderDropdown } from './ProviderDropdown';
-import { useToast } from './ToastProvider';
+import { Dispatch, SetStateAction, useState, FormEvent } from 'react';
+import { providers } from '../../../src/providers';
+import { isRevocableProvider } from '../../../src/typeGuards';
+import { RevocableProvider } from '../../../src/types';
+import { formStyle, formButtonStyle } from '../../utils/styles';
+import { Modal } from '../utils/Modal';
+import { ProviderDropdown } from '../utils/ProviderDropdown';
+import { useToast } from '../utils/ToastProvider';
 
 const revocableProviders = Object.keys(providers).filter(isRevocableProvider);
 

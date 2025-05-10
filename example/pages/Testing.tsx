@@ -1,8 +1,8 @@
 import { CSSProperties } from 'react';
 import { providers } from '../../src/providers';
 import { isValidProviderOption } from '../../src/typeGuards';
-import { Head } from '../components/Head';
-import { Navbar } from '../components/Navbar';
+import { Head } from '../components/page/Head';
+import { Navbar } from '../components/page/Navbar';
 
 import { htmlDefault, bodyDefault, mainDefault } from '../utils/styles';
 
@@ -86,14 +86,14 @@ export const Testing = () => {
 
 					<p
 						style={{
-							margin: '0 auto 2rem',
-							maxWidth: '800px',
-							textAlign: 'center',
 							backgroundColor: '#fff',
 							border: '1px solid #ddd',
 							borderRadius: '8px',
 							boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-							padding: '20px'
+							margin: '0 auto 2rem',
+							maxWidth: '800px',
+							padding: '20px',
+							textAlign: 'center'
 						}}
 					>
 						Below is a list of all supported providers, including

@@ -40,14 +40,8 @@ export const Home = () => {
 			<body style={bodyDefault}>
 				<Navbar />
 				<main style={mainDefault}>
-					<h1
-						style={headingStyle}
-					>
-						Welcome to Citra Example
-					</h1>
-					<p
-						style={paragraphStyle}
-					>
+					<h1 style={headingStyle}>Welcome to Citra Example</h1>
+					<p style={paragraphStyle}>
 						Citra is a lightweight TypeScript OAuth2 client library
 						that makes it easy to authorize users, refresh, and
 						revoke tokens with just a few lines of code.

@@ -5,10 +5,10 @@ import {
 } from '@absolutejs/absolute';
 import { staticPlugin } from '@elysiajs/static';
 import { Elysia } from 'elysia';
-import { Home } from './pages/Home';
-import { providersPlugin } from './providersPlugin';
-import { Testing } from './pages/Testing';
 import { Documentation } from './pages/Documentation';
+import { Home } from './pages/Home';
+import { Testing } from './pages/Testing';
+import { providersPlugin } from './providersPlugin';
 
 const manifest = await build({
 	assetsDir: 'example/assets',

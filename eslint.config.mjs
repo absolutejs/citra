@@ -209,7 +209,7 @@ export default [
 		}
 	},
 	{
-		files: ['example/server.ts', 'example/indexes/ExampleIndex.tsx'],
+		files: ['example/server.ts', 'example/indexes/*.tsx'],
 		rules: {
 			'import/no-unused-modules': 'off'
 		}

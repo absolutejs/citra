@@ -81,7 +81,7 @@ export const headingStyle: CSSProperties = {
 	fontSize: '2.5rem',
 	marginBottom: '20px',
 	textAlign: 'center'
-}
+};
 
 export const paragraphStyle: CSSProperties = {
 	color: '#333',
@@ -90,4 +90,4 @@ export const paragraphStyle: CSSProperties = {
 	marginBottom: '20px',
 	maxWidth: '600px',
 	textAlign: 'center'
-}
+};

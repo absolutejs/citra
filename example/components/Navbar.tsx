@@ -1,10 +1,10 @@
 import { CSSProperties } from 'react';
 
 const linkStyle: CSSProperties = {
-	textDecoration: 'none',
 	color: '#fff',
 	fontSize: '1.2rem',
-	fontWeight: 'bold'
+	fontWeight: 'bold',
+	textDecoration: 'none'
 };
 
 export const Navbar = () => (

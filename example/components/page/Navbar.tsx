@@ -1,4 +1,6 @@
 import { CSSProperties } from 'react';
+import { User } from '../../db/schema';
+import { NavbarUserButtons } from './NavbarUserButtons';
 
 const linkStyle: CSSProperties = {
 	color: '#fff',
@@ -7,7 +9,12 @@ const linkStyle: CSSProperties = {
 	textDecoration: 'none'
 };
 
-export const Navbar = () => (
+type NavbarProps = {
+	user: User | undefined;
+	handleSignOut: () => Promise<void>;
+};
+
+export const Navbar = ({ user, handleSignOut }: NavbarProps) => (
 	<header
 		style={{
 			alignItems: 'center',
@@ -52,6 +59,8 @@ export const Navbar = () => (
 			<a href="/testing" style={linkStyle}>
 				Testing
 			</a>
+
+			<NavbarUserButtons user={user} handleSignOut={handleSignOut} />
 		</nav>
 	</header>
 );

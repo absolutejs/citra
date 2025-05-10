@@ -3,6 +3,7 @@ import { providers } from '../../src/providers';
 import { isValidProviderOption } from '../../src/typeGuards';
 import { Head } from '../components/page/Head';
 import { Navbar } from '../components/page/Navbar';
+import { useAuthStatus } from '../hooks/useAuthStatus';
 import { htmlDefault, bodyDefault, mainDefault } from '../styles/styles';
 
 const legendWrapperStyle: CSSProperties = {
@@ -60,6 +61,8 @@ const legendTextStyle: CSSProperties = {
 };
 
 export const Testing = () => {
+	const { user, handleSignOut } = useAuthStatus();
+
 	const providerOptions = Object.keys(providers).filter(
 		isValidProviderOption
 	);
@@ -68,7 +71,7 @@ export const Testing = () => {
 		<html lang="en" style={htmlDefault}>
 			<Head />
 			<body style={bodyDefault}>
-				<Navbar />
+				<Navbar user={user} handleSignOut={handleSignOut} />
 				<main style={mainDefault}>
 					<h1
 						style={{

@@ -6,6 +6,7 @@ import { RevokeModal } from '../components/home/RevokeModal';
 import { Head } from '../components/page/Head';
 import { Navbar } from '../components/page/Navbar';
 import { ToastProvider } from '../components/utils/ToastProvider';
+import { useAuthStatus } from '../hooks/useAuthStatus';
 import {
 	htmlDefault,
 	bodyDefault,
@@ -16,6 +17,7 @@ import {
 } from '../styles/styles';
 
 export const Home = () => {
+	const { user, handleSignOut } = useAuthStatus();
 	const [authModalOpen, setAuthModalOpen] = useState(false);
 	const [refreshModalOpen, setRefreshModalOpen] = useState(false);
 	const [revokeModalOpen, setRevokeModalOpen] = useState(false);
@@ -38,7 +40,7 @@ export const Home = () => {
 		<html lang="en" style={htmlDefault}>
 			<Head />
 			<body style={bodyDefault}>
-				<Navbar />
+				<Navbar user={user} handleSignOut={handleSignOut} />
 				<main style={mainDefault}>
 					<h1 style={headingStyle}>Welcome to Citra Example</h1>
 					<p style={paragraphStyle}>

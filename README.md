@@ -250,13 +250,13 @@ Conditional types for narrowing providers by feature:
 - **`ScopeRequiredProvider`**  
   Providers where `scopeRequired === true`
 
-### ConfigFor
+### CredentialsFor
 
-- **`ConfigFor<P>`**  
-  Resolves a provider key `P` to the credentials/configuration type you must supply (e.g. `clientId`, `clientSecret`, `redirectUri`)—**not** the internal provider metadata:
+- **`CredentialsFor<P>`**  
+  Resolves a provider key `P` to the credentials type you must supply (e.g. `clientId`, `clientSecret`, `redirectUri`)—**not** the internal provider configuration metadata:
     ```ts
-    export type ConfigFor<P extends keyof typeof providers> =
-    	P extends keyof ConfigMap ? ConfigMap[P] : never;
+    export type CredentialsFor<P extends keyof typeof providers> =
+    	P extends keyof CredentialsMap ? CredentialsMap[P] : never;
     ```
 
 ### Client Types

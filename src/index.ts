@@ -1,22 +1,22 @@
 import { createS256CodeChallenge } from './arctic-utils';
 import { providers, providerOptions } from './providers';
 import { hasClientSecret } from './typeGuards';
-import { ConfigFor, OAuth2Client, ProviderOption } from './types';
+import { CredentialsFor, OAuth2Client, ProviderOption } from './types';
 import { createOAuth2FetchError, createOAuth2Request } from './utils';
 
 export const createOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
-	config: ConfigFor<P>
+	config: CredentialsFor<P>
 ): OAuth2Client<P> => {
 	const meta = providers[providerName];
 
 	const isConfigPropertyFunction = <T>(
-		configProperty: T | ((cfg: ConfigFor<P>) => T)
-	): configProperty is (cfg: ConfigFor<P>) => T =>
+		configProperty: T | ((cfg: CredentialsFor<P>) => T)
+	): configProperty is (cfg: CredentialsFor<P>) => T =>
 		typeof configProperty === 'function';
 
 	const resolveConfigProp = <T>(
-		configProperty: T | ((cfg: ConfigFor<P>) => T)
+		configProperty: T | ((cfg: CredentialsFor<P>) => T)
 	) =>
 		isConfigPropertyFunction(configProperty)
 			? configProperty(config)

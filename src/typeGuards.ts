@@ -1,6 +1,6 @@
 import { providers } from './providers';
 import {
-	ConfigFor,
+	CredentialsFor,
 	ProviderOption,
 	RefreshableProvider,
 	RevocableProvider
@@ -25,8 +25,8 @@ export const isRevocableProvider = (
 	providers[provider].revocationRequest !== undefined;
 
 export const hasClientSecret = <P extends ProviderOption>(
-	cfg: ConfigFor<P>
-): cfg is ConfigFor<P> & { clientSecret: string } => {
+	cfg: CredentialsFor<P>
+): cfg is CredentialsFor<P> & { clientSecret: string } => {
 	if (typeof cfg !== 'object' || cfg === null) return false;
 	const secret = Reflect.get(cfg, 'clientSecret');
 

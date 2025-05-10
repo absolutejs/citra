@@ -177,410 +177,410 @@ export type OAuth2TokenResponse = {
 	id_token?: string;
 };
 
-type FortyTwoOAuth2Config = {
+type FortyTwoOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type AmazonCognitoOAuth2Config = {
+type AmazonCognitoOAuth2Credentials = {
 	domain: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-type AniListOAuth2Config = {
+type AniListOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type AppleOAuth2Config = {
+type AppleOAuth2Credentials = {
 	clientId: string;
 	teamId: string;
 	keyId: string;
 	pkcs8PrivateKey: Uint8Array;
 	redirectUri: string;
 };
-type Auth0OAuth2Config = {
+type Auth0OAuth2Credentials = {
 	domain: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-type AuthentikOAuth2Config = {
+type AuthentikOAuth2Credentials = {
 	baseURL: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-type AutodeskOAuth2Config = {
+type AutodeskOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-type AtlassianOAuth2Config = {
+type AtlassianOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type BattlenetOAuth2Config = {
+type BattlenetOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type BitbucketOAuth2Config = {
+type BitbucketOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type BoxOAuth2Config = {
+type BoxOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type BungieOAuth2Config = {
+type BungieOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type CoinbaseOAuth2Config = {
+type CoinbaseOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type DiscordOAuth2Config = {
+type DiscordOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-type DonationAlertsOAuth2Config = {
+type DonationAlertsOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type DribbbleOAuth2Config = {
+type DribbbleOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type DropboxOAuth2Config = {
+type DropboxOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type EpicGamesOAuth2Config = {
+type EpicGamesOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type EtsyOAuth2Config = {
+type EtsyOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type FacebookOAuth2Config = {
+type FacebookOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type FigmaOAuth2Config = {
+type FigmaOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type GiteaOAuth2Config = {
+type GiteaOAuth2Credentials = {
 	baseURL: string;
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type GitHubOAuth2Config = {
+type GitHubOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string | null;
 };
-type GitLabOAuth2Config = {
+type GitLabOAuth2Credentials = {
 	baseURL: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-type GoogleOAuth2Config = {
+type GoogleOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-type IntuitOAuth2Config = {
+type IntuitOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 	environment: 'sandbox' | 'production';
 };
-type KakaoOAuth2Config = {
+type KakaoOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type KeycloakOAuth2Config = {
+type KeycloakOAuth2Credentials = {
 	realmURL: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-type KickOAuth2Config = {
+type KickOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type LichessOAuth2Config = {
+type LichessOAuth2Credentials = {
 	clientId: string;
 	redirectUri: string;
 };
-type LINEOAuth2Config = {
-	clientId: string;
-	clientSecret: string;
-	redirectUri: string;
-};
-type LinearOAuth2Config = {
+type LINEOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type LinkedInOAuth2Config = {
+type LinearOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type MastodonOAuth2Config = {
+type LinkedInOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
+type MastodonOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 	baseURL: string;
 };
-type MercadoLibreOAuth2Config = {
+type MercadoLibreOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type MercadoPagoOAuth2Config = {
+type MercadoPagoOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type MicrosoftEntraIdOAuth2Config = {
+type MicrosoftEntraIdOAuth2Credentials = {
 	tenantId: string;
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type MyAnimeListOAuth2Config = {
+type MyAnimeListOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type NaverOAuth2Config = {
+type NaverOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type NotionOAuth2Config = {
+type NotionOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type OktaOAuth2Config = {
+type OktaOAuth2Credentials = {
 	domain: string;
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type OsuOAuth2Config = {
+type OsuOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type PatreonOAuth2Config = {
+type PatreonOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type PolarOAuth2Config = {
+type PolarOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type PolarAccessLinkOAuth2Config = {
+type PolarAccessLinkOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type PolarTeamProOAuthOAuth2Config = {
+type PolarTeamProOAuthOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type RedditOAuth2Config = {
+type RedditOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type RobloxOAuth2Config = {
+type RobloxOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type SalesforceOAuth2Config = {
+type SalesforceOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type ShikimoriOAuth2Config = {
+type ShikimoriOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type SlackOAuth2Config = {
+type SlackOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type SpotifyOAuth2Config = {
+type SpotifyOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type StartGGOAuth2Config = {
+type StartGGOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type StravaOAuth2Config = {
+type StravaOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type SynologyOAuth2Config = {
+type SynologyOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type TikTokOAuth2Config = {
+type TikTokOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type TiltifyOAuth2Config = {
+type TiltifyOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type TumblrOAuth2Config = {
+type TumblrOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type TwitchOAuth2Config = {
+type TwitchOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type TwitterOAuth2Config = {
+type TwitterOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type VKOAuth2Config = {
+type VKOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type WorkOSOAuth2Config = {
+type WorkOSOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type YahooOAuth2Config = {
+type YahooOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type YandexOAuth2Config = {
+type YandexOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-type ZoomOAuth2Config = {
+type ZoomOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
 
-type ConfigMap = {
-	'42': FortyTwoOAuth2Config;
-	AmazonCognito: AmazonCognitoOAuth2Config;
-	AniList: AniListOAuth2Config;
-	Apple: AppleOAuth2Config;
-	Auth0: Auth0OAuth2Config;
-	Authentik: AuthentikOAuth2Config;
-	Autodesk: AutodeskOAuth2Config;
-	Atlassian: AtlassianOAuth2Config;
-	Battlenet: BattlenetOAuth2Config;
-	Bitbucket: BitbucketOAuth2Config;
-	Box: BoxOAuth2Config;
-	Bungie: BungieOAuth2Config;
-	Coinbase: CoinbaseOAuth2Config;
-	Discord: DiscordOAuth2Config;
-	DonationAlerts: DonationAlertsOAuth2Config;
-	Dribbble: DribbbleOAuth2Config;
-	Dropbox: DropboxOAuth2Config;
-	EpicGames: EpicGamesOAuth2Config;
-	Etsy: EtsyOAuth2Config;
-	Facebook: FacebookOAuth2Config;
-	Figma: FigmaOAuth2Config;
-	Gitea: GiteaOAuth2Config;
-	GitHub: GitHubOAuth2Config;
-	GitLab: GitLabOAuth2Config;
-	Google: GoogleOAuth2Config;
-	Intuit: IntuitOAuth2Config;
-	Kakao: KakaoOAuth2Config;
-	Keycloak: KeycloakOAuth2Config;
-	Kick: KickOAuth2Config;
-	Lichess: LichessOAuth2Config;
-	LINE: LINEOAuth2Config;
-	Linear: LinearOAuth2Config;
-	LinkedIn: LinkedInOAuth2Config;
-	Mastodon: MastodonOAuth2Config;
-	MercadoLibre: MercadoLibreOAuth2Config;
-	MercadoPago: MercadoPagoOAuth2Config;
-	MicrosoftEntraId: MicrosoftEntraIdOAuth2Config;
-	MyAnimeList: MyAnimeListOAuth2Config;
-	Naver: NaverOAuth2Config;
-	Notion: NotionOAuth2Config;
-	Okta: OktaOAuth2Config;
-	Osu: OsuOAuth2Config;
-	Patreon: PatreonOAuth2Config;
-	Polar: PolarOAuth2Config;
-	PolarAccessLink: PolarAccessLinkOAuth2Config;
-	PolarTeamPro: PolarTeamProOAuthOAuth2Config;
-	Reddit: RedditOAuth2Config;
-	Roblox: RobloxOAuth2Config;
-	Salesforce: SalesforceOAuth2Config;
-	Shikimori: ShikimoriOAuth2Config;
-	Slack: SlackOAuth2Config;
-	Spotify: SpotifyOAuth2Config;
-	StartGG: StartGGOAuth2Config;
-	Strava: StravaOAuth2Config;
-	Synology: SynologyOAuth2Config;
-	TikTok: TikTokOAuth2Config;
-	Tiltify: TiltifyOAuth2Config;
-	Tumblr: TumblrOAuth2Config;
-	Twitch: TwitchOAuth2Config;
-	Twitter: TwitterOAuth2Config;
-	VK: VKOAuth2Config;
-	WorkOS: WorkOSOAuth2Config;
-	Yahoo: YahooOAuth2Config;
-	Yandex: YandexOAuth2Config;
-	Zoom: ZoomOAuth2Config;
+type CredentialsMap = {
+	'42': FortyTwoOAuth2Credentials;
+	AmazonCognito: AmazonCognitoOAuth2Credentials;
+	AniList: AniListOAuth2Credentials;
+	Apple: AppleOAuth2Credentials;
+	Auth0: Auth0OAuth2Credentials;
+	Authentik: AuthentikOAuth2Credentials;
+	Autodesk: AutodeskOAuth2Credentials;
+	Atlassian: AtlassianOAuth2Credentials;
+	Battlenet: BattlenetOAuth2Credentials;
+	Bitbucket: BitbucketOAuth2Credentials;
+	Box: BoxOAuth2Credentials;
+	Bungie: BungieOAuth2Credentials;
+	Coinbase: CoinbaseOAuth2Credentials;
+	Discord: DiscordOAuth2Credentials;
+	DonationAlerts: DonationAlertsOAuth2Credentials;
+	Dribbble: DribbbleOAuth2Credentials;
+	Dropbox: DropboxOAuth2Credentials;
+	EpicGames: EpicGamesOAuth2Credentials;
+	Etsy: EtsyOAuth2Credentials;
+	Facebook: FacebookOAuth2Credentials;
+	Figma: FigmaOAuth2Credentials;
+	Gitea: GiteaOAuth2Credentials;
+	GitHub: GitHubOAuth2Credentials;
+	GitLab: GitLabOAuth2Credentials;
+	Google: GoogleOAuth2Credentials;
+	Intuit: IntuitOAuth2Credentials;
+	Kakao: KakaoOAuth2Credentials;
+	Keycloak: KeycloakOAuth2Credentials;
+	Kick: KickOAuth2Credentials;
+	Lichess: LichessOAuth2Credentials;
+	LINE: LINEOAuth2Credentials;
+	Linear: LinearOAuth2Credentials;
+	LinkedIn: LinkedInOAuth2Credentials;
+	Mastodon: MastodonOAuth2Credentials;
+	MercadoLibre: MercadoLibreOAuth2Credentials;
+	MercadoPago: MercadoPagoOAuth2Credentials;
+	MicrosoftEntraId: MicrosoftEntraIdOAuth2Credentials;
+	MyAnimeList: MyAnimeListOAuth2Credentials;
+	Naver: NaverOAuth2Credentials;
+	Notion: NotionOAuth2Credentials;
+	Okta: OktaOAuth2Credentials;
+	Osu: OsuOAuth2Credentials;
+	Patreon: PatreonOAuth2Credentials;
+	Polar: PolarOAuth2Credentials;
+	PolarAccessLink: PolarAccessLinkOAuth2Credentials;
+	PolarTeamPro: PolarTeamProOAuthOAuth2Credentials;
+	Reddit: RedditOAuth2Credentials;
+	Roblox: RobloxOAuth2Credentials;
+	Salesforce: SalesforceOAuth2Credentials;
+	Shikimori: ShikimoriOAuth2Credentials;
+	Slack: SlackOAuth2Credentials;
+	Spotify: SpotifyOAuth2Credentials;
+	StartGG: StartGGOAuth2Credentials;
+	Strava: StravaOAuth2Credentials;
+	Synology: SynologyOAuth2Credentials;
+	TikTok: TikTokOAuth2Credentials;
+	Tiltify: TiltifyOAuth2Credentials;
+	Tumblr: TumblrOAuth2Credentials;
+	Twitch: TwitchOAuth2Credentials;
+	Twitter: TwitterOAuth2Credentials;
+	VK: VKOAuth2Credentials;
+	WorkOS: WorkOSOAuth2Credentials;
+	Yahoo: YahooOAuth2Credentials;
+	Yandex: YandexOAuth2Credentials;
+	Zoom: ZoomOAuth2Credentials;
 };
 
-export type ConfigFor<P extends keyof typeof providers> =
-	P extends keyof ConfigMap ? ConfigMap[P] : never;
+export type CredentialsFor<P extends keyof typeof providers> =
+	P extends keyof CredentialsMap ? CredentialsMap[P] : never;

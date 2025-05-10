@@ -19,8 +19,8 @@ export const AuthContainer = () => {
 		<div style={containerStyle}>
 			<a href="/">
 				<img
-					src="/assets/svg/eg-logo-no-text.svg"
-					alt="EventGames.io Logo"
+					src="/assets/citra-logo.png"
+					alt="Citra Logo"
 					style={egLogoStyle}
 				/>
 			</a>
@@ -30,9 +30,10 @@ export const AuthContainer = () => {
 					: 'Create an account'}
 			</h1>
 
-			<Divider text="or" />
 
 			<OAuthButtons mode={mode} />
+			
+			<Divider text="or" />
 
 			<p style={loginTextStyle}>
 				{mode === 'login' ? 'Need an account? ' : 'Have an account? '}

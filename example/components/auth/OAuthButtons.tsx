@@ -10,7 +10,7 @@ type OAuthButtonsProps = {
 };
 
 export const OAuthButtons = ({ mode }: OAuthButtonsProps) => (
-	<a href="/authorize/google" style={googleButtonStyle}>
+	<a href="/oauth2/google/authorization" style={googleButtonStyle}>
 		<div style={googleButtonContentStyle}>
 			<img
 				src="/assets/svg/GoogleIcon.svg"

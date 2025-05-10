@@ -2,8 +2,6 @@ import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState } from '../../src/arctic-utils';
-import { User } from '../db/schema';
-import { sessionStore } from '../plugins/sessionStore';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -21,10 +19,9 @@ const twitchOAuth2Client = createOAuth2Client('Twitch', {
 });
 
 export const twitchPlugin = new Elysia()
-	.use(sessionStore<User>())
 	.get(
 		'/oauth2/twitch/authorization',
-		async ({ redirect, store: { session }, error, cookie: { state } }) => {
+		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
@@ -52,7 +49,6 @@ export const twitchPlugin = new Elysia()
 		async ({
 			error,
 			redirect,
-			store: { session },
 			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {

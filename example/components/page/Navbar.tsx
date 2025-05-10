@@ -1,13 +1,6 @@
-import { CSSProperties } from 'react';
 import { User } from '../../db/schema';
+import { linkStyle } from '../../styles/styles';
 import { NavbarUserButtons } from './NavbarUserButtons';
-
-const linkStyle: CSSProperties = {
-	color: '#fff',
-	fontSize: '1.2rem',
-	fontWeight: 'bold',
-	textDecoration: 'none'
-};
 
 type NavbarProps = {
 	user: User | undefined;

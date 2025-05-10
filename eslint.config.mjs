@@ -209,13 +209,17 @@ export default [
 		}
 	},
 	{
-		files: ['example/server.ts', 'example/indexes/*.tsx'],
+		files: [
+			'example/server.ts',
+			'example/indexes/*.tsx',
+			'example/db/migrate.ts'
+		],
 		rules: {
 			'import/no-unused-modules': 'off'
 		}
 	},
 	{
-		files: ['example/providers/**/*.ts'],
+		files: ['example/providers/**/*.ts', 'example/db/migrate.ts'],
 		rules: {
 			'no-console': 'off'
 		}
@@ -243,6 +247,12 @@ export default [
 					order: 'asc'
 				}
 			]
+		}
+	},
+	{
+		files: ['example/db/schema.ts'],
+		rules: {
+			'absolute/explicit-object-types': 'off'
 		}
 	}
 ];

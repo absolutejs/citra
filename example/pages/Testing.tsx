@@ -1,64 +1,17 @@
-import { CSSProperties } from 'react';
 import { providers } from '../../src/providers';
 import { isValidProviderOption } from '../../src/typeGuards';
 import { Head } from '../components/page/Head';
 import { Navbar } from '../components/page/Navbar';
 import { useAuthStatus } from '../hooks/useAuthStatus';
 import { htmlDefault, bodyDefault, mainDefault } from '../styles/styles';
-
-const legendWrapperStyle: CSSProperties = {
-	backgroundColor: '#fff',
-	border: '1px solid #ddd',
-	borderRadius: '8px',
-	boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-	margin: '0 auto 2rem',
-	maxWidth: '800px',
-	padding: '20px',
-	width: '100%'
-};
-
-const legendTitleStyle: CSSProperties = {
-	fontSize: '1.25rem',
-	fontWeight: 600,
-	margin: '0 0 16px',
-	textAlign: 'center'
-};
-
-const legendGridStyle: CSSProperties = {
-	alignItems: 'center',
-	columnGap: '12px',
-	display: 'grid',
-	gridTemplateColumns: '8ch auto',
-	margin: '0 auto',
-	rowGap: '12px',
-	width: 'max-content'
-};
-
-const legendFooterStyle: CSSProperties = {
-	margin: '16px 0 0',
-	textAlign: 'center'
-};
-
-const badgeStyle = (backgroundColor: string): CSSProperties => ({
-	alignItems: 'center',
-	backgroundColor,
-	borderRadius: '4px',
-	boxSizing: 'border-box',
-	color: '#fff',
-	display: 'inline-flex',
-	fontSize: '0.9rem',
-	fontWeight: 500,
-	justifyContent: 'center',
-	padding: '4px 12px',
-	width: '8ch'
-});
-
-const legendTextStyle: CSSProperties = {
-	fontSize: '1rem',
-	lineHeight: 1.6,
-	margin: 0,
-	textAlign: 'left'
-};
+import {
+	legendWrapperStyle,
+	legendTitleStyle,
+	legendGridStyle,
+	badgeStyle,
+	legendTextStyle,
+	legendFooterStyle
+} from '../styles/testingStyles';
 
 export const Testing = () => {
 	const { user, handleSignOut } = useAuthStatus();

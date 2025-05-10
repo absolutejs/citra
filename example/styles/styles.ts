@@ -91,3 +91,10 @@ export const paragraphStyle: CSSProperties = {
 	maxWidth: '600px',
 	textAlign: 'center'
 };
+
+export const linkStyle: CSSProperties = {
+	color: '#fff',
+	fontSize: '1.2rem',
+	fontWeight: 'bold',
+	textDecoration: 'none'
+};

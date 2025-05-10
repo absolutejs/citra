@@ -3,8 +3,7 @@ import { providers } from '../../src/providers';
 import { isValidProviderOption } from '../../src/typeGuards';
 import { Head } from '../components/page/Head';
 import { Navbar } from '../components/page/Navbar';
-
-import { htmlDefault, bodyDefault, mainDefault } from '../utils/styles';
+import { htmlDefault, bodyDefault, mainDefault } from '../styles/styles';
 
 const legendWrapperStyle: CSSProperties = {
 	backgroundColor: '#fff',

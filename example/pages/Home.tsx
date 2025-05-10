@@ -10,10 +10,10 @@ import {
 	htmlDefault,
 	bodyDefault,
 	mainDefault,
-	buttonStyle,
 	headingStyle,
-	paragraphStyle
-} from '../utils/styles';
+	paragraphStyle,
+	buttonStyle
+} from '../styles/styles';
 
 export const Home = () => {
 	const [authModalOpen, setAuthModalOpen] = useState(false);

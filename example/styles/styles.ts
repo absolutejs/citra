@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { HALF } from './constants';
+import { HALF } from '../utils/constants';
 
 export const styleReset = `
     * {

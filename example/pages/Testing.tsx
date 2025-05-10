@@ -88,22 +88,20 @@ export const Testing = () => {
 						style={{
 							margin: '0 auto 1rem',
 							maxWidth: '800px',
-							textAlign: 'center'
+							textAlign: 'center',
+							backgroundColor: '#fff',
+							border: '1px solid #ddd',
+							borderRadius: '8px',
+							boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+							padding: '20px'
 						}}
 					>
 						Below is a list of all supported providers, including
 						relevant information tags and their current status.
-					</p>
-
-					<p
-						style={{
-							margin: '0 auto 1rem',
-							maxWidth: '800px',
-							textAlign: 'center'
-						}}
-					>
-						Test providers from this screen by opening a provider’s
-						tab—you’ll find instructions for obtaining client
+						<br />
+						<br />
+						Test providers from this screen by opening a provider's
+						tab—you'll find instructions for obtaining client
 						credentials and controls to exercise each step of the
 						OAuth 2.0 flow.
 					</p>

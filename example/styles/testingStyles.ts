@@ -33,13 +33,13 @@ export const legendFooterStyle: CSSProperties = {
 	textAlign: 'center'
 };
 
-
 export const badgeStyle = (
 	backgroundColor: string,
 	textColor = '#fff'
-  ): CSSProperties => ({
+): CSSProperties => ({
 	alignItems: 'center',
 	backgroundColor,
+	border: '1px solid black',
 	borderRadius: '4px',
 	boxSizing: 'border-box',
 	color: textColor,
@@ -47,10 +47,9 @@ export const badgeStyle = (
 	fontSize: '0.9rem',
 	fontWeight: 500,
 	justifyContent: 'center',
-	border: '1px solid black',
 	padding: '4px 12px',
-	width: '8ch',
-  });
+	width: '8ch'
+});
 
 export const legendTextStyle: CSSProperties = {
 	fontSize: '1rem',

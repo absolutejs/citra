@@ -1,39 +1,10 @@
 import { providers } from './providers';
 import {
 	ConfigFor,
-	OAuth2TokenResponse,
 	ProviderOption,
 	RefreshableProvider,
 	RevocableProvider
 } from './types';
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-	typeof value === 'object' && value !== null;
-
-export const isValidOAuth2TokenResponse = (
-	tokens: unknown
-): tokens is OAuth2TokenResponse => {
-	if (!isRecord(tokens)) return false;
-
-	if (typeof tokens['access_token'] !== 'string') return false;
-	if (typeof tokens['token_type'] !== 'string') return false;
-
-	if (
-		'refresh_token' in tokens &&
-		typeof tokens['refresh_token'] !== 'string'
-	)
-		return false;
-
-	if ('expires_in' in tokens && typeof tokens['expires_in'] !== 'number')
-		return false;
-
-	if ('scope' in tokens && typeof tokens['scope'] !== 'string') return false;
-
-	if ('id_token' in tokens && typeof tokens['id_token'] !== 'string')
-		return false;
-
-	return true;
-};
 
 export const isValidProviderOption = (
 	provider: string

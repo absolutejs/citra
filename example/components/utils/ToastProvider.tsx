@@ -23,12 +23,12 @@ type AddToastProps = {
 	duration?: number;
 };
 
-export type ToastContextType = {
+type ToastContextType = {
 	addToast: (opts: AddToastProps) => void;
 	registerHost: (host: HTMLElement | null) => void;
 };
 
-export const ToastContext = createContext<ToastContextType | null>(null);
+const ToastContext = createContext<ToastContextType | null>(null);
 export const useToast = () => {
 	const ctx = useContext(ToastContext);
 	if (!ctx) throw new Error('useToast must be used within ToastProvider');

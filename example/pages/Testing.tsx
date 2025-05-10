@@ -3,12 +3,9 @@ import { isValidProviderOption } from '../../src/typeGuards';
 import { Head } from '../components/page/Head';
 import { Navbar } from '../components/page/Navbar';
 import { Legend } from '../components/testing/Legend';
-import { useAuthStatus } from '../hooks/useAuthStatus';
 import { htmlDefault, bodyDefault, mainDefault } from '../styles/styles';
 
 export const Testing = () => {
-	const { user, handleSignOut } = useAuthStatus();
-
 	const providerOptions = Object.keys(providers).filter(
 		isValidProviderOption
 	);
@@ -17,7 +14,7 @@ export const Testing = () => {
 		<html lang="en" style={htmlDefault}>
 			<Head />
 			<body style={bodyDefault}>
-				<Navbar user={user} handleSignOut={handleSignOut} />
+				<Navbar />
 				<main style={mainDefault}>
 					<h1
 						style={{
@@ -49,8 +46,9 @@ export const Testing = () => {
 						<br />
 						<br />
 						Test providers from this screen by opening a provider's
-						tab—you'll find a link to create an OAuth app on that provider and controls to exercise each step of the
-						OAuth 2.0 flow.
+						tab—you'll find a link to create an OAuth app on that
+						provider and controls to exercise each step of the OAuth
+						2.0 flow.
 					</p>
 
 					<Legend />

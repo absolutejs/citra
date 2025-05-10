@@ -53,10 +53,12 @@ import { slackPlugin } from '../providers/slack';
 import { spotifyPlugin } from '../providers/spotify';
 import { startggPlugin } from '../providers/start.gg';
 import { stravaPlugin } from '../providers/strava';
+import { synologyPlugin } from '../providers/synology';
 import { tiktokPlugin } from '../providers/tiktok';
 import { tiltifyPlugin } from '../providers/tiltify';
 import { tumblrPlugin } from '../providers/tumblr';
 import { twitchPlugin } from '../providers/twitch';
+import { twitterPlugin } from '../providers/twitter';
 import { vkPlugin } from '../providers/vk';
 import { workOSPlugin } from '../providers/workos';
 import { yahooPlugin } from '../providers/yahoo';
@@ -118,10 +120,12 @@ const allProviders = [
 	spotifyPlugin,
 	startggPlugin,
 	stravaPlugin,
+	synologyPlugin,
 	tiktokPlugin,
 	tiltifyPlugin,
 	tumblrPlugin,
 	twitchPlugin,
+	twitterPlugin,
 	vkPlugin,
 	workOSPlugin,
 	yahooPlugin,

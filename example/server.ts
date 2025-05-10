@@ -9,7 +9,6 @@ import { Documentation } from './pages/Documentation';
 import { Home } from './pages/Home';
 import { Testing } from './pages/Testing';
 import { providersPlugin } from './plugins/providersPlugin';
-import { statusPlugin } from './plugins/statusPlugin';
 
 const manifest = await build({
 	assetsDir: 'example/assets',
@@ -41,7 +40,6 @@ new Elysia()
 			prefix: ''
 		})
 	)
-	.use(statusPlugin)
 	.get('/', () => handleReactPageRequest(Home, homeIndex))
 	.get('/testing', () => handleReactPageRequest(Testing, testingIndex))
 	.get('/documentation', () =>

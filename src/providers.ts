@@ -1,3 +1,4 @@
+import { isValidProviderOption } from './typeGuards';
 import { DefineProviders } from './types';
 import { encodeBase64 } from './utils';
 
@@ -1273,3 +1274,7 @@ export const providers = defineProviders({
 		}
 	}
 });
+
+export const providerOptions = Object.keys(providers).filter(
+	isValidProviderOption
+);

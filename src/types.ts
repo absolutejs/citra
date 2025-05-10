@@ -7,7 +7,7 @@ type URLSearchParamsInit =
 	| string[][]
 	| URLSearchParams;
 
-export type ProfileRequestConfig = {
+type ProfileRequestConfig = {
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	url: string | ((config: any) => string);
@@ -40,9 +40,9 @@ type BodyOrHeaderRevocation = BaseRevocation & {
 	tokenParamName?: never;
 };
 
-export type RevocationRequestConfig = QueryRevocation | BodyOrHeaderRevocation;
+type RevocationRequestConfig = QueryRevocation | BodyOrHeaderRevocation;
 
-export type TokenRequestConfig = {
+type TokenRequestConfig = {
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	url: string | ((config: any) => string);
@@ -136,7 +136,7 @@ export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
 	(P extends RefreshableProvider ? RefreshableOAuth2Client : unknown) &
 	(P extends RevocableProvider ? RevocableOAuth2Client : unknown);
 
-export type ProviderConfig = {
+type ProviderConfig = {
 	// TODO : remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	authorizationUrl: string | ((config: any) => string);
@@ -177,347 +177,344 @@ export type OAuth2TokenResponse = {
 	id_token?: string;
 };
 
-export type FortyTwoOAuth2Config = {
+type FortyTwoOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type AmazonCognitoOAuth2Config = {
+type AmazonCognitoOAuth2Config = {
 	domain: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-export type AniListOAuth2Config = {
+type AniListOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type AppleOAuth2Config = {
+type AppleOAuth2Config = {
 	clientId: string;
 	teamId: string;
 	keyId: string;
 	pkcs8PrivateKey: Uint8Array;
 	redirectUri: string;
 };
-export type Auth0OAuth2Config = {
+type Auth0OAuth2Config = {
 	domain: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-export type AuthentikOAuth2Config = {
+type AuthentikOAuth2Config = {
 	baseURL: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-export type AutodeskOAuth2Config = {
+type AutodeskOAuth2Config = {
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-export type AtlassianOAuth2Config = {
+type AtlassianOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type BattlenetOAuth2Config = {
+type BattlenetOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type BitbucketOAuth2Config = {
+type BitbucketOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type BoxOAuth2Config = {
+type BoxOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type BungieOAuth2Config = {
+type BungieOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type CoinbaseOAuth2Config = {
+type CoinbaseOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type DiscordOAuth2Config = {
+type DiscordOAuth2Config = {
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-export type DonationAlertsOAuth2Config = {
+type DonationAlertsOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type DribbbleOAuth2Config = {
+type DribbbleOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type DropboxOAuth2Config = {
+type DropboxOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type EpicGamesOAuth2Config = {
+type EpicGamesOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type EtsyOAuth2Config = {
+type EtsyOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type FacebookOAuth2Config = {
+type FacebookOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type FigmaOAuth2Config = {
+type FigmaOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type GiteaOAuth2Config = {
+type GiteaOAuth2Config = {
 	baseURL: string;
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type GitHubOAuth2Config = {
+type GitHubOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string | null;
 };
-export type GitLabOAuth2Config = {
+type GitLabOAuth2Config = {
 	baseURL: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-export type GoogleOAuth2Config = {
+type GoogleOAuth2Config = {
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-export type IntuitOAuth2Config = {
+type IntuitOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 	environment: 'sandbox' | 'production';
 };
-export type KakaoOAuth2Config = {
+type KakaoOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type KeycloakOAuth2Config = {
+type KeycloakOAuth2Config = {
 	realmURL: string;
 	clientId: string;
 	clientSecret: string | null;
 	redirectUri: string;
 };
-export type KickOAuth2Config = {
+type KickOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-
-export type LichessOAuth2Config = {
+type LichessOAuth2Config = {
 	clientId: string;
 	redirectUri: string;
 };
-
-export type LINEOAuth2Config = {
+type LINEOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-
-export type LinearOAuth2Config = {
+type LinearOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type LinkedInOAuth2Config = {
+type LinkedInOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type MastodonOAuth2Config = {
+type MastodonOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 	baseURL: string;
 };
-export type MercadoLibreOAuth2Config = {
+type MercadoLibreOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type MercadoPagoOAuth2Config = {
+type MercadoPagoOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type MicrosoftEntraIdOAuth2Config = {
+type MicrosoftEntraIdOAuth2Config = {
 	tenantId: string;
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type MyAnimeListOAuth2Config = {
+type MyAnimeListOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type NaverOAuth2Config = {
+type NaverOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type NotionOAuth2Config = {
+type NotionOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type OktaOAuth2Config = {
+type OktaOAuth2Config = {
 	domain: string;
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type OsuOAuth2Config = {
+type OsuOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type PatreonOAuth2Config = {
+type PatreonOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type PolarOAuth2Config = {
+type PolarOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type PolarAccessLinkOAuth2Config = {
+type PolarAccessLinkOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type PolarTeamProOAuthOAuth2Config = {
+type PolarTeamProOAuthOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type RedditOAuth2Config = {
+type RedditOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type RobloxOAuth2Config = {
+type RobloxOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type SalesforceOAuth2Config = {
+type SalesforceOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type ShikimoriOAuth2Config = {
+type ShikimoriOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type SlackOAuth2Config = {
+type SlackOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type SpotifyOAuth2Config = {
+type SpotifyOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type StartGGOAuth2Config = {
+type StartGGOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type StravaOAuth2Config = {
+type StravaOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type SynologyOAuth2Config = {
+type SynologyOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type TikTokOAuth2Config = {
+type TikTokOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type TiltifyOAuth2Config = {
+type TiltifyOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type TumblrOAuth2Config = {
+type TumblrOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type TwitchOAuth2Config = {
+type TwitchOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type TwitterOAuth2Config = {
+type TwitterOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type VKOAuth2Config = {
+type VKOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type WorkOSOAuth2Config = {
+type WorkOSOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type YahooOAuth2Config = {
+type YahooOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type YandexOAuth2Config = {
+type YandexOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
-export type ZoomOAuth2Config = {
+type ZoomOAuth2Config = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
 };
 
-export type ConfigMap = {
+type ConfigMap = {
 	'42': FortyTwoOAuth2Config;
 	AmazonCognito: AmazonCognitoOAuth2Config;
 	AniList: AniListOAuth2Config;

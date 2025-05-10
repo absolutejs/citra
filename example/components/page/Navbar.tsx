@@ -1,13 +1,6 @@
-import { User } from '../../db/schema';
 import { linkStyle } from '../../styles/styles';
-import { NavbarUserButtons } from './NavbarUserButtons';
 
-type NavbarProps = {
-	user: User | undefined;
-	handleSignOut: () => Promise<void>;
-};
-
-export const Navbar = ({ user, handleSignOut }: NavbarProps) => (
+export const Navbar = () => (
 	<header
 		style={{
 			alignItems: 'center',
@@ -39,21 +32,8 @@ export const Navbar = ({ user, handleSignOut }: NavbarProps) => (
 			Citra
 		</a>
 
-		<nav
-			style={{
-				display: 'flex',
-				gap: '20px'
-			}}
-		>
-			<a href="/documentation" style={linkStyle}>
-				Documentation
-			</a>
-
-			<a href="/testing" style={linkStyle}>
-				Testing
-			</a>
-
-			<NavbarUserButtons user={user} handleSignOut={handleSignOut} />
-		</nav>
+		<a href="/documentation" style={linkStyle}>
+			Documentation
+		</a>
 	</header>
 );

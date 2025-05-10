@@ -2,16 +2,9 @@ import { providers } from '../../src/providers';
 import { isValidProviderOption } from '../../src/typeGuards';
 import { Head } from '../components/page/Head';
 import { Navbar } from '../components/page/Navbar';
+import { Legend } from '../components/testing/Legend';
 import { useAuthStatus } from '../hooks/useAuthStatus';
 import { htmlDefault, bodyDefault, mainDefault } from '../styles/styles';
-import {
-	legendWrapperStyle,
-	legendTitleStyle,
-	legendGridStyle,
-	badgeStyle,
-	legendTextStyle,
-	legendFooterStyle
-} from '../styles/testingStyles';
 
 export const Testing = () => {
 	const { user, handleSignOut } = useAuthStatus();
@@ -61,31 +54,7 @@ export const Testing = () => {
 						OAuth 2.0 flow.
 					</p>
 
-					<div style={legendWrapperStyle}>
-						<h2 style={legendTitleStyle}>Status Key</h2>
-						<div style={legendGridStyle}>
-							<span style={badgeStyle('#888')}>Untested</span>
-							<p style={legendTextStyle}>
-								Pending external or restricted access.
-							</p>
-
-							<span style={badgeStyle('#4caf50')}>Tested</span>
-							<p style={legendTextStyle}>
-								Verified routes actively working and
-								community-tested.
-							</p>
-
-							<span style={badgeStyle('#e53935')}>Failed</span>
-							<p style={legendTextStyle}>
-								Library or endpoint issues (not user error).
-							</p>
-						</div>
-
-						<p style={legendFooterStyle}>
-							Every test here updates our database in real time,
-							informing all users which routes are working.
-						</p>
-					</div>
+					<Legend />
 
 					<div
 						style={{

@@ -2,6 +2,8 @@ import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
+import { User } from '../db/schema';
+import { sessionStore } from '../plugins/sessionStore';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -21,9 +23,15 @@ const auth0OAuth2Client = createOAuth2Client('Auth0', {
 });
 
 export const auth0Plugin = new Elysia()
+	.use(sessionStore<User>())
 	.get(
 		'/oauth2/auth0/authorization',
-		async ({ redirect, error, cookie: { state, code_verifier } }) => {
+		async ({
+			redirect,
+			store: { session },
+			error,
+			cookie: { state, code_verifier }
+		}) => {
 			if (state === undefined || code_verifier === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
@@ -62,6 +70,7 @@ export const auth0Plugin = new Elysia()
 		async ({
 			error,
 			redirect,
+			store: { session },
 			cookie: { state: stored_state, code_verifier },
 			query: { code, state: callback_state }
 		}) => {

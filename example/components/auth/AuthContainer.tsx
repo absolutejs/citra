@@ -30,9 +30,8 @@ export const AuthContainer = () => {
 					: 'Create an account'}
 			</h1>
 
-
 			<OAuthButtons mode={mode} />
-			
+
 			<Divider text="or" />
 
 			<p style={loginTextStyle}>

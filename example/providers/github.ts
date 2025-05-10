@@ -2,6 +2,8 @@ import { env } from 'process';
 import { Elysia } from 'elysia';
 import { createOAuth2Client } from '../../src';
 import { generateState } from '../../src/arctic-utils';
+import { User } from '../db/schema';
+import { sessionStore } from '../plugins/sessionStore';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
@@ -19,9 +21,10 @@ const githubOAuth2Client = createOAuth2Client('GitHub', {
 });
 
 export const githubPlugin = new Elysia()
+	.use(sessionStore<User>())
 	.get(
 		'/oauth2/github/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
+		async ({ redirect, store: { session }, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
@@ -48,6 +51,7 @@ export const githubPlugin = new Elysia()
 		async ({
 			error,
 			redirect,
+			store: { session },
 			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {

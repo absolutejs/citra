@@ -371,8 +371,8 @@ export const isRevocableProvider = (
 };
 
 export const hasClientSecret = <P extends ProviderOption>(
-	cfg: ConfigFor<P>
-): cfg is ConfigFor<P> & { clientSecret: string } => {
+	credentials: CredentialsFor<P>
+): credentials is CredentialsFor<P> & { clientSecret: string } => {
 	/* ... */
 };
 ```

@@ -25,10 +25,10 @@ export const isRevocableProvider = (
 	providers[provider].revocationRequest !== undefined;
 
 export const hasClientSecret = <P extends ProviderOption>(
-	cfg: CredentialsFor<P>
-): cfg is CredentialsFor<P> & { clientSecret: string } => {
-	if (typeof cfg !== 'object' || cfg === null) return false;
-	const secret = Reflect.get(cfg, 'clientSecret');
+	credentials: CredentialsFor<P>
+): credentials is CredentialsFor<P> & { clientSecret: string } => {
+	if (typeof credentials !== 'object' || credentials === null) return false;
+	const secret = Reflect.get(credentials, 'clientSecret');
 
 	return typeof secret === 'string';
 };

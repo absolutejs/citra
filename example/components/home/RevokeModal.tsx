@@ -1,13 +1,15 @@
 import { Dispatch, SetStateAction, useState, FormEvent } from 'react';
 import { providers } from '../../../src/providers';
-import { isRevocableProvider } from '../../../src/typeGuards';
+import { isRevocableProviderOption } from '../../../src/typeGuards';
 import { RevocableProvider } from '../../../src/types';
 import { formButtonStyle, formStyle } from '../../styles/styles';
 import { Modal } from '../utils/Modal';
 import { ProviderDropdown } from '../utils/ProviderDropdown';
 import { useToast } from '../utils/ToastProvider';
 
-const revocableProviders = Object.keys(providers).filter(isRevocableProvider);
+const revocableProviders = Object.keys(providers).filter(
+	isRevocableProviderOption
+);
 
 type RevokeModalProps = {
 	revokeModalOpen: boolean;

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState, FormEvent } from 'react';
 import { providers } from '../../../src/providers';
-import { isRefreshableProvider } from '../../../src/typeGuards';
+import { isRefreshableProviderOption } from '../../../src/typeGuards';
 import { RefreshableProvider } from '../../../src/types';
 import { formStyle, formButtonStyle } from '../../styles/styles';
 import { Modal } from '../utils/Modal';
@@ -8,7 +8,7 @@ import { ProviderDropdown } from '../utils/ProviderDropdown';
 import { useToast } from '../utils/ToastProvider';
 
 const refreshableProviders = Object.keys(providers).filter(
-	isRefreshableProvider
+	isRefreshableProviderOption
 );
 
 type RefreshModalProps = {

@@ -1,6 +1,6 @@
 import { providers } from './providers';
 
-type NonEmptyArray<T> = [T, ...T[]];
+export type NonEmptyArray<T> = [T, ...T[]];
 type URLSearchParamsInit =
 	| string
 	| Record<string, string>
@@ -107,7 +107,7 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 	createAuthorizationUrl(
 		opts: { state: string } & (P extends PKCEProvider
 			? { codeVerifier: string }
-			: unknown) &
+			: { codeVerifier?: string }) &
 			(P extends ScopeRequiredProvider
 				? { scope: NonEmptyArray<string> }
 				: { scope?: string[] }) & {
@@ -118,7 +118,7 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 	validateAuthorizationCode(
 		opts: { code: string } & (P extends PKCEProvider
 			? { codeVerifier: string }
-			: unknown)
+			: { codeVerifier?: string })
 	): Promise<OAuth2TokenResponse>;
 
 	fetchUserProfile(accessToken: string): Promise<unknown>;
@@ -130,6 +130,20 @@ export type RefreshableOAuth2Client = {
 
 export type RevocableOAuth2Client = {
 	revokeToken(token: string): Promise<void>;
+};
+
+export type PKCEOAuth2Client = {
+	createAuthorizationUrl(opts: {
+		state: string;
+		codeVerifier: string;
+		scope?: string[];
+		searchParams?: [string, string][];
+	}): Promise<URL>;
+
+	validateAuthorizationCode(opts: {
+		code: string;
+		codeVerifier: string;
+	}): Promise<OAuth2TokenResponse>;
 };
 
 export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &

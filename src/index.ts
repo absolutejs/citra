@@ -11,16 +11,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 	const meta = providers[providerName];
 
 	const isConfigPropertyFunction = <T>(
-		configProperty: T | ((cfg: CredentialsFor<P>) => T)
-	): configProperty is (cfg: CredentialsFor<P>) => T =>
-		typeof configProperty === 'function';
+		cfgProp: T | ((cfg: CredentialsFor<P>) => T)
+	): cfgProp is (cfg: CredentialsFor<P>) => T =>
+		typeof cfgProp === 'function';
 
 	const resolveConfigProp = <T>(
-		configProperty: T | ((cfg: CredentialsFor<P>) => T)
-	) =>
-		isConfigPropertyFunction(configProperty)
-			? configProperty(config)
-			: configProperty;
+		cfgProp: T | ((cfg: CredentialsFor<P>) => T)
+	) => (isConfigPropertyFunction(cfgProp) ? cfgProp(config) : cfgProp);
 
 	const authorizationUrl = resolveConfigProp(meta.authorizationUrl);
 	const tokenUrl = resolveConfigProp(meta.tokenRequest.url);
@@ -33,50 +30,38 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			codeVerifier?: string;
 		}) {
 			const { state, scope = [], searchParams = [], codeVerifier } = opts;
-
 			const url = new URL(authorizationUrl);
+
 			url.searchParams.set('response_type', 'code');
 			url.searchParams.set('client_id', config.clientId);
-
-			if (config.redirectUri) {
+			if (config.redirectUri)
 				url.searchParams.set('redirect_uri', config.redirectUri);
-			}
-			if (state) {
-				url.searchParams.set('state', state);
-			}
-			if (scope.length) {
-				url.searchParams.set('scope', scope.join(' '));
-			}
+			if (state) url.searchParams.set('state', state);
+			if (scope.length) url.searchParams.set('scope', scope.join(' '));
 
 			if (meta.PKCEMethod !== undefined) {
-				if (codeVerifier === undefined) {
+				if (!codeVerifier) {
 					throw new Error(
-						'`codeVerifier` is required when `meta.isPKCE` is true'
+						'`codeVerifier` is required when PKCE is enabled'
 					);
 				}
-
 				const codeChallenge =
 					meta.PKCEMethod === 'S256'
 						? await createS256CodeChallenge(codeVerifier)
 						: codeVerifier;
-
 				url.searchParams.set('code_challenge_method', meta.PKCEMethod);
 				url.searchParams.set('code_challenge', codeChallenge);
 			}
 
-			const { createAuthorizationURLSearchParams } = meta;
-
 			Object.entries(
-				resolveConfigProp(createAuthorizationURLSearchParams) ?? {}
-			).forEach(([key, value]) => url.searchParams.set(key, value));
-			searchParams.forEach(([key, value]) =>
-				url.searchParams.set(key, value)
-			);
+				resolveConfigProp(meta.createAuthorizationURLSearchParams) ?? {}
+			).forEach(([k, v]) => url.searchParams.set(k, v));
+			searchParams.forEach(([k, v]) => url.searchParams.set(k, v));
 
 			return url;
 		},
 
-		async fetchUserProfile(accessToken) {
+		async fetchUserProfile(accessToken: string) {
 			const { profileRequest } = meta;
 			const {
 				url,
@@ -88,34 +73,21 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			} = profileRequest;
 
 			const endpoint = new URL(resolveConfigProp(url));
-			const params = new URLSearchParams(searchParams);
-
-			for (const [key, value] of params.entries()) {
-				endpoint.searchParams.append(key, value);
-			}
-
-			const rawHeaders = headers ? resolveConfigProp(headers) : undefined;
-			let headerEntries: [string, string][] = [];
-			if (rawHeaders instanceof Headers) {
-				headerEntries = Array.from(rawHeaders.entries());
-			}
-			if (Array.isArray(rawHeaders)) {
-				headerEntries = rawHeaders;
-			}
-			if (
-				rawHeaders &&
-				typeof rawHeaders === 'object' &&
-				!(rawHeaders instanceof Headers) &&
-				!Array.isArray(rawHeaders)
-			) {
-				headerEntries = Object.entries(rawHeaders);
-			}
-
-			const filteredEntries = headerEntries.filter(
-				([, value]) => value !== ''
+			new URLSearchParams(searchParams).forEach((v, k) =>
+				endpoint.searchParams.append(k, v)
 			);
-			const profileHeaders: Record<string, string> =
-				Object.fromEntries(filteredEntries);
+
+			let headerEntries: [string, string][] = [];
+			const rawHeaders = headers ? resolveConfigProp(headers) : undefined;
+			if (rawHeaders instanceof Headers)
+				headerEntries = Array.from(rawHeaders.entries());
+			else if (Array.isArray(rawHeaders)) headerEntries = rawHeaders;
+			else if (rawHeaders && typeof rawHeaders === 'object')
+				headerEntries = Object.entries(rawHeaders);
+
+			const profileHeaders = Object.fromEntries(
+				headerEntries.filter(([, v]) => v !== '')
+			);
 
 			if (authIn === 'header') {
 				profileHeaders.Authorization = `Bearer ${accessToken}`;
@@ -130,30 +102,23 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 
 			const response = await fetch(endpoint.toString(), init);
-			if (!response.ok) {
-				throw await createOAuth2FetchError(response);
-			}
+			if (!response.ok) throw await createOAuth2FetchError(response);
 
 			return response.json();
 		},
 
 		async refreshAccessToken(refreshToken: string) {
 			const { authIn, encoding } = meta.tokenRequest;
-
 			const params = new URLSearchParams(meta.refreshAccessTokenBody);
 			params.set('grant_type', 'refresh_token');
 			params.set('refresh_token', refreshToken);
 
 			const { clientId } = config;
 			let clientSecretValue: string | undefined;
-
 			if (hasClientSecret(config)) {
-				// destructure inside the guard
-				const { clientSecret } = config;
-				clientSecretValue = clientSecret;
-
+				clientSecretValue = config.clientSecret;
 				params.set('client_id', clientId);
-				params.set('client_secret', clientSecret);
+				params.set('client_secret', clientSecretValue);
 			}
 
 			const request = createOAuth2Request({
@@ -164,11 +129,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				encoding,
 				url: tokenUrl
 			});
-
 			const response = await fetch(request);
-			if (!response.ok) {
-				throw await createOAuth2FetchError(response);
-			}
+			if (!response.ok) throw await createOAuth2FetchError(response);
 
 			return response.json();
 		},
@@ -177,7 +139,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			const { revocationRequest } = meta;
 			if (!revocationRequest) {
 				throw new Error(
-					'Token revocation request is not defined for this provider'
+					'Token revocation not defined for this provider'
 				);
 			}
 
@@ -188,7 +150,6 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			const revocationHeaders = new Headers(
 				headers && resolveConfigProp(headers)
 			);
-
 			const { clientId } = config;
 			const clientSecret = hasClientSecret(config)
 				? config.clientSecret
@@ -198,11 +159,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			if (authIn === 'body') {
 				revocationBody.set(tokenParamName, token);
 				revocationBody.set('client_id', clientId);
-				void (
-					clientSecret &&
-					revocationBody.set('client_secret', clientSecret)
-				);
-
+				if (clientSecret)
+					revocationBody.set('client_secret', clientSecret);
 				request = createOAuth2Request({
 					authIn: 'body',
 					body: revocationBody,
@@ -213,8 +171,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					url: endpoint.toString()
 				});
 			} else if (authIn === 'header') {
-				revocationHeaders?.set('Authorization', `Bearer ${token}`);
-
+				revocationHeaders.set('Authorization', `Bearer ${token}`);
 				request = createOAuth2Request({
 					authIn: 'header',
 					body: revocationBody,
@@ -237,9 +194,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 
 			const response = await fetch(request);
-			if (!response.ok) {
-				throw await createOAuth2FetchError(response);
-			}
+			if (!response.ok) throw await createOAuth2FetchError(response);
 		},
 
 		async validateAuthorizationCode(opts: {
@@ -250,18 +205,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			const { authIn, encoding } = meta.tokenRequest;
 
 			const bodyObj: Record<string, string> = {};
-			const defaults = meta.validateAuthorizationCodeBody ?? {};
-			for (const key in defaults) {
-				const value = defaults[key];
-				if (typeof value !== 'string') continue;
-				bodyObj[key] = value;
+			for (const key in meta.validateAuthorizationCodeBody ?? {}) {
+				const v = meta.validateAuthorizationCodeBody![key];
+				if (typeof v === 'string') bodyObj[key] = v;
 			}
-
 			bodyObj.grant_type = 'authorization_code';
 			bodyObj.code = code;
-			if (config.redirectUri) {
-				bodyObj.redirect_uri = config.redirectUri;
-			}
+			if (config.redirectUri) bodyObj.redirect_uri = config.redirectUri;
 			if (meta.PKCEMethod !== undefined) {
 				if (!codeVerifier) {
 					throw new Error(
@@ -278,18 +228,14 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				authIn,
 				body: payload,
 				clientId: config.clientId,
-				clientSecret:
-					'clientSecret' in config && config.clientSecret
-						? config.clientSecret
-						: undefined,
+				clientSecret: hasClientSecret(config)
+					? config.clientSecret
+					: undefined,
 				encoding,
 				url: tokenUrl
 			});
-
 			const response = await fetch(request);
-			if (!response.ok) {
-				throw await createOAuth2FetchError(response);
-			}
+			if (!response.ok) throw await createOAuth2FetchError(response);
 
 			return response.json();
 		}

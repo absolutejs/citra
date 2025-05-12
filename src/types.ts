@@ -132,7 +132,7 @@ export type RevocableOAuth2Client = {
 	revokeToken(token: string): Promise<void>;
 };
 
-export type PKCEOAuth2Client = {
+export type PKCEOAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> & {
 	createAuthorizationUrl(opts: {
 		state: string;
 		codeVerifier: string;

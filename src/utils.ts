@@ -31,6 +31,42 @@ export const encodeBase64 = (input: string | ArrayBuffer | Uint8Array) => {
 	return btoa(raw);
 };
 
+export const decodeBase64 = (
+	input: string,
+	toUint8Array = false
+): string | Uint8Array => {
+	const b64 =
+		input.replace(/-/g, '+').replace(/_/g, '/') +
+		'=='.slice(0, (4 - (input.length % 4)) % 4);
+
+	const raw = atob(b64);
+
+	if (toUint8Array) {
+		const bytes = new Uint8Array(raw.length);
+		for (let i = 0; i < raw.length; i++) {
+			bytes[i] = raw.charCodeAt(i);
+		}
+		return bytes;
+	}
+
+	return raw;
+};
+
+export const decodeJWT = (tokenString: string): Record<string, unknown> => {
+	const [headerSegment, payloadSegment, signatureSegment] =
+		tokenString.split('.');
+	if (!headerSegment || !payloadSegment || !signatureSegment) {
+		throw new Error('Invalid JWT format');
+	}
+
+	const decodedPayload = decodeBase64(payloadSegment);
+	if (typeof decodedPayload !== 'string') {
+		throw new Error('Expected JWT payload to be a UTF-8 string');
+	}
+
+	return JSON.parse(decodedPayload);
+};
+
 export const createOAuth2Request = ({
 	url,
 	body,

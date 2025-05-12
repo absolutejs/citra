@@ -1275,6 +1275,13 @@ export const providers = defineProviders({
 	}
 });
 
+export const normalizedProviders: Record<
+	string,
+	(typeof providers)[keyof typeof providers]
+> = Object.fromEntries(
+	Object.entries(providers).map(([key, def]) => [key.toLowerCase(), def])
+);
+
 export const providerOptions = Object.keys(providers).filter(
 	isValidProviderOption
 );

@@ -245,3 +245,5 @@ export const createOAuth2Client = <P extends ProviderOption>(
 export { providers, providerOptions };
 export * from './types';
 export * from './typeGuards';
+export * from './arctic-utils';
+export * from './utils';

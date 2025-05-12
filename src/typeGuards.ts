@@ -1,4 +1,4 @@
-import { providers } from './providers';
+import { normalizedProviders, providers } from './providers';
 import {
 	BaseOAuth2Client,
 	CredentialsFor,
@@ -14,10 +14,10 @@ import {
 
 export const isValidProviderOption = (
 	option: string
-): option is keyof typeof providers =>
-	Object.keys(providers).includes(
-		option.charAt(0).toUpperCase() + option.slice(1)
-	);
+): option is ProviderOption => {
+	const normalizedOption = option.toLowerCase();
+	return Object.keys(normalizedProviders).includes(normalizedOption);
+};
 
 export const isRefreshableProviderOption = (
 	option: string
@@ -31,7 +31,7 @@ export const isRevocableProviderOption = (
 	providers[option].revocationRequest !== undefined;
 
 export const isPKCEProviderOption = (option: string): option is PKCEProvider =>
-	isValidProviderOption(option) && providers[option].PKCEMethod !== undefined;
+	normalizedProviders[option.toLowerCase()]?.PKCEMethod !== undefined;
 
 export const isOIDCProviderOption = (option: string): option is OIDCProvider =>
 	isValidProviderOption(option) && providers[option].isOIDC;
@@ -39,7 +39,7 @@ export const isOIDCProviderOption = (option: string): option is OIDCProvider =>
 export const isPKCEOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & PKCEOAuth2Client =>
+): client is PKCEOAuth2Client<P> =>
 	providers[providerName].PKCEMethod !== undefined;
 
 export const isRefreshableOAuth2Client = <P extends ProviderOption>(

@@ -121,7 +121,7 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 			: { codeVerifier?: string })
 	): Promise<OAuth2TokenResponse>;
 
-	fetchUserProfile(accessToken: string): Promise<unknown>;
+	fetchUserProfile(accessToken: string): Promise<Record<string, unknown>>;
 };
 
 export type RefreshableOAuth2Client = {
@@ -130,20 +130,6 @@ export type RefreshableOAuth2Client = {
 
 export type RevocableOAuth2Client = {
 	revokeToken(token: string): Promise<void>;
-};
-
-export type PKCEOAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> & {
-	createAuthorizationUrl(opts: {
-		state: string;
-		codeVerifier: string;
-		scope?: string[];
-		searchParams?: [string, string][];
-	}): Promise<URL>;
-
-	validateAuthorizationCode(opts: {
-		code: string;
-		codeVerifier: string;
-	}): Promise<OAuth2TokenResponse>;
 };
 
 export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &

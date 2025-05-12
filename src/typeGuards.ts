@@ -3,7 +3,6 @@ import {
 	BaseOAuth2Client,
 	CredentialsFor,
 	OIDCProvider,
-	PKCEOAuth2Client,
 	PKCEProvider,
 	ProviderOption,
 	RefreshableOAuth2Client,
@@ -36,12 +35,6 @@ export const isPKCEProviderOption = (option: string): option is PKCEProvider =>
 export const isOIDCProviderOption = (option: string): option is OIDCProvider =>
 	isValidProviderOption(option) && providers[option].isOIDC;
 
-export const isPKCEOAuth2Client = <P extends ProviderOption>(
-	providerName: P,
-	client: BaseOAuth2Client<P>
-): client is PKCEOAuth2Client<P> =>
-	providers[providerName].PKCEMethod !== undefined;
-
 export const isRefreshableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
@@ -53,12 +46,6 @@ export const isRevocableOAuth2Client = <P extends ProviderOption>(
 	client: BaseOAuth2Client<P>
 ): client is BaseOAuth2Client<P> & RevocableOAuth2Client =>
 	providers[providerName].revocationRequest !== undefined;
-
-export const isOIDCOAuth2Client = <P extends ProviderOption>(
-	providerName: P,
-	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & { getUserInfo: () => Promise<void> } =>
-	providers[providerName].isOIDC;
 
 export const hasClientSecret = <P extends ProviderOption>(
 	credentials: CredentialsFor<P>

@@ -411,7 +411,6 @@ export const providers = defineProviders({
 	GitHub: {
 		authorizationUrl: 'https://github.com/login/oauth/authorize',
 		isOIDC: false,
-
 		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',

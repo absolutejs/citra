@@ -8,7 +8,8 @@ import {
 	RefreshableOAuth2Client,
 	RefreshableProvider,
 	RevocableOAuth2Client,
-	RevocableProvider
+	RevocableProvider,
+	ScopeRequiredProvider
 } from './types';
 
 export const isValidProviderOption = (
@@ -51,6 +52,14 @@ export const isOIDCProviderOption = (
 	return provider.isOIDC;
 };
 
+export const isScopeRequiredProviderOption = (
+	option: string
+): option is ScopeRequiredProvider => {
+	if (!isValidProviderOption(option)) return false;
+	const provider = providers[option];
+	return provider.scopeRequired;
+};
+
 export const isRefreshableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
@@ -62,6 +71,7 @@ export const isRevocableOAuth2Client = <P extends ProviderOption>(
 	client: BaseOAuth2Client<P>
 ): client is BaseOAuth2Client<P> & RevocableOAuth2Client =>
 	isRevocableProviderOption(providerName);
+
 
 export const hasClientSecret = <P extends ProviderOption>(
 	credentials: CredentialsFor<P>

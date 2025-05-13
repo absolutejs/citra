@@ -1,6 +1,6 @@
 {
 	"name": "citra",
-	"version": "0.19.0",
+	"version": "0.20.0",
 	"description": "OAuth2 library for Typescript",
 	"repository": {
 		"type": "git",
@@ -20,7 +20,7 @@
 		"release": "bun run format && bun run build && bun publish"
 	},
 	"devDependencies": {
-		"@absolutejs/absolute": "0.4.0",
+		"@absolutejs/auth": "0.7.0",
 		"@elysiajs/static": "1.2.0",
 		"@stylistic/eslint-plugin-ts": "4.2.0",
 		"@neondatabase/serverless": "1.0.0",

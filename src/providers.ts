@@ -1,7 +1,9 @@
 import {
 	isOIDCProviderOption,
+	isPKCEProviderOption,
 	isRefreshableProviderOption,
 	isRevocableProviderOption,
+	isScopeRequiredProviderOption,
 	isValidProviderOption
 } from './typeGuards';
 import { DefineProviders } from './types';
@@ -1292,4 +1294,13 @@ export const oidcProviderOptions =
 
 export const revocableProviderOptions = Object.keys(providers).filter(
 	isRevocableProviderOption
+);
+
+export const scopeRequiredProviderOptions = Object.keys(providers).filter(
+	isScopeRequiredProviderOption
+);
+
+
+export const pkceProviderOption = Object.keys(providers).filter(
+	isPKCEProviderOption
 );

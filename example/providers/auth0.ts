@@ -13,7 +13,7 @@ if (
 	throw new Error('Auth0 OAuth2 credentials are not set in .env file');
 }
 
-const auth0OAuth2Client = createOAuth2Client('Auth0', {
+const auth0OAuth2Client = createOAuth2Client('auth0', {
 	clientId: env.AUTH0_CLIENT_ID,
 	clientSecret: env.AUTH0_CLIENT_SECRET,
 	domain: env.AUTH0_DOMAIN,

@@ -15,7 +15,7 @@ if (
 	);
 }
 
-const amazonCognitoOAuth2Client = createOAuth2Client('AmazonCognito', {
+const amazonCognitoOAuth2Client = createOAuth2Client('amazoncognito', {
 	clientId: env.AMAZON_COGNITO_CLIENT_ID,
 	clientSecret: env.AMAZON_COGNITO_CLIENT_SECRET,
 	domain: env.AMAZON_COGNITO_DOMAIN,

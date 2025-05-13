@@ -12,7 +12,7 @@ if (
 	throw new Error('start.gg OAuth2 credentials are not set in .env file');
 }
 
-const startggOAuth2Client = createOAuth2Client('StartGG', {
+const startggOAuth2Client = createOAuth2Client('startgg', {
 	clientId: env.STARTGG_CLIENT_ID,
 	clientSecret: env.STARTGG_CLIENT_SECRET,
 	redirectUri: env.STARTGG_REDIRECT_URI

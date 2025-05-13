@@ -12,7 +12,7 @@ if (
 	throw new Error('Battlenet OAuth2 credentials are not set in .env file');
 }
 
-const battlenetOAuth2Client = createOAuth2Client('Battlenet', {
+const battlenetOAuth2Client = createOAuth2Client('battlenet', {
 	clientId: env.BATTLENET_CLIENT_ID,
 	clientSecret: env.BATTLENET_CLIENT_SECRET,
 	redirectUri: env.BATTLENET_REDIRECT_URI

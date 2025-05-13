@@ -8,7 +8,7 @@ if (!env.LICHESS_CLIENT_ID || !env.LICHESS_REDIRECT_URI) {
 	throw new Error('Lichess OAuth2 credentials are not set in .env file');
 }
 
-const lichessOAuth2Client = createOAuth2Client('Lichess', {
+const lichessOAuth2Client = createOAuth2Client('lichess', {
 	clientId: env.LICHESS_CLIENT_ID,
 	redirectUri: env.LICHESS_REDIRECT_URI
 });

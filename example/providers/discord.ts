@@ -12,7 +12,7 @@ if (
 	throw new Error('Discord OAuth2 credentials are not set in .env file');
 }
 
-const discordOAuth2Client = createOAuth2Client('Discord', {
+const discordOAuth2Client = createOAuth2Client('discord', {
 	clientId: env.DISCORD_CLIENT_ID,
 	clientSecret: env.DISCORD_CLIENT_SECRET,
 	redirectUri: env.DISCORD_REDIRECT_URI

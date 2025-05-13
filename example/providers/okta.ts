@@ -13,7 +13,7 @@ if (
 	throw new Error('Okta OAuth2 credentials are not set in .env file');
 }
 
-const oktaOAuth2Client = createOAuth2Client('Okta', {
+const oktaOAuth2Client = createOAuth2Client('okta', {
 	clientId: env.OKTA_CLIENT_ID,
 	clientSecret: env.OKTA_CLIENT_SECRET,
 	domain: env.OKTA_DOMAIN,

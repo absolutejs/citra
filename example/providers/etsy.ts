@@ -8,7 +8,7 @@ if (!env.ETSY_KEYSTRING || !env.ETSY_SHARED_SECRET || !env.ETSY_REDIRECT_URI) {
 	throw new Error('Etsy OAuth2 credentials are not set in .env file');
 }
 
-const etsyOAuth2Client = createOAuth2Client('Etsy', {
+const etsyOAuth2Client = createOAuth2Client('etsy', {
 	clientId: env.ETSY_KEYSTRING,
 	clientSecret: env.ETSY_SHARED_SECRET,
 	redirectUri: env.ETSY_REDIRECT_URI

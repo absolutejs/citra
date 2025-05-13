@@ -12,7 +12,7 @@ if (
 	throw new Error('Atlassian OAuth2 credentials are not set in .env file');
 }
 
-const atlassianOAuth2Client = createOAuth2Client('Atlassian', {
+const atlassianOAuth2Client = createOAuth2Client('atlassian', {
 	clientId: env.ATLASSIAN_CLIENT_ID,
 	clientSecret: env.ATLASSIAN_CLIENT_SECRET,
 	redirectUri: env.ATLASSIAN_REDIRECT_URI

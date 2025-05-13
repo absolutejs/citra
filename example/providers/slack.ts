@@ -12,7 +12,7 @@ if (
 	throw new Error('Slack OAuth2 credentials are not set in .env file');
 }
 
-const slackOAuth2Client = createOAuth2Client('Slack', {
+const slackOAuth2Client = createOAuth2Client('slack', {
 	clientId: env.SLACK_CLIENT_ID,
 	clientSecret: env.SLACK_CLIENT_SECRET,
 	redirectUri: env.SLACK_REDIRECT_URI

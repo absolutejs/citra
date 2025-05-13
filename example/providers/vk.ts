@@ -8,7 +8,7 @@ if (!env.VK_CLIENT_ID || !env.VK_CLIENT_SECRET || !env.VK_REDIRECT_URI) {
 	throw new Error('VK OAuth2 credentials are not set in .env file');
 }
 
-const vkOAuth2Client = createOAuth2Client('VK', {
+const vkOAuth2Client = createOAuth2Client('vk', {
 	clientId: env.VK_CLIENT_ID,
 	clientSecret: env.VK_CLIENT_SECRET,
 	redirectUri: env.VK_REDIRECT_URI

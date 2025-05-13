@@ -13,7 +13,7 @@ if (
 	throw new Error('Authentik OAuth2 credentials are not set in .env file');
 }
 
-const authentikOAuth2Client = createOAuth2Client('Authentik', {
+const authentikOAuth2Client = createOAuth2Client('authentik', {
 	baseURL: env.AUTHENTIK_BASE_URL,
 	clientId: env.AUTHENTIK_CLIENT_ID,
 	clientSecret: env.AUTHENTIK_CLIENT_SECRET,

@@ -12,7 +12,7 @@ if (
 	throw new Error('MyAnimeList OAuth2 credentials are not set in .env file');
 }
 
-const myAnimeListOAuth2Client = createOAuth2Client('MyAnimeList', {
+const myAnimeListOAuth2Client = createOAuth2Client('myanimelist', {
 	clientId: env.MY_ANIME_LIST_CLIENT_ID,
 	clientSecret: env.MY_ANIME_LIST_CLIENT_SECRET,
 	redirectUri: env.MY_ANIME_LIST_REDIRECT_URI

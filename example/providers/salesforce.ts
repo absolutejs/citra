@@ -12,7 +12,7 @@ if (
 	throw new Error('Salesforce OAuth2 credentials are not set in .env file');
 }
 
-const salesforceOAuth2Client = createOAuth2Client('Salesforce', {
+const salesforceOAuth2Client = createOAuth2Client('salesforce', {
 	clientId: env.SALESFORCE_CONSUMER_KEY,
 	clientSecret: env.SALESFORCE_CONSUMER_SECRET,
 	redirectUri: env.SALESFORCE_REDIRECT_URI

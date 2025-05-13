@@ -12,7 +12,7 @@ if (
 	throw new Error('TikTok OAuth2 credentials are not set in .env file');
 }
 
-const tiktokOAuth2Client = createOAuth2Client('TikTok', {
+const tiktokOAuth2Client = createOAuth2Client('tiktok', {
 	clientId: env.TIK_TOK_CLIENT_KEY,
 	clientSecret: env.TIK_TOK_CLIENT_SECRET,
 	redirectUri: env.TIK_TOK_REDIRECT_URI

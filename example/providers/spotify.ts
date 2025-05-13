@@ -12,7 +12,7 @@ if (
 	throw new Error('Spotify OAuth2 credentials are not set in .env file');
 }
 
-const spotifyOAuth2Client = createOAuth2Client('Spotify', {
+const spotifyOAuth2Client = createOAuth2Client('spotify', {
 	clientId: env.SPOTIFY_CLIENT_ID,
 	clientSecret: env.SPOTIFY_CLIENT_SECRET,
 	redirectUri: env.SPOTIFY_REDIRECT_URI

@@ -12,7 +12,7 @@ if (
 	throw new Error('Mercado Pago OAuth2 credentials are not set in .env file');
 }
 
-const mercadoPagoOAuth2Client = createOAuth2Client('MercadoPago', {
+const mercadoPagoOAuth2Client = createOAuth2Client('mercadopago', {
 	clientId: env.MERCADO_PAGO_CLIENT_ID,
 	clientSecret: env.MERCADO_PAGO_CLIENT_SECRET,
 	redirectUri: env.MERCADO_PAGO_REDIRECT_URI

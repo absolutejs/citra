@@ -12,7 +12,7 @@ if (
 	throw new Error('Patreon OAuth2 credentials are not set in .env file');
 }
 
-const patreonOAuth2Client = createOAuth2Client('Patreon', {
+const patreonOAuth2Client = createOAuth2Client('patreon', {
 	clientId: env.PATREON_CLIENT_ID,
 	clientSecret: env.PATREON_CLIENT_SECRET,
 	redirectUri: env.PATREON_REDIRECT_URI

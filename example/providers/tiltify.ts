@@ -12,7 +12,7 @@ if (
 	throw new Error('Tiltify OAuth2 credentials are not set in .env file');
 }
 
-const tiltifyOAuth2Client = createOAuth2Client('Tiltify', {
+const tiltifyOAuth2Client = createOAuth2Client('tiltify', {
 	clientId: env.TILTIFY_CLIENT_ID,
 	clientSecret: env.TILTIFY_CLIENT_SECRET,
 	redirectUri: env.TILTIFY_REDIRECT_URI

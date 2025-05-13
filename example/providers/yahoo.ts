@@ -12,7 +12,7 @@ if (
 	throw new Error('Yahoo OAuth2 credentials are not set in .env file');
 }
 
-const yahooOAuth2Client = createOAuth2Client('Yahoo', {
+const yahooOAuth2Client = createOAuth2Client('yahoo', {
 	clientId: env.YAHOO_CLIENT_ID,
 	clientSecret: env.YAHOO_CLIENT_SECRET,
 	redirectUri: env.YAHOO_REDIRECT_URI

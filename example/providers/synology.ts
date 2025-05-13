@@ -12,7 +12,7 @@ if (
 	throw new Error('Synology OAuth2 credentials are not set in .env file');
 }
 
-const synologyOAuth2Client = createOAuth2Client('Synology', {
+const synologyOAuth2Client = createOAuth2Client('synology', {
 	clientId: env.SYNOLOGY_CLIENT_ID,
 	clientSecret: env.SYNOLOGY_CLIENT_SECRET,
 	redirectUri: env.SYNOLOGY_REDIRECT_URI

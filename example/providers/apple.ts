@@ -15,7 +15,7 @@ if (
 	throw new Error('Apple OAuth2 credentials are not set in .env file');
 }
 
-const appleOAuth2Client = createOAuth2Client('Apple', {
+const appleOAuth2Client = createOAuth2Client('apple', {
 	clientId: env.APPLE_CLIENT_ID,
 	keyId: env.APPLE_KEY_ID,
 	pkcs8PrivateKey: Buffer.from(env.APPLE_PKCS8_PRIVATE_KEY, 'utf8'),

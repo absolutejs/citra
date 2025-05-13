@@ -12,7 +12,7 @@ if (
 	throw new Error('Shikimori OAuth2 credentials are not set in .env file');
 }
 
-const shikimoriOAuth2Client = createOAuth2Client('Shikimori', {
+const shikimoriOAuth2Client = createOAuth2Client('shikimori', {
 	clientId: env.SHIKIMORI_CLIENT_ID,
 	clientSecret: env.SHIKIMORI_CLIENT_SECRET,
 	redirectUri: env.SHIKIMORI_REDIRECT_URI

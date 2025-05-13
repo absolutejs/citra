@@ -13,7 +13,7 @@ if (
 	throw new Error('Mastodon OAuth2 credentials are not set in .env file');
 }
 
-const mastodonOAuth2Client = createOAuth2Client('Mastodon', {
+const mastodonOAuth2Client = createOAuth2Client('mastodon', {
 	baseURL: env.MASTODON_BASE_URL,
 	clientId: env.MASTODON_CLIENT_ID,
 	clientSecret: env.MASTODON_CLIENT_SECRET,

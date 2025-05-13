@@ -8,7 +8,7 @@ if (!env.BOX_CLIENT_ID || !env.BOX_CLIENT_SECRET || !env.BOX_REDIRECT_URI) {
 	throw new Error('Box OAuth2 credentials are not set in .env file');
 }
 
-const boxOAuth2Client = createOAuth2Client('Box', {
+const boxOAuth2Client = createOAuth2Client('box', {
 	clientId: env.BOX_CLIENT_ID,
 	clientSecret: env.BOX_CLIENT_SECRET,
 	redirectUri: env.BOX_REDIRECT_URI

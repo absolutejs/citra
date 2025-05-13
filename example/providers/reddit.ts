@@ -12,7 +12,7 @@ if (
 	throw new Error('Reddit OAuth2 credentials are not set in .env file');
 }
 
-const redditOAuth2Client = createOAuth2Client('Reddit', {
+const redditOAuth2Client = createOAuth2Client('reddit', {
 	clientId: env.REDDIT_CLIENT_ID,
 	clientSecret: env.REDDIT_CLIENT_SECRET,
 	redirectUri: env.REDDIT_REDIRECT_URI

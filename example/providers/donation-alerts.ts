@@ -14,7 +14,7 @@ if (
 	);
 }
 
-const donationAlertsOAuth2Client = createOAuth2Client('DonationAlerts', {
+const donationAlertsOAuth2Client = createOAuth2Client('donationalerts', {
 	clientId: env.DONATION_ALERTS_CLIENT_ID,
 	clientSecret: env.DONATION_ALERTS_CLIENT_SECRET,
 	redirectUri: env.DONATION_ALERTS_REDIRECT_URI

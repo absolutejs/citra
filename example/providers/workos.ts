@@ -12,7 +12,7 @@ if (
 	throw new Error('WorkOS OAuth2 credentials are not set in .env file');
 }
 
-const workOSOAuth2Client = createOAuth2Client('WorkOS', {
+const workOSOAuth2Client = createOAuth2Client('workos', {
 	clientId: env.WORK_OS_CLIENT_ID,
 	clientSecret: env.WORK_OS_CLIENT_SECRET,
 	redirectUri: env.WORK_OS_REDIRECT_URI

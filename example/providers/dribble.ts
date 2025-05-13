@@ -12,7 +12,7 @@ if (
 	throw new Error('Dribbble OAuth2 credentials are not set in .env file');
 }
 
-const dribbbleOAuth2Client = createOAuth2Client('Dribbble', {
+const dribbbleOAuth2Client = createOAuth2Client('dribbble', {
 	clientId: env.DRIBBBLE_CLIENT_ID,
 	clientSecret: env.DRIBBBLE_CLIENT_SECRET,
 	redirectUri: env.DRIBBBLE_REDIRECT_URI

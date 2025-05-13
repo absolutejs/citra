@@ -12,7 +12,7 @@ if (
 	throw new Error('Bitbucket OAuth2 credentials are not set in .env file');
 }
 
-const bitbucketOAuth2Client = createOAuth2Client('Bitbucket', {
+const bitbucketOAuth2Client = createOAuth2Client('bitbucket', {
 	clientId: env.BITBUCKET_CLIENT_ID,
 	clientSecret: env.BITBUCKET_CLIENT_SECRET,
 	redirectUri: env.BITBUCKET_REDIRECT_URI

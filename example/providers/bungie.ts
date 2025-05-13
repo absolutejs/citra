@@ -12,7 +12,7 @@ if (
 	throw new Error('Bungie OAuth2 credentials are not set in .env file');
 }
 
-const bungieOAuth2Client = createOAuth2Client('Bungie', {
+const bungieOAuth2Client = createOAuth2Client('bungie', {
 	clientId: env.BUNGIE_CLIENT_ID,
 	clientSecret: env.BUNGIE_CLIENT_SECRET,
 	redirectUri: env.BUNGIE_REDIRECT_URI

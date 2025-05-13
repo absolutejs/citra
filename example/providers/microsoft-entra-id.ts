@@ -15,7 +15,7 @@ if (
 	);
 }
 
-const microsoftEntraIDOAuth2Client = createOAuth2Client('MicrosoftEntraId', {
+const microsoftEntraIDOAuth2Client = createOAuth2Client('microsoftentraid', {
 	clientId: env.MICROSOFT_ENTRA_ID_CLIENT_ID,
 	clientSecret: env.MICROSOFT_ENTRA_ID_CLIENT_SECRET,
 	redirectUri: env.MICROSOFT_ENTRA_ID_REDIRECT_URI,

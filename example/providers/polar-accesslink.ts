@@ -14,7 +14,7 @@ if (
 	);
 }
 
-const polarAccessLinkOAuth2Client = createOAuth2Client('PolarAccessLink', {
+const polarAccessLinkOAuth2Client = createOAuth2Client('polaraccesslink', {
 	clientId: env.POLAR_ACCESSLINK_CLIENT_ID,
 	clientSecret: env.POLAR_ACCESSLINK_CLIENT_SECRET,
 	redirectUri: env.POLAR_ACCESSLINK_REDIRECT_URI

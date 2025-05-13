@@ -12,7 +12,7 @@ if (
 	throw new Error('Tumblr OAuth2 credentials are not set in .env file');
 }
 
-const tumblrOAuth2Client = createOAuth2Client('Tumblr', {
+const tumblrOAuth2Client = createOAuth2Client('tumblr', {
 	clientId: env.TUMBLR_CONSUMER_KEY,
 	clientSecret: env.TUMBLR_CONSUMER_SECRET,
 	redirectUri: env.TUMBLR_REDIRECT_URI

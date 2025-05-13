@@ -46,6 +46,7 @@ export const decodeBase64 = (
 		for (let i = 0; i < raw.length; i++) {
 			bytes[i] = raw.charCodeAt(i);
 		}
+
 		return bytes;
 	}
 

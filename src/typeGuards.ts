@@ -15,6 +15,7 @@ export const isValidProviderOption = (
 	option: string
 ): option is ProviderOption => {
 	const normalizedOption = option.toLowerCase();
+
 	return Object.keys(normalizedProviders).includes(normalizedOption);
 };
 
@@ -23,6 +24,11 @@ export const isRefreshableProviderOption = (
 ): option is RefreshableProvider => {
 	const normalizedOption = option.toLowerCase();
 	const provider = normalizedProviders[normalizedOption];
+
+	console.log(
+		`isRefreshableProviderOption: ${option} -> ${normalizedOption} -> `,
+		provider
+	);
 
 	return isValidProviderOption(option) && provider?.isRefreshable === true;
 };
@@ -48,14 +54,27 @@ export const isOIDCProviderOption = (option: string): option is OIDCProvider =>
 export const isRefreshableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & RefreshableOAuth2Client =>
-	providers[providerName].isRefreshable;
+): client is BaseOAuth2Client<P> & RefreshableOAuth2Client => {
+	const normalizedOption = providerName.toLowerCase();
+	const provider = normalizedProviders[normalizedOption];
+
+	return (
+		isValidProviderOption(providerName) && provider?.isRefreshable === true
+	);
+};
 
 export const isRevocableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & RevocableOAuth2Client =>
-	providers[providerName].revocationRequest !== undefined;
+): client is BaseOAuth2Client<P> & RevocableOAuth2Client => {
+	const normalizedOption = providerName.toLowerCase();
+	const provider = normalizedProviders[normalizedOption];
+
+	return (
+		isValidProviderOption(providerName) &&
+		provider?.revocationRequest !== undefined
+	);
+};
 
 export const hasClientSecret = <P extends ProviderOption>(
 	credentials: CredentialsFor<P>

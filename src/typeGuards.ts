@@ -20,6 +20,7 @@ export const isRefreshableProviderOption = (
 ): option is RefreshableProvider => {
 	if (!isValidProviderOption(option)) return false;
 	const provider = providers[option];
+
 	return provider.isRefreshable;
 };
 
@@ -28,6 +29,7 @@ export const isRevocableProviderOption = (
 ): option is RevocableProvider => {
 	if (!isValidProviderOption(option)) return false;
 	const provider = providers[option];
+
 	return provider.revocationRequest !== undefined;
 };
 
@@ -36,6 +38,7 @@ export const isPKCEProviderOption = (
 ): option is PKCEProvider => {
 	if (!isValidProviderOption(option)) return false;
 	const provider = providers[option];
+
 	return provider.PKCEMethod !== undefined;
 };
 
@@ -44,22 +47,21 @@ export const isOIDCProviderOption = (
 ): option is OIDCProvider => {
 	if (!isValidProviderOption(option)) return false;
 	const provider = providers[option];
+
 	return provider.isOIDC;
 };
 
 export const isRefreshableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & RefreshableOAuth2Client => {
-	return isRefreshableProviderOption(providerName);
-};
+): client is BaseOAuth2Client<P> & RefreshableOAuth2Client =>
+	isRefreshableProviderOption(providerName);
 
 export const isRevocableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & RevocableOAuth2Client => {
-	return isRevocableProviderOption(providerName);
-};
+): client is BaseOAuth2Client<P> & RevocableOAuth2Client =>
+	isRevocableProviderOption(providerName);
 
 export const hasClientSecret = <P extends ProviderOption>(
 	credentials: CredentialsFor<P>

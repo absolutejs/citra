@@ -1,4 +1,9 @@
-import { isValidProviderOption } from './typeGuards';
+import {
+	isOIDCProviderOption,
+	isRefreshableProviderOption,
+	isRevocableProviderOption,
+	isValidProviderOption
+} from './typeGuards';
 import { DefineProviders } from './types';
 import { encodeBase64 } from './utils';
 
@@ -1276,4 +1281,15 @@ export const providers = defineProviders({
 
 export const providerOptions = Object.keys(providers).filter(
 	isValidProviderOption
+);
+
+export const refreshableProviderOptions = Object.keys(providers).filter(
+	isRefreshableProviderOption
+);
+
+export const oidcProviderOptions =
+	Object.keys(providers).filter(isOIDCProviderOption);
+
+export const revocableProviderOptions = Object.keys(providers).filter(
+	isRevocableProviderOption
 );

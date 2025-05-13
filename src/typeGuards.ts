@@ -20,14 +20,24 @@ export const isValidProviderOption = (
 
 export const isRefreshableProviderOption = (
 	option: string
-): option is RefreshableProvider =>
-	isValidProviderOption(option) && providers[option].isRefreshable;
+): option is RefreshableProvider => {
+	const normalizedOption = option.toLowerCase();
+	const provider = normalizedProviders[normalizedOption];
+
+	return isValidProviderOption(option) && provider?.isRefreshable === true;
+};
 
 export const isRevocableProviderOption = (
 	option: string
-): option is RevocableProvider =>
-	isValidProviderOption(option) &&
-	providers[option].revocationRequest !== undefined;
+): option is RevocableProvider => {
+	const normalizedOption = option.toLowerCase();
+	const provider = normalizedProviders[normalizedOption];
+
+	return (
+		isValidProviderOption(option) &&
+		provider?.revocationRequest !== undefined
+	);
+};
 
 export const isPKCEProviderOption = (option: string): option is PKCEProvider =>
 	normalizedProviders[option.toLowerCase()]?.PKCEMethod !== undefined;

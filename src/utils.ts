@@ -1,3 +1,4 @@
+import { BASE64_BLOCK_SIZE } from './constants';
 import { OAuth2RequestOptions } from './types';
 
 export const createOAuth2FetchError = async (response: Response) => {
@@ -31,26 +32,27 @@ export const encodeBase64 = (input: string | ArrayBuffer | Uint8Array) => {
 	return btoa(raw);
 };
 
-export const decodeBase64 = (
-	input: string,
-	toUint8Array = false
-): string | Uint8Array => {
+export const decodeBase64 = (input: string, toUint8Array = false) => {
 	const b64 =
 		input.replace(/-/g, '+').replace(/_/g, '/') +
-		'=='.slice(0, (4 - (input.length % 4)) % 4);
+		'=='.slice(
+			0,
+			(BASE64_BLOCK_SIZE - (input.length % BASE64_BLOCK_SIZE)) %
+				BASE64_BLOCK_SIZE
+		);
 
 	const raw = atob(b64);
 
-	if (toUint8Array) {
-		const bytes = new Uint8Array(raw.length);
-		for (let i = 0; i < raw.length; i++) {
-			bytes[i] = raw.charCodeAt(i);
-		}
-
-		return bytes;
+	if (!toUint8Array) {
+		return raw;
 	}
 
-	return raw;
+	const bytes = new Uint8Array(raw.length);
+	for (let i = 0; i < raw.length; i++) {
+		bytes[i] = raw.charCodeAt(i);
+	}
+
+	return bytes;
 };
 
 export const decodeJWT = (tokenString: string): Record<string, unknown> => {

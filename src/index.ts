@@ -55,8 +55,10 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			Object.entries(
 				resolveConfigProp(meta.createAuthorizationURLSearchParams) ?? {}
-			).forEach(([k, v]) => url.searchParams.set(k, v));
-			searchParams.forEach(([k, v]) => url.searchParams.set(k, v));
+			).forEach(([key, value]) => url.searchParams.set(key, value));
+			searchParams.forEach(([key, value]) =>
+				url.searchParams.set(key, value)
+			);
 
 			return url;
 		},
@@ -73,8 +75,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			} = profileRequest;
 
 			const endpoint = new URL(resolveConfigProp(url));
-			new URLSearchParams(searchParams).forEach((v, k) =>
-				endpoint.searchParams.append(k, v)
+			new URLSearchParams(searchParams).forEach((value, key) =>
+				endpoint.searchParams.append(key, value)
 			);
 
 			let headerEntries: [string, string][] = [];
@@ -86,7 +88,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				headerEntries = Object.entries(rawHeaders);
 
 			const profileHeaders = Object.fromEntries(
-				headerEntries.filter(([, v]) => v !== '')
+				headerEntries.filter(([, value]) => value !== '')
 			);
 
 			if (authIn === 'header') {
@@ -206,8 +208,8 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			const bodyObj: Record<string, string> = {};
 			for (const key in meta.validateAuthorizationCodeBody ?? {}) {
-				const v = meta.validateAuthorizationCodeBody![key];
-				if (typeof v === 'string') bodyObj[key] = v;
+				const value = meta.validateAuthorizationCodeBody![key];
+				if (typeof value === 'string') bodyObj[key] = value;
 			}
 			bodyObj.grant_type = 'authorization_code';
 			bodyObj.code = code;

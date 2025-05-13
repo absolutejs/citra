@@ -25,11 +25,6 @@ export const isRefreshableProviderOption = (
 	const normalizedOption = option.toLowerCase();
 	const provider = normalizedProviders[normalizedOption];
 
-	console.log(
-		`isRefreshableProviderOption: ${option} -> ${normalizedOption} -> `,
-		provider
-	);
-
 	return isValidProviderOption(option) && provider?.isRefreshable === true;
 };
 

@@ -1,4 +1,4 @@
-import { normalizedProviders, providers } from './providers';
+import { providers } from './providers';
 import {
 	BaseOAuth2Client,
 	CredentialsFor,
@@ -13,69 +13,52 @@ import {
 
 export const isValidProviderOption = (
 	option: string
-): option is ProviderOption => {
-	return Object.keys(providers).includes(option);
-};
-
-export const isNormalizedProviderOption = (
-	option: string
-): option is Lowercase<ProviderOption> => {
-	const normalizedOption = option.toLowerCase();
-	return Object.keys(normalizedProviders).includes(normalizedOption);
-};
+): option is ProviderOption => Object.hasOwn(providers, option);
 
 export const isRefreshableProviderOption = (
 	option: string
 ): option is RefreshableProvider => {
-	const normalizedOption = option.toLowerCase();
-	const provider = normalizedProviders[normalizedOption];
-
-	return (
-		isNormalizedProviderOption(option) && provider?.isRefreshable === true
-	);
+	if (!isValidProviderOption(option)) return false;
+	const provider = providers[option];
+	return provider.isRefreshable;
 };
 
 export const isRevocableProviderOption = (
 	option: string
 ): option is RevocableProvider => {
-	const normalizedOption = option.toLowerCase();
-	const provider = normalizedProviders[normalizedOption];
-
-	return (
-		isNormalizedProviderOption(option) &&
-		provider?.revocationRequest !== undefined
-	);
+	if (!isValidProviderOption(option)) return false;
+	const provider = providers[option];
+	return provider.revocationRequest !== undefined;
 };
 
-export const isPKCEProviderOption = (option: string): option is PKCEProvider =>
-	normalizedProviders[option.toLowerCase()]?.PKCEMethod !== undefined;
+export const isPKCEProviderOption = (
+	option: string
+): option is PKCEProvider => {
+	if (!isValidProviderOption(option)) return false;
+	const provider = providers[option];
+	return provider.PKCEMethod !== undefined;
+};
 
-export const isOIDCProviderOption = (option: string): option is OIDCProvider =>
-	isValidProviderOption(option) && providers[option].isOIDC;
+export const isOIDCProviderOption = (
+	option: string
+): option is OIDCProvider => {
+	if (!isValidProviderOption(option)) return false;
+	const provider = providers[option];
+	return provider.isOIDC;
+};
 
 export const isRefreshableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
 ): client is BaseOAuth2Client<P> & RefreshableOAuth2Client => {
-	const normalizedOption = providerName.toLowerCase();
-	const provider = normalizedProviders[normalizedOption];
-
-	return (
-		isValidProviderOption(providerName) && provider?.isRefreshable === true
-	);
+	return isRefreshableProviderOption(providerName);
 };
 
 export const isRevocableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
 ): client is BaseOAuth2Client<P> & RevocableOAuth2Client => {
-	const normalizedOption = providerName.toLowerCase();
-	const provider = normalizedProviders[normalizedOption];
-
-	return (
-		isValidProviderOption(providerName) &&
-		provider?.revocationRequest !== undefined
-	);
+	return isRevocableProviderOption(providerName);
 };
 
 export const hasClientSecret = <P extends ProviderOption>(

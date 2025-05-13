@@ -21,7 +21,7 @@ export const providers = defineProviders({
 			url: 'https://api.intra.42.fr/oauth/token'
 		}
 	},
-	AmazonCognito: {
+	amazoncognito: {
 		authorizationUrl: 'https://${domain}/oauth2/authorize',
 		isOIDC: true,
 		isRefreshable: true,
@@ -43,7 +43,7 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth2/token`
 		}
 	},
-	AniList: {
+	anilist: {
 		authorizationUrl: 'https://anilist.co/api/v2/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -66,7 +66,7 @@ export const providers = defineProviders({
 			url: 'https://anilist.co/api/v2/oauth/token'
 		}
 	},
-	Apple: {
+	apple: {
 		authorizationUrl: 'https://appleid.apple.com/auth/authorize',
 		isOIDC: true,
 		isRefreshable: true,
@@ -83,7 +83,7 @@ export const providers = defineProviders({
 			url: 'https://appleid.apple.com/auth/token'
 		}
 	},
-	Atlassian: {
+	atlassian: {
 		authorizationUrl: 'https://auth.atlassian.com/authorize',
 		createAuthorizationURLSearchParams: {
 			audience: 'api.atlassian.com'
@@ -103,7 +103,7 @@ export const providers = defineProviders({
 			url: 'https://auth.atlassian.com/oauth/token'
 		}
 	},
-	Auth0: {
+	auth0: {
 		authorizationUrl: (config) => `https://${config.domain}/authorize`,
 		isOIDC: true,
 		isRefreshable: true,
@@ -128,7 +128,7 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth/token`
 		}
 	},
-	Authentik: {
+	authentik: {
 		authorizationUrl: (config) =>
 			`https://${config.baseURL}/oauth/authorize`,
 		isOIDC: true,
@@ -146,7 +146,7 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.baseURL}/oauth/token`
 		}
 	},
-	Autodesk: {
+	autodesk: {
 		authorizationUrl:
 			'https://developer.api.autodesk.com/authentication/v2/authorize',
 		isOIDC: true,
@@ -164,7 +164,7 @@ export const providers = defineProviders({
 			url: 'https://developer.api.autodesk.com/authentication/v2/token'
 		}
 	},
-	Battlenet: {
+	battlenet: {
 		authorizationUrl: 'https://oauth.battle.net/authorize',
 		isOIDC: true,
 		isRefreshable: false,
@@ -180,7 +180,7 @@ export const providers = defineProviders({
 			url: 'https://oauth.battle.net/token'
 		}
 	},
-	Bitbucket: {
+	bitbucket: {
 		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -196,7 +196,7 @@ export const providers = defineProviders({
 			url: 'https://bitbucket.org/site/oauth2/access_token'
 		}
 	},
-	Box: {
+	box: {
 		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -217,7 +217,7 @@ export const providers = defineProviders({
 			url: 'https://api.box.com/oauth2/token'
 		}
 	},
-	Bungie: {
+	bungie: {
 		authorizationUrl: 'https://www.bungie.net/en/OAuth/Authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -236,7 +236,7 @@ export const providers = defineProviders({
 			url: 'https://www.bungie.net/Platform/App/OAuth/token'
 		}
 	},
-	Coinbase: {
+	coinbase: {
 		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
 		isOIDC: false,
 
@@ -253,7 +253,7 @@ export const providers = defineProviders({
 			url: 'https://api.coinbase.com/oauth/token'
 		}
 	},
-	Discord: {
+	discord: {
 		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -270,7 +270,7 @@ export const providers = defineProviders({
 			url: 'https://discord.com/api/oauth2/token'
 		}
 	},
-	DonationAlerts: {
+	donationalerts: {
 		authorizationUrl: 'https://www.donationalerts.com/oauth/authorize',
 		isOIDC: false,
 
@@ -287,7 +287,7 @@ export const providers = defineProviders({
 			url: 'https://www.donationalerts.com/oauth/token'
 		}
 	},
-	Dribbble: {
+	dribbble: {
 		authorizationUrl: 'https://dribbble.com/oauth/authorize',
 		isOIDC: false,
 
@@ -304,7 +304,7 @@ export const providers = defineProviders({
 			url: 'https://dribbble.com/oauth/token'
 		}
 	},
-	Dropbox: {
+	dropbox: {
 		authorizationUrl: 'https://www.dropbox.com/oauth2/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -324,7 +324,7 @@ export const providers = defineProviders({
 			url: 'https://api.dropboxapi.com/oauth2/token'
 		}
 	},
-	EpicGames: {
+	epicgames: {
 		authorizationUrl: 'https://www.epicgames.com/id/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -340,7 +340,7 @@ export const providers = defineProviders({
 			url: 'https://api.epicgames.dev/epic/oauth/v1/token'
 		}
 	},
-	Etsy: {
+	etsy: {
 		authorizationUrl: 'https://www.etsy.com/oauth/connect',
 		isOIDC: false,
 		isRefreshable: true,
@@ -356,7 +356,7 @@ export const providers = defineProviders({
 			url: 'https://api.etsy.com/v3/public/oauth/token'
 		}
 	},
-	Facebook: {
+	facebook: {
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
 		isOIDC: true,
 		isRefreshable: false,
@@ -374,7 +374,7 @@ export const providers = defineProviders({
 			url: 'https://graph.facebook.com/v16.0/oauth/access_token'
 		}
 	},
-	Figma: {
+	figma: {
 		authorizationUrl: 'https://www.figma.com/oauth',
 		isOIDC: false,
 		isRefreshable: true,
@@ -391,7 +391,7 @@ export const providers = defineProviders({
 			url: 'https://api.figma.com/v1/oauth/token'
 		}
 	},
-	Gitea: {
+	gitea: {
 		authorizationUrl: (config) => `${config.baseURL}/login/oauth/authorize`,
 		isOIDC: true,
 		isRefreshable: true,
@@ -408,7 +408,7 @@ export const providers = defineProviders({
 			url: (config) => `${config.baseURL}/login/oauth/access_token`
 		}
 	},
-	GitHub: {
+	github: {
 		authorizationUrl: 'https://github.com/login/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: false,
@@ -424,7 +424,7 @@ export const providers = defineProviders({
 			url: 'https://github.com/login/oauth/access_token'
 		}
 	},
-	GitLab: {
+	gitlab: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
 		isOIDC: true,
 		isRefreshable: true,
@@ -446,7 +446,7 @@ export const providers = defineProviders({
 			url: (config) => `${config.baseURL}/oauth/token`
 		}
 	},
-	Google: {
+	google: {
 		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 		isOIDC: true,
 		isRefreshable: true,
@@ -469,7 +469,7 @@ export const providers = defineProviders({
 			url: 'https://oauth2.googleapis.com/token'
 		}
 	},
-	Intuit: {
+	intuit: {
 		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
 		isOIDC: true,
 		isRefreshable: true,
@@ -497,7 +497,7 @@ export const providers = defineProviders({
 			url: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'
 		}
 	},
-	Kakao: {
+	kakao: {
 		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
 		isOIDC: true,
 		isRefreshable: true,
@@ -514,7 +514,7 @@ export const providers = defineProviders({
 			url: 'https://kauth.kakao.com/oauth/token'
 		}
 	},
-	Keycloak: {
+	keycloak: {
 		authorizationUrl: (config) =>
 			`${config.realmURL}/protocol/openid-connect/auth`,
 		isOIDC: true,
@@ -537,7 +537,7 @@ export const providers = defineProviders({
 			url: (config) => `${config.realmURL}/protocol/openid-connect/token`
 		}
 	},
-	Kick: {
+	kick: {
 		authorizationUrl: 'https://id.kick.com/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -559,7 +559,7 @@ export const providers = defineProviders({
 			url: 'https://id.kick.com/oauth/token'
 		}
 	},
-	Lichess: {
+	lichess: {
 		authorizationUrl: 'https://lichess.org/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: false,
@@ -576,7 +576,7 @@ export const providers = defineProviders({
 			url: 'https://lichess.org/api/token'
 		}
 	},
-	LINE: {
+	line: {
 		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
 		isOIDC: true,
 		isRefreshable: true,
@@ -594,7 +594,7 @@ export const providers = defineProviders({
 			url: 'https://api.line.me/oauth2/v2.1/token'
 		}
 	},
-	Linear: {
+	linear: {
 		authorizationUrl: 'https://linear.app/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: false,
@@ -621,7 +621,7 @@ export const providers = defineProviders({
 			url: 'https://api.linear.app/oauth/token'
 		}
 	},
-	LinkedIn: {
+	linkedin: {
 		authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
 		isOIDC: true,
 		isRefreshable: true,
@@ -631,14 +631,14 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.linkedin.com/v2/me'
 		},
-		scopeRequired: true, // Has to be at least one (not including 'openid')
+		scopeRequired: true, // Has to be at least one not including 'openid'
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'form',
 			url: 'https://www.linkedin.com/oauth/v2/accessToken'
 		}
 	},
-	Mastodon: {
+	mastodon: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
 		isOIDC: false,
 		isRefreshable: false,
@@ -661,7 +661,7 @@ export const providers = defineProviders({
 			url: (config) => `${config.baseURL}/oauth/token`
 		}
 	},
-	MercadoLibre: {
+	mercadolibre: {
 		authorizationUrl: 'https://auth.mercadolibre.com/authorization',
 		isOIDC: false,
 		isRefreshable: true,
@@ -678,7 +678,7 @@ export const providers = defineProviders({
 			url: 'https://api.mercadolibre.com/oauth/token'
 		}
 	},
-	MercadoPago: {
+	mercadopago: {
 		authorizationUrl: 'https://auth.mercadopago.com/authorization',
 		isOIDC: false,
 
@@ -695,7 +695,7 @@ export const providers = defineProviders({
 			url: 'https://api.mercadopago.com/oauth/token'
 		}
 	},
-	MicrosoftEntraId: {
+	microsoftentraid: {
 		authorizationUrl: (config) =>
 			`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/authorize`,
 		isOIDC: true,
@@ -715,7 +715,7 @@ export const providers = defineProviders({
 				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/token`
 		}
 	},
-	MyAnimeList: {
+	myanimelist: {
 		authorizationUrl: 'https://myanimelist.net/v1/oauth2/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -732,7 +732,7 @@ export const providers = defineProviders({
 			url: 'https://myanimelist.net/v1/oauth2/token'
 		}
 	},
-	Naver: {
+	naver: {
 		authorizationUrl: 'https://nid.naver.com/oauth2.0/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -748,7 +748,7 @@ export const providers = defineProviders({
 			url: 'https://nid.naver.com/oauth2.0/token'
 		}
 	},
-	Notion: {
+	notion: {
 		authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: false,
@@ -767,7 +767,7 @@ export const providers = defineProviders({
 			url: 'https://api.notion.com/v1/oauth/token'
 		}
 	},
-	Okta: {
+	okta: {
 		authorizationUrl: (config) =>
 			`https://${config.domain}/oauth2/default/v1/authorize`,
 		isOIDC: true,
@@ -791,7 +791,7 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth2/default/v1/token`
 		}
 	},
-	Osu: {
+	osu: {
 		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -807,7 +807,7 @@ export const providers = defineProviders({
 			url: 'https://osu.ppy.sh/oauth/token'
 		}
 	},
-	Patreon: {
+	patreon: {
 		authorizationUrl: 'https://www.patreon.com/oauth2/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -823,7 +823,7 @@ export const providers = defineProviders({
 			url: 'https://www.patreon.com/api/oauth2/token'
 		}
 	},
-	Polar: {
+	polar: {
 		authorizationUrl: 'https://polar.sh/oauth2/authorize',
 		isOIDC: true,
 		isRefreshable: true,
@@ -845,7 +845,7 @@ export const providers = defineProviders({
 			url: 'https://api.polar.sh/v1/oauth2/token'
 		}
 	},
-	PolarAccessLink: {
+	polaraccesslink: {
 		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
 		isOIDC: false,
 		isRefreshable: false,
@@ -862,7 +862,7 @@ export const providers = defineProviders({
 			url: 'https://polarremote.com/v2/oauth2/token'
 		}
 	},
-	PolarTeamPro: {
+	polarteampro: {
 		authorizationUrl: 'https://auth.polar.com/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -879,7 +879,7 @@ export const providers = defineProviders({
 			url: 'https://auth.polar.com/oauth/token'
 		}
 	},
-	Reddit: {
+	reddit: {
 		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -902,7 +902,7 @@ export const providers = defineProviders({
 			url: 'https://www.reddit.com/api/v1/access_token'
 		}
 	},
-	Roblox: {
+	roblox: {
 		authorizationUrl: 'https://apis.roblox.com/oauth/v1/authorize',
 		isOIDC: true,
 		isRefreshable: true,
@@ -919,7 +919,7 @@ export const providers = defineProviders({
 			url: 'https://apis.roblox.com/oauth/v1/token'
 		}
 	},
-	Salesforce: {
+	salesforce: {
 		authorizationUrl:
 			'https://login.salesforce.com/services/oauth2/authorize',
 		isOIDC: true,
@@ -941,7 +941,7 @@ export const providers = defineProviders({
 			url: 'https://login.salesforce.com/services/oauth2/token'
 		}
 	},
-	Shikimori: {
+	shikimori: {
 		authorizationUrl: 'https://shikimori.org/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -957,7 +957,7 @@ export const providers = defineProviders({
 			url: 'https://shikimori.org/oauth/token'
 		}
 	},
-	Slack: {
+	slack: {
 		authorizationUrl: 'https://slack.com/openid/connect/authorize',
 		isOIDC: true,
 		isRefreshable: true,
@@ -978,7 +978,7 @@ export const providers = defineProviders({
 			url: 'https://slack.com/api/openid.connect.token'
 		}
 	},
-	Spotify: {
+	spotify: {
 		authorizationUrl: 'https://accounts.spotify.com/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -995,7 +995,7 @@ export const providers = defineProviders({
 			url: 'https://accounts.spotify.com/api/token'
 		}
 	},
-	StartGG: {
+	startgg: {
 		authorizationUrl: 'https://start.gg/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -1018,7 +1018,7 @@ export const providers = defineProviders({
 			url: 'https://api.start.gg/oauth/access_token'
 		}
 	},
-	Strava: {
+	strava: {
 		authorizationUrl: 'https://www.strava.com/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -1043,7 +1043,7 @@ export const providers = defineProviders({
 			url: 'https://www.strava.com/oauth/token'
 		}
 	},
-	Synology: {
+	synology: {
 		authorizationUrl: (config) =>
 			`${config.baseURL}/webman/sso/SSOOauth.cgi?client_id=${config.clientId}&response_type=code&redirect_uri=${config.redirectUri}`,
 		isOIDC: false,
@@ -1062,7 +1062,7 @@ export const providers = defineProviders({
 				`${config.baseURL}/webman/sso/SSOAccessToken.cgi?client_id=${config.clientId}&client_secret=${config.clientSecret}`
 		}
 	},
-	TikTok: {
+	tiktok: {
 		authorizationUrl: 'https://www.tiktok.com/v2/auth/authorize',
 		createAuthorizationURLSearchParams: (config) => ({
 			client_key: config.clientId
@@ -1087,7 +1087,7 @@ export const providers = defineProviders({
 			url: 'https://open.tiktokapis.com/v2/oauth/token/'
 		}
 	},
-	Tiltify: {
+	tiltify: {
 		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -1103,7 +1103,7 @@ export const providers = defineProviders({
 			url: 'https://v5api.tiltify.com/oauth/token'
 		}
 	},
-	Tumblr: {
+	tumblr: {
 		authorizationUrl: 'https://www.tumblr.com/oauth2/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -1119,7 +1119,7 @@ export const providers = defineProviders({
 			url: 'https://api.tumblr.com/v2/oauth2/token'
 		}
 	},
-	Twitch: {
+	twitch: {
 		authorizationUrl: 'https://id.twitch.tv/oauth2/authorize',
 		isOIDC: true,
 		isRefreshable: true,
@@ -1146,7 +1146,7 @@ export const providers = defineProviders({
 			url: 'https://id.twitch.tv/oauth2/token'
 		}
 	},
-	Twitter: {
+	twitter: {
 		authorizationUrl: 'https://twitter.com/i/oauth2/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -1167,7 +1167,7 @@ export const providers = defineProviders({
 			url: 'https://api.twitter.com/2/oauth2/token'
 		}
 	},
-	VK: {
+	vk: {
 		authorizationUrl: 'https://oauth.vk.com/authorize',
 		isOIDC: false,
 		isRefreshable: false,
@@ -1183,7 +1183,7 @@ export const providers = defineProviders({
 			url: 'https://oauth.vk.com/access_token'
 		}
 	},
-	WorkOS: {
+	workos: {
 		authorizationUrl: 'https://api.workos.com/sso/authorize',
 		isOIDC: true,
 		isRefreshable: true,
@@ -1200,7 +1200,7 @@ export const providers = defineProviders({
 			url: 'https://api.workos.com/sso/token'
 		}
 	},
-	Yahoo: {
+	yahoo: {
 		authorizationUrl: 'https://api.login.yahoo.com/oauth2/request_auth',
 		isOIDC: true,
 		isRefreshable: true,
@@ -1221,7 +1221,7 @@ export const providers = defineProviders({
 			url: 'https://api.login.yahoo.com/oauth2/get_token'
 		}
 	},
-	Yandex: {
+	yandex: {
 		authorizationUrl: 'https://oauth.yandex.com/authorize',
 		createAuthorizationURLSearchParams: {
 			device_id: crypto.randomUUID(),
@@ -1247,7 +1247,7 @@ export const providers = defineProviders({
 			url: 'https://oauth.yandex.com/token'
 		}
 	},
-	Zoom: {
+	zoom: {
 		authorizationUrl: 'https://zoom.us/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
@@ -1273,13 +1273,6 @@ export const providers = defineProviders({
 		}
 	}
 });
-
-export const normalizedProviders: Record<
-	string,
-	(typeof providers)[keyof typeof providers]
-> = Object.fromEntries(
-	Object.entries(providers).map(([key, def]) => [key.toLowerCase(), def])
-);
 
 export const providerOptions = Object.keys(providers).filter(
 	isValidProviderOption

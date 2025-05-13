@@ -14,8 +14,13 @@ import {
 export const isValidProviderOption = (
 	option: string
 ): option is ProviderOption => {
-	const normalizedOption = option.toLowerCase();
+	return Object.keys(providers).includes(option);
+};
 
+export const isNormalizedProviderOption = (
+	option: string
+): option is Lowercase<ProviderOption> => {
+	const normalizedOption = option.toLowerCase();
 	return Object.keys(normalizedProviders).includes(normalizedOption);
 };
 
@@ -25,7 +30,9 @@ export const isRefreshableProviderOption = (
 	const normalizedOption = option.toLowerCase();
 	const provider = normalizedProviders[normalizedOption];
 
-	return isValidProviderOption(option) && provider?.isRefreshable === true;
+	return (
+		isNormalizedProviderOption(option) && provider?.isRefreshable === true
+	);
 };
 
 export const isRevocableProviderOption = (
@@ -35,7 +42,7 @@ export const isRevocableProviderOption = (
 	const provider = normalizedProviders[normalizedOption];
 
 	return (
-		isValidProviderOption(option) &&
+		isNormalizedProviderOption(option) &&
 		provider?.revocationRequest !== undefined
 	);
 };

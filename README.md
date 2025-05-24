@@ -48,7 +48,7 @@ Import Citra and create a client for your desired provider:
 ```ts
 import { createOAuth2Client } from 'citra';
 
-const googleClient = createOAuth2Client('Google', {
+const googleClient = createOAuth2Client('google', {
 	// defining your config directly in the function will make it type safe
 	clientId: 'YOUR_CLIENT_ID',
 	clientSecret: 'YOUR_CLIENT_SECRET',
@@ -68,8 +68,8 @@ import { generateState, generateCodeVerifier } from 'citra';
 const currentState = generateState();
 const codeVerifier = generateCodeVerifier();
 const authUrl = await googleClient.createAuthorizationUrl({
-	codeVerifier,
-	scope: ['profile', 'openid'],
+	codeVerifier, // type error if not provided since google is a PKCEProvider
+	scope: ['profile', 'openid'], // type error if not provided since google is a ScopeRequiredProvider
 	searchParams: [
 		['access_type', 'offline'],
 		['prompt', 'consent']

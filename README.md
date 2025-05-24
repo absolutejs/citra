@@ -68,8 +68,8 @@ import { generateState, generateCodeVerifier } from 'citra';
 const currentState = generateState();
 const codeVerifier = generateCodeVerifier();
 const authUrl = await googleClient.createAuthorizationUrl({
-	codeVerifier,
-	scope: ['profile', 'openid'],
+	codeVerifier, // will error if not provided since google is a PKCEProvider
+	scope: ['profile', 'openid'], // will error if not provided since google is a ScopeRequiredProvider
 	searchParams: [
 		['access_type', 'offline'],
 		['prompt', 'consent']

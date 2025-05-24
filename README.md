@@ -48,7 +48,7 @@ Import Citra and create a client for your desired provider:
 ```ts
 import { createOAuth2Client } from 'citra';
 
-const googleClient = createOAuth2Client('Google', {
+const googleClient = createOAuth2Client('google', {
 	// defining your config directly in the function will make it type safe
 	clientId: 'YOUR_CLIENT_ID',
 	clientSecret: 'YOUR_CLIENT_SECRET',

@@ -1300,7 +1300,5 @@ export const scopeRequiredProviderOptions = Object.keys(providers).filter(
 	isScopeRequiredProviderOption
 );
 
-
-export const pkceProviderOption = Object.keys(providers).filter(
-	isPKCEProviderOption
-);
+export const pkceProviderOptions =
+	Object.keys(providers).filter(isPKCEProviderOption);

@@ -72,7 +72,6 @@ export const isRevocableOAuth2Client = <P extends ProviderOption>(
 ): client is BaseOAuth2Client<P> & RevocableOAuth2Client =>
 	isRevocableProviderOption(providerName);
 
-
 export const hasClientSecret = <P extends ProviderOption>(
 	credentials: CredentialsFor<P>
 ): credentials is CredentialsFor<P> & { clientSecret: string } => {

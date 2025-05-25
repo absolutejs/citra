@@ -1,33 +1,34 @@
 import { env } from 'process';
 import { Elysia, t } from 'elysia';
 import { createOAuth2Client } from '../../src';
-import { generateState } from '../../src/arctic-utils';
+import { generateState, generateCodeVerifier } from '../../src/arctic-utils';
 import { COOKIE_DURATION } from '../utils/constants';
 
 if (
-	!env.BUNGIE_CLIENT_ID ||
-	!env.BUNGIE_CLIENT_SECRET ||
-	!env.BUNGIE_REDIRECT_URI
+	!env.WITHINGS_CLIENT_ID ||
+	!env.WITHINGS_CLIENT_SECRET ||
+	!env.WITHINGS_REDIRECT_URI
 ) {
-	throw new Error('Bungie OAuth2 credentials are not set in .env file');
+	throw new Error('Withings OAuth2 credentials are not set in .env file');
 }
 
-const bungieOAuth2Client = await createOAuth2Client('bungie', {
-	clientId: env.BUNGIE_CLIENT_ID,
-	clientSecret: env.BUNGIE_CLIENT_SECRET,
-	redirectUri: env.BUNGIE_REDIRECT_URI
+const withingsOAuth2Client = await createOAuth2Client('withings', {
+	clientId: env.WITHINGS_CLIENT_ID,
+	clientSecret: env.WITHINGS_CLIENT_SECRET,
+	redirectUri: env.WITHINGS_REDIRECT_URI
 });
 
-export const bungiePlugin = new Elysia()
+export const withingsPlugin = new Elysia()
 	.get(
-		'/oauth2/bungie/authorization',
+		'/oauth2/withings/authorization',
 		async ({ redirect, error, cookie: { state } }) => {
 			if (state === undefined)
 				return error('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
-				await bungieOAuth2Client.createAuthorizationUrl({
+				await withingsOAuth2Client.createAuthorizationUrl({
+					scope: ['user.info'],
 					state: currentState
 				});
 
@@ -44,7 +45,7 @@ export const bungiePlugin = new Elysia()
 		}
 	)
 	.get(
-		'/oauth2/bungie/callback',
+		'/oauth2/withings/callback',
 		async ({
 			error,
 			redirect,
@@ -68,10 +69,10 @@ export const bungiePlugin = new Elysia()
 
 			try {
 				const oauthResponse =
-					await bungieOAuth2Client.validateAuthorizationCode({
+					await withingsOAuth2Client.validateAuthorizationCode({
 						code
 					});
-				console.log('\nBungie authorized:', oauthResponse);
+				console.log('\nWithings authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
 					return error(
@@ -90,12 +91,14 @@ export const bungiePlugin = new Elysia()
 		}
 	)
 	.post(
-		'/oauth2/bungie/tokens',
+		'/oauth2/withings/tokens',
 		async ({ error, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
-					await bungieOAuth2Client.refreshAccessToken(refresh_token);
-				console.log('\nBungie token refreshed:', oauthResponse);
+					await withingsOAuth2Client.refreshAccessToken(
+						refresh_token
+					);
+				console.log('\nWithings token refreshed:', oauthResponse);
 
 				return new Response(JSON.stringify(oauthResponse), {
 					headers: {
@@ -122,21 +125,54 @@ export const bungiePlugin = new Elysia()
 			})
 		}
 	)
+	.delete(
+		'/oauth2/withings/revocation',
+		async ({ error, query: { token_to_revoke } }) => {
+			if (!token_to_revoke)
+				return error(
+					'Bad Request',
+					'Token to revoke is required in query parameters'
+				);
+
+			try {
+				await withingsOAuth2Client.revokeToken(token_to_revoke);
+				console.log('\nWithings token revoked:', token_to_revoke);
+
+				return new Response(
+					`Token ${token_to_revoke} revoked successfully`,
+					{
+						headers: {
+							'Content-Type': 'text/plain'
+						}
+					}
+				);
+			} catch (err) {
+				if (err instanceof Error) {
+					return error(
+						'Internal Server Error',
+						`Failed to revoke token: ${err.message}`
+					);
+				}
+
+				return error(
+					'Internal Server Error',
+					`Unexpected error: ${err}`
+				);
+			}
+		}
+	)
 	.get(
-		'/oauth2/bungie/profile',
+		'/oauth2/withings/profile',
 		async ({ error, headers: { authorization } }) => {
 			if (authorization === undefined)
-				return error(
-					'Unauthorized',
-					'Access token is missing in headers'
-				);
+				return error('Unauthorized', 'Authorization header is missing');
 
 			const accessToken = authorization.replace('Bearer ', '');
 
 			try {
 				const userProfile =
-					await bungieOAuth2Client.fetchUserProfile(accessToken);
-				console.log('\nBungie user profile:', userProfile);
+					await withingsOAuth2Client.fetchUserProfile(accessToken);
+				console.log('\nWithings user profile:', userProfile);
 
 				return new Response(JSON.stringify(userProfile), {
 					headers: {

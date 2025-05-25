@@ -12,7 +12,7 @@ if (
 	throw new Error('LINE OAuth2 credentials are not set in .env file');
 }
 
-const LINEOAuth2Client = createOAuth2Client('line', {
+const LINEOAuth2Client = await createOAuth2Client('line', {
 	clientId: env.LINE_CHANNEL_ID,
 	clientSecret: env.LINE_CHANNEL_SECRET,
 	redirectUri: env.LINE_REDIRECT_URI

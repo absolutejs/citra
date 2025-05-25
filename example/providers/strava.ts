@@ -12,7 +12,7 @@ if (
 	throw new Error('Strava OAuth2 credentials are not set in .env file');
 }
 
-const stravaOAuth2Client = createOAuth2Client('strava', {
+const stravaOAuth2Client = await createOAuth2Client('strava', {
 	clientId: env.STRAVA_CLIENT_ID,
 	clientSecret: env.STRAVA_CLIENT_SECRET,
 	redirectUri: env.STRAVA_REDIRECT_URI

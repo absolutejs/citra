@@ -12,7 +12,7 @@ if (
 	throw new Error('Roblox OAuth2 credentials are not set in .env file');
 }
 
-const robloxOAuth2Client = createOAuth2Client('roblox', {
+const robloxOAuth2Client = await createOAuth2Client('roblox', {
 	clientId: env.ROBLOX_CLIENT_ID,
 	clientSecret: env.ROBLOX_CLIENT_SECRET,
 	redirectUri: env.ROBLOX_REDIRECT_URI

@@ -13,7 +13,7 @@ if (
 	throw new Error('Gitea OAuth2 credentials are not set in .env file');
 }
 
-const giteaOAuth2Client = createOAuth2Client('gitea', {
+const giteaOAuth2Client = await createOAuth2Client('gitea', {
 	baseURL: env.GITEA_BASE_URL,
 	clientId: env.GITEA_CLIENT_ID,
 	clientSecret: env.GITEA_CLIENT_SECRET,

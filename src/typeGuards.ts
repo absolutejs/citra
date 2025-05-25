@@ -57,6 +57,7 @@ export const isScopeRequiredProviderOption = (
 ): option is ScopeRequiredProvider => {
 	if (!isValidProviderOption(option)) return false;
 	const provider = providers[option];
+
 	return provider.scopeRequired;
 };
 

@@ -12,7 +12,7 @@ if (
 	throw new Error('PolarTeamPro OAuth2 credentials are not set in .env file');
 }
 
-const polarTeamProOAuth2Client = createOAuth2Client('polarteampro', {
+const polarTeamProOAuth2Client = await createOAuth2Client('polarteampro', {
 	clientId: env.POLAR_TEAM_PRO_CLIENT_ID,
 	clientSecret: env.POLAR_TEAM_PRO_CLIENT_SECRET,
 	redirectUri: env.POLAR_TEAM_PRO_REDIRECT_URI

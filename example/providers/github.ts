@@ -12,7 +12,7 @@ if (
 	throw new Error('GitHub OAuth2 credentials are not set in .env file');
 }
 
-const githubOAuth2Client = createOAuth2Client('github', {
+const githubOAuth2Client = await createOAuth2Client('github', {
 	clientId: env.GITHUB_CLIENT_ID,
 	clientSecret: env.GITHUB_CLIENT_SECRET,
 	redirectUri: env.GITHUB_REDIRECT_URI

@@ -55,6 +55,29 @@ export const decodeBase64 = (input: string, toUint8Array = false) => {
 	return bytes;
 };
 
+export const hmacSha256 = async (
+	message: string,
+	secret: string
+): Promise<string> => {
+	const encoder = new TextEncoder();
+	const key = await crypto.subtle.importKey(
+		'raw',
+		encoder.encode(secret),
+		{ hash: 'SHA-256', name: 'HMAC' },
+		false,
+		['sign']
+	);
+	const sigBuffer = await crypto.subtle.sign(
+		'HMAC',
+		key,
+		encoder.encode(message)
+	);
+
+	return Array.from(new Uint8Array(sigBuffer))
+		.map((b) => b.toString(16).padStart(2, '0'))
+		.join('');
+};
+
 export const decodeJWT = (tokenString: string): Record<string, unknown> => {
 	const [headerSegment, payloadSegment, signatureSegment] =
 		tokenString.split('.');
@@ -68,6 +91,33 @@ export const decodeJWT = (tokenString: string): Record<string, unknown> => {
 	}
 
 	return JSON.parse(decodedPayload);
+};
+
+export const getWithingsProps = async (config: any) => {
+	const timestamp = Math.floor(Date.now() / 1000);
+	const signature = `getnonce,${config.clientId},${timestamp}`;
+	const hashedSignature = await hmacSha256(signature, config.clientSecret);
+
+	const nonceUrl = new URL('https://wbsapi.withings.net/v2/signature');
+	nonceUrl.searchParams.set('action', 'getnonce');
+	nonceUrl.searchParams.set('client_id', config.clientId);
+	nonceUrl.searchParams.set('timestamp', timestamp.toString());
+	nonceUrl.searchParams.set('signature', hashedSignature);
+
+	const nonceResponse = await fetch(nonceUrl.toString(), {
+		method: 'POST'
+	});
+
+	const nonceData = await nonceResponse.json();
+
+	if (nonceData.status === 0) {
+		return {
+			hashedSignature,
+			nonce: nonceData.body.nonce
+		};
+	}
+
+	return undefined;
 };
 
 export const createOAuth2Request = ({
@@ -94,7 +144,7 @@ export const createOAuth2Request = ({
 		);
 	}
 
-	if (encoding === 'json') {
+	if (encoding === 'application/json') {
 		oauthHeaders.set('Content-Type', 'application/json');
 
 		return new Request(url, {

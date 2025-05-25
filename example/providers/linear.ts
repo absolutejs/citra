@@ -12,7 +12,7 @@ if (
 	throw new Error('Linear OAuth2 credentials are not set in .env file');
 }
 
-const linearOAuth2Client = createOAuth2Client('linear', {
+const linearOAuth2Client = await createOAuth2Client('linear', {
 	clientId: env.LINEAR_CLIENT_ID,
 	clientSecret: env.LINEAR_CLIENT_SECRET,
 	redirectUri: env.LINEAR_REDIRECT_URI

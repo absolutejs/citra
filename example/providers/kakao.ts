@@ -12,7 +12,7 @@ if (
 	throw new Error('Kakao OAuth2 credentials are not set in .env file');
 }
 
-const kakaoOAuth2Client = createOAuth2Client('kakao', {
+const kakaoOAuth2Client = await createOAuth2Client('kakao', {
 	clientId: env.KAKAO_CLIENT_ID,
 	clientSecret: env.KAKAO_CLIENT_SECRET,
 	redirectUri: env.KAKAO_REDIRECT_URI

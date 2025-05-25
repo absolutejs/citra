@@ -12,7 +12,7 @@ if (
 	throw new Error('Notion OAuth2 credentials are not set in .env file');
 }
 
-const notionOAuth2Client = createOAuth2Client('notion', {
+const notionOAuth2Client = await createOAuth2Client('notion', {
 	clientId: env.NOTION_CLIENT_ID,
 	clientSecret: env.NOTION_CLIENT_SECRET,
 	redirectUri: env.NOTION_REDIRECT_URI

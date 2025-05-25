@@ -13,7 +13,7 @@ if (
 	throw new Error('Keycloak OAuth2 credentials are not set in .env file');
 }
 
-const keycloakOAuth2Client = createOAuth2Client('keycloak', {
+const keycloakOAuth2Client = await createOAuth2Client('keycloak', {
 	clientId: env.KEYCLOAK_CLIENT_ID,
 	clientSecret: env.KEYCLOAK_CLIENT_SECRET,
 	realmURL: env.KEYCLOAK_REALM_URL,

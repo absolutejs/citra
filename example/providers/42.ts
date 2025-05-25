@@ -12,7 +12,7 @@ if (
 	throw new Error('42 OAuth2 credentials are not set in .env file');
 }
 
-const fortyTwoOAuth2Client = createOAuth2Client('42', {
+const fortyTwoOAuth2Client = await createOAuth2Client('42', {
 	clientId: env.FORTY_TWO_CLIENT_ID,
 	clientSecret: env.FORTY_TWO_CLIENT_SECRET,
 	redirectUri: env.FORTY_TWO_REDIRECT_URI

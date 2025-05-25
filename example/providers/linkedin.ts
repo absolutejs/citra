@@ -12,7 +12,7 @@ if (
 	throw new Error('LinkedIn OAuth2 credentials are not set in .env file');
 }
 
-const linkedinOAuth2Client = createOAuth2Client('linkedin', {
+const linkedinOAuth2Client = await createOAuth2Client('linkedin', {
 	clientId: env.LINKEDIN_CLIENT_ID,
 	clientSecret: env.LINKEDIN_CLIENT_SECRET,
 	redirectUri: env.LINKEDIN_REDIRECT_URI

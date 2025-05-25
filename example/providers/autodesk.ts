@@ -12,7 +12,7 @@ if (
 	throw new Error('Autodesk OAuth2 credentials are not set in .env file');
 }
 
-const autodeskOAuth2Client = createOAuth2Client('autodesk', {
+const autodeskOAuth2Client = await createOAuth2Client('autodesk', {
 	clientId: env.AUTODESK_CLIENT_ID,
 	clientSecret: env.AUTODESK_CLIENT_SECRET,
 	redirectUri: env.AUTODESK_REDIRECT_URI

@@ -8,7 +8,7 @@ if (!env.OSU_CLIENT_ID || !env.OSU_CLIENT_SECRET || !env.OSU_REDIRECT_URI) {
 	throw new Error('Osu OAuth2 credentials are not set in .env file');
 }
 
-const osuOAuth2Client = createOAuth2Client('osu', {
+const osuOAuth2Client = await createOAuth2Client('osu', {
 	clientId: env.OSU_CLIENT_ID,
 	clientSecret: env.OSU_CLIENT_SECRET,
 	redirectUri: env.OSU_REDIRECT_URI

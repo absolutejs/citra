@@ -12,7 +12,7 @@ if (
 	throw new Error('Coinbase OAuth2 credentials are not set in .env file');
 }
 
-const coinbaseOAuth2Client = createOAuth2Client('coinbase', {
+const coinbaseOAuth2Client = await createOAuth2Client('coinbase', {
 	clientId: env.COINBASE_CLIENT_ID,
 	clientSecret: env.COINBASE_CLIENT_SECRET,
 	redirectUri: env.COINBASE_REDIRECT_URI

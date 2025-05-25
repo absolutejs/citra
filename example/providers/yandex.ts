@@ -12,7 +12,7 @@ if (
 	throw new Error('Yandex OAuth2 credentials are not set in .env file');
 }
 
-const yandexOAuth2Client = createOAuth2Client('yandex', {
+const yandexOAuth2Client = await createOAuth2Client('yandex', {
 	clientId: env.YANDEX_CLIENT_ID,
 	clientSecret: env.YANDEX_CLIENT_SECRET,
 	redirectUri: env.YANDEX_REDIRECT_URI

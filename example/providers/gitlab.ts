@@ -13,7 +13,7 @@ if (
 	throw new Error('GitLab OAuth2 credentials are not set in .env file');
 }
 
-const gitlabOAuth2Client = createOAuth2Client('gitlab', {
+const gitlabOAuth2Client = await createOAuth2Client('gitlab', {
 	baseURL: env.GITLAB_BASE_URL,
 	clientId: env.GITLAB_CLIENT_ID,
 	clientSecret: env.GITLAB_CLIENT_SECRET,

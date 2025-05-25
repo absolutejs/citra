@@ -12,7 +12,7 @@ if (
 	throw new Error('Twitter OAuth2 credentials are not set in .env file');
 }
 
-const twitterOAuth2Client = createOAuth2Client('twitter', {
+const twitterOAuth2Client = await createOAuth2Client('twitter', {
 	clientId: env.TWITTER_CLIENT_ID,
 	clientSecret: env.TWITTER_CLIENT_SECRET,
 	redirectUri: env.TWITTER_REDIRECT_URI

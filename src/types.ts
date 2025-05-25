@@ -16,8 +16,15 @@ type ProfileRequestConfig = {
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	headers?: HeadersInit | ((config: any) => HeadersInit);
-	body?: unknown;
-	searchParams?: URLSearchParamsInit;
+	body?:
+		| URLSearchParamsInit
+		| ((config: any) => URLSearchParamsInit)
+		| ((config: any) => Promise<URLSearchParamsInit>);
+	searchParams?:
+		| URLSearchParamsInit
+		| ((config: any) => URLSearchParamsInit)
+		| ((config: any) => Promise<URLSearchParamsInit>);
+	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 };
 
 type BaseRevocation = {
@@ -27,27 +34,31 @@ type BaseRevocation = {
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	headers?: HeadersInit | ((config: any) => HeadersInit);
-	body?: URLSearchParams;
+	body?:
+		| URLSearchParamsInit
+		| ((config: any) => URLSearchParamsInit)
+		| ((config: any) => Promise<URLSearchParamsInit>);
+	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 };
 
-type QueryRevocation = BaseRevocation & {
+type NamedRevocation = BaseRevocation & {
 	authIn: 'query' | 'body';
 	tokenParamName: 'token' | 'access_token' | 'refresh_token';
 };
 
-type BodyOrHeaderRevocation = BaseRevocation & {
+type HeaderRevocation = BaseRevocation & {
 	authIn: 'header';
 	tokenParamName?: never;
 };
 
-type RevocationRequestConfig = QueryRevocation | BodyOrHeaderRevocation;
+type RevocationRequestConfig = NamedRevocation | HeaderRevocation;
 
 type TokenRequestConfig = {
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	url: string | ((config: any) => string);
 	authIn: 'body' | 'header';
-	encoding: 'form' | 'json';
+	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 };
 
 export type DefineProviders = <
@@ -65,7 +76,7 @@ export type OAuth2RequestOptions = {
 	url: string;
 	body: Record<string, unknown> | URLSearchParams;
 	authIn: 'header' | 'body' | 'query';
-	encoding: 'form' | 'json';
+	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 	headers?: HeadersInit;
 	clientId: string;
 	clientSecret?: string;
@@ -493,6 +504,11 @@ type VKOAuth2Credentials = {
 	clientSecret: string;
 	redirectUri: string;
 };
+type WithingsOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
 type WorkOSOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
@@ -576,6 +592,7 @@ type CredentialsMap = {
 	twitch: TwitchOAuth2Credentials;
 	twitter: TwitterOAuth2Credentials;
 	vk: VKOAuth2Credentials;
+	withings: WithingsOAuth2Credentials;
 	workos: WorkOSOAuth2Credentials;
 	yahoo: YahooOAuth2Credentials;
 	yandex: YandexOAuth2Credentials;

@@ -27,12 +27,14 @@ export const FetchProfileModal = ({
 			message: 'Fetching profile, please wait...'
 		});
 
+		const headers: Record<string, string> = {
+			Authorization: `Bearer ${accessToken}`
+		};
+
 		const response = await fetch(
 			`/oauth2/${currentProvider?.toLowerCase()}/profile`,
 			{
-				headers: {
-					Authorization: `Bearer ${accessToken}`
-				}
+				headers
 			}
 		);
 

@@ -60,6 +60,7 @@ import { tumblrPlugin } from '../providers/tumblr';
 import { twitchPlugin } from '../providers/twitch';
 import { twitterPlugin } from '../providers/twitter';
 import { vkPlugin } from '../providers/vk';
+import { withingsPlugin } from '../providers/withings';
 import { workOSPlugin } from '../providers/workos';
 import { yahooPlugin } from '../providers/yahoo';
 import { yandexPlugin } from '../providers/yandex';
@@ -127,6 +128,7 @@ const allProviders = [
 	twitchPlugin,
 	twitterPlugin,
 	vkPlugin,
+	withingsPlugin,
 	workOSPlugin,
 	yahooPlugin,
 	yandexPlugin,

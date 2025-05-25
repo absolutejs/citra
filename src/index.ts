@@ -4,10 +4,10 @@ import { hasClientSecret } from './typeGuards';
 import { CredentialsFor, OAuth2Client, ProviderOption } from './types';
 import { createOAuth2FetchError, createOAuth2Request } from './utils';
 
-export const createOAuth2Client = <P extends ProviderOption>(
+export const createOAuth2Client = async <P extends ProviderOption>(
 	providerName: P,
 	config: CredentialsFor<P>
-): OAuth2Client<P> => {
+): Promise<OAuth2Client<P>> => {
 	const meta = providers[providerName];
 
 	const isConfigPropertyFunction = <T>(
@@ -15,12 +15,18 @@ export const createOAuth2Client = <P extends ProviderOption>(
 	): cfgProp is (cfg: CredentialsFor<P>) => T =>
 		typeof cfgProp === 'function';
 
-	const resolveConfigProp = <T>(
-		cfgProp: T | ((cfg: CredentialsFor<P>) => T)
-	) => (isConfigPropertyFunction(cfgProp) ? cfgProp(config) : cfgProp);
+	const resolveConfigProp = async <T>(
+		cfgProp: T | ((cfg: CredentialsFor<P>) => T | Promise<T>)
+	): Promise<T> => {
+		const result = isConfigPropertyFunction(cfgProp)
+			? cfgProp(config)
+			: cfgProp;
 
-	const authorizationUrl = resolveConfigProp(meta.authorizationUrl);
-	const tokenUrl = resolveConfigProp(meta.tokenRequest.url);
+		return await result;
+	};
+
+	const authorizationUrl = await resolveConfigProp(meta.authorizationUrl);
+	const tokenUrl = await resolveConfigProp(meta.tokenRequest.url);
 
 	return {
 		async createAuthorizationUrl(opts: {
@@ -37,8 +43,10 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			if (config.redirectUri)
 				url.searchParams.set('redirect_uri', config.redirectUri);
 			if (state) url.searchParams.set('state', state);
-			if (scope.length) url.searchParams.set('scope', scope.join(' '));
-
+			if (scope.length !== 0) {
+				const delimeter = providerName === 'withings' ? ',' : ' ';
+				url.searchParams.set('scope', scope.join(delimeter));
+			}
 			if (meta.PKCEMethod !== undefined) {
 				if (!codeVerifier) {
 					throw new Error(
@@ -71,16 +79,21 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				authIn,
 				searchParams,
 				body: profileBody,
-				headers
+				headers,
+				encoding
 			} = profileRequest;
 
-			const endpoint = new URL(resolveConfigProp(url));
-			new URLSearchParams(searchParams).forEach((value, key) =>
-				endpoint.searchParams.append(key, value)
+			const endpoint = new URL(await resolveConfigProp(url));
+			const resolvedBody = await resolveConfigProp(profileBody);
+
+			new URLSearchParams(await resolveConfigProp(searchParams)).forEach(
+				(value, key) => endpoint.searchParams.append(key, value)
 			);
 
 			let headerEntries: [string, string][] = [];
-			const rawHeaders = headers ? resolveConfigProp(headers) : undefined;
+			const rawHeaders = headers
+				? await resolveConfigProp(headers)
+				: undefined;
 			if (rawHeaders instanceof Headers)
 				headerEntries = Array.from(rawHeaders.entries());
 			else if (Array.isArray(rawHeaders)) headerEntries = rawHeaders;
@@ -88,7 +101,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 				headerEntries = Object.entries(rawHeaders);
 
 			const profileHeaders = Object.fromEntries(
-				headerEntries.filter(([, value]) => value !== '')
+				headerEntries.filter(([, v]) => v !== '')
 			);
 
 			if (authIn === 'header') {
@@ -98,9 +111,13 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 
 			const init: RequestInit = { headers: profileHeaders, method };
-			if (method === 'POST' && profileBody) {
-				profileHeaders['Content-Type'] = 'application/json';
-				init.body = JSON.stringify(profileBody);
+
+			if (method === 'POST' && resolvedBody != null) {
+				profileHeaders['Content-Type'] = encoding;
+				init.body =
+					encoding === 'application/json'
+						? JSON.stringify(resolvedBody)
+						: new URLSearchParams(resolvedBody).toString();
 			}
 
 			const response = await fetch(endpoint.toString(), init);
@@ -108,7 +125,6 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			return response.json();
 		},
-
 		async refreshAccessToken(refreshToken: string) {
 			const { authIn, encoding } = meta.tokenRequest;
 			const params = new URLSearchParams(meta.refreshAccessTokenBody);
@@ -147,10 +163,11 @@ export const createOAuth2Client = <P extends ProviderOption>(
 
 			const { url, authIn, body, headers, tokenParamName } =
 				revocationRequest;
-			const endpoint = resolveConfigProp(url);
-			const revocationBody = body ?? new URLSearchParams();
+			const endpoint = await resolveConfigProp(url);
+			const resolvedBody = await resolveConfigProp(body);
+			const revocationBody = new URLSearchParams(resolvedBody);
 			const revocationHeaders = new Headers(
-				headers && resolveConfigProp(headers)
+				headers && (await resolveConfigProp(headers))
 			);
 			const { clientId } = config;
 			const clientSecret = hasClientSecret(config)
@@ -168,7 +185,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					body: revocationBody,
 					clientId,
 					clientSecret,
-					encoding: 'form',
+					encoding: 'application/x-www-form-urlencoded',
 					headers: revocationHeaders,
 					url: endpoint.toString()
 				});
@@ -179,7 +196,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					body: revocationBody,
 					clientId,
 					clientSecret,
-					encoding: 'form',
+					encoding: 'application/x-www-form-urlencoded',
 					headers: revocationHeaders,
 					url: endpoint.toString()
 				});
@@ -189,7 +206,7 @@ export const createOAuth2Client = <P extends ProviderOption>(
 					body: revocationBody,
 					clientId,
 					clientSecret,
-					encoding: 'form',
+					encoding: 'application/x-www-form-urlencoded',
 					headers: revocationHeaders,
 					url: `${endpoint.toString()}?${tokenParamName}=${token}`
 				});
@@ -224,7 +241,9 @@ export const createOAuth2Client = <P extends ProviderOption>(
 			}
 
 			const payload =
-				encoding === 'json' ? bodyObj : new URLSearchParams(bodyObj);
+				encoding === 'application/json'
+					? bodyObj
+					: new URLSearchParams(bodyObj);
 
 			const request = createOAuth2Request({
 				authIn,

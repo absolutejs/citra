@@ -12,7 +12,7 @@ if (
 	throw new Error('Epic Games OAuth2 credentials are not set in .env file');
 }
 
-const epicGamesOAuth2Client = createOAuth2Client('epicgames', {
+const epicGamesOAuth2Client = await createOAuth2Client('epicgames', {
 	clientId: env.EPIC_GAMES_CLIENT_ID,
 	clientSecret: env.EPIC_GAMES_CLIENT_SECRET,
 	redirectUri: env.EPIC_GAMES_REDIRECT_URI

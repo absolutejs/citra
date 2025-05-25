@@ -12,7 +12,7 @@ if (
 	throw new Error('Google OAuth2 credentials are not set in .env file');
 }
 
-const googleOAuth2Client = createOAuth2Client('google', {
+const googleOAuth2Client = await createOAuth2Client('google', {
 	clientId: env.GOOGLE_CLIENT_ID,
 	clientSecret: env.GOOGLE_CLIENT_SECRET,
 	redirectUri: env.GOOGLE_REDIRECT_URI

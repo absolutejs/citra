@@ -15,12 +15,15 @@ if (
 	);
 }
 
-const microsoftEntraIDOAuth2Client = createOAuth2Client('microsoftentraid', {
-	clientId: env.MICROSOFT_ENTRA_ID_CLIENT_ID,
-	clientSecret: env.MICROSOFT_ENTRA_ID_CLIENT_SECRET,
-	redirectUri: env.MICROSOFT_ENTRA_ID_REDIRECT_URI,
-	tenantId: env.MICROSOFT_ENTRA_ID_TENANT_ID
-});
+const microsoftEntraIDOAuth2Client = await createOAuth2Client(
+	'microsoftentraid',
+	{
+		clientId: env.MICROSOFT_ENTRA_ID_CLIENT_ID,
+		clientSecret: env.MICROSOFT_ENTRA_ID_CLIENT_SECRET,
+		redirectUri: env.MICROSOFT_ENTRA_ID_REDIRECT_URI,
+		tenantId: env.MICROSOFT_ENTRA_ID_TENANT_ID
+	}
+);
 
 export const microsoftEntraIDPlugin = new Elysia()
 	.get(

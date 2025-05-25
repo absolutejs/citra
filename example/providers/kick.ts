@@ -8,7 +8,7 @@ if (!env.KICK_CLIENT_ID || !env.KICK_CLIENT_SECRET || !env.KICK_REDIRECT_URI) {
 	throw new Error('Kick OAuth2 credentials are not set in .env file');
 }
 
-const kickOAuth2Client = createOAuth2Client('kick', {
+const kickOAuth2Client = await createOAuth2Client('kick', {
 	clientId: env.KICK_CLIENT_ID,
 	clientSecret: env.KICK_CLIENT_SECRET,
 	redirectUri: env.KICK_REDIRECT_URI

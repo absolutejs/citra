@@ -11,7 +11,7 @@ if (
 ) {
 	throw new Error('Facebook OAuth2 credentials are not set in .env file');
 }
-const facebookOAuth2Client = createOAuth2Client('facebook', {
+const facebookOAuth2Client = await createOAuth2Client('facebook', {
 	clientId: env.FACEBOOK_CLIENT_ID,
 	clientSecret: env.FACEBOOK_CLIENT_SECRET,
 	redirectUri: env.FACEBOOK_REDIRECT_URI

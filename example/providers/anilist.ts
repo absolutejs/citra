@@ -12,7 +12,7 @@ if (
 	throw new Error('Google OAuth2 credentials are not set in .env file');
 }
 
-const anilistOAuth2Client = createOAuth2Client('anilist', {
+const anilistOAuth2Client = await createOAuth2Client('anilist', {
 	clientId: env.ANILIST_CLIENT_ID,
 	clientSecret: env.ANILIST_CLIENT_SECRET,
 	redirectUri: env.ANILIST_REDIRECT_URI

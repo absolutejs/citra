@@ -12,7 +12,7 @@ if (
 	throw new Error('Dropbox OAuth2 credentials are not set in .env file');
 }
 
-const dropboxOAuth2Client = createOAuth2Client('dropbox', {
+const dropboxOAuth2Client = await createOAuth2Client('dropbox', {
 	clientId: env.DROPBOX_APP_KEY,
 	clientSecret: env.DROPBOX_APP_SECRET,
 	redirectUri: env.DROPBOX_REDIRECT_URI

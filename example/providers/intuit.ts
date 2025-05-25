@@ -12,7 +12,7 @@ if (
 	throw new Error('Intuit OAuth2 credentials are not set in .env file');
 }
 
-const intuitOAuth2Client = createOAuth2Client('intuit', {
+const intuitOAuth2Client = await createOAuth2Client('intuit', {
 	clientId: env.INTUIT_CLIENT_ID,
 	clientSecret: env.INTUIT_CLIENT_SECRET,
 	environment: env.NODE_ENV === 'production' ? 'production' : 'sandbox',

@@ -8,7 +8,7 @@ if (!env.ZOOM_CLIENT_ID || !env.ZOOM_CLIENT_SECRET || !env.ZOOM_REDIRECT_URI) {
 	throw new Error('Zoom OAuth2 credentials are not set in .env file');
 }
 
-const zoomOAuth2Client = createOAuth2Client('zoom', {
+const zoomOAuth2Client = await createOAuth2Client('zoom', {
 	clientId: env.ZOOM_CLIENT_ID,
 	clientSecret: env.ZOOM_CLIENT_SECRET,
 	redirectUri: env.ZOOM_REDIRECT_URI

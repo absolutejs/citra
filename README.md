@@ -454,6 +454,7 @@ Providers are grouped by special requirements:
 | Twitch             | —                                                      |
 | Twitter            | Untested: Paid                                         |
 | VK                 | Public Domain Only (Untested: localhost Not Supported) |
+| Withings           | Fetch profile in development							  |
 | WorkOS             | In Development                                         |
 | Yahoo              | Untested: HTTPS Required                               |
 | Yandex             | —                                                      |

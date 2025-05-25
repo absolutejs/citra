@@ -14,7 +14,7 @@ if (
 	);
 }
 
-const mercadoLibreOAuth2Client = createOAuth2Client('mercadolibre', {
+const mercadoLibreOAuth2Client = await createOAuth2Client('mercadolibre', {
 	clientId: env.MERCADO_LIBRE_CLIENT_ID,
 	clientSecret: env.MERCADO_LIBRE_CLIENT_SECRET,
 	redirectUri: env.MERCADO_LIBRE_REDIRECT_URI

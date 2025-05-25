@@ -12,7 +12,7 @@ if (
 	throw new Error('Polar OAuth2 credentials are not set in .env file');
 }
 
-const polarOAuth2Client = createOAuth2Client('polar', {
+const polarOAuth2Client = await createOAuth2Client('polar', {
 	clientId: env.POLAR_CLIENT_ID,
 	clientSecret: env.POLAR_CLIENT_SECRET,
 	redirectUri: env.POLAR_REDIRECT_URI

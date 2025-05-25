@@ -12,7 +12,7 @@ if (
 	throw new Error('Twitch OAuth2 credentials are not set in .env file');
 }
 
-const twitchOAuth2Client = createOAuth2Client('twitch', {
+const twitchOAuth2Client = await createOAuth2Client('twitch', {
 	clientId: env.TWITCH_CLIENT_ID,
 	clientSecret: env.TWITCH_CLIENT_SECRET,
 	redirectUri: env.TWITCH_REDIRECT_URI

@@ -12,7 +12,7 @@ if (
 	throw new Error('Figma OAuth2 credentials are not set in .env file');
 }
 
-const figmaOAuth2Client = createOAuth2Client('figma', {
+const figmaOAuth2Client = await createOAuth2Client('figma', {
 	clientId: env.FIGMA_CLIENT_ID,
 	clientSecret: env.FIGMA_CLIENT_SECRET,
 	redirectUri: env.FIGMA_REDIRECT_URI

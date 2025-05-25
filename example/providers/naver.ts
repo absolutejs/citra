@@ -12,7 +12,7 @@ if (
 	throw new Error('Naver OAuth2 credentials are not set in .env file');
 }
 
-const naverOAuth2Client = createOAuth2Client('naver', {
+const naverOAuth2Client = await createOAuth2Client('naver', {
 	clientId: env.NAVER_CLIENT_ID,
 	clientSecret: env.NAVER_CLIENT_SECRET,
 	redirectUri: env.NAVER_REDIRECT_URI

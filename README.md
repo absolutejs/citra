@@ -48,7 +48,7 @@ Import Citra and create a client for your desired provider:
 ```ts
 import { createOAuth2Client } from 'citra';
 
-const googleClient = createOAuth2Client('google', {
+const googleClient = await createOAuth2Client('google', {
 	// defining your config directly in the function will make it type safe
 	clientId: 'YOUR_CLIENT_ID',
 	clientSecret: 'YOUR_CLIENT_SECRET',
@@ -454,7 +454,7 @@ Providers are grouped by special requirements:
 | Twitch             | —                                                      |
 | Twitter            | Untested: Paid                                         |
 | VK                 | Public Domain Only (Untested: localhost Not Supported) |
-| Withings           | Fetch profile in development							  |
+| Withings           | Fetch profile in development                           |
 | WorkOS             | In Development                                         |
 | Yahoo              | Untested: HTTPS Required                               |
 | Yandex             | —                                                      |

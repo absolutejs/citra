@@ -70,6 +70,7 @@ export type DefineProviders = <
 		ProviderConfig;
 };
 
+export type ProvidersMap = typeof providers;
 export type ProviderOption = keyof typeof providers;
 
 export type OAuth2RequestOptions = {

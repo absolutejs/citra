@@ -7,7 +7,7 @@ import {
 	isValidProviderOption
 } from './typeGuards';
 import { DefineProviders } from './types';
-import { encodeBase64, getWithingsProps} from './utils';
+import { encodeBase64, getWithingsProps } from './utils';
 
 export const defineProviders: DefineProviders = (providers) => providers;
 

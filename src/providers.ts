@@ -577,9 +577,7 @@ export const providers = defineProviders({
 	figma: {
 		authorizationUrl: 'https://www.figma.com/oauth',
 		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'user_id_string'
-			]);
+			const subject = extractPropFromIdentity(identity, ['id']);
 
 			if (typeof subject !== 'string') {
 				throw new Error(

@@ -15,8 +15,7 @@ const extractPropFromIdentity = (
 	identity: Record<string, unknown>,
 	keys: string[]
 ) => {
-	let value: unknown | Record<string, unknown>
-	 = identity;
+	let value: unknown | Record<string, unknown> = identity;
 
 	for (const key of keys) {
 		if (!isObject(value)) {
@@ -98,7 +97,9 @@ export const providers = defineProviders({
 			]);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -152,8 +153,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['account_id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -264,8 +267,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['uuid']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -290,8 +295,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -325,8 +332,10 @@ export const providers = defineProviders({
 				'membershipId'
 			]);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -354,8 +363,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['data', 'id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -400,7 +411,9 @@ export const providers = defineProviders({
 			const subject = extractPropFromIdentity(identity, ['data', 'id']);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -426,7 +439,9 @@ export const providers = defineProviders({
 			const subject = extractPropFromIdentity(identity, ['id']);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -451,8 +466,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['account_id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -482,8 +499,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['account_id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -513,7 +532,9 @@ export const providers = defineProviders({
 			]);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -561,7 +582,9 @@ export const providers = defineProviders({
 			]);
 
 			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected string, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -607,7 +630,9 @@ export const providers = defineProviders({
 			const subject = extractPropFromIdentity(identity, ['id']);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -762,7 +787,9 @@ export const providers = defineProviders({
 			]);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -794,8 +821,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -844,8 +873,10 @@ export const providers = defineProviders({
 				'id'
 			]);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -901,8 +932,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -935,8 +968,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -962,8 +997,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1011,7 +1048,9 @@ export const providers = defineProviders({
 			const subject = extractPropFromIdentity(identity, ['id']);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1040,8 +1079,10 @@ export const providers = defineProviders({
 				'id'
 			]);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1066,8 +1107,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1123,7 +1166,9 @@ export const providers = defineProviders({
 			const subject = extractPropFromIdentity(identity, ['id']);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1148,8 +1193,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['data', 'id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1200,7 +1247,9 @@ export const providers = defineProviders({
 			const subject = extractPropFromIdentity(identity, ['x_user_id']);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1228,7 +1277,9 @@ export const providers = defineProviders({
 			const subject = extractPropFromIdentity(identity, ['x_user_id']);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1255,8 +1306,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1334,7 +1387,9 @@ export const providers = defineProviders({
 			const subject = extractPropFromIdentity(identity, ['id']);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1383,8 +1438,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1414,8 +1471,10 @@ export const providers = defineProviders({
 				'id'
 			]);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1448,7 +1507,9 @@ export const providers = defineProviders({
 			const subject = extractPropFromIdentity(identity, ['id']);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1484,8 +1545,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['data', 'id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1518,8 +1581,10 @@ export const providers = defineProviders({
 				'open_id'
 			]);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1551,8 +1616,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['data', 'id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1581,8 +1648,10 @@ export const providers = defineProviders({
 				'name'
 			]);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1637,8 +1706,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['data', 'id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1674,7 +1745,9 @@ export const providers = defineProviders({
 			]);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1703,7 +1776,9 @@ export const providers = defineProviders({
 			]);
 
 			if (typeof subject !== 'number') {
-				throw new Error('Invalid identity data shape');
+				throw new Error(
+					`Invalid identity data shape: expected number, got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1812,8 +1887,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;
@@ -1845,8 +1922,10 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'string') {
-				throw new Error('Invalid identity data shape');
+			if (typeof subject !== 'number') {
+				throw new Error(
+					`Invalid identity data shape: expected string got ${typeof subject}`
+				);
 			}
 
 			return subject;

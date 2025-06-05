@@ -1,4 +1,6 @@
+import { anilistProfileQuery } from './graphqlQueries';
 import {
+	isObject,
 	isOIDCProviderOption,
 	isPKCEProviderOption,
 	isRefreshableProviderOption,
@@ -9,11 +11,42 @@ import {
 import { DefineProviders } from './types';
 import { encodeBase64, getWithingsProps } from './utils';
 
+const extractPropFromIdentity = (
+	identity: Record<string, unknown>,
+	keys: string[]
+) => {
+	let value: unknown = identity;
+
+	for (const key of keys) {
+		if (!isObject(value)) {
+			throw new Error(
+				`Invalid identity data shape: expected object, got ${typeof value}`
+			);
+		}
+		value = value[key];
+	}
+
+	return value;
+};
+
+const extractSubFromOIDCIdentity = (
+	identity: Record<string, unknown>
+): string => {
+	const sub = extractPropFromIdentity(identity, ['sub']);
+
+	if (typeof sub !== 'string') {
+		throw new Error('Invalid identity data shape');
+	}
+
+	return sub;
+};
+
 export const defineProviders: DefineProviders = (providers) => providers;
 
 export const providers = defineProviders({
 	'42': {
 		authorizationUrl: 'https://api.intra.42.fr/oauth/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -31,6 +64,7 @@ export const providers = defineProviders({
 	},
 	amazoncognito: {
 		authorizationUrl: 'https://${domain}/oauth2/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -55,12 +89,25 @@ export const providers = defineProviders({
 	},
 	anilist: {
 		authorizationUrl: 'https://anilist.co/api/v2/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'data',
+				'Viewer',
+				'id'
+			]);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
 			body: {
-				query: `query { Viewer { id name } }`
+				query: anilistProfileQuery
 			},
 			encoding: 'application/json',
 			headers: {
@@ -79,6 +126,7 @@ export const providers = defineProviders({
 	},
 	apple: {
 		authorizationUrl: 'https://appleid.apple.com/auth/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -100,6 +148,15 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: {
 			audience: 'api.atlassian.com'
 		},
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['account_id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -108,7 +165,6 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.atlassian.com/me'
 		},
-
 		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'body',
@@ -118,6 +174,7 @@ export const providers = defineProviders({
 	},
 	auth0: {
 		authorizationUrl: (config) => `https://${config.domain}/authorize`,
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -146,6 +203,7 @@ export const providers = defineProviders({
 	authentik: {
 		authorizationUrl: (config) =>
 			`https://${config.baseURL}/oauth/authorize`,
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -165,6 +223,7 @@ export const providers = defineProviders({
 	autodesk: {
 		authorizationUrl:
 			'https://developer.api.autodesk.com/authentication/v2/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -183,6 +242,7 @@ export const providers = defineProviders({
 	},
 	battlenet: {
 		authorizationUrl: 'https://oauth.battle.net/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: false,
 		profileRequest: {
@@ -200,6 +260,15 @@ export const providers = defineProviders({
 	},
 	bitbucket: {
 		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['uuid']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -217,6 +286,15 @@ export const providers = defineProviders({
 	},
 	box: {
 		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -240,6 +318,18 @@ export const providers = defineProviders({
 	},
 	bungie: {
 		authorizationUrl: 'https://www.bungie.net/en/OAuth/Authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'Response',
+				'membershipId'
+			]);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -260,8 +350,16 @@ export const providers = defineProviders({
 	},
 	coinbase: {
 		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
-		isOIDC: false,
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['data', 'id']);
 
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
+		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -278,7 +376,8 @@ export const providers = defineProviders({
 	},
 	discord: {
 		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
-		isOIDC: false,
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
+		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
 		profileRequest: {
@@ -296,8 +395,16 @@ export const providers = defineProviders({
 	},
 	donationalerts: {
 		authorizationUrl: 'https://www.donationalerts.com/oauth/authorize',
-		isOIDC: false,
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['data', 'id']);
 
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
+		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -314,8 +421,16 @@ export const providers = defineProviders({
 	},
 	dribbble: {
 		authorizationUrl: 'https://dribbble.com/oauth/authorize',
-		isOIDC: false,
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
 
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
+		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
 			authIn: 'header',
@@ -332,6 +447,15 @@ export const providers = defineProviders({
 	},
 	dropbox: {
 		authorizationUrl: 'https://www.dropbox.com/oauth2/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['account_id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -354,6 +478,15 @@ export const providers = defineProviders({
 	},
 	epicgames: {
 		authorizationUrl: 'https://www.epicgames.com/id/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['account_id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -371,6 +504,19 @@ export const providers = defineProviders({
 	},
 	etsy: {
 		authorizationUrl: 'https://www.etsy.com/oauth/connect',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'results',
+				'0',
+				'user_id'
+			]);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -388,6 +534,7 @@ export const providers = defineProviders({
 	},
 	facebook: {
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: false,
 		PKCEMethod: 'S256',
@@ -407,6 +554,17 @@ export const providers = defineProviders({
 	},
 	figma: {
 		authorizationUrl: 'https://www.figma.com/oauth',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'user_id_string'
+			]);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -425,6 +583,7 @@ export const providers = defineProviders({
 	},
 	gitea: {
 		authorizationUrl: (config) => `${config.baseURL}/login/oauth/authorize`,
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -443,6 +602,15 @@ export const providers = defineProviders({
 	},
 	github: {
 		authorizationUrl: 'https://github.com/login/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -460,6 +628,7 @@ export const providers = defineProviders({
 	},
 	gitlab: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -484,6 +653,7 @@ export const providers = defineProviders({
 	},
 	google: {
 		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -509,6 +679,7 @@ export const providers = defineProviders({
 	},
 	intuit: {
 		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		profileRequest: {
@@ -520,7 +691,6 @@ export const providers = defineProviders({
 					? 'https://accounts.platform.intuit.com/v1/openid_connect/userinfo'
 					: 'https://sandbox-accounts.platform.intuit.com/v1/openid_connect/userinfo'
 		},
-
 		revocationRequest: {
 			authIn: 'body',
 			encoding: 'application/json',
@@ -539,6 +709,7 @@ export const providers = defineProviders({
 	},
 	kakao: {
 		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -558,6 +729,7 @@ export const providers = defineProviders({
 	keycloak: {
 		authorizationUrl: (config) =>
 			`${config.realmURL}/protocol/openid-connect/auth`,
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -582,6 +754,18 @@ export const providers = defineProviders({
 	},
 	kick: {
 		authorizationUrl: 'https://id.kick.com/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'data',
+				'user_id'
+			]);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -589,7 +773,7 @@ export const providers = defineProviders({
 			authIn: 'header',
 			encoding: 'application/json',
 			method: 'GET',
-			url: 'https://id.kick.com/v1/user'
+			url: 'https://api.kick.com/public/v1/users'
 		},
 		revocationRequest: {
 			authIn: 'body',
@@ -597,7 +781,7 @@ export const providers = defineProviders({
 			tokenParamName: 'token',
 			url: 'https://id.kick.com/oauth/revoke'
 		},
-		scopeRequired: false,
+		scopeRequired: true, // Has to include 'user:read'
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -606,6 +790,15 @@ export const providers = defineProviders({
 	},
 	lichess: {
 		authorizationUrl: 'https://lichess.org/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: false,
 		PKCEMethod: 'S256',
@@ -624,6 +817,7 @@ export const providers = defineProviders({
 	},
 	line: {
 		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -633,7 +827,6 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.line.me/v2/profile'
 		},
-
 		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'body',
@@ -643,6 +836,19 @@ export const providers = defineProviders({
 	},
 	linear: {
 		authorizationUrl: 'https://linear.app/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'data',
+				'viewer',
+				'id'
+			]);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -672,6 +878,7 @@ export const providers = defineProviders({
 	},
 	linkedin: {
 		authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -690,6 +897,15 @@ export const providers = defineProviders({
 	},
 	mastodon: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: false,
 		PKCEMethod: 'S256',
@@ -715,6 +931,15 @@ export const providers = defineProviders({
 	},
 	mercadolibre: {
 		authorizationUrl: 'https://auth.mercadolibre.com/authorization',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -733,8 +958,16 @@ export const providers = defineProviders({
 	},
 	mercadopago: {
 		authorizationUrl: 'https://auth.mercadopago.com/authorization',
-		isOIDC: false,
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
 
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
+		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
 			authIn: 'header',
@@ -752,6 +985,7 @@ export const providers = defineProviders({
 	microsoftentraid: {
 		authorizationUrl: (config) =>
 			`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/authorize`,
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -772,6 +1006,15 @@ export const providers = defineProviders({
 	},
 	myanimelist: {
 		authorizationUrl: 'https://myanimelist.net/v1/oauth2/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'plain',
@@ -790,6 +1033,18 @@ export const providers = defineProviders({
 	},
 	naver: {
 		authorizationUrl: 'https://nid.naver.com/oauth2.0/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'response',
+				'id'
+			]);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -807,6 +1062,15 @@ export const providers = defineProviders({
 	},
 	notion: {
 		authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -828,6 +1092,7 @@ export const providers = defineProviders({
 	okta: {
 		authorizationUrl: (config) =>
 			`https://${config.domain}/oauth2/default/v1/authorize`,
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -853,6 +1118,15 @@ export const providers = defineProviders({
 	},
 	osu: {
 		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -870,6 +1144,15 @@ export const providers = defineProviders({
 	},
 	patreon: {
 		authorizationUrl: 'https://www.patreon.com/oauth2/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['data', 'id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -887,6 +1170,7 @@ export const providers = defineProviders({
 	},
 	polar: {
 		authorizationUrl: 'https://polar.sh/oauth2/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -911,6 +1195,15 @@ export const providers = defineProviders({
 	},
 	polaraccesslink: {
 		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['x_user_id']);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: false,
 		PKCEMethod: 'S256',
@@ -919,6 +1212,7 @@ export const providers = defineProviders({
 			encoding: 'application/json',
 			method: 'GET',
 			url: 'https://www.polaraccesslink.com/v3/users/me'
+			// TODO: Implement Polar AccessLink profile request which needs an additional user ID parameter
 		},
 		scopeRequired: false,
 		tokenRequest: {
@@ -929,6 +1223,15 @@ export const providers = defineProviders({
 	},
 	polarteampro: {
 		authorizationUrl: 'https://auth.polar.com/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['x_user_id']);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -937,7 +1240,7 @@ export const providers = defineProviders({
 			encoding: 'application/json',
 			method: 'GET',
 			url: 'https://www.polaraccesslink.com/v3/users/<USER_ID>'
-			// TODO: Implement Polar AccessLink profile request which needs an additional user ID parameter // TODO: Implement Polar AccessLink profile request which needs an additional user ID parameter
+			// TODO: Implement Polar AccessLink profile request which needs an additional user ID parameter
 		},
 		scopeRequired: false,
 		tokenRequest: {
@@ -948,6 +1251,15 @@ export const providers = defineProviders({
 	},
 	reddit: {
 		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -973,6 +1285,7 @@ export const providers = defineProviders({
 	},
 	roblox: {
 		authorizationUrl: 'https://apis.roblox.com/oauth/v1/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -992,6 +1305,7 @@ export const providers = defineProviders({
 	salesforce: {
 		authorizationUrl:
 			'https://login.salesforce.com/services/oauth2/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1015,6 +1329,15 @@ export const providers = defineProviders({
 	},
 	shikimori: {
 		authorizationUrl: 'https://shikimori.org/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1032,6 +1355,7 @@ export const providers = defineProviders({
 	},
 	slack: {
 		authorizationUrl: 'https://slack.com/openid/connect/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		profileRequest: {
@@ -1055,6 +1379,15 @@ export const providers = defineProviders({
 	},
 	spotify: {
 		authorizationUrl: 'https://accounts.spotify.com/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1073,6 +1406,19 @@ export const providers = defineProviders({
 	},
 	startgg: {
 		authorizationUrl: 'https://start.gg/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'data',
+				'currentUser',
+				'id'
+			]);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1096,7 +1442,16 @@ export const providers = defineProviders({
 		}
 	},
 	strava: {
-		authorizationUrl: 'https://www.strava.com/oauth/authorize',
+		authorizationUrl: 'https://www.strava.com/oauth/authorize', // TODO: Certain providers like Strava arent oidc but dont need to get the user profile, it would save a fetch call
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1125,6 +1480,15 @@ export const providers = defineProviders({
 	synology: {
 		authorizationUrl: (config) =>
 			`${config.baseURL}/webman/sso/SSOOauth.cgi?client_id=${config.clientId}&response_type=code&redirect_uri=${config.redirectUri}`,
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['data', 'id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -1147,6 +1511,18 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: (config) => ({
 			client_key: config.clientId
 		}),
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'data',
+				'open_id'
+			]);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1171,6 +1547,15 @@ export const providers = defineProviders({
 	},
 	tiltify: {
 		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['data', 'id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1188,6 +1573,19 @@ export const providers = defineProviders({
 	},
 	tumblr: {
 		authorizationUrl: 'https://www.tumblr.com/oauth2/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'response',
+				'user',
+				'name'
+			]);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1205,6 +1603,7 @@ export const providers = defineProviders({
 	},
 	twitch: {
 		authorizationUrl: 'https://id.twitch.tv/oauth2/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		profileRequest: {
@@ -1234,6 +1633,15 @@ export const providers = defineProviders({
 	},
 	twitter: {
 		authorizationUrl: 'https://twitter.com/i/oauth2/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['data', 'id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1257,6 +1665,19 @@ export const providers = defineProviders({
 	},
 	vk: {
 		authorizationUrl: 'https://oauth.vk.com/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'response',
+				'0',
+				'id'
+			]);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -1274,6 +1695,18 @@ export const providers = defineProviders({
 	},
 	withings: {
 		authorizationUrl: 'https://account.withings.com/oauth2_user/authorize2',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, [
+				'body',
+				'userid'
+			]);
+
+			if (typeof subject !== 'number') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1316,7 +1749,6 @@ export const providers = defineProviders({
 			method: 'POST',
 			url: 'https://wbsapi.withings.net/v2/oauth2'
 		},
-
 		scopeRequired: true,
 		tokenRequest: {
 			authIn: 'body',
@@ -1329,6 +1761,7 @@ export const providers = defineProviders({
 	},
 	workos: {
 		authorizationUrl: 'https://api.workos.com/sso/authorize',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1347,6 +1780,7 @@ export const providers = defineProviders({
 	},
 	yahoo: {
 		authorizationUrl: 'https://api.login.yahoo.com/oauth2/request_auth',
+		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1374,6 +1808,15 @@ export const providers = defineProviders({
 			device_id: crypto.randomUUID(),
 			device_name: `${navigator.platform ?? 'Unknown'} — ${(navigator.userAgent.split(')')[0] || '').split('(').pop() || 'Unknown'}`
 		},
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1398,6 +1841,15 @@ export const providers = defineProviders({
 	},
 	zoom: {
 		authorizationUrl: 'https://zoom.us/oauth/authorize',
+		extractSubjectFromIdentity(identity) {
+			const subject = extractPropFromIdentity(identity, ['id']);
+
+			if (typeof subject !== 'string') {
+				throw new Error('Invalid identity data shape');
+			}
+
+			return subject;
+		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',

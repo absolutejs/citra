@@ -81,3 +81,9 @@ export const hasClientSecret = <P extends ProviderOption>(
 
 	return typeof secret === 'string';
 };
+
+export const isObject = (x: unknown): x is Record<string, unknown> =>
+	x !== null &&
+	typeof x === 'object' &&
+	!Array.isArray(x) &&
+	Object.prototype.toString.call(x) === '[object Object]';

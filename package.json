@@ -1,6 +1,6 @@
 {
 	"name": "citra",
-	"version": "0.21.1",
+	"version": "0.22.0",
 	"description": "OAuth2 library for Typescript",
 	"repository": {
 		"type": "git",
@@ -14,7 +14,7 @@
 		"build": "rm -rf dist && bun build src/index.ts --outdir dist --target=bun --external react --external react-dom --external elysia && tsc --emitDeclarationOnly --project tsconfig.json",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json,mjs,md}\"",
-		"dev": "bun run --watch example/server.ts",
+		"dev": "bun run --watch --no-clear-screen example/server.ts",
 		"lint": "eslint ./src ./example ./eslint.config.mjs",
 		"typecheck": "bun run tsc --noEmit",
 		"release": "bun run format && bun run build && bun publish"

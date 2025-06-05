@@ -28,6 +28,7 @@ export const startggPlugin = new Elysia()
 			const currentState = generateState();
 			const authorizationUrl =
 				await startggOAuth2Client.createAuthorizationUrl({
+					scope: ['user.identity', 'user.email'],
 					state: currentState
 				});
 

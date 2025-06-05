@@ -32,7 +32,7 @@ export const auth0Plugin = new Elysia()
 			const authorizationUrl =
 				await auth0OAuth2Client.createAuthorizationUrl({
 					codeVerifier,
-					scope: ['offline_access'],
+					scope: ['offline_access', 'openid'],
 					searchParams: [['prompt', 'login']],
 					state: currentState
 				});

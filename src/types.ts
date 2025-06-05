@@ -148,12 +148,14 @@ export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
 	(P extends RefreshableProvider ? RefreshableOAuth2Client : unknown) &
 	(P extends RevocableProvider ? RevocableOAuth2Client : unknown);
 
+type IdentityFunction<ReturnType> = (
+	identity: Record<string, unknown>
+) => ReturnType;
+
 type ProviderConfig = {
 	// TODO : remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	authorizationUrl: string | ((config: any) => string);
-
-	/** Static query params added to the auth URL */
 	createAuthorizationURLSearchParams?:
 		| Record<string, string>
 		// TODO : remove any type in favor of the actual config for this specific provider
@@ -162,22 +164,14 @@ type ProviderConfig = {
 
 	isOIDC: boolean;
 	isRefreshable: boolean;
-
 	PKCEMethod?: 'S256' | 'plain';
-
 	profileRequest: ProfileRequestConfig;
-
-	/** Static fields added to the refresh‑token request body */
 	refreshAccessTokenBody?: Record<string, string>;
-
 	revocationRequest?: RevocationRequestConfig;
-
 	scopeRequired: boolean;
-
 	tokenRequest: TokenRequestConfig;
-
-	/** Static fields added to the authorization‑code exchange body */
 	validateAuthorizationCodeBody?: Record<string, string>;
+	extractSubjectFromIdentity: IdentityFunction<string | number>;
 };
 
 export type OAuth2TokenResponse = {

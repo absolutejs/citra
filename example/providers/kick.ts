@@ -26,6 +26,7 @@ export const kickPlugin = new Elysia()
 			const authorizationUrl =
 				await kickOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
+					scope: ['user:read'],
 					state: currentState
 				});
 

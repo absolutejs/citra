@@ -15,7 +15,8 @@ const extractPropFromIdentity = (
 	identity: Record<string, unknown>,
 	keys: string[]
 ) => {
-	let value: unknown = identity;
+	let value: unknown | Record<string, unknown>
+	 = identity;
 
 	for (const key of keys) {
 		if (!isObject(value)) {

@@ -7,7 +7,8 @@ import { COOKIE_DURATION } from '../utils/constants';
 if (
 	!env.WORK_OS_CLIENT_ID ||
 	!env.WORK_OS_CLIENT_SECRET ||
-	!env.WORK_OS_REDIRECT_URI
+	!env.WORK_OS_REDIRECT_URI ||
+	!env.WORK_OS_DOMAIN
 ) {
 	throw new Error('WorkOS OAuth2 credentials are not set in .env file');
 }
@@ -15,7 +16,8 @@ if (
 const workOSOAuth2Client = await createOAuth2Client('workos', {
 	clientId: env.WORK_OS_CLIENT_ID,
 	clientSecret: env.WORK_OS_CLIENT_SECRET,
-	redirectUri: env.WORK_OS_REDIRECT_URI
+	redirectUri: env.WORK_OS_REDIRECT_URI,
+	domain: env.WORK_OS_DOMAIN
 });
 
 export const workOSPlugin = new Elysia()
@@ -30,6 +32,7 @@ export const workOSPlugin = new Elysia()
 			const authorizationUrl =
 				await workOSOAuth2Client.createAuthorizationUrl({
 					codeVerifier,
+					scope: ['offline_access', 'openid', 'profile', 'email'],
 					state: currentState
 				});
 

@@ -508,6 +508,7 @@ type WorkOSOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
+	domain: string;
 };
 type YahooOAuth2Credentials = {
 	clientId: string;

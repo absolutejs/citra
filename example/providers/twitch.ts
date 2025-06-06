@@ -28,6 +28,7 @@ export const twitchPlugin = new Elysia()
 			const currentState = generateState();
 			const authorizationUrl =
 				await twitchOAuth2Client.createAuthorizationUrl({
+					scope: ['openid'],
 					searchParams: [['force_verify', 'true']],
 					state: currentState
 				});

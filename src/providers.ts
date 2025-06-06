@@ -1890,9 +1890,9 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'number') {
+			if (typeof subject !== 'string') {
 				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
+					`Invalid identity data shape: expected string got ${typeof subject}`
 				);
 			}
 
@@ -1925,9 +1925,9 @@ export const providers = defineProviders({
 		extractSubjectFromIdentity(identity) {
 			const subject = extractPropFromIdentity(identity, ['id']);
 
-			if (typeof subject !== 'number') {
+			if (typeof subject !== 'string') {
 				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
+					`Invalid identity data shape: expected string got ${typeof subject}`
 				);
 			}
 

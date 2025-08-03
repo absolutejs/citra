@@ -1,4 +1,4 @@
-import { providerOptions } from '../../src/providers';
+import { providerOptions } from '../../src/providerOptions';
 import { Head } from '../components/page/Head';
 import { Navbar } from '../components/page/Navbar';
 import { Legend } from '../components/testing/Legend';

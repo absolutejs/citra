@@ -1,5 +1,5 @@
 import { createS256CodeChallenge } from './arctic-utils';
-import { providers, providerOptions } from './providers';
+import { providers } from './providers';
 import { hasClientSecret } from './typeGuards';
 import { CredentialsFor, OAuth2Client, ProviderOption } from './types';
 import { createOAuth2FetchError, createOAuth2Request } from './utils';

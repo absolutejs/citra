@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState, FormEvent } from 'react';
-import { refreshableProviderOptions } from '../../../src/providers';
+import { refreshableProviderOptions } from '../../../src/providerOptions';
 import { RefreshableProvider } from '../../../src/types';
 import { formStyle, formButtonStyle } from '../../styles/styles';
 import { Modal } from '../utils/Modal';

@@ -1,5 +1,6 @@
 import { BASE64_BLOCK_SIZE } from './constants';
-import { OAuth2RequestOptions } from './types';
+import { isExpectedType, isObject } from './typeGuards';
+import { OAuth2RequestOptions, TypeMap } from './types';
 
 export const createOAuth2FetchError = async (response: Response) => {
 	const clone = response.clone();
@@ -176,4 +177,30 @@ export const createOAuth2Request = ({
 		headers: oauthHeaders,
 		method: 'POST'
 	});
+};
+
+export const extractPropFromIdentity = <T extends keyof TypeMap>(
+	identity: Record<string, unknown>,
+	keys: string[],
+	propType: T
+) => {
+	let value: unknown = identity;
+
+	for (const key of keys) {
+		if (Array.isArray(value)) value = value[0];
+		if (!isObject(value)) {
+			throw new Error(
+				`Invalid identity data shape: expected object, got ${typeof value}`
+			);
+		}
+		value = value[key];
+	}
+
+	if (!isExpectedType(value, propType)) {
+		throw new Error(
+			`Invalid identity data shape: expected ${propType}, got ${typeof value}`
+		);
+	}
+
+	return value;
 };

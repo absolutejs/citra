@@ -16,8 +16,8 @@ if (
 const workOSOAuth2Client = await createOAuth2Client('workos', {
 	clientId: env.WORK_OS_CLIENT_ID,
 	clientSecret: env.WORK_OS_CLIENT_SECRET,
-	redirectUri: env.WORK_OS_REDIRECT_URI,
-	domain: env.WORK_OS_DOMAIN
+	domain: env.WORK_OS_DOMAIN,
+	redirectUri: env.WORK_OS_REDIRECT_URI
 });
 
 export const workOSPlugin = new Elysia()

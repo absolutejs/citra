@@ -9,7 +9,8 @@ import {
 	RefreshableProvider,
 	RevocableOAuth2Client,
 	RevocableProvider,
-	ScopeRequiredProvider
+	ScopeRequiredProvider,
+	TypeMap
 } from './types';
 
 export const isValidProviderOption = (
@@ -87,3 +88,19 @@ export const isObject = (x: unknown): x is Record<string, unknown> =>
 	typeof x === 'object' &&
 	!Array.isArray(x) &&
 	Object.prototype.toString.call(x) === '[object Object]';
+
+export const isExpectedType = <T extends keyof TypeMap>(
+	value: unknown,
+	kind: T
+): value is TypeMap[T] => {
+	switch (kind) {
+		case 'string':
+			return typeof value === 'string';
+		case 'number':
+			return typeof value === 'number';
+		case 'boolean':
+			return typeof value === 'boolean';
+		case 'object':
+			return typeof value === 'object' && value !== null;
+	}
+};

@@ -148,9 +148,12 @@ export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
 	(P extends RefreshableProvider ? RefreshableOAuth2Client : unknown) &
 	(P extends RevocableProvider ? RevocableOAuth2Client : unknown);
 
-type IdentityFunction<ReturnType> = (
-	identity: Record<string, unknown>
-) => ReturnType;
+export type TypeMap = {
+	string: string;
+	number: number;
+	boolean: boolean;
+	object: Record<string, unknown>;
+};
 
 type ProviderConfig = {
 	// TODO : remove any type in favor of the actual config for this specific provider
@@ -171,7 +174,8 @@ type ProviderConfig = {
 	scopeRequired: boolean;
 	tokenRequest: TokenRequestConfig;
 	validateAuthorizationCodeBody?: Record<string, string>;
-	extractSubjectFromIdentity: IdentityFunction<string | number>;
+	subject: string[];
+	subjectType: keyof TypeMap;
 };
 
 export type OAuth2TokenResponse = {

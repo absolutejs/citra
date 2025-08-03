@@ -8,46 +8,14 @@ import {
 	isScopeRequiredProviderOption,
 	isValidProviderOption
 } from './typeGuards';
-import { DefineProviders } from './types';
+import { DefineProviders, TypeMap } from './types';
 import { encodeBase64, getWithingsProps } from './utils';
-
-const extractPropFromIdentity = (
-	identity: Record<string, unknown>,
-	keys: string[]
-) => {
-	let value: unknown = identity;
-	for (const key of keys) {
-		if (Array.isArray(value)) {
-			value = value[0];
-		}
-		if (!isObject(value)) {
-			throw new Error(
-				`Invalid identity data shape: expected object, got ${typeof value}`
-			);
-		}
-		value = value[key];
-	}
-	return value;
-};
-
-const extractSubFromOIDCIdentity = (
-	identity: Record<string, unknown>
-): string => {
-	const sub = extractPropFromIdentity(identity, ['sub']);
-
-	if (typeof sub !== 'string') {
-		throw new Error('Invalid identity data shape');
-	}
-
-	return sub;
-};
 
 export const defineProviders: DefineProviders = (providers) => providers;
 
 export const providers = defineProviders({
 	'42': {
 		authorizationUrl: 'https://api.intra.42.fr/oauth/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -57,6 +25,8 @@ export const providers = defineProviders({
 			url: 'https://api.intra.42.fr/v2/me'
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -65,7 +35,6 @@ export const providers = defineProviders({
 	},
 	amazoncognito: {
 		authorizationUrl: 'https://${domain}/oauth2/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -82,6 +51,8 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth2/revoke`
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -90,21 +61,6 @@ export const providers = defineProviders({
 	},
 	anilist: {
 		authorizationUrl: 'https://anilist.co/api/v2/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'data',
-				'Viewer',
-				'id'
-			]);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -121,6 +77,8 @@ export const providers = defineProviders({
 			url: 'https://graphql.anilist.co'
 		},
 		scopeRequired: false,
+		subject: ['data', 'Viewer', 'id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -129,7 +87,6 @@ export const providers = defineProviders({
 	},
 	apple: {
 		authorizationUrl: 'https://appleid.apple.com/auth/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -140,6 +97,8 @@ export const providers = defineProviders({
 			url: 'https://appleid.apple.com/auth/userinfo'
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -151,17 +110,6 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: {
 			audience: 'api.atlassian.com'
 		},
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['account_id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -171,6 +119,8 @@ export const providers = defineProviders({
 			url: 'https://api.atlassian.com/me'
 		},
 		scopeRequired: true,
+		subject: ['account_id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -179,7 +129,6 @@ export const providers = defineProviders({
 	},
 	auth0: {
 		authorizationUrl: (config) => `https://${config.domain}/authorize`,
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -199,6 +148,8 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth/revoke`
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -208,7 +159,6 @@ export const providers = defineProviders({
 	authentik: {
 		authorizationUrl: (config) =>
 			`https://${config.baseURL}/oauth/authorize`,
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -219,6 +169,8 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.baseURL}/api/v3/user/`
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -228,7 +180,6 @@ export const providers = defineProviders({
 	autodesk: {
 		authorizationUrl:
 			'https://developer.api.autodesk.com/authentication/v2/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -239,6 +190,8 @@ export const providers = defineProviders({
 			url: 'https://api.userprofile.autodesk.com/userinfo'
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -247,7 +200,6 @@ export const providers = defineProviders({
 	},
 	battlenet: {
 		authorizationUrl: 'https://oauth.battle.net/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: false,
 		profileRequest: {
@@ -257,6 +209,8 @@ export const providers = defineProviders({
 			url: 'https://oauth.battle.net/userinfo'
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -265,17 +219,6 @@ export const providers = defineProviders({
 	},
 	bitbucket: {
 		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['uuid']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -285,6 +228,8 @@ export const providers = defineProviders({
 			url: 'https://api.bitbucket.org/2.0/user'
 		},
 		scopeRequired: false,
+		subject: ['uuid'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -293,17 +238,6 @@ export const providers = defineProviders({
 	},
 	box: {
 		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -319,6 +253,8 @@ export const providers = defineProviders({
 			url: 'https://api.box.com/oauth2/revoke'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -327,20 +263,6 @@ export const providers = defineProviders({
 	},
 	bungie: {
 		authorizationUrl: 'https://www.bungie.net/en/OAuth/Authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'Response',
-				'membershipId'
-			]);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -353,6 +275,8 @@ export const providers = defineProviders({
 			url: 'https://www.bungie.net/Platform/User/GetCurrentBungieNetUser'
 		},
 		scopeRequired: false,
+		subject: ['Response', 'membershipId'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -361,17 +285,6 @@ export const providers = defineProviders({
 	},
 	coinbase: {
 		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['data', 'id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -381,6 +294,8 @@ export const providers = defineProviders({
 			url: 'https://api.coinbase.com/v2/user'
 		},
 		scopeRequired: false,
+		subject: ['data', 'id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -389,7 +304,6 @@ export const providers = defineProviders({
 	},
 	discord: {
 		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -400,6 +314,8 @@ export const providers = defineProviders({
 			url: 'https://discord.com/api/users/@me'
 		},
 		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -408,17 +324,6 @@ export const providers = defineProviders({
 	},
 	donationalerts: {
 		authorizationUrl: 'https://www.donationalerts.com/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['data', 'id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -428,6 +333,8 @@ export const providers = defineProviders({
 			url: 'https://www.donationalerts.com/api/v1/user/oauth'
 		},
 		scopeRequired: false,
+		subject: ['data', 'id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -436,17 +343,6 @@ export const providers = defineProviders({
 	},
 	dribbble: {
 		authorizationUrl: 'https://dribbble.com/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -456,6 +352,8 @@ export const providers = defineProviders({
 			url: 'https://api.dribbble.com/v2/user'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -464,17 +362,6 @@ export const providers = defineProviders({
 	},
 	dropbox: {
 		authorizationUrl: 'https://www.dropbox.com/oauth2/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['account_id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -489,6 +376,8 @@ export const providers = defineProviders({
 			url: 'https://api.dropboxapi.com/2/auth/token/revoke'
 		},
 		scopeRequired: false,
+		subject: ['account_id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -497,17 +386,6 @@ export const providers = defineProviders({
 	},
 	epicgames: {
 		authorizationUrl: 'https://www.epicgames.com/id/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['account_id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -517,6 +395,8 @@ export const providers = defineProviders({
 			url: 'https://api.epicgames.dev/epic/oauth/v2/userInfo'
 		},
 		scopeRequired: false,
+		subject: ['account_id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -525,21 +405,6 @@ export const providers = defineProviders({
 	},
 	etsy: {
 		authorizationUrl: 'https://www.etsy.com/oauth/connect',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'results',
-				'0',
-				'user_id'
-			]);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -549,6 +414,8 @@ export const providers = defineProviders({
 			url: 'https://openapi.etsy.com/v3/application/users/me'
 		},
 		scopeRequired: false,
+		subject: ['results', '0', 'user_id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -557,7 +424,6 @@ export const providers = defineProviders({
 	},
 	facebook: {
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: false,
 		PKCEMethod: 'S256',
@@ -569,6 +435,8 @@ export const providers = defineProviders({
 			url: 'https://graph.facebook.com/me'
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -577,17 +445,6 @@ export const providers = defineProviders({
 	},
 	figma: {
 		authorizationUrl: 'https://www.figma.com/oauth',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -598,6 +455,8 @@ export const providers = defineProviders({
 			url: 'https://api.figma.com/v1/me'
 		},
 		scopeRequired: true,
+		subject: ['id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -606,7 +465,6 @@ export const providers = defineProviders({
 	},
 	gitea: {
 		authorizationUrl: (config) => `${config.baseURL}/login/oauth/authorize`,
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -617,6 +475,8 @@ export const providers = defineProviders({
 			url: (config) => `${config.baseURL}/api/v1/user`
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -625,17 +485,6 @@ export const providers = defineProviders({
 	},
 	github: {
 		authorizationUrl: 'https://github.com/login/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -645,6 +494,8 @@ export const providers = defineProviders({
 			url: 'https://api.github.com/user'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -653,7 +504,6 @@ export const providers = defineProviders({
 	},
 	gitlab: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -670,6 +520,8 @@ export const providers = defineProviders({
 			url: (config) => `${config.baseURL}/oauth/revoke`
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -678,7 +530,6 @@ export const providers = defineProviders({
 	},
 	google: {
 		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -696,6 +547,8 @@ export const providers = defineProviders({
 			url: 'https://oauth2.googleapis.com/revoke'
 		},
 		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -704,7 +557,6 @@ export const providers = defineProviders({
 	},
 	intuit: {
 		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		profileRequest: {
@@ -726,6 +578,8 @@ export const providers = defineProviders({
 			url: 'https://developer.api.intuit.com/v2/oauth2/tokens/revoke'
 		},
 		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -734,7 +588,6 @@ export const providers = defineProviders({
 	},
 	kakao: {
 		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -745,6 +598,8 @@ export const providers = defineProviders({
 			url: 'https://kapi.kakao.com/v2/user/me'
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -754,7 +609,6 @@ export const providers = defineProviders({
 	keycloak: {
 		authorizationUrl: (config) =>
 			`${config.realmURL}/protocol/openid-connect/auth`,
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -771,6 +625,8 @@ export const providers = defineProviders({
 			url: (config) => `${config.realmURL}/protocol/openid-connect/revoke`
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -779,20 +635,6 @@ export const providers = defineProviders({
 	},
 	kick: {
 		authorizationUrl: 'https://id.kick.com/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'data',
-				'user_id'
-			]);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -808,7 +650,9 @@ export const providers = defineProviders({
 			tokenParamName: 'token',
 			url: 'https://id.kick.com/oauth/revoke'
 		},
-		scopeRequired: true, // Has to include 'user:read'
+		scopeRequired: true,
+		subject: ['data', 'user_id'],
+		subjectType: 'number', // Has to include 'user:read'
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -817,17 +661,6 @@ export const providers = defineProviders({
 	},
 	lichess: {
 		authorizationUrl: 'https://lichess.org/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: false,
 		PKCEMethod: 'S256',
@@ -838,6 +671,8 @@ export const providers = defineProviders({
 			url: 'https://lichess.org/api/account'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -846,7 +681,6 @@ export const providers = defineProviders({
 	},
 	line: {
 		authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -857,6 +691,8 @@ export const providers = defineProviders({
 			url: 'https://api.line.me/v2/profile'
 		},
 		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -865,21 +701,6 @@ export const providers = defineProviders({
 	},
 	linear: {
 		authorizationUrl: 'https://linear.app/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'data',
-				'viewer',
-				'id'
-			]);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -901,6 +722,8 @@ export const providers = defineProviders({
 			url: 'https://api.linear.app/oauth/revoke'
 		},
 		scopeRequired: false,
+		subject: ['data', 'viewer', 'id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -909,7 +732,6 @@ export const providers = defineProviders({
 	},
 	linkedin: {
 		authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -919,7 +741,9 @@ export const providers = defineProviders({
 			method: 'GET',
 			url: 'https://api.linkedin.com/v2/me'
 		},
-		scopeRequired: true, // Has to be at least one not including 'openid'
+		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string', // Has to be at least one not including 'openid'
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -928,17 +752,6 @@ export const providers = defineProviders({
 	},
 	mastodon: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: false,
 		PKCEMethod: 'S256',
@@ -956,6 +769,8 @@ export const providers = defineProviders({
 			url: (config) => `${config.baseURL}/oauth/revoke`
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -964,17 +779,6 @@ export const providers = defineProviders({
 	},
 	mercadolibre: {
 		authorizationUrl: 'https://auth.mercadolibre.com/authorization',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -985,6 +789,8 @@ export const providers = defineProviders({
 			url: 'https://api.mercadolibre.com/users/me'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -993,17 +799,6 @@ export const providers = defineProviders({
 	},
 	mercadopago: {
 		authorizationUrl: 'https://auth.mercadopago.com/authorization',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1013,6 +808,8 @@ export const providers = defineProviders({
 			url: 'https://api.mercadopago.com/v1/users/me'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1022,7 +819,6 @@ export const providers = defineProviders({
 	microsoftentraid: {
 		authorizationUrl: (config) =>
 			`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/authorize`,
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1034,6 +830,8 @@ export const providers = defineProviders({
 				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/openid/userinfo`
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1043,17 +841,6 @@ export const providers = defineProviders({
 	},
 	myanimelist: {
 		authorizationUrl: 'https://myanimelist.net/v1/oauth2/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'plain',
@@ -1064,6 +851,8 @@ export const providers = defineProviders({
 			url: 'https://api.myanimelist.net/v2/users/@me'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1072,20 +861,6 @@ export const providers = defineProviders({
 	},
 	naver: {
 		authorizationUrl: 'https://nid.naver.com/oauth2.0/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'response',
-				'id'
-			]);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1095,6 +870,8 @@ export const providers = defineProviders({
 			url: 'https://openapi.naver.com/v1/nid/me'
 		},
 		scopeRequired: false,
+		subject: ['response', 'id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1103,17 +880,6 @@ export const providers = defineProviders({
 	},
 	notion: {
 		authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -1126,6 +892,8 @@ export const providers = defineProviders({
 			url: 'https://api.notion.com/v1/users/me'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
@@ -1135,7 +903,6 @@ export const providers = defineProviders({
 	okta: {
 		authorizationUrl: (config) =>
 			`https://${config.domain}/oauth2/default/v1/authorize`,
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1153,6 +920,8 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth2/default/v1/revoke`
 		},
 		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1161,17 +930,6 @@ export const providers = defineProviders({
 	},
 	osu: {
 		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1181,6 +939,8 @@ export const providers = defineProviders({
 			url: 'https://osu.ppy.sh/api/v2/me'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1189,17 +949,6 @@ export const providers = defineProviders({
 	},
 	patreon: {
 		authorizationUrl: 'https://www.patreon.com/oauth2/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['data', 'id']);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1209,6 +958,8 @@ export const providers = defineProviders({
 			url: 'https://www.patreon.com/api/oauth2/v2/identity'
 		},
 		scopeRequired: false,
+		subject: ['data', 'id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1217,7 +968,6 @@ export const providers = defineProviders({
 	},
 	polar: {
 		authorizationUrl: 'https://polar.sh/oauth2/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1234,6 +984,8 @@ export const providers = defineProviders({
 			url: 'https://api.polar.sh/v1/oauth2/revoke'
 		},
 		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1242,17 +994,6 @@ export const providers = defineProviders({
 	},
 	polaraccesslink: {
 		authorizationUrl: 'https://flow.polar.com/oauth2/authorization',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['x_user_id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: false,
 		PKCEMethod: 'S256',
@@ -1264,6 +1005,8 @@ export const providers = defineProviders({
 			// TODO: Implement Polar AccessLink profile request which needs an additional user ID parameter
 		},
 		scopeRequired: false,
+		subject: ['x_user_id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'header',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1272,17 +1015,6 @@ export const providers = defineProviders({
 	},
 	polarteampro: {
 		authorizationUrl: 'https://auth.polar.com/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['x_user_id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1294,6 +1026,8 @@ export const providers = defineProviders({
 			// TODO: Implement Polar AccessLink profile request which needs an additional user ID parameter
 		},
 		scopeRequired: false,
+		subject: ['x_user_id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'header',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1302,17 +1036,6 @@ export const providers = defineProviders({
 	},
 	reddit: {
 		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1330,6 +1053,8 @@ export const providers = defineProviders({
 			url: 'https://www.reddit.com/api/v1/revoke_token'
 		},
 		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'header',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1338,7 +1063,6 @@ export const providers = defineProviders({
 	},
 	roblox: {
 		authorizationUrl: 'https://apis.roblox.com/oauth/v1/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1349,6 +1073,8 @@ export const providers = defineProviders({
 			url: 'https://apis.roblox.com/oauth/v1/userinfo'
 		},
 		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1358,7 +1084,6 @@ export const providers = defineProviders({
 	salesforce: {
 		authorizationUrl:
 			'https://login.salesforce.com/services/oauth2/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1374,6 +1099,8 @@ export const providers = defineProviders({
 			url: 'https://login.salesforce.com/services/oauth2/revoke'
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1382,17 +1109,6 @@ export const providers = defineProviders({
 	},
 	shikimori: {
 		authorizationUrl: 'https://shikimori.org/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1402,6 +1118,8 @@ export const providers = defineProviders({
 			url: 'https://shikimori.one/api/users/whoami'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1410,7 +1128,6 @@ export const providers = defineProviders({
 	},
 	slack: {
 		authorizationUrl: 'https://slack.com/openid/connect/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		profileRequest: {
@@ -1426,6 +1143,8 @@ export const providers = defineProviders({
 			url: 'https://slack.com/api/auth.revoke'
 		},
 		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1434,17 +1153,6 @@ export const providers = defineProviders({
 	},
 	spotify: {
 		authorizationUrl: 'https://accounts.spotify.com/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1455,6 +1163,8 @@ export const providers = defineProviders({
 			url: 'https://api.spotify.com/v1/me'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1463,21 +1173,6 @@ export const providers = defineProviders({
 	},
 	startgg: {
 		authorizationUrl: 'https://start.gg/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'data',
-				'currentUser',
-				'id'
-			]);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1494,6 +1189,8 @@ export const providers = defineProviders({
 			url: 'https://api.start.gg/gql/alpha'
 		},
 		scopeRequired: false,
+		subject: ['data', 'currentUser', 'id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1501,18 +1198,7 @@ export const providers = defineProviders({
 		}
 	},
 	strava: {
-		authorizationUrl: 'https://www.strava.com/oauth/authorize', // TODO: Certain providers like Strava arent oidc but dont need to get the user profile, it would save a fetch call
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
+		authorizationUrl: 'https://www.strava.com/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1531,7 +1217,9 @@ export const providers = defineProviders({
 			tokenParamName: 'access_token',
 			url: 'https://www.strava.com/oauth/deauthorize'
 		},
-		scopeRequired: false,
+		scopeRequired: false, // TODO: Certain providers like Strava arent oidc but dont need to get the user profile, it would save a fetch call
+		subject: ['id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1541,17 +1229,6 @@ export const providers = defineProviders({
 	synology: {
 		authorizationUrl: (config) =>
 			`${config.baseURL}/webman/sso/SSOOauth.cgi?client_id=${config.clientId}&response_type=code&redirect_uri=${config.redirectUri}`,
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['data', 'id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -1562,6 +1239,8 @@ export const providers = defineProviders({
 				`${config.baseURL}/webman/sso/SSOUserInfo.cgi?client_id=${config.clientId}&access_token=${config.accessToken}`
 		},
 		scopeRequired: false,
+		subject: ['data', 'id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1574,20 +1253,6 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: (config) => ({
 			client_key: config.clientId
 		}),
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'data',
-				'open_id'
-			]);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1604,6 +1269,8 @@ export const providers = defineProviders({
 			url: 'https://open.tiktokapis.com/v2/oauth/revoke/'
 		},
 		scopeRequired: false,
+		subject: ['data', 'open_id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1612,17 +1279,6 @@ export const providers = defineProviders({
 	},
 	tiltify: {
 		authorizationUrl: 'https://v5api.tiltify.com/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['data', 'id']);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1632,6 +1288,8 @@ export const providers = defineProviders({
 			url: 'https://v5api.tiltify.com/api/public/current-user'
 		},
 		scopeRequired: false,
+		subject: ['data', 'id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1640,21 +1298,6 @@ export const providers = defineProviders({
 	},
 	tumblr: {
 		authorizationUrl: 'https://www.tumblr.com/oauth2/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'response',
-				'user',
-				'name'
-			]);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1664,6 +1307,8 @@ export const providers = defineProviders({
 			url: 'https://api.tumblr.com/v2/user/info'
 		},
 		scopeRequired: false,
+		subject: ['response', 'user', 'name'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1672,7 +1317,6 @@ export const providers = defineProviders({
 	},
 	twitch: {
 		authorizationUrl: 'https://id.twitch.tv/oauth2/authorize',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		profileRequest: {
@@ -1694,6 +1338,8 @@ export const providers = defineProviders({
 			url: 'https://id.twitch.tv/oauth2/revoke'
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1702,17 +1348,6 @@ export const providers = defineProviders({
 	},
 	twitter: {
 		authorizationUrl: 'https://twitter.com/i/oauth2/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['data', 'id']);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1728,6 +1363,8 @@ export const providers = defineProviders({
 			url: 'https://api.twitter.com/2/oauth2/revoke'
 		},
 		scopeRequired: false,
+		subject: ['data', 'id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1736,21 +1373,6 @@ export const providers = defineProviders({
 	},
 	vk: {
 		authorizationUrl: 'https://oauth.vk.com/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, [
-				'response',
-				'0',
-				'id'
-			]);
-
-			if (typeof subject !== 'number') {
-				throw new Error(
-					`Invalid identity data shape: expected number, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: false,
 		profileRequest: {
@@ -1760,6 +1382,8 @@ export const providers = defineProviders({
 			url: 'https://api.vk.com/method/users.get'
 		},
 		scopeRequired: false,
+		subject: ['response', '0', 'id'],
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1768,17 +1392,6 @@ export const providers = defineProviders({
 	},
 	withings: {
 		authorizationUrl: 'https://account.withings.com/oauth2_user/authorize2',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['userid']);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string, got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1822,6 +1435,8 @@ export const providers = defineProviders({
 			url: 'https://wbsapi.withings.net/v2/oauth2'
 		},
 		scopeRequired: true,
+		subject: ['userid'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1834,9 +1449,9 @@ export const providers = defineProviders({
 	workos: {
 		authorizationUrl: (config) =>
 			`https://${config.domain}/oauth2/authorize`,
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		createAuthorizationURLSearchParams: () => {
 			const nonce = crypto.randomUUID();
+
 			return {
 				nonce
 			};
@@ -1851,6 +1466,8 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth2/userinfo`
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1859,7 +1476,6 @@ export const providers = defineProviders({
 	},
 	yahoo: {
 		authorizationUrl: 'https://api.login.yahoo.com/oauth2/request_auth',
-		extractSubjectFromIdentity: extractSubFromOIDCIdentity,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1875,6 +1491,8 @@ export const providers = defineProviders({
 			url: 'https://api.login.yahoo.com/oauth2/revoke'
 		},
 		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1886,17 +1504,6 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: {
 			device_id: crypto.randomUUID(),
 			device_name: `${navigator.platform ?? 'Unknown'} — ${(navigator.userAgent.split(')')[0] || '').split('(').pop() || 'Unknown'}`
-		},
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
 		},
 		isOIDC: false,
 		isRefreshable: true,
@@ -1914,6 +1521,8 @@ export const providers = defineProviders({
 			url: 'https://oauth.yandex.com/revoke_token'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -1922,17 +1531,6 @@ export const providers = defineProviders({
 	},
 	zoom: {
 		authorizationUrl: 'https://zoom.us/oauth/authorize',
-		extractSubjectFromIdentity(identity) {
-			const subject = extractPropFromIdentity(identity, ['id']);
-
-			if (typeof subject !== 'string') {
-				throw new Error(
-					`Invalid identity data shape: expected string got ${typeof subject}`
-				);
-			}
-
-			return subject;
-		},
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1952,6 +1550,8 @@ export const providers = defineProviders({
 			url: 'https://zoom.us/oauth/revoke'
 		},
 		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',

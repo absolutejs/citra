@@ -182,7 +182,7 @@ export const createOAuth2Request = ({
 export const extractPropFromIdentity = <T extends keyof TypeMap>(
 	identity: Record<string, unknown>,
 	keys: string[],
-	propType: T
+	propType?: T
 ) => {
 	let value: unknown = identity;
 
@@ -196,7 +196,7 @@ export const extractPropFromIdentity = <T extends keyof TypeMap>(
 		value = value[key];
 	}
 
-	if (!isExpectedType(value, propType)) {
+	if (propType !== undefined && !isExpectedType(value, propType)) {
 		throw new Error(
 			`Invalid identity data shape: expected ${propType}, got ${typeof value}`
 		);

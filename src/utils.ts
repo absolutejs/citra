@@ -187,7 +187,7 @@ export const extractPropFromIdentity = <T extends keyof TypeMap>(
 	let value: unknown = identity;
 
 	for (const key of keys) {
-		if (Array.isArray(value)) value = value[0];
+		if (Array.isArray(value)) value = value[Number(key)];
 		if (!isObject(value)) {
 			throw new Error(
 				`Invalid identity data shape: expected object, got ${typeof value}`

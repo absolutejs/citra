@@ -50,3 +50,6 @@ package-lock.json
 
 # dist folder
 /dist
+
+# THIS IS ALL OF MY PERSONAL IDENTITIES
+/example/utils/exampleIdentities.ts

@@ -175,7 +175,12 @@ type ProviderConfig = {
 	tokenRequest: TokenRequestConfig;
 	validateAuthorizationCodeBody?: Record<string, string>;
 	subject: string[];
-	subjectType: keyof TypeMap;
+	subjectType: 'string' | 'number';
+	email?: string[];
+	fullName?: string[];
+	givenName?: string[];
+	familyName?: string[];
+	picture?: string[];
 };
 
 export type OAuth2TokenResponse = {

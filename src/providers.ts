@@ -101,8 +101,11 @@ export const providers = defineProviders({
 		createAuthorizationURLSearchParams: {
 			audience: 'api.atlassian.com'
 		},
+		email: ['email'],
+		fullName: ['name'],
 		isOIDC: false,
 		isRefreshable: true,
+		picture: ['picture'],
 		profileRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
@@ -171,8 +174,13 @@ export const providers = defineProviders({
 	autodesk: {
 		authorizationUrl:
 			'https://developer.api.autodesk.com/authentication/v2/authorize',
+		email: ['email'],
+		familyName: ['family_name'],
+		fullName: ['name'],
+		givenName: ['given_name'],
 		isOIDC: true,
 		isRefreshable: true,
+		picture: ['picture'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -210,8 +218,10 @@ export const providers = defineProviders({
 	},
 	bitbucket: {
 		authorizationUrl: 'https://bitbucket.org/site/oauth2/authorize',
+		fullName: ['display_name'],
 		isOIDC: false,
 		isRefreshable: true,
+		picture: ['links', 'avatar', 'href'],
 		profileRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
@@ -220,7 +230,7 @@ export const providers = defineProviders({
 		},
 		scopeRequired: false,
 		subject: ['uuid'],
-		subjectType: 'number',
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -229,8 +239,11 @@ export const providers = defineProviders({
 	},
 	box: {
 		authorizationUrl: 'https://account.box.com/api/oauth2/authorize',
+		email: ['login'],
+		fullName: ['name'],
 		isOIDC: false,
 		isRefreshable: true,
+		picture: ['avatar_url'],
 		profileRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
@@ -245,7 +258,7 @@ export const providers = defineProviders({
 		},
 		scopeRequired: false,
 		subject: ['id'],
-		subjectType: 'number',
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -295,8 +308,10 @@ export const providers = defineProviders({
 	},
 	discord: {
 		authorizationUrl: 'https://discord.com/api/oauth2/authorize',
+		email: ['email'],
 		isOIDC: true,
 		isRefreshable: true,
+		picture: ['avatar'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -315,8 +330,10 @@ export const providers = defineProviders({
 	},
 	donationalerts: {
 		authorizationUrl: 'https://www.donationalerts.com/oauth/authorize',
+		email: ['data', 'email'],
 		isOIDC: false,
 		isRefreshable: true,
+		picture: ['data', 'avatar'],
 		profileRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
@@ -353,6 +370,10 @@ export const providers = defineProviders({
 	},
 	dropbox: {
 		authorizationUrl: 'https://www.dropbox.com/oauth2/authorize',
+		email: ['email'],
+		familyName: ['name', 'surname'],
+		fullName: ['name', 'display_name'],
+		givenName: ['name', 'given_name'],
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -368,7 +389,7 @@ export const providers = defineProviders({
 		},
 		scopeRequired: false,
 		subject: ['account_id'],
-		subjectType: 'number',
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -415,8 +436,13 @@ export const providers = defineProviders({
 	},
 	facebook: {
 		authorizationUrl: 'https://www.facebook.com/v16.0/dialog/oauth',
+		email: ['email'],
+		familyName: ['family_name'],
+		fullName: ['name'],
+		givenName: ['given_name'],
 		isOIDC: true,
 		isRefreshable: false,
+		picture: ['picture'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'query',
@@ -436,8 +462,10 @@ export const providers = defineProviders({
 	},
 	figma: {
 		authorizationUrl: 'https://www.figma.com/oauth',
+		email: ['email'],
 		isOIDC: false,
 		isRefreshable: true,
+		picture: ['img_url'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -476,8 +504,10 @@ export const providers = defineProviders({
 	},
 	github: {
 		authorizationUrl: 'https://github.com/login/oauth/authorize',
+		email: ['email'],
 		isOIDC: false,
 		isRefreshable: false,
+		picture: ['avatar_url'],
 		profileRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
@@ -495,8 +525,11 @@ export const providers = defineProviders({
 	},
 	gitlab: {
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
+		email: ['email'],
+		fullName: ['name'],
 		isOIDC: true,
 		isRefreshable: true,
+		picture: ['picture'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -521,8 +554,12 @@ export const providers = defineProviders({
 	},
 	google: {
 		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+		familyName: ['family_name'],
+		fullName: ['name'],
+		givenName: ['given_name'],
 		isOIDC: true,
 		isRefreshable: true,
+		picture: ['picture'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -581,6 +618,7 @@ export const providers = defineProviders({
 		authorizationUrl: 'https://kauth.kakao.com/oauth/authorize',
 		isOIDC: true,
 		isRefreshable: true,
+		picture: ['picture'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -626,8 +664,10 @@ export const providers = defineProviders({
 	},
 	kick: {
 		authorizationUrl: 'https://id.kick.com/oauth/authorize',
+		email: ['data', 'email'],
 		isOIDC: false,
 		isRefreshable: true,
+		picture: ['data', 'profile_picture'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -663,7 +703,7 @@ export const providers = defineProviders({
 		},
 		scopeRequired: false,
 		subject: ['id'],
-		subjectType: 'number',
+		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
@@ -745,6 +785,7 @@ export const providers = defineProviders({
 		authorizationUrl: (config) => `${config.baseURL}/oauth/authorize`,
 		isOIDC: false,
 		isRefreshable: false,
+		picture: ['avatar'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -852,8 +893,11 @@ export const providers = defineProviders({
 	},
 	naver: {
 		authorizationUrl: 'https://nid.naver.com/oauth2.0/authorize',
+		email: ['response', 'email'],
+		fullName: ['response', 'name'],
 		isOIDC: false,
 		isRefreshable: true,
+		picture: ['response', 'profile_image'],
 		profileRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
@@ -871,8 +915,10 @@ export const providers = defineProviders({
 	},
 	notion: {
 		authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
+		email: ['bot', 'owner', 'user', 'person', 'email'],
 		isOIDC: false,
 		isRefreshable: false,
+		picture: ['bot', 'owner', 'user', 'avatar_url'],
 		profileRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
@@ -883,7 +929,7 @@ export const providers = defineProviders({
 			url: 'https://api.notion.com/v1/users/me'
 		},
 		scopeRequired: false,
-		subject: ['id'],
+		subject: ['bot', 'owner', 'user', 'id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'header',
@@ -923,6 +969,7 @@ export const providers = defineProviders({
 		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
 		isOIDC: false,
 		isRefreshable: true,
+		picture: ['avatar_url'],
 		profileRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
@@ -1056,6 +1103,7 @@ export const providers = defineProviders({
 		authorizationUrl: 'https://apis.roblox.com/oauth/v1/authorize',
 		isOIDC: true,
 		isRefreshable: true,
+		picture: ['picture'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -1164,6 +1212,7 @@ export const providers = defineProviders({
 	},
 	startgg: {
 		authorizationUrl: 'https://start.gg/oauth/authorize',
+		email: ['data', 'currentUser', 'email'],
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -1190,8 +1239,11 @@ export const providers = defineProviders({
 	},
 	strava: {
 		authorizationUrl: 'https://www.strava.com/oauth/authorize',
-		isOIDC: false,
+		familyName: ['lastname'],
+		givenName: ['firstname'],
+		isOIDC: false, // TODO: Certain providers like Strava arent oidc but dont need to get the user profile, it would save a fetch call
 		isRefreshable: true,
+		picture: ['profile'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',
@@ -1208,7 +1260,7 @@ export const providers = defineProviders({
 			tokenParamName: 'access_token',
 			url: 'https://www.strava.com/oauth/deauthorize'
 		},
-		scopeRequired: false, // TODO: Certain providers like Strava arent oidc but dont need to get the user profile, it would save a fetch call
+		scopeRequired: false,
 		subject: ['id'],
 		subjectType: 'number',
 		tokenRequest: {
@@ -1447,6 +1499,10 @@ export const providers = defineProviders({
 				nonce
 			};
 		},
+		email: ['email'],
+		familyName: ['family_name'],
+		fullName: ['name'],
+		givenName: ['given_name'],
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1496,6 +1552,10 @@ export const providers = defineProviders({
 			device_id: crypto.randomUUID(),
 			device_name: `${navigator.platform ?? 'Unknown'} — ${(navigator.userAgent.split(')')[0] || '').split('(').pop() || 'Unknown'}`
 		},
+		email: ['default_email'],
+		familyName: ['last_name'],
+		fullName: ['real_name'],
+		givenName: ['first_name'],
 		isOIDC: false,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -1522,8 +1582,12 @@ export const providers = defineProviders({
 	},
 	zoom: {
 		authorizationUrl: 'https://zoom.us/oauth/authorize',
+		email: ['email'],
+		familyName: ['last_name'],
+		givenName: ['first_name'],
 		isOIDC: false,
 		isRefreshable: true,
+		picture: ['pic_url'],
 		PKCEMethod: 'S256',
 		profileRequest: {
 			authIn: 'header',

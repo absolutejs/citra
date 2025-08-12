@@ -179,10 +179,23 @@ export const createOAuth2Request = ({
 	});
 };
 
-export const extractPropFromIdentity = <T extends keyof TypeMap>(
+type ExtractPropFromIdentity = {
+	<T extends keyof TypeMap>(
+		identity: Record<string, unknown>,
+		keys: string[],
+		propType: T
+	): TypeMap[T];
+	(
+		identity: Record<string, unknown>,
+		keys: string[],
+		propType?: undefined
+	): unknown;
+};
+
+export const extractPropFromIdentity: ExtractPropFromIdentity = (
 	identity: Record<string, unknown>,
 	keys: string[],
-	propType?: T
+	propType?: keyof TypeMap
 ) => {
 	let value: unknown = identity;
 

@@ -554,6 +554,7 @@ export const providers = defineProviders({
 	},
 	google: {
 		authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+		email: ['email'],
 		familyName: ['family_name'],
 		fullName: ['name'],
 		givenName: ['given_name'],

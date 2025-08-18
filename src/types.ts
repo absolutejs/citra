@@ -71,6 +71,7 @@ export type DefineProviders = <
 };
 
 export type ProvidersMap = typeof providers;
+export type ProviderConfiguration = (typeof providers)[keyof typeof providers];
 export type ProviderOption = keyof typeof providers;
 
 export type OAuth2RequestOptions = {

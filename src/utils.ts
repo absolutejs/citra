@@ -3,6 +3,13 @@ import { ProviderConfiguration } from './types';
 import { isExpectedType, isObject } from './typeGuards';
 import { OAuth2RequestOptions, TypeMap } from './types';
 
+// Opportunistic HTTP/2 multiplexing for outbound HTTPS (Bun 1.3.14+).
+// The `protocol` option lands in @types/bun 1.3.14; widen locally for now.
+// Hard-skip on non-HTTPS — Bun's h2 client throws HTTP2Unsupported on h2c.
+export type H2Init = RequestInit & { protocol?: 'http2' };
+export const h2IfHttps = (url: string): H2Init =>
+	url.startsWith('https://') ? { protocol: 'http2' } : {};
+
 export const createOAuth2FetchError = async (response: Response) => {
 	const clone = response.clone();
 	const prefix = `HTTP ${response.status} ${response.statusText} for ${response.url}`;
@@ -106,7 +113,9 @@ export const getWithingsProps = async (config: any) => {
 	nonceUrl.searchParams.set('timestamp', timestamp.toString());
 	nonceUrl.searchParams.set('signature', hashedSignature);
 
-	const nonceResponse = await fetch(nonceUrl.toString(), {
+	const nonceTarget = nonceUrl.toString();
+	const nonceResponse = await fetch(nonceTarget, {
+		...h2IfHttps(nonceTarget),
 		method: 'POST'
 	});
 

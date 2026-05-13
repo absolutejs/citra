@@ -176,6 +176,10 @@ type ProviderConfig = {
 	tokenRequest: TokenRequestConfig;
 	validateAuthorizationCodeBody?: Record<string, string>;
 	subject: string[];
+	subjectBySource?: {
+		idToken?: string[];
+		profile?: string[];
+	};
 	subjectType: 'string' | 'number';
 	email?: string[];
 	fullName?: string[];

@@ -16,7 +16,7 @@ export const providers = defineProviders({
 			url: 'https://api.intra.42.fr/v2/me'
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -42,7 +42,7 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth2/revoke`
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -88,7 +88,7 @@ export const providers = defineProviders({
 			url: 'https://appleid.apple.com/auth/userinfo'
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -142,7 +142,7 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth/revoke`
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -163,7 +163,7 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.baseURL}/api/v3/user/`
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -189,7 +189,7 @@ export const providers = defineProviders({
 			url: 'https://api.userprofile.autodesk.com/userinfo'
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -208,7 +208,7 @@ export const providers = defineProviders({
 			url: 'https://oauth.battle.net/userinfo'
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -320,7 +320,7 @@ export const providers = defineProviders({
 			url: 'https://discord.com/api/users/@me'
 		},
 		scopeRequired: true,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -453,6 +453,10 @@ export const providers = defineProviders({
 		},
 		scopeRequired: false,
 		subject: ['sub'],
+		subjectBySource: {
+			idToken: ['sub'],
+			profile: ['id']
+		},
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -494,7 +498,7 @@ export const providers = defineProviders({
 			url: (config) => `${config.baseURL}/api/v1/user`
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -544,7 +548,7 @@ export const providers = defineProviders({
 			url: (config) => `${config.baseURL}/oauth/revoke`
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -566,8 +570,7 @@ export const providers = defineProviders({
 			authIn: 'header',
 			encoding: 'application/json',
 			method: 'GET',
-			searchParams: [['personFields', 'names,emailAddresses,photos']],
-			url: 'https://people.googleapis.com/v1/people/me'
+			url: 'https://openidconnect.googleapis.com/v1/userinfo'
 		},
 		revocationRequest: {
 			authIn: 'body',
@@ -577,6 +580,10 @@ export const providers = defineProviders({
 		},
 		scopeRequired: true,
 		subject: ['sub'],
+		subjectBySource: {
+			idToken: ['sub'],
+			profile: ['sub']
+		},
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -607,7 +614,7 @@ export const providers = defineProviders({
 			url: 'https://developer.api.intuit.com/v2/oauth2/tokens/revoke'
 		},
 		scopeRequired: true,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -628,7 +635,7 @@ export const providers = defineProviders({
 			url: 'https://kapi.kakao.com/v2/user/me'
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -655,7 +662,7 @@ export const providers = defineProviders({
 			url: (config) => `${config.realmURL}/protocol/openid-connect/revoke`
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -723,7 +730,7 @@ export const providers = defineProviders({
 			url: 'https://api.line.me/v2/profile'
 		},
 		scopeRequired: true,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -774,7 +781,7 @@ export const providers = defineProviders({
 			url: 'https://api.linkedin.com/v2/me'
 		},
 		scopeRequired: true,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string', // Has to be at least one not including 'openid'
 		tokenRequest: {
 			authIn: 'body',
@@ -863,7 +870,7 @@ export const providers = defineProviders({
 				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/openid/userinfo`
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -958,7 +965,7 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth2/default/v1/revoke`
 		},
 		scopeRequired: true,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -1023,7 +1030,7 @@ export const providers = defineProviders({
 			url: 'https://api.polar.sh/v1/oauth2/revoke'
 		},
 		scopeRequired: true,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -1092,7 +1099,7 @@ export const providers = defineProviders({
 			url: 'https://www.reddit.com/api/v1/revoke_token'
 		},
 		scopeRequired: true,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'header',
@@ -1113,7 +1120,7 @@ export const providers = defineProviders({
 			url: 'https://apis.roblox.com/oauth/v1/userinfo'
 		},
 		scopeRequired: true,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -1139,7 +1146,7 @@ export const providers = defineProviders({
 			url: 'https://login.salesforce.com/services/oauth2/revoke'
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -1183,7 +1190,7 @@ export const providers = defineProviders({
 			url: 'https://slack.com/api/auth.revoke'
 		},
 		scopeRequired: true,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -1382,7 +1389,7 @@ export const providers = defineProviders({
 			url: 'https://id.twitch.tv/oauth2/revoke'
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -1514,7 +1521,7 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth2/userinfo`
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
@@ -1539,7 +1546,7 @@ export const providers = defineProviders({
 			url: 'https://api.login.yahoo.com/oauth2/revoke'
 		},
 		scopeRequired: false,
-		subject: ['sub'],
+		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',

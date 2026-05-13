@@ -2,7 +2,12 @@ import { createS256CodeChallenge } from './arctic-utils';
 import { providers } from './providers';
 import { hasClientSecret } from './typeGuards';
 import { CredentialsFor, OAuth2Client, ProviderOption } from './types';
-import { createOAuth2FetchError, createOAuth2Request } from './utils';
+import {
+	createOAuth2FetchError,
+	createOAuth2Request,
+	getProviderSubjectKeys,
+	normalizeProviderIdentity
+} from './utils';
 
 export const createOAuth2Client = async <P extends ProviderOption>(
 	providerName: P,
@@ -262,6 +267,8 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 		}
 	};
 };
+
+export { extractPropFromIdentity, getProviderSubjectKeys, normalizeProviderIdentity } from './utils';
 
 export * from './providers';
 export * from './providerOptions';

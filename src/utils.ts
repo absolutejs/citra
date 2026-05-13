@@ -1,4 +1,5 @@
 import { BASE64_BLOCK_SIZE } from './constants';
+import { ProviderConfiguration } from './types';
 import { isExpectedType, isObject } from './typeGuards';
 import { OAuth2RequestOptions, TypeMap } from './types';
 
@@ -216,4 +217,60 @@ export const extractPropFromIdentity: ExtractPropFromIdentity = (
 	}
 
 	return value;
+};
+
+export const getProviderSubjectKeys = (
+	providerConfiguration: ProviderConfiguration,
+	source: 'idToken' | 'profile'
+) => providerConfiguration.subjectBySource?.[source] ?? providerConfiguration.subject;
+
+const setPropInIdentity = (
+	identity: Record<string, unknown>,
+	keys: string[],
+	value: string | number
+) => {
+	if (keys.length === 0) {
+		return identity;
+	}
+
+	let cursor: Record<string, unknown> = identity;
+
+	for (const key of keys.slice(0, -1)) {
+		const next = cursor[key];
+		if (!isObject(next)) {
+			cursor[key] = {};
+		}
+
+		cursor = cursor[key] as Record<string, unknown>;
+	}
+
+	cursor[keys[keys.length - 1]!] = value;
+
+	return identity;
+};
+
+export const normalizeProviderIdentity = ({
+	identity,
+	providerConfiguration,
+	source
+}: {
+	identity: Record<string, unknown>;
+	providerConfiguration: ProviderConfiguration;
+	source: 'idToken' | 'profile';
+}) => {
+	const sourceKeys = getProviderSubjectKeys(providerConfiguration, source);
+	const canonicalKeys = providerConfiguration.subject;
+
+	if (sourceKeys.join('.') === canonicalKeys.join('.')) {
+		return identity;
+	}
+
+	const subject = extractPropFromIdentity(
+		identity,
+		sourceKeys,
+		providerConfiguration.subjectType
+	);
+	const normalizedIdentity = structuredClone(identity);
+
+	return setPropInIdentity(normalizedIdentity, canonicalKeys, subject);
 };

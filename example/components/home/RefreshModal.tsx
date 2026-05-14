@@ -57,41 +57,31 @@ export const RefreshModal = ({
 
 	return (
 		<Modal
-			isOpen={refreshModalOpen}
-			onOpen={(dialogRef) => {
-				registerHost(dialogRef);
-			}}
-			onClose={() => {
+			isOpen={refreshModalOpen} onClose={() => {
 				setRefreshModalOpen(false);
 				registerHost(null);
+			}} onOpen={(dialogRef) => {
+				registerHost(dialogRef);
 			}}
 		>
-			<form style={formStyle} onSubmit={handleSubmit}>
+			<form onSubmit={handleSubmit} style={formStyle}>
 				<ProviderDropdown
-					setCurrentProvider={setCurrentProvider}
-					providerOptions={refreshableProviderOptions}
+					providerOptions={refreshableProviderOptions} setCurrentProvider={setCurrentProvider}
 				/>
 
 				<input
-					type="text"
-					name="refresh_token"
-					placeholder="Enter refresh token"
-					value={refreshToken}
-					onChange={(event) => setRefreshToken(event.target.value)}
-					style={{
+					name="refresh_token" onChange={(event) => setRefreshToken(event.target.value)} placeholder="Enter refresh token" style={{
 						border: '1px solid #ccc',
 						borderRadius: '4px',
 						fontSize: '14px',
 						padding: '8px'
-					}}
+					}} type="text" value={refreshToken}
 				/>
 
 				<button
-					type="submit"
-					disabled={!currentProvider || !refreshToken}
-					style={formButtonStyle(
+					disabled={!currentProvider || !refreshToken} style={formButtonStyle(
 						currentProvider !== undefined && refreshToken !== ''
-					)}
+					)} type="submit"
 				>
 					Refresh Token
 				</button>

@@ -7,7 +7,19 @@ type ToastProps = {
 
 export const Toast = ({ message, action, style, removeToast }: ToastProps) => (
 	<div
-		style={{
+		onMouseEnter={(event) => {
+			const btn =
+				event.currentTarget.querySelector<HTMLElement>('.close-btn');
+			if (btn) {
+				btn.style.opacity = '1';
+			}
+		}} onMouseLeave={(event) => {
+			const btn =
+				event.currentTarget.querySelector<HTMLElement>('.close-btn');
+			if (btn) {
+				btn.style.opacity = '0';
+			}
+		}} style={{
 			alignItems: 'flex-start',
 			background: style?.background || '#333',
 			borderRadius: '0.5rem',
@@ -22,20 +34,6 @@ export const Toast = ({ message, action, style, removeToast }: ToastProps) => (
 			padding: '0.75rem',
 			paddingRight: '2.5rem',
 			position: 'relative'
-		}}
-		onMouseEnter={(event) => {
-			const btn =
-				event.currentTarget.querySelector<HTMLElement>('.close-btn');
-			if (btn) {
-				btn.style.opacity = '1';
-			}
-		}}
-		onMouseLeave={(event) => {
-			const btn =
-				event.currentTarget.querySelector<HTMLElement>('.close-btn');
-			if (btn) {
-				btn.style.opacity = '0';
-			}
 		}}
 	>
 		<span

@@ -1,15 +1,15 @@
 import { BASE64_BLOCK_SIZE } from './constants';
-import { ProviderConfiguration } from './types';
 import { isExpectedType, isObject } from './typeGuards';
-import { OAuth2RequestOptions, TypeMap } from './types';
+import {
+	OAuth2RequestOptions,
+	ProviderConfiguration,
+	TypeMap
+} from './types';
 
 // Opportunistic HTTP/2 multiplexing for outbound HTTPS (Bun 1.3.14+).
 // The `protocol` option lands in @types/bun 1.3.14; widen locally for now.
 // Hard-skip on non-HTTPS — Bun's h2 client throws HTTP2Unsupported on h2c.
 export type H2Init = RequestInit & { protocol?: 'http2' };
-export const h2IfHttps = (url: string): H2Init =>
-	url.startsWith('https://') ? { protocol: 'http2' } : {};
-
 export const createOAuth2FetchError = async (response: Response) => {
 	const clone = response.clone();
 	const prefix = `HTTP ${response.status} ${response.statusText} for ${response.url}`;
@@ -26,111 +26,6 @@ export const createOAuth2FetchError = async (response: Response) => {
 
 	return new Error(prefix);
 };
-
-export const encodeBase64 = (input: string | ArrayBuffer | Uint8Array) => {
-	let raw;
-
-	if (typeof input === 'string') {
-		raw = input;
-	} else {
-		const bytes =
-			input instanceof Uint8Array ? input : new Uint8Array(input);
-		raw = bytes.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
-	}
-
-	return btoa(raw);
-};
-
-export const decodeBase64 = (input: string, toUint8Array = false) => {
-	const b64 =
-		input.replace(/-/g, '+').replace(/_/g, '/') +
-		'=='.slice(
-			0,
-			(BASE64_BLOCK_SIZE - (input.length % BASE64_BLOCK_SIZE)) %
-				BASE64_BLOCK_SIZE
-		);
-
-	const raw = atob(b64);
-
-	if (!toUint8Array) {
-		return raw;
-	}
-
-	const bytes = new Uint8Array(raw.length);
-	for (let i = 0; i < raw.length; i++) {
-		bytes[i] = raw.charCodeAt(i);
-	}
-
-	return bytes;
-};
-
-export const hmacSha256 = async (
-	message: string,
-	secret: string
-): Promise<string> => {
-	const encoder = new TextEncoder();
-	const key = await crypto.subtle.importKey(
-		'raw',
-		encoder.encode(secret),
-		{ hash: 'SHA-256', name: 'HMAC' },
-		false,
-		['sign']
-	);
-	const sigBuffer = await crypto.subtle.sign(
-		'HMAC',
-		key,
-		encoder.encode(message)
-	);
-
-	return Array.from(new Uint8Array(sigBuffer))
-		.map((b) => b.toString(16).padStart(2, '0'))
-		.join('');
-};
-
-export const decodeJWT = (tokenString: string): Record<string, unknown> => {
-	const [headerSegment, payloadSegment, signatureSegment] =
-		tokenString.split('.');
-	if (!headerSegment || !payloadSegment || !signatureSegment) {
-		throw new Error('Invalid JWT format');
-	}
-
-	const decodedPayload = decodeBase64(payloadSegment);
-	if (typeof decodedPayload !== 'string') {
-		throw new Error('Expected JWT payload to be a UTF-8 string');
-	}
-
-	return JSON.parse(decodedPayload);
-};
-
-export const getWithingsProps = async (config: any) => {
-	const timestamp = Math.floor(Date.now() / 1000);
-	const signature = `getnonce,${config.clientId},${timestamp}`;
-	const hashedSignature = await hmacSha256(signature, config.clientSecret);
-
-	const nonceUrl = new URL('https://wbsapi.withings.net/v2/signature');
-	nonceUrl.searchParams.set('action', 'getnonce');
-	nonceUrl.searchParams.set('client_id', config.clientId);
-	nonceUrl.searchParams.set('timestamp', timestamp.toString());
-	nonceUrl.searchParams.set('signature', hashedSignature);
-
-	const nonceTarget = nonceUrl.toString();
-	const nonceResponse = await fetch(nonceTarget, {
-		...h2IfHttps(nonceTarget),
-		method: 'POST'
-	});
-
-	const nonceData = await nonceResponse.json();
-
-	if (nonceData.status === 0) {
-		return {
-			hashedSignature,
-			nonce: nonceData.body.nonce
-		};
-	}
-
-	return undefined;
-};
-
 export const createOAuth2Request = ({
 	url,
 	body,
@@ -187,6 +82,107 @@ export const createOAuth2Request = ({
 		headers: oauthHeaders,
 		method: 'POST'
 	});
+};
+export const decodeBase64 = (input: string, toUint8Array = false) => {
+	const b64 =
+		input.replace(/-/g, '+').replace(/_/g, '/') +
+		'=='.slice(
+			0,
+			(BASE64_BLOCK_SIZE - (input.length % BASE64_BLOCK_SIZE)) %
+				BASE64_BLOCK_SIZE
+		);
+
+	const raw = atob(b64);
+
+	if (!toUint8Array) {
+		return raw;
+	}
+
+	const bytes = new Uint8Array(raw.length);
+	for (let i = 0; i < raw.length; i++) {
+		bytes[i] = raw.charCodeAt(i);
+	}
+
+	return bytes;
+};
+export const decodeJWT = (tokenString: string): Record<string, unknown> => {
+	const [headerSegment, payloadSegment, signatureSegment] =
+		tokenString.split('.');
+	if (!headerSegment || !payloadSegment || !signatureSegment) {
+		throw new Error('Invalid JWT format');
+	}
+
+	const decodedPayload = decodeBase64(payloadSegment);
+	if (typeof decodedPayload !== 'string') {
+		throw new Error('Expected JWT payload to be a UTF-8 string');
+	}
+
+	return JSON.parse(decodedPayload);
+};
+export const encodeBase64 = (input: string | ArrayBuffer | Uint8Array) => {
+	let raw;
+
+	if (typeof input === 'string') {
+		raw = input;
+	} else {
+		const bytes =
+			input instanceof Uint8Array ? input : new Uint8Array(input);
+		raw = bytes.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+	}
+
+	return btoa(raw);
+};
+export const getWithingsProps = async (config: any) => {
+	const timestamp = Math.floor(Date.now() / 1000);
+	const signature = `getnonce,${config.clientId},${timestamp}`;
+	const hashedSignature = await hmacSha256(signature, config.clientSecret);
+
+	const nonceUrl = new URL('https://wbsapi.withings.net/v2/signature');
+	nonceUrl.searchParams.set('action', 'getnonce');
+	nonceUrl.searchParams.set('client_id', config.clientId);
+	nonceUrl.searchParams.set('timestamp', timestamp.toString());
+	nonceUrl.searchParams.set('signature', hashedSignature);
+
+	const nonceTarget = nonceUrl.toString();
+	const nonceResponse = await fetch(nonceTarget, {
+		...h2IfHttps(nonceTarget),
+		method: 'POST'
+	});
+
+	const nonceData = await nonceResponse.json();
+
+	if (nonceData.status === 0) {
+		return {
+			hashedSignature,
+			nonce: nonceData.body.nonce
+		};
+	}
+
+	return undefined;
+};
+export const h2IfHttps = (url: string): H2Init =>
+	url.startsWith('https://') ? { protocol: 'http2' } : {};
+export const hmacSha256 = async (
+	message: string,
+	secret: string
+): Promise<string> => {
+	const encoder = new TextEncoder();
+	const key = await crypto.subtle.importKey(
+		'raw',
+		encoder.encode(secret),
+		{ hash: 'SHA-256', name: 'HMAC' },
+		false,
+		['sign']
+	);
+	const sigBuffer = await crypto.subtle.sign(
+		'HMAC',
+		key,
+		encoder.encode(message)
+	);
+
+	return Array.from(new Uint8Array(sigBuffer))
+		.map((b) => b.toString(16).padStart(2, '0'))
+		.join('');
 };
 
 type ExtractPropFromIdentity = {

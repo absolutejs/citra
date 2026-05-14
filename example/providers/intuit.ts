@@ -22,9 +22,9 @@ const intuitOAuth2Client = await createOAuth2Client('intuit', {
 export const intuitPlugin = new Elysia()
 	.get(
 		'/oauth2/intuit/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
+		async ({ redirect, status, cookie: { state } }) => {
 			if (state === undefined)
-				return error('Bad Request', 'Cookies are missing');
+				return status('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
@@ -48,19 +48,19 @@ export const intuitPlugin = new Elysia()
 	.get(
 		'/oauth2/intuit/callback',
 		async ({
-			error,
+			status,
 			redirect,
 			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
 			if (stored_state === undefined)
-				return error('Bad Request', 'Cookies are missing');
+				return status('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
-				return error('Bad Request', 'Code is missing in query');
+				return status('Bad Request', 'Code is missing in query');
 
 			if (callback_state !== stored_state.value) {
-				return error(
+				return status(
 					'Bad Request',
 					`Invalid state mismatch: expected "${stored_state.value}", got "${callback_state}"`
 				);
@@ -76,13 +76,13 @@ export const intuitPlugin = new Elysia()
 				console.log('\nIntuit authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -93,7 +93,7 @@ export const intuitPlugin = new Elysia()
 	)
 	.post(
 		'/oauth2/intuit/tokens',
-		async ({ error, body: { refresh_token } }) => {
+		async ({ status, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
 					await intuitOAuth2Client.refreshAccessToken(refresh_token);
@@ -106,13 +106,13 @@ export const intuitPlugin = new Elysia()
 				});
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -126,9 +126,9 @@ export const intuitPlugin = new Elysia()
 	)
 	.delete(
 		'/oauth2/intuit/revocation',
-		async ({ error, query: { token_to_revoke } }) => {
+		async ({ status, query: { token_to_revoke } }) => {
 			if (!token_to_revoke)
-				return error(
+				return status(
 					'Bad Request',
 					'Token to revoke is required in query parameters'
 				);
@@ -147,13 +147,13 @@ export const intuitPlugin = new Elysia()
 				);
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to revoke token: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -162,9 +162,9 @@ export const intuitPlugin = new Elysia()
 	)
 	.get(
 		'/oauth2/intuit/profile',
-		async ({ error, headers: { authorization } }) => {
+		async ({ status, headers: { authorization } }) => {
 			if (authorization === undefined)
-				return error(
+				return status(
 					'Unauthorized',
 					'Access token is missing in headers'
 				);
@@ -183,10 +183,10 @@ export const intuitPlugin = new Elysia()
 				});
 			} catch (err) {
 				if (err instanceof Error) {
-					return error('Internal Server Error', `${err.message}`);
+					return status('Internal Server Error', `${err.message}`);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);

@@ -1,15 +1,6 @@
 import { CSSProperties } from 'react';
 import { HALF } from '../utils/constants';
 
-export const styleReset = `
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-weight: inherit;
-    }
-`;
-
 export const bodyDefault: CSSProperties = {
 	backgroundColor: '#f5f5f5',
 	color: '#333',
@@ -19,7 +10,9 @@ export const bodyDefault: CSSProperties = {
 	height: '100%',
 	margin: 0
 };
-
+export const htmlDefault: CSSProperties = {
+	height: '100%'
+};
 export const mainDefault: CSSProperties = {
 	alignItems: 'center',
 	display: 'flex',
@@ -27,14 +20,45 @@ export const mainDefault: CSSProperties = {
 	flexDirection: 'column',
 	justifyContent: 'center'
 };
-
-export const htmlDefault: CSSProperties = {
-	height: '100%'
-};
+export const styleReset = `
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-weight: inherit;
+    }
+`;
 
 type ButtonStyleProps = {
 	backgroundColor?: string;
 	color?: string;
+};
+export const formStyle: CSSProperties = {
+	display: 'flex',
+	flexDirection: 'column',
+	gap: '8px',
+	padding: '16px',
+	width: '300px'
+};
+export const headingStyle: CSSProperties = {
+	color: '#333',
+	fontSize: '2.5rem',
+	marginBottom: '20px',
+	textAlign: 'center'
+};
+export const linkStyle: CSSProperties = {
+	color: '#fff',
+	fontSize: '1.2rem',
+	fontWeight: 'bold',
+	textDecoration: 'none'
+};
+export const paragraphStyle: CSSProperties = {
+	color: '#333',
+	fontSize: '1.2rem',
+	lineHeight: '1.5',
+	marginBottom: '20px',
+	maxWidth: '600px',
+	textAlign: 'center'
 };
 export const buttonStyle = ({
 	backgroundColor = 'none',
@@ -56,15 +80,6 @@ export const buttonStyle = ({
 	textWrap: 'nowrap',
 	width: '100%'
 });
-
-export const formStyle: CSSProperties = {
-	display: 'flex',
-	flexDirection: 'column',
-	gap: '8px',
-	padding: '16px',
-	width: '300px'
-};
-
 export const formButtonStyle = (isFullOpacity?: boolean): CSSProperties => ({
 	backgroundColor: '#007bff',
 	border: 'none',
@@ -75,26 +90,3 @@ export const formButtonStyle = (isFullOpacity?: boolean): CSSProperties => ({
 	opacity: isFullOpacity ? 1 : HALF,
 	padding: '8px 16px'
 });
-
-export const headingStyle: CSSProperties = {
-	color: '#333',
-	fontSize: '2.5rem',
-	marginBottom: '20px',
-	textAlign: 'center'
-};
-
-export const paragraphStyle: CSSProperties = {
-	color: '#333',
-	fontSize: '1.2rem',
-	lineHeight: '1.5',
-	marginBottom: '20px',
-	maxWidth: '600px',
-	textAlign: 'center'
-};
-
-export const linkStyle: CSSProperties = {
-	color: '#fff',
-	fontSize: '1.2rem',
-	fontWeight: 'bold',
-	textDecoration: 'none'
-};

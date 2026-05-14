@@ -21,9 +21,9 @@ const shikimoriOAuth2Client = await createOAuth2Client('shikimori', {
 export const shikimoriPlugin = new Elysia()
 	.get(
 		'/oauth2/shikimori/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
+		async ({ redirect, status, cookie: { state } }) => {
 			if (state === undefined)
-				return error('Bad Request', 'Cookies are missing');
+				return status('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
@@ -46,19 +46,19 @@ export const shikimoriPlugin = new Elysia()
 	.get(
 		'/oauth2/shikimori/callback',
 		async ({
-			error,
+			status,
 			redirect,
 			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
 			if (stored_state === undefined)
-				return error('Bad Request', 'Cookies are missing');
+				return status('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
-				return error('Bad Request', 'Code is missing in query');
+				return status('Bad Request', 'Code is missing in query');
 
 			if (callback_state !== stored_state.value) {
-				return error(
+				return status(
 					'Bad Request',
 					`Invalid state mismatch: expected "${stored_state.value}", got "${callback_state}"`
 				);
@@ -74,13 +74,13 @@ export const shikimoriPlugin = new Elysia()
 				console.log('\nShikimori authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -91,7 +91,7 @@ export const shikimoriPlugin = new Elysia()
 	)
 	.post(
 		'/oauth2/shikimori/tokens',
-		async ({ error, body: { refresh_token } }) => {
+		async ({ status, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
 					await shikimoriOAuth2Client.refreshAccessToken(
@@ -106,13 +106,13 @@ export const shikimoriPlugin = new Elysia()
 				});
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -126,9 +126,9 @@ export const shikimoriPlugin = new Elysia()
 	)
 	.get(
 		'/oauth2/shikimori/profile',
-		async ({ error, headers: { authorization } }) => {
+		async ({ status, headers: { authorization } }) => {
 			if (authorization === undefined)
-				return error(
+				return status(
 					'Unauthorized',
 					'Access token is missing in headers'
 				);
@@ -147,10 +147,10 @@ export const shikimoriPlugin = new Elysia()
 				});
 			} catch (err) {
 				if (err instanceof Error) {
-					return error('Internal Server Error', `${err.message}`);
+					return status('Internal Server Error', `${err.message}`);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);

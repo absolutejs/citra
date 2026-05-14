@@ -4,10 +4,10 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import pluginJs from '@eslint/js';
-import stylisticTs from '@stylistic/eslint-plugin-ts';
+import stylistic from '@stylistic/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import absolutePlugin from 'eslint-plugin-absolute';
-import importPlugin from 'eslint-plugin-import';
+import importPlugin from 'eslint-plugin-import-x';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import promisePlugin from 'eslint-plugin-promise';
 import reactPlugin from 'eslint-plugin-react';
@@ -40,9 +40,9 @@ export default [
 
 	{
 		files: ['**/*.{ts,tsx}'],
-		plugins: { '@stylistic/ts': stylisticTs },
+		plugins: { '@stylistic': stylistic },
 		rules: {
-			'@stylistic/ts/padding-line-between-statements': [
+			'@stylistic/padding-line-between-statements': [
 				'error',
 				{ blankLine: 'always', next: 'return', prev: '*' }
 			]
@@ -69,12 +69,10 @@ export default [
 			],
 			'absolute/no-button-navigation': 'error',
 			'absolute/no-explicit-return-type': 'error',
-			'absolute/no-inline-prop-types': 'error',
 			'absolute/no-multi-style-objects': 'error',
 			'absolute/no-nested-jsx-return': 'error',
 			'absolute/no-or-none-component': 'error',
 			'absolute/no-transition-cssproperties': 'error',
-			'absolute/no-type-cast': 'error',
 			'absolute/no-unnecessary-div': 'error',
 			'absolute/no-unnecessary-key': 'error',
 			'absolute/no-useless-function': 'error',

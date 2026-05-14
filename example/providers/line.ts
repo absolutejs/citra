@@ -21,9 +21,9 @@ const LINEOAuth2Client = await createOAuth2Client('line', {
 export const linePlugin = new Elysia()
 	.get(
 		'/oauth2/line/authorization',
-		async ({ redirect, error, cookie: { state, code_verifier } }) => {
+		async ({ redirect, status, cookie: { state, code_verifier } }) => {
 			if (state === undefined || code_verifier === undefined)
-				return error('Bad Request', 'Cookies are missing');
+				return status('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const codeVerifier = generateCodeVerifier();
@@ -57,19 +57,19 @@ export const linePlugin = new Elysia()
 	.get(
 		'/oauth2/line/callback',
 		async ({
-			error,
+			status,
 			redirect,
 			cookie: { state: stored_state, code_verifier },
 			query: { code, state: callback_state }
 		}) => {
 			if (stored_state === undefined || code_verifier === undefined)
-				return error('Bad Request', 'Cookies are missing');
+				return status('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
-				return error('Bad Request', 'Code is missing in query');
+				return status('Bad Request', 'Code is missing in query');
 
 			if (callback_state !== stored_state.value) {
-				return error(
+				return status(
 					'Bad Request',
 					`Invalid state mismatch: expected "${stored_state.value}", got "${callback_state}"`
 				);
@@ -78,8 +78,8 @@ export const linePlugin = new Elysia()
 			stored_state.remove();
 
 			const codeVerifier = code_verifier.value;
-			if (codeVerifier === undefined)
-				return error('Bad Request', 'Code verifier is missing');
+			if (typeof codeVerifier !== 'string')
+				return status('Bad Request', 'Code verifier is missing');
 
 			try {
 				const oauthResponse =
@@ -90,13 +90,13 @@ export const linePlugin = new Elysia()
 				console.log('\nLINE authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -107,7 +107,7 @@ export const linePlugin = new Elysia()
 	)
 	.post(
 		'/oauth2/line/tokens',
-		async ({ error, body: { refresh_token } }) => {
+		async ({ status, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
 					await LINEOAuth2Client.refreshAccessToken(refresh_token);
@@ -120,13 +120,13 @@ export const linePlugin = new Elysia()
 				});
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -140,9 +140,9 @@ export const linePlugin = new Elysia()
 	)
 	.get(
 		'/oauth2/line/profile',
-		async ({ error, headers: { authorization } }) => {
+		async ({ status, headers: { authorization } }) => {
 			if (authorization === undefined)
-				return error(
+				return status(
 					'Unauthorized',
 					'Access token is missing in headers'
 				);
@@ -161,10 +161,10 @@ export const linePlugin = new Elysia()
 				});
 			} catch (err) {
 				if (err instanceof Error) {
-					return error('Internal Server Error', `${err.message}`);
+					return status('Internal Server Error', `${err.message}`);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);

@@ -27,15 +27,12 @@ export const Modal = ({ isOpen, onClose, onOpen, children }: ModalProps) => {
 
 	return (
 		<dialog
-			ref={dialogRef}
 			onCancel={(event) => {
 				event.preventDefault();
 				onClose();
-			}}
-			onClick={(event: MouseEvent<HTMLDialogElement>) => {
+			}} onClick={(event: MouseEvent<HTMLDialogElement>) => {
 				if (event.target === dialogRef.current) onClose();
-			}}
-			style={{
+			}} ref={dialogRef} style={{
 				alignItems: 'center',
 				border: 'none',
 				borderRadius: '8px',
@@ -64,9 +61,7 @@ export const Modal = ({ isOpen, onClose, onOpen, children }: ModalProps) => {
 				}}
 			>
 				<button
-					onClick={() => dialogRef.current?.close()}
-					aria-label="Close modal"
-					style={{
+					aria-label="Close modal" onClick={() => dialogRef.current?.close()} style={{
 						background: 'transparent',
 						border: 'none',
 						cursor: 'pointer',

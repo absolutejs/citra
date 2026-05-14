@@ -1,5 +1,30 @@
 import { CSSProperties } from 'react';
 
+export const legendFooterStyle: CSSProperties = {
+	margin: '16px 0 0',
+	textAlign: 'center'
+};
+export const legendGridStyle: CSSProperties = {
+	alignItems: 'center',
+	columnGap: '12px',
+	display: 'grid',
+	gridTemplateColumns: '8ch auto',
+	margin: '0 auto',
+	rowGap: '12px',
+	width: 'max-content'
+};
+export const legendTextStyle: CSSProperties = {
+	fontSize: '1rem',
+	lineHeight: 1.6,
+	margin: 0,
+	textAlign: 'left'
+};
+export const legendTitleStyle: CSSProperties = {
+	fontSize: '1.25rem',
+	fontWeight: 600,
+	margin: '0 0 16px',
+	textAlign: 'center'
+};
 export const legendWrapperStyle: CSSProperties = {
 	backgroundColor: '#fff',
 	border: '1px solid #ddd',
@@ -10,29 +35,6 @@ export const legendWrapperStyle: CSSProperties = {
 	padding: '20px',
 	width: '100%'
 };
-
-export const legendTitleStyle: CSSProperties = {
-	fontSize: '1.25rem',
-	fontWeight: 600,
-	margin: '0 0 16px',
-	textAlign: 'center'
-};
-
-export const legendGridStyle: CSSProperties = {
-	alignItems: 'center',
-	columnGap: '12px',
-	display: 'grid',
-	gridTemplateColumns: '8ch auto',
-	margin: '0 auto',
-	rowGap: '12px',
-	width: 'max-content'
-};
-
-export const legendFooterStyle: CSSProperties = {
-	margin: '16px 0 0',
-	textAlign: 'center'
-};
-
 export const badgeStyle = (
 	backgroundColor: string,
 	textColor = '#fff'
@@ -50,10 +52,3 @@ export const badgeStyle = (
 	padding: '4px 12px',
 	width: '8ch'
 });
-
-export const legendTextStyle: CSSProperties = {
-	fontSize: '1rem',
-	lineHeight: 1.6,
-	margin: 0,
-	textAlign: 'left'
-};

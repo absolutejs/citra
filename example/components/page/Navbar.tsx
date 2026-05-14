@@ -13,7 +13,7 @@ export const Navbar = () => (
 		}}
 	>
 		<a
-			style={{
+			href="/" style={{
 				alignItems: 'center',
 				color: '#fff',
 				display: 'flex',
@@ -22,12 +22,9 @@ export const Navbar = () => (
 				justifyContent: 'center',
 				textDecoration: 'none'
 			}}
-			href="/"
 		>
 			<img
-				src="/assets/citra-logo.png"
-				alt="Citra Logo"
-				style={{ height: '100px', marginRight: '10px' }}
+				alt="Citra Logo" src="/assets/citra-logo.png" style={{ height: '100px', marginRight: '10px' }}
 			/>
 			Citra
 		</a>

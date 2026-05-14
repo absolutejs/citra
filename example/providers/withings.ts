@@ -21,9 +21,9 @@ const withingsOAuth2Client = await createOAuth2Client('withings', {
 export const withingsPlugin = new Elysia()
 	.get(
 		'/oauth2/withings/authorization',
-		async ({ redirect, error, cookie: { state } }) => {
+		async ({ redirect, status, cookie: { state } }) => {
 			if (state === undefined)
-				return error('Bad Request', 'Cookies are missing');
+				return status('Bad Request', 'Cookies are missing');
 
 			const currentState = generateState();
 			const authorizationUrl =
@@ -47,19 +47,19 @@ export const withingsPlugin = new Elysia()
 	.get(
 		'/oauth2/withings/callback',
 		async ({
-			error,
+			status,
 			redirect,
 			cookie: { state: stored_state },
 			query: { code, state: callback_state }
 		}) => {
 			if (stored_state === undefined)
-				return error('Bad Request', 'Cookies are missing');
+				return status('Bad Request', 'Cookies are missing');
 
 			if (code === undefined)
-				return error('Bad Request', 'Code is missing in query');
+				return status('Bad Request', 'Code is missing in query');
 
 			if (callback_state !== stored_state.value) {
-				return error(
+				return status(
 					'Bad Request',
 					`Invalid state mismatch: expected "${stored_state.value}", got "${callback_state}"`
 				);
@@ -75,13 +75,13 @@ export const withingsPlugin = new Elysia()
 				console.log('\nWithings authorized:', oauthResponse);
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to validate authorization code: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -92,7 +92,7 @@ export const withingsPlugin = new Elysia()
 	)
 	.post(
 		'/oauth2/withings/tokens',
-		async ({ error, body: { refresh_token } }) => {
+		async ({ status, body: { refresh_token } }) => {
 			try {
 				const oauthResponse =
 					await withingsOAuth2Client.refreshAccessToken(
@@ -107,13 +107,13 @@ export const withingsPlugin = new Elysia()
 				});
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to refresh access token: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -127,9 +127,9 @@ export const withingsPlugin = new Elysia()
 	)
 	.delete(
 		'/oauth2/withings/revocation',
-		async ({ error, query: { token_to_revoke } }) => {
+		async ({ status, query: { token_to_revoke } }) => {
 			if (!token_to_revoke)
-				return error(
+				return status(
 					'Bad Request',
 					'Token to revoke is required in query parameters'
 				);
@@ -148,13 +148,13 @@ export const withingsPlugin = new Elysia()
 				);
 			} catch (err) {
 				if (err instanceof Error) {
-					return error(
+					return status(
 						'Internal Server Error',
 						`Failed to revoke token: ${err.message}`
 					);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);
@@ -163,9 +163,9 @@ export const withingsPlugin = new Elysia()
 	)
 	.get(
 		'/oauth2/withings/profile',
-		async ({ error, headers: { authorization } }) => {
+		async ({ status, headers: { authorization } }) => {
 			if (authorization === undefined)
-				return error('Unauthorized', 'Authorization header is missing');
+				return status('Unauthorized', 'Authorization header is missing');
 
 			const accessToken = authorization.replace('Bearer ', '');
 
@@ -181,10 +181,10 @@ export const withingsPlugin = new Elysia()
 				});
 			} catch (err) {
 				if (err instanceof Error) {
-					return error('Internal Server Error', `${err.message}`);
+					return status('Internal Server Error', `${err.message}`);
 				}
 
-				return error(
+				return status(
 					'Internal Server Error',
 					`Unexpected error: ${err}`
 				);

@@ -12,9 +12,9 @@ export const Head = ({
 	<head>
 		<meta charSet="utf-8" />
 		<title>{title}</title>
-		<meta name="description" content="Bun, Elysia & React" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="icon" href={icon} />
+		<meta content="Bun, Elysia & React" name="description" />
+		<meta content="width=device-width, initial-scale=1" name="viewport" />
+		<link href={icon} rel="icon" />
 		<link
 			href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
 			rel="stylesheet"

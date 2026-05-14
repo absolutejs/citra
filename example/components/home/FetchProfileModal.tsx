@@ -58,41 +58,31 @@ export const FetchProfileModal = ({
 
 	return (
 		<Modal
-			isOpen={profileModalOpen}
-			onOpen={(dialogRef) => {
-				registerHost(dialogRef);
-			}}
-			onClose={() => {
+			isOpen={profileModalOpen} onClose={() => {
 				setProfileModalOpen(false);
 				registerHost(null);
+			}} onOpen={(dialogRef) => {
+				registerHost(dialogRef);
 			}}
 		>
-			<form style={formStyle} onSubmit={handleSubmit}>
+			<form onSubmit={handleSubmit} style={formStyle}>
 				<ProviderDropdown
-					setCurrentProvider={setCurrentProvider}
-					providerOptions={providerOptions}
+					providerOptions={providerOptions} setCurrentProvider={setCurrentProvider}
 				/>
 
 				<input
-					type="text"
-					name="access_token"
-					placeholder="Enter access token"
-					value={accessToken}
-					onChange={(event) => setAccessToken(event.target.value)}
-					style={{
+					name="access_token" onChange={(event) => setAccessToken(event.target.value)} placeholder="Enter access token" style={{
 						border: '1px solid #ccc',
 						borderRadius: '4px',
 						fontSize: '14px',
 						padding: '8px'
-					}}
+					}} type="text" value={accessToken}
 				/>
 
 				<button
-					type="submit"
-					disabled={!currentProvider || !accessToken}
-					style={formButtonStyle(
+					disabled={!currentProvider || !accessToken} style={formButtonStyle(
 						currentProvider !== undefined && accessToken !== ''
-					)}
+					)} type="submit"
 				>
 					Fetch Profile
 				</button>

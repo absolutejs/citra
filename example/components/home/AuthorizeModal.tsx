@@ -20,13 +20,11 @@ export const AuthorizeModal = ({
 
 	return (
 		<Modal
-			isOpen={authModalOpen}
-			onOpen={(dialogRef) => {
-				registerHost(dialogRef);
-			}}
-			onClose={() => {
+			isOpen={authModalOpen} onClose={() => {
 				setAuthModalOpen(false);
 				registerHost(null);
+			}} onOpen={(dialogRef) => {
+				registerHost(dialogRef);
 			}}
 		>
 			<form
@@ -35,14 +33,11 @@ export const AuthorizeModal = ({
 				style={formStyle}
 			>
 				<ProviderDropdown
-					setCurrentProvider={setCurrentProvider}
-					providerOptions={providerOptions}
+					providerOptions={providerOptions} setCurrentProvider={setCurrentProvider}
 				/>
 
 				<button
-					type="submit"
-					disabled={!currentProvider}
-					style={formButtonStyle(currentProvider !== undefined)}
+					disabled={!currentProvider} style={formButtonStyle(currentProvider !== undefined)} type="submit"
 				>
 					Authorize
 				</button>

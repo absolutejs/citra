@@ -56,41 +56,37 @@ export const Home = () => {
 						}}
 					>
 						<button
-							style={buttonStyle({
+							onClick={() => setAuthModalOpen(true)} style={buttonStyle({
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
-							onClick={() => setAuthModalOpen(true)}
 						>
 							Test OAuth2
 						</button>
 
 						<button
-							style={buttonStyle({
+							onClick={() => setRefreshModalOpen(true)} style={buttonStyle({
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
-							onClick={() => setRefreshModalOpen(true)}
 						>
 							Refresh Token
 						</button>
 
 						<button
-							style={buttonStyle({
+							onClick={() => setRevokeModalOpen(true)} style={buttonStyle({
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
-							onClick={() => setRevokeModalOpen(true)}
 						>
 							Revoke Token
 						</button>
 
 						<button
-							style={buttonStyle({
+							onClick={() => setProfileModalOpen(true)} style={buttonStyle({
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
-							onClick={() => setProfileModalOpen(true)}
 						>
 							Fetch Profile
 						</button>

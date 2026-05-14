@@ -53,3 +53,6 @@ package-lock.json
 
 # THIS IS ALL OF MY PERSONAL IDENTITIES
 /example/utils/exampleIdentities.ts
+
+# Codex CLI
+.codex

@@ -591,6 +591,25 @@ export const providers = defineProviders({
 			url: 'https://oauth2.googleapis.com/token'
 		}
 	},
+	hubspot: {
+		authorizationUrl: 'https://app.hubspot.com/oauth/authorize',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://api.hubapi.com/oauth/v1/access-tokens/me'
+		},
+		scopeRequired: true,
+		subject: ['hub_id'],
+		subjectType: 'number',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://api.hubapi.com/oauth/v1/token'
+		}
+	},
 	intuit: {
 		authorizationUrl: 'https://appcenter.intuit.com/connect/oauth2',
 		isOIDC: true,

@@ -150,6 +150,25 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth/token`
 		}
 	},
+	attio: {
+		authorizationUrl: 'https://app.attio.com/authorize',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://api.attio.com/v2/self'
+		},
+		scopeRequired: true,
+		subject: ['workspace_id'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://app.attio.com/oauth/token'
+		}
+	},
 	authentik: {
 		authorizationUrl: (config) =>
 			`https://${config.baseURL}/oauth/authorize`,
@@ -304,6 +323,25 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: 'https://api.coinbase.com/oauth/token'
+		}
+	},
+	close: {
+		authorizationUrl: 'https://app.close.com/oauth2/authorize/',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://api.close.com/api/v1/me/'
+		},
+		scopeRequired: true,
+		subject: ['id'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://api.close.com/oauth2/token/'
 		}
 	},
 	discord: {
@@ -554,6 +592,26 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: (config) => `${config.baseURL}/oauth/token`
+		}
+	},
+	gohighlevel: {
+		authorizationUrl:
+			'https://marketplace.gohighlevel.com/oauth/chooselocation',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://services.leadconnectorhq.com/users/me'
+		},
+		scopeRequired: true,
+		subject: ['id'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://services.leadconnectorhq.com/oauth/token'
 		}
 	},
 	google: {
@@ -898,6 +956,31 @@ export const providers = defineProviders({
 				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/token`
 		}
 	},
+	monday: {
+		authorizationUrl: 'https://auth.monday.com/oauth2/authorize',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			body: {
+				query: 'query { me { id name email } }'
+			},
+			encoding: 'application/json',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			url: 'https://api.monday.com/v2'
+		},
+		scopeRequired: true,
+		subject: ['data', 'me', 'id'],
+		subjectType: 'number',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://auth.monday.com/oauth2/token'
+		}
+	},
 	myanimelist: {
 		authorizationUrl: 'https://myanimelist.net/v1/oauth2/authorize',
 		isOIDC: false,
@@ -1029,6 +1112,25 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: 'https://www.patreon.com/api/oauth2/token'
+		}
+	},
+	pipedrive: {
+		authorizationUrl: 'https://oauth.pipedrive.com/oauth/authorize',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://api.pipedrive.com/v1/users/me'
+		},
+		scopeRequired: true,
+		subject: ['data', 'id'],
+		subjectType: 'number',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://oauth.pipedrive.com/oauth/token'
 		}
 	},
 	polar: {
@@ -1605,6 +1707,36 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: 'https://oauth.yandex.com/token'
+		}
+	},
+	zoho: {
+		authorizationUrl: (config) =>
+			`https://accounts.zoho.${config.region ?? 'com'}/oauth/v2/auth`,
+		isOIDC: false,
+		isRefreshable: true,
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: (config) =>
+				`https://accounts.zoho.${config.region ?? 'com'}/oauth/user/info`
+		},
+		revocationRequest: {
+			authIn: 'query',
+			encoding: 'application/x-www-form-urlencoded',
+			tokenParamName: 'token',
+			url: (config) =>
+				`https://accounts.zoho.${config.region ?? 'com'}/oauth/v2/token/revoke`
+		},
+		scopeRequired: true,
+		subject: ['ZUID'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: (config) =>
+				`https://accounts.zoho.${config.region ?? 'com'}/oauth/v2/token`
 		}
 	},
 	zoom: {

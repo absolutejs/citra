@@ -45,17 +45,11 @@ package-lock.json
 **/build/**/*
 /build
 
-# index files
-**/indexes/*
-
 # dist folder
 /dist
 
 # absolute CLI caches (eslint/prettier/tsc)
 .absolutejs
-
-# THIS IS ALL OF MY PERSONAL IDENTITIES
-/example/utils/exampleIdentities.ts
 
 # Codex CLI
 .codex

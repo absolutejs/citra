@@ -8,11 +8,7 @@ import stylistic from '@stylistic/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import absolutePlugin from 'eslint-plugin-absolute';
 import importPlugin from 'eslint-plugin-import-x';
-import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import promisePlugin from 'eslint-plugin-promise';
-import reactPlugin from 'eslint-plugin-react';
-import reactCompilerPlugin from 'eslint-plugin-react-compiler';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import securityPlugin from 'eslint-plugin-security';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -22,10 +18,6 @@ export default [
 		ignores: [
 			'node_modules/**',
 			'dist/**',
-			// The provider showcase is a stale demo (drifted against the current
-			// @absolutejs/absolute API); it's excluded from the library lint gate
-			// pending a separate modernization pass.
-			'example/**',
 			'**/*.d.ts',
 			'**/*.min.js',
 			'**/*.min.css'
@@ -65,7 +57,6 @@ export default [
 
 	{
 		files: ['**/*.{js,mjs,cjs,ts,tsx,jsx}'],
-		ignores: ['example/build/**'],
 		plugins: {
 			absolute: absolutePlugin,
 			import: importPlugin,
@@ -74,23 +65,13 @@ export default [
 		},
 		rules: {
 			'absolute/explicit-object-types': 'error',
-			'absolute/localize-react-props': 'error',
 			'absolute/max-depth-extended': ['error', 1],
-			'absolute/max-jsxnesting': ['error', 5],
 			'absolute/min-var-length': [
 				'error',
 				{ allowedVars: ['_', 'id', 'db', 'OK'], minLength: 3 }
 			],
-			'absolute/no-button-navigation': 'error',
 			'absolute/no-explicit-return-type': 'error',
-			'absolute/no-multi-style-objects': 'error',
-			'absolute/no-nested-jsx-return': 'error',
-			'absolute/no-or-none-component': 'error',
-			'absolute/no-transition-cssproperties': 'error',
-			'absolute/no-unnecessary-div': 'error',
-			'absolute/no-unnecessary-key': 'error',
 			'absolute/no-useless-function': 'error',
-			'absolute/seperate-style-files': 'error',
 			'absolute/sort-exports': [
 				'error',
 				{
@@ -112,11 +93,7 @@ export default [
 			'arrow-body-style': ['error', 'as-needed'],
 			'consistent-return': 'error',
 			eqeqeq: 'error',
-			'func-style': [
-				'error',
-				'expression',
-				{ allowArrowFunctions: true }
-			],
+			'func-style': ['error', 'expression', { allowArrowFunctions: true }],
 			'import/no-cycle': 'error',
 			'import/no-default-export': 'error',
 			'import/no-relative-packages': 'error',
@@ -150,12 +127,6 @@ export default [
 				'error',
 				{
 					paths: [
-						{
-							importNames: ['default'],
-							message:
-								'Import only named React exports for tree-shaking.',
-							name: 'react'
-						},
 						{
 							importNames: ['default'],
 							message: 'Import only the required Bun exports.',
@@ -192,60 +163,10 @@ export default [
 		}
 	},
 	{
-		files: ['example/**/*.{js,jsx,ts,tsx}'],
-		plugins: {
-			'jsx-a11y': jsxA11yPlugin,
-			react: reactPlugin,
-			'react-compiler': reactCompilerPlugin,
-			'react-hooks': reactHooksPlugin
-		},
-		rules: {
-			'jsx-a11y/prefer-tag-over-role': 'error',
-			'react-compiler/react-compiler': 'error',
-			'react-hooks/exhaustive-deps': 'warn',
-			'react-hooks/rules-of-hooks': 'error',
-			'react/checked-requires-onchange-or-readonly': 'error',
-			'react/destructuring-assignment': ['error', 'always'],
-			'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
-			'react/jsx-no-leaked-render': 'error',
-			'react/jsx-no-target-blank': 'error',
-			'react/jsx-no-useless-fragment': 'error',
-			'react/jsx-pascal-case': ['error', { allowAllCaps: true }],
-			'react/no-multi-comp': 'error',
-			'react/no-unknown-property': 'off',
-			'react/react-in-jsx-scope': 'off',
-			'react/self-closing-comp': 'error'
-		},
-		settings: {
-			react: { version: 'detect' }
-		}
-	},
-	{
-		files: [
-			'example/server.ts',
-			'example/indexes/*.tsx',
-			'example/db/migrate.ts'
-		],
-		rules: {
-			'import/no-unused-modules': 'off'
-		}
-	},
-	{
-		files: ['example/providers/**/*.ts', 'example/db/migrate.ts'],
-		rules: {
-			'no-console': 'off'
-		}
-	},
-	{
 		files: ['eslint.config.mjs'],
 		rules: {
+			'import/no-default-export': 'off',
 			'no-magic-numbers': 'off'
-		}
-	},
-	{
-		files: ['eslint.config.mjs'],
-		rules: {
-			'import/no-default-export': 'off'
 		}
 	},
 	{
@@ -259,12 +180,6 @@ export default [
 					order: 'asc'
 				}
 			]
-		}
-	},
-	{
-		files: ['example/db/schema.ts'],
-		rules: {
-			'absolute/explicit-object-types': 'off'
 		}
 	}
 ];

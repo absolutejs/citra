@@ -283,6 +283,7 @@ export {
 	normalizeProviderIdentity
 } from './utils';
 
+export * from './oidc';
 export * from './providers';
 export * from './providerOptions';
 export * from './types';

@@ -34,7 +34,7 @@ export default [
 			parser: tsParser,
 			parserOptions: {
 				createDefaultProgram: true,
-				project: './tsconfig.json',
+				project: './tsconfig.eslint.json',
 				tsconfigRootDir: __dirname
 			}
 		}
@@ -93,7 +93,11 @@ export default [
 			'arrow-body-style': ['error', 'as-needed'],
 			'consistent-return': 'error',
 			eqeqeq: 'error',
-			'func-style': ['error', 'expression', { allowArrowFunctions: true }],
+			'func-style': [
+				'error',
+				'expression',
+				{ allowArrowFunctions: true }
+			],
 			'import/no-cycle': 'error',
 			'import/no-default-export': 'error',
 			'import/no-relative-packages': 'error',
@@ -180,6 +184,13 @@ export default [
 					order: 'asc'
 				}
 			]
+		}
+	},
+	{
+		// Test files are entry points, not modules consumed elsewhere.
+		files: ['tests/**/*.ts'],
+		rules: {
+			'import/no-unused-modules': 'off'
 		}
 	}
 ];

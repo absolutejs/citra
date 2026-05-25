@@ -1,10 +1,6 @@
 import { BASE64_BLOCK_SIZE } from './constants';
 import { isExpectedType, isObject } from './typeGuards';
-import {
-	OAuth2RequestOptions,
-	ProviderConfiguration,
-	TypeMap
-} from './types';
+import { OAuth2RequestOptions, ProviderConfiguration, TypeMap } from './types';
 
 // Opportunistic HTTP/2 multiplexing for outbound HTTPS (Bun 1.3.14+).
 // The `protocol` option lands in @types/bun 1.3.14; widen locally for now.
@@ -105,7 +101,7 @@ export const decodeBase64 = (input: string, toUint8Array = false) => {
 
 	return bytes;
 };
-export const decodeJWT = (tokenString: string): Record<string, unknown> => {
+export const decodeJWT = (tokenString: string) => {
 	const [headerSegment, payloadSegment, signatureSegment] =
 		tokenString.split('.');
 	if (!headerSegment || !payloadSegment || !signatureSegment) {
@@ -117,7 +113,9 @@ export const decodeJWT = (tokenString: string): Record<string, unknown> => {
 		throw new Error('Expected JWT payload to be a UTF-8 string');
 	}
 
-	return JSON.parse(decodedPayload);
+	const claims: Record<string, unknown> = JSON.parse(decodedPayload);
+
+	return claims;
 };
 export const encodeBase64 = (input: string | ArrayBuffer | Uint8Array) => {
 	let raw;
@@ -132,7 +130,10 @@ export const encodeBase64 = (input: string | ArrayBuffer | Uint8Array) => {
 
 	return btoa(raw);
 };
-export const getWithingsProps = async (config: any) => {
+export const getWithingsProps = async (config: {
+	clientId: string;
+	clientSecret: string;
+}) => {
 	const timestamp = Math.floor(Date.now() / 1000);
 	const signature = `getnonce,${config.clientId},${timestamp}`;
 	const hashedSignature = await hmacSha256(signature, config.clientSecret);
@@ -160,12 +161,14 @@ export const getWithingsProps = async (config: any) => {
 
 	return undefined;
 };
-export const h2IfHttps = (url: string): H2Init =>
-	url.startsWith('https://') ? { protocol: 'http2' } : {};
-export const hmacSha256 = async (
-	message: string,
-	secret: string
-): Promise<string> => {
+export const h2IfHttps = (url: string) => {
+	const init: H2Init = url.startsWith('https://')
+		? { protocol: 'http2' }
+		: {};
+
+	return init;
+};
+export const hmacSha256 = async (message: string, secret: string) => {
 	const encoder = new TextEncoder();
 	const key = await crypto.subtle.importKey(
 		'raw',
@@ -181,7 +184,7 @@ export const hmacSha256 = async (
 	);
 
 	return Array.from(new Uint8Array(sigBuffer))
-		.map((b) => b.toString(16).padStart(2, '0'))
+		.map((byte) => byte.toString(16).padStart(2, '0'))
 		.join('');
 };
 
@@ -227,7 +230,9 @@ export const extractPropFromIdentity: ExtractPropFromIdentity = (
 export const getProviderSubjectKeys = (
 	providerConfiguration: ProviderConfiguration,
 	source: 'idToken' | 'profile'
-) => providerConfiguration.subjectBySource?.[source] ?? providerConfiguration.subject;
+) =>
+	providerConfiguration.subjectBySource?.[source] ??
+	providerConfiguration.subject;
 
 const setPropInIdentity = (
 	identity: Record<string, unknown>,
@@ -242,10 +247,7 @@ const setPropInIdentity = (
 
 	for (const key of keys.slice(0, -1)) {
 		const next = cursor[key];
-		if (!isObject(next)) {
-			cursor[key] = {};
-		}
-
+		cursor[key] = isObject(next) ? next : {};
 		cursor = cursor[key] as Record<string, unknown>;
 	}
 

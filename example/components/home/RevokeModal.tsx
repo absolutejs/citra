@@ -54,31 +54,41 @@ export const RevokeModal = ({
 
 	return (
 		<Modal
-			isOpen={revokeModalOpen} onClose={() => {
+			isOpen={revokeModalOpen}
+			onClose={() => {
 				setRevokeModalOpen(false);
 				registerHost(null);
-			}} onOpen={(dialogRef) => {
+			}}
+			onOpen={(dialogRef) => {
 				registerHost(dialogRef);
 			}}
 		>
 			<form onSubmit={handleSubmit} style={formStyle}>
 				<ProviderDropdown
-					providerOptions={revocableProviderOptions} setCurrentProvider={setCurrentProvider}
+					providerOptions={revocableProviderOptions}
+					setCurrentProvider={setCurrentProvider}
 				/>
 
 				<input
-					name="token" onChange={(event) => setTokenToRevoke(event.target.value)} placeholder="Enter token to revoke" style={{
+					name="token"
+					onChange={(event) => setTokenToRevoke(event.target.value)}
+					placeholder="Enter token to revoke"
+					style={{
 						border: '1px solid #ccc',
 						borderRadius: '4px',
 						fontSize: '14px',
 						padding: '8px'
-					}} type="text" value={tokenToRevoke}
+					}}
+					type="text"
+					value={tokenToRevoke}
 				/>
 
 				<button
-					disabled={!currentProvider || !tokenToRevoke} style={formButtonStyle(
+					disabled={!currentProvider || !tokenToRevoke}
+					style={formButtonStyle(
 						currentProvider !== undefined && tokenToRevoke !== ''
-					)} type="submit"
+					)}
+					type="submit"
 				>
 					Revoke Token
 				</button>

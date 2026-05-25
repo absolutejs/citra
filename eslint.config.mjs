@@ -19,7 +19,17 @@ import tseslint from 'typescript-eslint';
 
 export default [
 	{
-		ignores: ['example/build/**']
+		ignores: [
+			'node_modules/**',
+			'dist/**',
+			// The provider showcase is a stale demo (drifted against the current
+			// @absolutejs/absolute API); it's excluded from the library lint gate
+			// pending a separate modernization pass.
+			'example/**',
+			'**/*.d.ts',
+			'**/*.min.js',
+			'**/*.min.css'
+		]
 	},
 	pluginJs.configs.recommended,
 
@@ -45,6 +55,10 @@ export default [
 			'@stylistic/padding-line-between-statements': [
 				'error',
 				{ blankLine: 'always', next: 'return', prev: '*' }
+			],
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{ argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
 			]
 		}
 	},

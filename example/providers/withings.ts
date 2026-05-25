@@ -165,7 +165,10 @@ export const withingsPlugin = new Elysia()
 		'/oauth2/withings/profile',
 		async ({ status, headers: { authorization } }) => {
 			if (authorization === undefined)
-				return status('Unauthorized', 'Authorization header is missing');
+				return status(
+					'Unauthorized',
+					'Authorization header is missing'
+				);
 
 			const accessToken = authorization.replace('Bearer ', '');
 

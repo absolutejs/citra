@@ -34,13 +34,15 @@ export const isExpectedType = <T extends keyof TypeMap>(
 			return typeof value === 'boolean';
 		case 'object':
 			return typeof value === 'object' && value !== null;
+		default:
+			return false;
 	}
 };
-export const isObject = (x: unknown): x is Record<string, unknown> =>
-	x !== null &&
-	typeof x === 'object' &&
-	!Array.isArray(x) &&
-	Object.prototype.toString.call(x) === '[object Object]';
+export const isObject = (value: unknown): value is Record<string, unknown> =>
+	value !== null &&
+	typeof value === 'object' &&
+	!Array.isArray(value) &&
+	Object.prototype.toString.call(value) === '[object Object]';
 export const isOIDCProviderOption = (
 	option: string
 ): option is OIDCProvider => {
@@ -59,8 +61,8 @@ export const isPKCEProviderOption = (
 };
 export const isRefreshableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
-	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & RefreshableOAuth2Client =>
+	_client: BaseOAuth2Client<P>
+): _client is BaseOAuth2Client<P> & RefreshableOAuth2Client =>
 	isRefreshableProviderOption(providerName);
 export const isRefreshableProviderOption = (
 	option: string
@@ -72,8 +74,8 @@ export const isRefreshableProviderOption = (
 };
 export const isRevocableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
-	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & RevocableOAuth2Client =>
+	_client: BaseOAuth2Client<P>
+): _client is BaseOAuth2Client<P> & RevocableOAuth2Client =>
 	isRevocableProviderOption(providerName);
 export const isRevocableProviderOption = (
 	option: string

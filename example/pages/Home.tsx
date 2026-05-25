@@ -56,7 +56,8 @@ export const Home = () => {
 						}}
 					>
 						<button
-							onClick={() => setAuthModalOpen(true)} style={buttonStyle({
+							onClick={() => setAuthModalOpen(true)}
+							style={buttonStyle({
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
@@ -65,7 +66,8 @@ export const Home = () => {
 						</button>
 
 						<button
-							onClick={() => setRefreshModalOpen(true)} style={buttonStyle({
+							onClick={() => setRefreshModalOpen(true)}
+							style={buttonStyle({
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
@@ -74,7 +76,8 @@ export const Home = () => {
 						</button>
 
 						<button
-							onClick={() => setRevokeModalOpen(true)} style={buttonStyle({
+							onClick={() => setRevokeModalOpen(true)}
+							style={buttonStyle({
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}
@@ -83,7 +86,8 @@ export const Home = () => {
 						</button>
 
 						<button
-							onClick={() => setProfileModalOpen(true)} style={buttonStyle({
+							onClick={() => setProfileModalOpen(true)}
+							style={buttonStyle({
 								backgroundColor: '#4285F4',
 								color: 'white'
 							})}

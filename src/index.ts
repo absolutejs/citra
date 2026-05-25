@@ -5,9 +5,7 @@ import { CredentialsFor, OAuth2Client, ProviderOption } from './types';
 import {
 	createOAuth2FetchError,
 	createOAuth2Request,
-	getProviderSubjectKeys,
-	h2IfHttps,
-	normalizeProviderIdentity
+	h2IfHttps
 } from './utils';
 
 export const createOAuth2Client = async <P extends ProviderOption>(
@@ -23,12 +21,12 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 
 	const resolveConfigProp = async <T>(
 		cfgProp: T | ((cfg: CredentialsFor<P>) => T | Promise<T>)
-	): Promise<T> => {
+	) => {
 		const result = isConfigPropertyFunction(cfgProp)
 			? cfgProp(config)
 			: cfgProp;
 
-		return await result;
+		return result;
 	};
 
 	const authorizationUrl = await resolveConfigProp(meta.authorizationUrl);
@@ -107,7 +105,7 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 				headerEntries = Object.entries(rawHeaders);
 
 			const profileHeaders = Object.fromEntries(
-				headerEntries.filter(([, v]) => v !== '')
+				headerEntries.filter(([, value]) => value !== '')
 			);
 
 			if (authIn === 'header') {
@@ -118,7 +116,7 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 
 			const init: RequestInit = { headers: profileHeaders, method };
 
-			if (method === 'POST' && resolvedBody != null) {
+			if (method === 'POST' && resolvedBody !== undefined) {
 				profileHeaders['Content-Type'] = encoding;
 				init.body =
 					encoding === 'application/json'
@@ -157,7 +155,9 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 				encoding,
 				url: tokenUrl
 			});
-			const response = await fetch(request, { ...h2IfHttps(request.url) });
+			const response = await fetch(request, {
+				...h2IfHttps(request.url)
+			});
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
 			return response.json();
@@ -222,7 +222,9 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 				});
 			}
 
-			const response = await fetch(request, { ...h2IfHttps(request.url) });
+			const response = await fetch(request, {
+				...h2IfHttps(request.url)
+			});
 			if (!response.ok) throw await createOAuth2FetchError(response);
 		},
 
@@ -265,7 +267,9 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 				encoding,
 				url: tokenUrl
 			});
-			const response = await fetch(request, { ...h2IfHttps(request.url) });
+			const response = await fetch(request, {
+				...h2IfHttps(request.url)
+			});
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
 			return response.json();
@@ -273,7 +277,11 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 	};
 };
 
-export { extractPropFromIdentity, getProviderSubjectKeys, normalizeProviderIdentity } from './utils';
+export {
+	extractPropFromIdentity,
+	getProviderSubjectKeys,
+	normalizeProviderIdentity
+} from './utils';
 
 export * from './providers';
 export * from './providerOptions';

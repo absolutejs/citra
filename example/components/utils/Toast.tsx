@@ -13,13 +13,15 @@ export const Toast = ({ message, action, style, removeToast }: ToastProps) => (
 			if (btn) {
 				btn.style.opacity = '1';
 			}
-		}} onMouseLeave={(event) => {
+		}}
+		onMouseLeave={(event) => {
 			const btn =
 				event.currentTarget.querySelector<HTMLElement>('.close-btn');
 			if (btn) {
 				btn.style.opacity = '0';
 			}
-		}} style={{
+		}}
+		style={{
 			alignItems: 'flex-start',
 			background: style?.background || '#333',
 			borderRadius: '0.5rem',

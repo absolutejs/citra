@@ -51,6 +51,9 @@ package-lock.json
 # dist folder
 /dist
 
+# absolute CLI caches (eslint/prettier/tsc)
+.absolutejs
+
 # THIS IS ALL OF MY PERSONAL IDENTITIES
 /example/utils/exampleIdentities.ts
 

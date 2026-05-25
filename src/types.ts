@@ -18,11 +18,15 @@ type ProfileRequestConfig = {
 	headers?: HeadersInit | ((config: any) => HeadersInit);
 	body?:
 		| URLSearchParamsInit
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		| ((config: any) => URLSearchParamsInit)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		| ((config: any) => Promise<URLSearchParamsInit>);
 	searchParams?:
 		| URLSearchParamsInit
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		| ((config: any) => URLSearchParamsInit)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		| ((config: any) => Promise<URLSearchParamsInit>);
 	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 };
@@ -36,7 +40,9 @@ type BaseRevocation = {
 	headers?: HeadersInit | ((config: any) => HeadersInit);
 	body?:
 		| URLSearchParamsInit
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		| ((config: any) => URLSearchParamsInit)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		| ((config: any) => Promise<URLSearchParamsInit>);
 	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 };

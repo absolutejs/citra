@@ -1,5 +1,5 @@
 import { anilistProfileQuery } from './graphqlQueries';
-import { DefineProviders, TypeMap } from './types';
+import { DefineProviders } from './types';
 import { encodeBase64, getWithingsProps } from './utils';
 
 export const defineProviders: DefineProviders = (providers) => providers;
@@ -121,6 +121,25 @@ export const providers = defineProviders({
 			url: 'https://auth.atlassian.com/oauth/token'
 		}
 	},
+	attio: {
+		authorizationUrl: 'https://app.attio.com/authorize',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://api.attio.com/v2/self'
+		},
+		scopeRequired: true,
+		subject: ['workspace_id'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://app.attio.com/oauth/token'
+		}
+	},
 	auth0: {
 		authorizationUrl: (config) => `https://${config.domain}/authorize`,
 		isOIDC: true,
@@ -148,25 +167,6 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: (config) => `https://${config.domain}/oauth/token`
-		}
-	},
-	attio: {
-		authorizationUrl: 'https://app.attio.com/authorize',
-		isOIDC: false,
-		isRefreshable: true,
-		profileRequest: {
-			authIn: 'header',
-			encoding: 'application/json',
-			method: 'GET',
-			url: 'https://api.attio.com/v2/self'
-		},
-		scopeRequired: true,
-		subject: ['workspace_id'],
-		subjectType: 'string',
-		tokenRequest: {
-			authIn: 'body',
-			encoding: 'application/x-www-form-urlencoded',
-			url: 'https://app.attio.com/oauth/token'
 		}
 	},
 	authentik: {
@@ -306,25 +306,6 @@ export const providers = defineProviders({
 			url: 'https://www.bungie.net/Platform/App/OAuth/token'
 		}
 	},
-	coinbase: {
-		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
-		isOIDC: false,
-		isRefreshable: true,
-		profileRequest: {
-			authIn: 'header',
-			encoding: 'application/json',
-			method: 'GET',
-			url: 'https://api.coinbase.com/v2/user'
-		},
-		scopeRequired: false,
-		subject: ['data', 'id'],
-		subjectType: 'number',
-		tokenRequest: {
-			authIn: 'body',
-			encoding: 'application/x-www-form-urlencoded',
-			url: 'https://api.coinbase.com/oauth/token'
-		}
-	},
 	close: {
 		authorizationUrl: 'https://app.close.com/oauth2/authorize/',
 		isOIDC: false,
@@ -342,6 +323,25 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: 'https://api.close.com/oauth2/token/'
+		}
+	},
+	coinbase: {
+		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://api.coinbase.com/v2/user'
+		},
+		scopeRequired: false,
+		subject: ['data', 'id'],
+		subjectType: 'number',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://api.coinbase.com/oauth/token'
 		}
 	},
 	discord: {

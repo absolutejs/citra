@@ -324,6 +324,16 @@ type GitHubOAuth2Credentials = {
 	clientSecret: string;
 	redirectUri: string | null;
 };
+type HubSpotOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
+type PipedriveOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
 type GitLabOAuth2Credentials = {
 	baseURL: string;
 	clientId: string;
@@ -572,6 +582,7 @@ type CredentialsMap = {
 	github: GitHubOAuth2Credentials;
 	gitlab: GitLabOAuth2Credentials;
 	google: GoogleOAuth2Credentials;
+	hubspot: HubSpotOAuth2Credentials;
 	intuit: IntuitOAuth2Credentials;
 	kakao: KakaoOAuth2Credentials;
 	keycloak: KeycloakOAuth2Credentials;
@@ -590,6 +601,7 @@ type CredentialsMap = {
 	okta: OktaOAuth2Credentials;
 	osu: OsuOAuth2Credentials;
 	patreon: PatreonOAuth2Credentials;
+	pipedrive: PipedriveOAuth2Credentials;
 	polar: PolarOAuth2Credentials;
 	polaraccesslink: PolarAccessLinkOAuth2Credentials;
 	polarteampro: PolarTeamProOAuthOAuth2Credentials;

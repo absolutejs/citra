@@ -268,6 +268,11 @@ type BungieOAuth2Credentials = {
 	clientSecret: string;
 	redirectUri: string;
 };
+type CalendlyOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
 type CoinbaseOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
@@ -569,6 +574,7 @@ type CredentialsMap = {
 	bitbucket: BitbucketOAuth2Credentials;
 	box: BoxOAuth2Credentials;
 	bungie: BungieOAuth2Credentials;
+	calendly: CalendlyOAuth2Credentials;
 	coinbase: CoinbaseOAuth2Credentials;
 	discord: DiscordOAuth2Credentials;
 	donationalerts: DonationAlertsOAuth2Credentials;

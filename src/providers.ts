@@ -325,6 +325,27 @@ export const providers = defineProviders({
 			url: 'https://api.close.com/oauth2/token/'
 		}
 	},
+	calendly: {
+		authorizationUrl: 'https://auth.calendly.com/oauth/authorize',
+		email: ['resource', 'email'],
+		fullName: ['resource', 'name'],
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://api.calendly.com/users/me'
+		},
+		scopeRequired: false,
+		subject: ['resource', 'uri'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://auth.calendly.com/oauth/token'
+		}
+	},
 	coinbase: {
 		authorizationUrl: 'https://www.coinbase.com/oauth/authorize',
 		isOIDC: false,

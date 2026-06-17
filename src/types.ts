@@ -179,6 +179,13 @@ type ProviderConfig = {
 	refreshAccessTokenBody?: Record<string, string>;
 	revocationRequest?: RevocationRequestConfig;
 	scopeRequired: boolean;
+	// The authorize-URL query param the requested scopes are sent under. Defaults to
+	// `scope`; Slack's user-token oauth/v2 flow uses `user_scope`.
+	scopeParamName?: string;
+	// Dotted path to the access token in the token response when it is NOT the top-level
+	// `access_token` (e.g. Slack oauth/v2 nests the user token at authed_user.access_token).
+	// When set, validateAuthorizationCode normalizes the response so `access_token` holds it.
+	accessTokenPath?: string[];
 	tokenRequest: TokenRequestConfig;
 	validateAuthorizationCodeBody?: Record<string, string>;
 	subject: string[];

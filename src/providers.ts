@@ -306,25 +306,6 @@ export const providers = defineProviders({
 			url: 'https://www.bungie.net/Platform/App/OAuth/token'
 		}
 	},
-	close: {
-		authorizationUrl: 'https://app.close.com/oauth2/authorize/',
-		isOIDC: false,
-		isRefreshable: true,
-		profileRequest: {
-			authIn: 'header',
-			encoding: 'application/json',
-			method: 'GET',
-			url: 'https://api.close.com/api/v1/me/'
-		},
-		scopeRequired: true,
-		subject: ['id'],
-		subjectType: 'string',
-		tokenRequest: {
-			authIn: 'body',
-			encoding: 'application/x-www-form-urlencoded',
-			url: 'https://api.close.com/oauth2/token/'
-		}
-	},
 	calendly: {
 		authorizationUrl: 'https://auth.calendly.com/oauth/authorize',
 		email: ['resource', 'email'],
@@ -344,6 +325,25 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: 'https://auth.calendly.com/oauth/token'
+		}
+	},
+	close: {
+		authorizationUrl: 'https://app.close.com/oauth2/authorize/',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://api.close.com/api/v1/me/'
+		},
+		scopeRequired: true,
+		subject: ['id'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://api.close.com/oauth2/token/'
 		}
 	},
 	coinbase: {
@@ -1338,6 +1338,38 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: 'https://slack.com/api/openid.connect.token'
+		}
+	},
+	// Slack's oauth/v2 USER-token grant (vs `slack`, which is OIDC "Sign in with Slack").
+	// Use this to read a user's data (channels, messages, files) on their behalf: scopes go
+	// in `user_scope`, and the user token comes back nested at authed_user.access_token —
+	// both handled generically via scopeParamName + accessTokenPath. Subject + profile come
+	// from auth.test (works with any token, no extra scope).
+	slackuser: {
+		accessTokenPath: ['authed_user', 'access_token'],
+		authorizationUrl: 'https://slack.com/oauth/v2/authorize',
+		isOIDC: false,
+		isRefreshable: false,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'POST',
+			url: 'https://slack.com/api/auth.test'
+		},
+		revocationRequest: {
+			authIn: 'body',
+			encoding: 'application/json',
+			tokenParamName: 'token',
+			url: 'https://slack.com/api/auth.revoke'
+		},
+		scopeParamName: 'user_scope',
+		scopeRequired: true,
+		subject: ['user_id'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://slack.com/api/oauth.v2.access'
 		}
 	},
 	spotify: {

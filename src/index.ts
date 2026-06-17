@@ -8,6 +8,16 @@ import {
 	h2IfHttps
 } from './utils';
 
+// Walk a dotted path into an unknown object (used to pull nested token-response fields).
+const readPath = (value: unknown, path: string[]) =>
+	path.reduce<unknown>(
+		(cursor, key) =>
+			cursor && typeof cursor === 'object'
+				? Reflect.get(cursor, key)
+				: undefined,
+		value
+	);
+
 export const createOAuth2Client = async <P extends ProviderOption>(
 	providerName: P,
 	config: CredentialsFor<P>
@@ -49,7 +59,10 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 			if (state) url.searchParams.set('state', state);
 			if (scope.length !== 0) {
 				const delimeter = providerName === 'withings' ? ',' : ' ';
-				url.searchParams.set('scope', scope.join(delimeter));
+				url.searchParams.set(
+					meta.scopeParamName ?? 'scope',
+					scope.join(delimeter)
+				);
 			}
 			if (meta.PKCEMethod !== undefined) {
 				if (!codeVerifier) {
@@ -272,7 +285,23 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 			});
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
-			return response.json();
+			const tokenResponse = await response.json();
+			// Normalize providers whose access token is nested (e.g. Slack oauth/v2 returns the
+			// user token at authed_user.access_token) so consumers read `access_token` uniformly.
+			const nestedToken = meta.accessTokenPath
+				? readPath(tokenResponse, meta.accessTokenPath)
+				: undefined;
+			if (
+				typeof nestedToken === 'string' &&
+				nestedToken.length > 0 &&
+				tokenResponse &&
+				typeof tokenResponse === 'object'
+			) {
+				(tokenResponse as Record<string, unknown>).access_token =
+					nestedToken;
+			}
+
+			return tokenResponse;
 		}
 	};
 };

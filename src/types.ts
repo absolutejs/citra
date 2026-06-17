@@ -623,6 +623,7 @@ type CredentialsMap = {
 	salesforce: SalesforceOAuth2Credentials;
 	shikimori: ShikimoriOAuth2Credentials;
 	slack: SlackOAuth2Credentials;
+	slackuser: SlackOAuth2Credentials;
 	spotify: SpotifyOAuth2Credentials;
 	startgg: StartGGOAuth2Credentials;
 	strava: StravaOAuth2Credentials;

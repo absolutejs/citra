@@ -632,7 +632,15 @@ export const providers = defineProviders({
 			url: 'https://services.leadconnectorhq.com/users/me'
 		},
 		scopeRequired: true,
-		subject: ['id'],
+		// GoHighLevel marketplace tokens are location-scoped and there is no
+		// profile endpoint reachable with the contacts/opportunities scope
+		// (/users/me requires the `users` scope -> 401). The connected identity
+		// is returned as top-level fields in the token-exchange response, so the
+		// subject is read from there (locationId = the connected sub-account).
+		subject: ['locationId'],
+		subjectBySource: {
+			tokenResponse: ['locationId']
+		},
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',

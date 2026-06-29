@@ -12,7 +12,10 @@ type ProfileRequestConfig = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	url: string | ((config: any) => string);
 	method: 'GET' | 'POST';
-	authIn: 'header' | 'query';
+	// 'path' appends the access token as the final URL path segment — required by
+	// providers whose token-info endpoint is keyed by the token itself (e.g.
+	// HubSpot's GET /oauth/v1/access-tokens/{token}), not a Bearer header.
+	authIn: 'header' | 'query' | 'path';
 	// TODO: remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	headers?: HeadersInit | ((config: any) => HeadersInit);
@@ -192,6 +195,11 @@ type ProviderConfig = {
 	subjectBySource?: {
 		idToken?: string[];
 		profile?: string[];
+		// Some providers (e.g. GoHighLevel) return the connected identity as
+		// top-level fields in the OAuth token-exchange response itself rather
+		// than via a profile endpoint, so the subject is read straight from the
+		// token response.
+		tokenResponse?: string[];
 	};
 	subjectType: 'string' | 'number';
 	email?: string[];
@@ -208,6 +216,11 @@ export type OAuth2TokenResponse = {
 	expires_in?: number;
 	scope?: string;
 	id_token?: string;
+	// Providers may return additional top-level fields in the token-exchange
+	// response (e.g. GoHighLevel's `locationId`/`userId`/`companyId`). These are
+	// preserved by validateAuthorizationCode and may be used as the subject
+	// source via `subjectBySource.tokenResponse`.
+	[key: string]: unknown;
 };
 
 type FortyTwoOAuth2Credentials = {
@@ -337,6 +350,11 @@ type GitHubOAuth2Credentials = {
 	redirectUri: string | null;
 };
 type HubSpotOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
+type GoHighLevelOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
@@ -594,6 +612,7 @@ type CredentialsMap = {
 	gitea: GiteaOAuth2Credentials;
 	github: GitHubOAuth2Credentials;
 	gitlab: GitLabOAuth2Credentials;
+	gohighlevel: GoHighLevelOAuth2Credentials;
 	google: GoogleOAuth2Credentials;
 	hubspot: HubSpotOAuth2Credentials;
 	intuit: IntuitOAuth2Credentials;

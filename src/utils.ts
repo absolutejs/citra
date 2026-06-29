@@ -229,7 +229,7 @@ export const extractPropFromIdentity: ExtractPropFromIdentity = (
 
 export const getProviderSubjectKeys = (
 	providerConfiguration: ProviderConfiguration,
-	source: 'idToken' | 'profile'
+	source: 'idToken' | 'profile' | 'tokenResponse'
 ) =>
 	providerConfiguration.subjectBySource?.[source] ??
 	providerConfiguration.subject;
@@ -263,7 +263,7 @@ export const normalizeProviderIdentity = ({
 }: {
 	identity: Record<string, unknown>;
 	providerConfiguration: ProviderConfiguration;
-	source: 'idToken' | 'profile';
+	source: 'idToken' | 'profile' | 'tokenResponse';
 }) => {
 	const sourceKeys = getProviderSubjectKeys(providerConfiguration, source);
 	const canonicalKeys = providerConfiguration.subject;

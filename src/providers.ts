@@ -617,7 +617,7 @@ export const providers = defineProviders({
 	},
 	gohighlevel: {
 		authorizationUrl:
-			'https://marketplace.gohighlevel.com/oauth/chooselocation',
+			'https://marketplace.gohighlevel.com/v2/oauth/chooselocation',
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
@@ -675,10 +675,12 @@ export const providers = defineProviders({
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
-			authIn: 'header',
+			// HubSpot keys token-info by the token in the path, not a Bearer header:
+			// GET /oauth/v1/access-tokens/{token}. authIn:'path' appends it.
+			authIn: 'path',
 			encoding: 'application/json',
 			method: 'GET',
-			url: 'https://api.hubapi.com/oauth/v1/access-tokens/me'
+			url: 'https://api.hubapi.com/oauth/v1/access-tokens'
 		},
 		scopeRequired: true,
 		subject: ['hub_id'],

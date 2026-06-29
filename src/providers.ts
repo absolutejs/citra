@@ -623,6 +623,11 @@ export const providers = defineProviders({
 		profileRequest: {
 			authIn: 'header',
 			encoding: 'application/json',
+			// LeadConnector's API rejects requests without a Version header
+			// ("version header was not found." -> 401).
+			headers: {
+				Version: '2021-07-28'
+			},
 			method: 'GET',
 			url: 'https://services.leadconnectorhq.com/users/me'
 		},

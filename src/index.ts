@@ -123,6 +123,8 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 
 			if (authIn === 'header') {
 				profileHeaders.Authorization = `Bearer ${accessToken}`;
+			} else if (authIn === 'path') {
+				endpoint.pathname = `${endpoint.pathname.replace(/\/+$/, '')}/${accessToken}`;
 			} else {
 				endpoint.searchParams.append('access_token', accessToken);
 			}

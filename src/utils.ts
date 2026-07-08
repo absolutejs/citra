@@ -1,6 +1,6 @@
 import { BASE64_BLOCK_SIZE } from './constants';
 import { isExpectedType, isObject } from './typeGuards';
-import { OAuth2RequestOptions, ProviderConfiguration, TypeMap } from './types';
+import { OAuth2RequestOptions, ProviderConfig, TypeMap } from './types';
 
 // Opportunistic HTTP/2 multiplexing for outbound HTTPS (Bun 1.3.14+).
 // The `protocol` option lands in @types/bun 1.3.14; widen locally for now.
@@ -228,7 +228,7 @@ export const extractPropFromIdentity: ExtractPropFromIdentity = (
 };
 
 export const getProviderSubjectKeys = (
-	providerConfiguration: ProviderConfiguration,
+	providerConfiguration: ProviderConfig,
 	source: 'idToken' | 'profile' | 'tokenResponse'
 ) =>
 	providerConfiguration.subjectBySource?.[source] ??
@@ -262,7 +262,7 @@ export const normalizeProviderIdentity = ({
 	source
 }: {
 	identity: Record<string, unknown>;
-	providerConfiguration: ProviderConfiguration;
+	providerConfiguration: ProviderConfig;
 	source: 'idToken' | 'profile' | 'tokenResponse';
 }) => {
 	const sourceKeys = getProviderSubjectKeys(providerConfiguration, source);

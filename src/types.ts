@@ -173,8 +173,9 @@ export type CustomProviderCredentials = {
  *  them. Intersecting with ProviderConfig keeps optional keys indexable. */
 export type BaseOAuth2ClientForConfig<C extends ProviderConfig> = {
 	createAuthorizationUrl(
-		opts: { state: string } & ((C &
-			ProviderConfig)['PKCEMethod'] extends 'S256' | 'plain'
+		opts: { state: string } & ((C & ProviderConfig)['PKCEMethod'] extends
+			| 'S256'
+			| 'plain'
 			? { codeVerifier: string }
 			: { codeVerifier?: string }) &
 			((C & ProviderConfig)['scopeRequired'] extends true
@@ -185,8 +186,9 @@ export type BaseOAuth2ClientForConfig<C extends ProviderConfig> = {
 	): Promise<URL>;
 
 	validateAuthorizationCode(
-		opts: { code: string } & ((C &
-			ProviderConfig)['PKCEMethod'] extends 'S256' | 'plain'
+		opts: { code: string } & ((C & ProviderConfig)['PKCEMethod'] extends
+			| 'S256'
+			| 'plain'
 			? { codeVerifier: string }
 			: { codeVerifier?: string })
 	): Promise<OAuth2TokenResponse>;
@@ -199,7 +201,8 @@ export type OAuth2ClientForConfig<C extends ProviderConfig> =
 		((C & ProviderConfig)['isRefreshable'] extends true
 			? RefreshableOAuth2Client
 			: unknown) &
-		((C & ProviderConfig)['revocationRequest'] extends RevocationRequestConfig
+		((C &
+			ProviderConfig)['revocationRequest'] extends RevocationRequestConfig
 			? RevocableOAuth2Client
 			: unknown);
 

@@ -1,7 +1,6 @@
 import { providers } from './providers';
 import {
 	BaseOAuth2Client,
-	CredentialsFor,
 	OIDCProvider,
 	PKCEProvider,
 	ProviderOption,
@@ -13,9 +12,9 @@ import {
 	TypeMap
 } from './types';
 
-export const hasClientSecret = <P extends ProviderOption>(
-	credentials: CredentialsFor<P>
-): credentials is CredentialsFor<P> & { clientSecret: string } => {
+export const hasClientSecret = <Creds extends object>(
+	credentials: Creds
+): credentials is Creds & { clientSecret: string } => {
 	if (typeof credentials !== 'object' || credentials === null) return false;
 	const secret = Reflect.get(credentials, 'clientSecret');
 

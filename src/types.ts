@@ -158,6 +158,51 @@ export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
 	(P extends RefreshableProvider ? RefreshableOAuth2Client : unknown) &
 	(P extends RevocableProvider ? RevocableOAuth2Client : unknown);
 
+/** Credentials for a caller-defined (custom) provider. Extra fields are
+ *  passed through to any `(config) => ...` functions in the provider config. */
+export type CustomProviderCredentials = {
+	clientId: string;
+	clientSecret?: string | null;
+	redirectUri?: string;
+	[key: string]: unknown;
+};
+
+/** Same capability derivation as the built-in map, but computed from a
+ *  caller-supplied config literal: PKCE/scope requirements shape the option
+ *  types, and refresh/revoke methods only exist when the config declares
+ *  them. Intersecting with ProviderConfig keeps optional keys indexable. */
+export type BaseOAuth2ClientForConfig<C extends ProviderConfig> = {
+	createAuthorizationUrl(
+		opts: { state: string } & ((C &
+			ProviderConfig)['PKCEMethod'] extends 'S256' | 'plain'
+			? { codeVerifier: string }
+			: { codeVerifier?: string }) &
+			((C & ProviderConfig)['scopeRequired'] extends true
+				? { scope: NonEmptyArray<string> }
+				: { scope?: string[] }) & {
+				searchParams?: [string, string][];
+			}
+	): Promise<URL>;
+
+	validateAuthorizationCode(
+		opts: { code: string } & ((C &
+			ProviderConfig)['PKCEMethod'] extends 'S256' | 'plain'
+			? { codeVerifier: string }
+			: { codeVerifier?: string })
+	): Promise<OAuth2TokenResponse>;
+
+	fetchUserProfile(accessToken: string): Promise<Record<string, unknown>>;
+};
+
+export type OAuth2ClientForConfig<C extends ProviderConfig> =
+	BaseOAuth2ClientForConfig<C> &
+		((C & ProviderConfig)['isRefreshable'] extends true
+			? RefreshableOAuth2Client
+			: unknown) &
+		((C & ProviderConfig)['revocationRequest'] extends RevocationRequestConfig
+			? RevocableOAuth2Client
+			: unknown);
+
 export type TypeMap = {
 	string: string;
 	number: number;
@@ -165,7 +210,7 @@ export type TypeMap = {
 	object: Record<string, unknown>;
 };
 
-type ProviderConfig = {
+export type ProviderConfig = {
 	// TODO : remove any type in favor of the actual config for this specific provider
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	authorizationUrl: string | ((config: any) => string);
@@ -185,6 +230,8 @@ type ProviderConfig = {
 	// The authorize-URL query param the requested scopes are sent under. Defaults to
 	// `scope`; Slack's user-token oauth/v2 flow uses `user_scope`.
 	scopeParamName?: string;
+	// Scope join delimiter in the authorize URL. Defaults to a space; Withings uses ','.
+	scopeDelimiter?: string;
 	// Dotted path to the access token in the token response when it is NOT the top-level
 	// `access_token` (e.g. Slack oauth/v2 nests the user token at authed_user.access_token).
 	// When set, validateAuthorizationCode normalizes the response so `access_token` holds it.
@@ -459,6 +506,11 @@ type OktaOAuth2Credentials = {
 	clientSecret: string;
 	redirectUri: string;
 };
+type OnSparkOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string | null;
+	redirectUri: string;
+};
 type OsuOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
@@ -631,6 +683,7 @@ type CredentialsMap = {
 	naver: NaverOAuth2Credentials;
 	notion: NotionOAuth2Credentials;
 	okta: OktaOAuth2Credentials;
+	onspark: OnSparkOAuth2Credentials;
 	osu: OsuOAuth2Credentials;
 	patreon: PatreonOAuth2Credentials;
 	pipedrive: PipedriveOAuth2Credentials;

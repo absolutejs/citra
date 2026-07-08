@@ -1,8 +1,14 @@
 import { anilistProfileQuery } from './graphqlQueries';
-import { DefineProviders } from './types';
+import { DefineProviders, ProviderConfig } from './types';
 import { encodeBase64, getWithingsProps } from './utils';
 
 export const defineProviders: DefineProviders = (providers) => providers;
+
+/** Capture a caller-defined provider config as a literal so
+ *  createCustomOAuth2Client can derive its capabilities type-safely. */
+export const defineProvider: <const C extends ProviderConfig>(
+	config: C
+) => C = (config) => config;
 
 export const providers = defineProviders({
 	'42': {
@@ -1111,6 +1117,37 @@ export const providers = defineProviders({
 			url: (config) => `https://${config.domain}/oauth2/default/v1/token`
 		}
 	},
+	onspark: {
+		authorizationUrl: 'https://app.onspark.com/oauth2/authorize',
+		email: ['email'],
+		familyName: ['family_name'],
+		fullName: ['name'],
+		givenName: ['given_name'],
+		isOIDC: true,
+		isRefreshable: true,
+		picture: ['picture'],
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://app.onspark.com/oauth2/userinfo'
+		},
+		revocationRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			tokenParamName: 'token',
+			url: 'https://app.onspark.com/oauth2/revoke'
+		},
+		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://app.onspark.com/oauth2/token'
+		}
+	},
 	osu: {
 		authorizationUrl: 'https://osu.ppy.sh/oauth/authorize',
 		isOIDC: false,
@@ -1674,6 +1711,7 @@ export const providers = defineProviders({
 			method: 'POST',
 			url: 'https://wbsapi.withings.net/v2/oauth2'
 		},
+		scopeDelimiter: ',',
 		scopeRequired: true,
 		subject: ['userid'],
 		subjectType: 'string',

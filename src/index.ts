@@ -1,7 +1,14 @@
 import { createS256CodeChallenge } from './arctic-utils';
 import { providers } from './providers';
 import { hasClientSecret } from './typeGuards';
-import { CredentialsFor, OAuth2Client, ProviderOption } from './types';
+import {
+	CredentialsFor,
+	CustomProviderCredentials,
+	OAuth2Client,
+	OAuth2ClientForConfig,
+	ProviderConfig,
+	ProviderOption
+} from './types';
 import {
 	createOAuth2FetchError,
 	createOAuth2Request,
@@ -18,19 +25,22 @@ const readPath = (value: unknown, path: string[]) =>
 		value
 	);
 
-export const createOAuth2Client = async <P extends ProviderOption>(
-	providerName: P,
-	config: CredentialsFor<P>
-): Promise<OAuth2Client<P>> => {
-	const meta = providers[providerName];
+// One shared implementation behind both the built-in-provider and
+// custom-provider entry points: everything below reads only `meta` (the
+// provider config) and `config` (the caller's credentials).
+type ClientCredentials = { clientId: string; redirectUri?: string | null };
 
+const buildOAuth2Client = async (
+	meta: ProviderConfig,
+	config: ClientCredentials
+) => {
 	const isConfigPropertyFunction = <T>(
-		cfgProp: T | ((cfg: CredentialsFor<P>) => T)
-	): cfgProp is (cfg: CredentialsFor<P>) => T =>
+		cfgProp: T | ((cfg: ClientCredentials) => T)
+	): cfgProp is (cfg: ClientCredentials) => T =>
 		typeof cfgProp === 'function';
 
 	const resolveConfigProp = async <T>(
-		cfgProp: T | ((cfg: CredentialsFor<P>) => T | Promise<T>)
+		cfgProp: T | ((cfg: ClientCredentials) => T | Promise<T>)
 	) => {
 		const result = isConfigPropertyFunction(cfgProp)
 			? cfgProp(config)
@@ -58,10 +68,9 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 				url.searchParams.set('redirect_uri', config.redirectUri);
 			if (state) url.searchParams.set('state', state);
 			if (scope.length !== 0) {
-				const delimeter = providerName === 'withings' ? ',' : ' ';
 				url.searchParams.set(
 					meta.scopeParamName ?? 'scope',
-					scope.join(delimeter)
+					scope.join(meta.scopeDelimiter ?? ' ')
 				);
 			}
 			if (meta.PKCEMethod !== undefined) {
@@ -307,6 +316,22 @@ export const createOAuth2Client = async <P extends ProviderOption>(
 		}
 	};
 };
+
+/** Bring your own provider: pass a full ProviderConfig (see defineProvider)
+ *  and credentials — the returned client's capabilities (PKCE, scope
+ *  requirements, refresh, revoke) are typed from YOUR config literal, exactly
+ *  like a built-in provider. */
+export const createCustomOAuth2Client: <const C extends ProviderConfig>(
+	providerConfig: C,
+	credentials: CustomProviderCredentials
+) => Promise<OAuth2ClientForConfig<C>> = (providerConfig, credentials) =>
+	buildOAuth2Client(providerConfig, credentials);
+
+export const createOAuth2Client: <P extends ProviderOption>(
+	providerName: P,
+	config: CredentialsFor<P>
+) => Promise<OAuth2Client<P>> = (providerName, config) =>
+	buildOAuth2Client(providers[providerName], config);
 
 export {
 	extractPropFromIdentity,

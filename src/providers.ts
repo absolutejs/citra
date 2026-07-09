@@ -1118,7 +1118,7 @@ export const providers = defineProviders({
 		}
 	},
 	onspark: {
-		authorizationUrl: 'https://app.onspark.com/oauth2/authorize',
+		authorizationUrl: 'https://onspark.com/oauth2/authorize',
 		email: ['email'],
 		familyName: ['family_name'],
 		fullName: ['name'],
@@ -1131,13 +1131,13 @@ export const providers = defineProviders({
 			authIn: 'header',
 			encoding: 'application/json',
 			method: 'GET',
-			url: 'https://app.onspark.com/oauth2/userinfo'
+			url: 'https://onspark.com/oauth2/userinfo'
 		},
 		revocationRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			tokenParamName: 'token',
-			url: 'https://app.onspark.com/oauth2/revoke'
+			url: 'https://onspark.com/oauth2/revoke'
 		},
 		scopeRequired: true,
 		subject: ['sub'],
@@ -1145,7 +1145,7 @@ export const providers = defineProviders({
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
-			url: 'https://app.onspark.com/oauth2/token'
+			url: 'https://onspark.com/oauth2/token'
 		}
 	},
 	osu: {

@@ -117,7 +117,7 @@ describe('onspark built-in provider', () => {
 			state: 's'
 		});
 
-		expect(url.origin).toBe('https://app.onspark.com');
+		expect(url.origin).toBe('https://onspark.com');
 		expect(url.pathname).toBe('/oauth2/authorize');
 		expect(url.searchParams.get('code_challenge_method')).toBe('S256');
 	});

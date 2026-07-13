@@ -9,11 +9,7 @@ import {
 	ProviderConfig,
 	ProviderOption
 } from './types';
-import {
-	createOAuth2FetchError,
-	createOAuth2Request,
-	h2IfHttps
-} from './utils';
+import { createOAuth2FetchError, createOAuth2Request } from './utils';
 
 // Walk a dotted path into an unknown object (used to pull nested token-response fields).
 const readPath = (value: unknown, path: string[]) =>
@@ -149,10 +145,7 @@ const buildOAuth2Client = async (
 			}
 
 			const profileTarget = endpoint.toString();
-			const response = await fetch(profileTarget, {
-				...h2IfHttps(profileTarget),
-				...init
-			});
+			const response = await fetch(profileTarget, init);
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
 			return response.json();
@@ -179,9 +172,7 @@ const buildOAuth2Client = async (
 				encoding,
 				url: tokenUrl
 			});
-			const response = await fetch(request, {
-				...h2IfHttps(request.url)
-			});
+			const response = await fetch(request);
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
 			return response.json();
@@ -246,9 +237,7 @@ const buildOAuth2Client = async (
 				});
 			}
 
-			const response = await fetch(request, {
-				...h2IfHttps(request.url)
-			});
+			const response = await fetch(request);
 			if (!response.ok) throw await createOAuth2FetchError(response);
 		},
 
@@ -291,9 +280,7 @@ const buildOAuth2Client = async (
 				encoding,
 				url: tokenUrl
 			});
-			const response = await fetch(request, {
-				...h2IfHttps(request.url)
-			});
+			const response = await fetch(request);
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
 			const tokenResponse = await response.json();

@@ -164,4 +164,42 @@ describe('Microsoft Entra ID built-in provider', () => {
 		);
 		expect(provider.subject).toEqual(['sub']);
 	});
+
+	it('lets fetch negotiate the token endpoint protocol', async () => {
+		const originalFetch = globalThis.fetch;
+		let requestInit: RequestInit | undefined;
+		let requestUrl = '';
+		globalThis.fetch = async (input, init) => {
+			requestInit = init;
+			requestUrl =
+				input instanceof Request ? input.url : input.toString();
+
+			return Response.json({
+				access_token: 'entra-access-token',
+				expires_in: 3600,
+				token_type: 'Bearer'
+			});
+		};
+
+		try {
+			const client = await createOAuth2Client('microsoftentraid', {
+				clientId: 'entra-client',
+				clientSecret: 'entra-secret',
+				redirectUri: 'https://app.example.test/oauth2/callback',
+				tenantId: 'common'
+			});
+			const response = await client.validateAuthorizationCode({
+				code: 'authorization-code',
+				codeVerifier: 'test-verifier-test-verifier-test-verifier-1234'
+			});
+
+			expect(requestUrl).toBe(
+				'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+			);
+			expect(Reflect.get(requestInit ?? {}, 'protocol')).toBeUndefined();
+			expect(response.access_token).toBe('entra-access-token');
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
 });

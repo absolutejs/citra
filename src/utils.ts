@@ -2,10 +2,6 @@ import { BASE64_BLOCK_SIZE } from './constants';
 import { isExpectedType, isObject } from './typeGuards';
 import { OAuth2RequestOptions, ProviderConfig, TypeMap } from './types';
 
-// Opportunistic HTTP/2 multiplexing for outbound HTTPS (Bun 1.3.14+).
-// The `protocol` option lands in @types/bun 1.3.14; widen locally for now.
-// Hard-skip on non-HTTPS — Bun's h2 client throws HTTP2Unsupported on h2c.
-export type H2Init = RequestInit & { protocol?: 'http2' };
 export const createOAuth2FetchError = async (response: Response) => {
 	const clone = response.clone();
 	const prefix = `HTTP ${response.status} ${response.statusText} for ${response.url}`;
@@ -145,10 +141,7 @@ export const getWithingsProps = async (config: {
 	nonceUrl.searchParams.set('signature', hashedSignature);
 
 	const nonceTarget = nonceUrl.toString();
-	const nonceResponse = await fetch(nonceTarget, {
-		...h2IfHttps(nonceTarget),
-		method: 'POST'
-	});
+	const nonceResponse = await fetch(nonceTarget, { method: 'POST' });
 
 	const nonceData = await nonceResponse.json();
 
@@ -160,13 +153,6 @@ export const getWithingsProps = async (config: {
 	}
 
 	return undefined;
-};
-export const h2IfHttps = (url: string) => {
-	const init: H2Init = url.startsWith('https://')
-		? { protocol: 'http2' }
-		: {};
-
-	return init;
 };
 export const hmacSha256 = async (message: string, secret: string) => {
 	const encoder = new TextEncoder();

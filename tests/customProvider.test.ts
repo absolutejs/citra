@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import { createCustomOAuth2Client, createOAuth2Client } from '../src/index';
-import { defineProvider } from '../src/providers';
+import { defineProvider, providers } from '../src/providers';
 
 // A caller-defined provider: PKCE + refreshable, NO revocation. The client's
 // capabilities must derive from this literal exactly like a built-in's.
@@ -120,5 +120,48 @@ describe('onspark built-in provider', () => {
 		expect(url.origin).toBe('https://onspark.com');
 		expect(url.pathname).toBe('/oauth2/authorize');
 		expect(url.searchParams.get('code_challenge_method')).toBe('S256');
+	});
+});
+
+describe('Microsoft Entra ID built-in provider', () => {
+	it('uses Microsoft 365 endpoints for a multitenant app', async () => {
+		const client = await createOAuth2Client('microsoftentraid', {
+			clientId: 'entra-client',
+			clientSecret: 'entra-secret',
+			redirectUri: 'https://app.example.test/oauth2/callback',
+			tenantId: 'common'
+		});
+		const url = await client.createAuthorizationUrl({
+			codeVerifier: 'test-verifier-test-verifier-test-verifier-1234',
+			scope: ['openid', 'profile', 'email'],
+			state: 'entra-state'
+		});
+
+		expect(url.origin).toBe('https://login.microsoftonline.com');
+		expect(url.pathname).toBe('/common/oauth2/v2.0/authorize');
+		expect(url.searchParams.get('client_id')).toBe('entra-client');
+		expect(url.searchParams.get('redirect_uri')).toBe(
+			'https://app.example.test/oauth2/callback'
+		);
+		expect(url.searchParams.get('scope')).toBe('openid profile email');
+		expect(url.searchParams.get('state')).toBe('entra-state');
+		expect(url.searchParams.get('code_challenge_method')).toBe('S256');
+		expect(url.searchParams.get('code_challenge')).toBeTruthy();
+	});
+
+	it('exchanges codes and resolves identity through Entra OIDC endpoints', () => {
+		const provider = providers.microsoftentraid;
+		const tokenUrl = provider.tokenRequest.url;
+		if (typeof tokenUrl !== 'function') {
+			throw new Error('Microsoft token URL must be tenant-aware');
+		}
+
+		expect(tokenUrl({ tenantId: 'organizations' })).toBe(
+			'https://login.microsoftonline.com/organizations/oauth2/v2.0/token'
+		);
+		expect(provider.profileRequest.url).toBe(
+			'https://graph.microsoft.com/oidc/userinfo'
+		);
+		expect(provider.subject).toEqual(['sub']);
 	});
 });

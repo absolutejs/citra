@@ -977,7 +977,7 @@ export const providers = defineProviders({
 	},
 	microsoftentraid: {
 		authorizationUrl: (config) =>
-			`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/authorize`,
+			`https://login.microsoftonline.com/${config.tenantId}/oauth2/v2.0/authorize`,
 		isOIDC: true,
 		isRefreshable: true,
 		PKCEMethod: 'S256',
@@ -985,17 +985,16 @@ export const providers = defineProviders({
 			authIn: 'header',
 			encoding: 'application/json',
 			method: 'GET',
-			url: (config) =>
-				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/openid/userinfo`
+			url: 'https://graph.microsoft.com/oidc/userinfo'
 		},
 		scopeRequired: false,
-		subject: ['id'],
+		subject: ['sub'],
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: (config) =>
-				`https://${config.tenantId}.b2clogin.com/${config.tenantId}/oauth2/v2.0/token`
+				`https://login.microsoftonline.com/${config.tenantId}/oauth2/v2.0/token`
 		}
 	},
 	monday: {

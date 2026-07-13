@@ -466,4 +466,4 @@ Found an issue or want to add a new provider? Please open an issue or submit a p
 
 ## License
 
-CC BY-NC 4.0 © Alex Kahn
+Business Source License 1.1 © Alex Kahn — production use is free except offering citra as a competing hosted service (see the Additional Use Grant in [LICENSE](./LICENSE)). Converts to Apache 2.0 on May 29, 2030.

@@ -95,6 +95,11 @@ const buildOAuth2Client = async (
 
 		async fetchUserProfile(accessToken: string) {
 			const { profileRequest } = meta;
+			if (!profileRequest) {
+				throw new Error(
+					'OIDC provider exposes identity through the id_token and does not define a UserInfo endpoint'
+				);
+			}
 			const {
 				url,
 				method,

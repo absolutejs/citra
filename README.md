@@ -402,6 +402,7 @@ Providers are grouped by special requirements:
 | Auth0              | —                                                      |
 | Authentik          | Untested                                               |
 | Autodesk           | —                                                      |
+| Azure AD B2C       | Legacy CIAM: tenant subdomain + policy required        |
 | Battlenet          | —                                                      |
 | Bitbucket          | —                                                      |
 | Box                | —                                                      |
@@ -429,7 +430,8 @@ Providers are grouped by special requirements:
 | Mastodon           | —                                                      |
 | Mercado Libre      | Untested: Region Restricted                            |
 | Mercado Pago       | Untested: Region Restricted                            |
-| Microsoft Entra ID | Untested: TODO – needed cc                             |
+| Microsoft Entra External ID | CIAM: tenant subdomain + tenant ID required  |
+| Microsoft Entra ID | —                                                      |
 | MyAnimeList        | —                                                      |
 | Naver              | In Development                                         |
 | Notion             | —                                                      |
@@ -459,6 +461,13 @@ Providers are grouped by special requirements:
 | Yahoo              | Untested: HTTPS Required                               |
 | Yandex             | —                                                      |
 | Zoom               | —                                                      |
+
+The Microsoft providers are intentionally separate: `microsoftentraid` is for
+workforce and personal Microsoft accounts (including Microsoft 365 APIs),
+`azureadb2c` is the legacy policy-based B2C product, and
+`microsoftentraexternalid` is the current `ciamlogin.com` customer-identity
+platform. B2C and External ID resolve the authenticated identity from the OIDC
+ID token rather than assuming a universal UserInfo endpoint.
 
 ## Contributing
 

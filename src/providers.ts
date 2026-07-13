@@ -222,6 +222,22 @@ export const providers = defineProviders({
 			url: 'https://developer.api.autodesk.com/authentication/v2/token'
 		}
 	},
+	azureadb2c: {
+		authorizationUrl: (config) =>
+			`https://${config.tenantSubdomain}.b2clogin.com/${config.tenantSubdomain}.onmicrosoft.com/${config.policy}/oauth2/v2.0/authorize`,
+		isOIDC: true,
+		isRefreshable: true,
+		PKCEMethod: 'S256',
+		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: (config) =>
+				`https://${config.tenantSubdomain}.b2clogin.com/${config.tenantSubdomain}.onmicrosoft.com/${config.policy}/oauth2/v2.0/token`
+		}
+	},
 	battlenet: {
 		authorizationUrl: 'https://oauth.battle.net/authorize',
 		isOIDC: true,
@@ -973,6 +989,22 @@ export const providers = defineProviders({
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
 			url: 'https://api.mercadopago.com/oauth/token'
+		}
+	},
+	microsoftentraexternalid: {
+		authorizationUrl: (config) =>
+			`https://${config.tenantSubdomain}.ciamlogin.com/${config.tenantId}/oauth2/v2.0/authorize`,
+		isOIDC: true,
+		isRefreshable: true,
+		PKCEMethod: 'S256',
+		scopeRequired: false,
+		subject: ['sub'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: (config) =>
+				`https://${config.tenantSubdomain}.ciamlogin.com/${config.tenantId}/oauth2/v2.0/token`
 		}
 	},
 	microsoftentraid: {

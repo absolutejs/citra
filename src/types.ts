@@ -226,7 +226,8 @@ export type ProviderConfig = {
 	isOIDC: boolean;
 	isRefreshable: boolean;
 	PKCEMethod?: 'S256' | 'plain';
-	profileRequest: ProfileRequestConfig;
+	// Some OIDC providers intentionally return identity only in the id_token.
+	profileRequest?: ProfileRequestConfig;
 	refreshAccessTokenBody?: Record<string, string>;
 	revocationRequest?: RevocationRequestConfig;
 	scopeRequired: boolean;
@@ -311,6 +312,13 @@ type AuthentikOAuth2Credentials = {
 type AutodeskOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string | null;
+	redirectUri: string;
+};
+type AzureAdB2COAuth2Credentials = {
+	tenantSubdomain: string;
+	policy: string;
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
 };
 type AtlassianOAuth2Credentials = {
@@ -488,6 +496,13 @@ type MicrosoftEntraIdOAuth2Credentials = {
 	clientSecret: string;
 	redirectUri: string;
 };
+type MicrosoftEntraExternalIdOAuth2Credentials = {
+	tenantSubdomain: string;
+	tenantId: string;
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
 type MyAnimeListOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
@@ -649,6 +664,7 @@ type CredentialsMap = {
 	auth0: Auth0OAuth2Credentials;
 	authentik: AuthentikOAuth2Credentials;
 	autodesk: AutodeskOAuth2Credentials;
+	azureadb2c: AzureAdB2COAuth2Credentials;
 	atlassian: AtlassianOAuth2Credentials;
 	battlenet: BattlenetOAuth2Credentials;
 	bitbucket: BitbucketOAuth2Credentials;
@@ -681,6 +697,7 @@ type CredentialsMap = {
 	mastodon: MastodonOAuth2Credentials;
 	mercadolibre: MercadoLibreOAuth2Credentials;
 	mercadopago: MercadoPagoOAuth2Credentials;
+	microsoftentraexternalid: MicrosoftEntraExternalIdOAuth2Credentials;
 	microsoftentraid: MicrosoftEntraIdOAuth2Credentials;
 	myanimelist: MyAnimeListOAuth2Credentials;
 	naver: NaverOAuth2Credentials;

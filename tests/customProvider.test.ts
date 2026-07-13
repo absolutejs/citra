@@ -203,3 +203,83 @@ describe('Microsoft Entra ID built-in provider', () => {
 		}
 	});
 });
+
+describe('Microsoft customer identity built-in providers', () => {
+	it('uses policy-qualified Azure AD B2C endpoints', async () => {
+		const client = await createOAuth2Client('azureadb2c', {
+			clientId: 'b2c-client',
+			clientSecret: 'b2c-secret',
+			policy: 'B2C_1_signupsignin',
+			redirectUri: 'https://app.example.test/oauth2/callback',
+			tenantSubdomain: 'contoso'
+		});
+		const url = await client.createAuthorizationUrl({
+			codeVerifier: 'test-verifier-test-verifier-test-verifier-1234',
+			scope: ['openid', 'profile'],
+			state: 'b2c-state'
+		});
+		const tokenUrl = providers.azureadb2c.tokenRequest.url;
+		if (typeof tokenUrl !== 'function') {
+			throw new Error('Azure AD B2C token URL must be tenant-aware');
+		}
+
+		expect(url.origin).toBe('https://contoso.b2clogin.com');
+		expect(url.pathname).toBe(
+			'/contoso.onmicrosoft.com/B2C_1_signupsignin/oauth2/v2.0/authorize'
+		);
+		expect(
+			tokenUrl({
+				policy: 'B2C_1_signupsignin',
+				tenantSubdomain: 'contoso'
+			})
+		).toBe(
+			'https://contoso.b2clogin.com/contoso.onmicrosoft.com/B2C_1_signupsignin/oauth2/v2.0/token'
+		);
+	});
+
+	it('uses tenant-specific Microsoft Entra External ID endpoints', async () => {
+		const client = await createOAuth2Client('microsoftentraexternalid', {
+			clientId: 'external-client',
+			clientSecret: 'external-secret',
+			redirectUri: 'https://app.example.test/oauth2/callback',
+			tenantId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+			tenantSubdomain: 'contoso'
+		});
+		const url = await client.createAuthorizationUrl({
+			codeVerifier: 'test-verifier-test-verifier-test-verifier-1234',
+			scope: ['openid', 'profile', 'email'],
+			state: 'external-state'
+		});
+		const tokenUrl = providers.microsoftentraexternalid.tokenRequest.url;
+		if (typeof tokenUrl !== 'function') {
+			throw new Error('External ID token URL must be tenant-aware');
+		}
+
+		expect(url.origin).toBe('https://contoso.ciamlogin.com');
+		expect(url.pathname).toBe(
+			'/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/oauth2/v2.0/authorize'
+		);
+		expect(
+			tokenUrl({
+				tenantId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+				tenantSubdomain: 'contoso'
+			})
+		).toBe(
+			'https://contoso.ciamlogin.com/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/oauth2/v2.0/token'
+		);
+	});
+
+	it('reports that customer identity comes from the ID token', async () => {
+		const client = await createOAuth2Client('microsoftentraexternalid', {
+			clientId: 'external-client',
+			clientSecret: 'external-secret',
+			redirectUri: 'https://app.example.test/oauth2/callback',
+			tenantId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+			tenantSubdomain: 'contoso'
+		});
+
+		expect(client.fetchUserProfile('access-token')).rejects.toThrow(
+			'identity through the id_token'
+		);
+	});
+});

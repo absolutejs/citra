@@ -1699,6 +1699,7 @@ export const providers = defineProviders({
 		}
 	},
 	withings: {
+		accessTokenPath: ['body', 'access_token'],
 		authorizationUrl: 'https://account.withings.com/oauth2_user/authorize2',
 		isOIDC: false,
 		isRefreshable: true,

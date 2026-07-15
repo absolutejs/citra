@@ -289,6 +289,13 @@ const buildOAuth2Client = async (
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
 			const tokenResponse = await response.json();
+			if (!tokenResponse || typeof tokenResponse !== 'object') {
+				throw new Error('OAuth token endpoint returned a non-object response');
+			}
+			const oauthError = Reflect.get(tokenResponse, 'error');
+			if (typeof oauthError === 'string' && oauthError.length > 0) {
+				throw new Error(`OAuth token exchange failed: ${oauthError}`);
+			}
 			// Normalize providers whose access token is nested (e.g. Slack oauth/v2 returns the
 			// user token at authed_user.access_token) so consumers read `access_token` uniformly.
 			const nestedToken = meta.accessTokenPath
@@ -302,6 +309,10 @@ const buildOAuth2Client = async (
 			) {
 				(tokenResponse as Record<string, unknown>).access_token =
 					nestedToken;
+			}
+			const accessToken = Reflect.get(tokenResponse, 'access_token');
+			if (typeof accessToken !== 'string' || accessToken.length === 0) {
+				throw new Error('OAuth token endpoint returned no access_token');
 			}
 
 			return tokenResponse;

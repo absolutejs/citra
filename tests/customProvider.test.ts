@@ -202,6 +202,47 @@ describe('Microsoft Entra ID built-in provider', () => {
 			globalThis.fetch = originalFetch;
 		}
 	});
+
+	it('rejects OAuth error JSON returned with HTTP 200', async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = async () =>
+			Response.json({
+				error: 'bad_verification_code',
+				error_description: 'The code passed is incorrect or expired.'
+			});
+
+		try {
+			const client = await createOAuth2Client('github', {
+				clientId: 'github-client',
+				clientSecret: 'github-secret',
+				redirectUri: 'https://app.example.test/oauth2/callback'
+			});
+			await expect(
+				client.validateAuthorizationCode({ code: 'expired-code' })
+			).rejects.toThrow('OAuth token exchange failed: bad_verification_code');
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('rejects successful-looking token JSON without an access token', async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = async () =>
+			Response.json({ token_type: 'bearer', scope: 'repo' });
+
+		try {
+			const client = await createOAuth2Client('github', {
+				clientId: 'github-client',
+				clientSecret: 'github-secret',
+				redirectUri: 'https://app.example.test/oauth2/callback'
+			});
+			await expect(
+				client.validateAuthorizationCode({ code: 'provider-code' })
+			).rejects.toThrow('OAuth token endpoint returned no access_token');
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
 });
 
 describe('Microsoft customer identity built-in providers', () => {

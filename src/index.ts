@@ -2,29 +2,29 @@ import { createS256CodeChallenge } from './arctic-utils';
 import { providers } from './providers';
 import { hasClientSecret } from './typeGuards';
 import {
+	BaseOAuth2ClientForConfig,
 	CredentialsFor,
 	CustomProviderCredentials,
 	OAuth2Client,
 	OAuth2ClientForConfig,
 	ProviderConfig,
-	ProviderOption
+	ProviderOption,
+	RefreshableOAuth2Client,
+	RevocableOAuth2Client
 } from './types';
-import { createOAuth2FetchError, createOAuth2Request } from './utils';
-
-// Walk a dotted path into an unknown object (used to pull nested token-response fields).
-const readPath = (value: unknown, path: string[]) =>
-	path.reduce<unknown>(
-		(cursor, key) =>
-			cursor && typeof cursor === 'object'
-				? Reflect.get(cursor, key)
-				: undefined,
-		value
-	);
+import {
+	createOAuth2FetchError,
+	createOAuth2Request,
+	parseOAuth2TokenResponse
+} from './utils';
 
 // One shared implementation behind both the built-in-provider and
 // custom-provider entry points: everything below reads only `meta` (the
 // provider config) and `config` (the caller's credentials).
 type ClientCredentials = { clientId: string; redirectUri?: string | null };
+type RuntimeOAuth2Client = BaseOAuth2ClientForConfig<ProviderConfig> &
+	RefreshableOAuth2Client &
+	RevocableOAuth2Client;
 
 const buildOAuth2Client = async (
 	meta: ProviderConfig,
@@ -44,11 +44,18 @@ const buildOAuth2Client = async (
 
 		return result;
 	};
+	const resolveClientSecret = async () => {
+		if (meta.createClientSecret) {
+			return resolveConfigProp(meta.createClientSecret);
+		}
+
+		return hasClientSecret(config) ? config.clientSecret : undefined;
+	};
 
 	const authorizationUrl = await resolveConfigProp(meta.authorizationUrl);
 	const tokenUrl = await resolveConfigProp(meta.tokenRequest.url);
 
-	return {
+	const client: RuntimeOAuth2Client = {
 		async createAuthorizationUrl(opts: {
 			state?: string;
 			scope?: string[];
@@ -84,7 +91,9 @@ const buildOAuth2Client = async (
 			}
 
 			Object.entries(
-				resolveConfigProp(meta.createAuthorizationURLSearchParams) ?? {}
+				(await resolveConfigProp(
+					meta.createAuthorizationURLSearchParams
+				)) ?? {}
 			).forEach(([key, value]) => url.searchParams.set(key, value));
 			searchParams.forEach(([key, value]) =>
 				url.searchParams.set(key, value)
@@ -134,7 +143,7 @@ const buildOAuth2Client = async (
 			if (authIn === 'header') {
 				profileHeaders.Authorization = `Bearer ${accessToken}`;
 			} else if (authIn === 'path') {
-				endpoint.pathname = `${endpoint.pathname.replace(/\/+$/, '')}/${accessToken}`;
+				endpoint.pathname = `${endpoint.pathname.replace(/\/+$/, '')}/${encodeURIComponent(accessToken)}`;
 			} else {
 				endpoint.searchParams.append('access_token', accessToken);
 			}
@@ -162,9 +171,8 @@ const buildOAuth2Client = async (
 			params.set('refresh_token', refreshToken);
 
 			const { clientId } = config;
-			let clientSecretValue: string | undefined;
-			if (hasClientSecret(config)) {
-				clientSecretValue = config.clientSecret;
+			const clientSecretValue = await resolveClientSecret();
+			if (clientSecretValue) {
 				params.set('client_id', clientId);
 				params.set('client_secret', clientSecretValue);
 			}
@@ -180,7 +188,7 @@ const buildOAuth2Client = async (
 			const response = await fetch(request);
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
-			return response.json();
+			return parseOAuth2TokenResponse(await response.json());
 		},
 
 		async revokeToken(token: string) {
@@ -191,54 +199,61 @@ const buildOAuth2Client = async (
 				);
 			}
 
-			const { url, authIn, body, headers, tokenParamName } =
+			const { url, authIn, body, encoding, headers, tokenParamName } =
 				revocationRequest;
 			const endpoint = await resolveConfigProp(url);
 			const resolvedBody = await resolveConfigProp(body);
-			const revocationBody = new URLSearchParams(resolvedBody);
+			const revocationBody =
+				resolvedBody === undefined
+					? undefined
+					: new URLSearchParams(resolvedBody);
 			const revocationHeaders = new Headers(
 				headers && (await resolveConfigProp(headers))
 			);
 			const { clientId } = config;
-			const clientSecret = hasClientSecret(config)
-				? config.clientSecret
-				: undefined;
+			const clientSecret = await resolveClientSecret();
 
 			let request: Request;
 			if (authIn === 'body') {
-				revocationBody.set(tokenParamName, token);
-				revocationBody.set('client_id', clientId);
-				if (clientSecret)
-					revocationBody.set('client_secret', clientSecret);
+				const bodyWithToken = revocationBody ?? new URLSearchParams();
+				bodyWithToken.set(tokenParamName, token);
+				const hasAuthorizationHeader =
+					revocationHeaders.has('Authorization');
+				if (!hasAuthorizationHeader)
+					bodyWithToken.set('client_id', clientId);
+				if (!hasAuthorizationHeader && clientSecret)
+					bodyWithToken.set('client_secret', clientSecret);
 				request = createOAuth2Request({
-					authIn: 'body',
-					body: revocationBody,
+					authIn: hasAuthorizationHeader ? 'query' : 'body',
+					body: bodyWithToken,
 					clientId,
 					clientSecret,
-					encoding: 'application/x-www-form-urlencoded',
+					encoding,
 					headers: revocationHeaders,
 					url: endpoint.toString()
 				});
 			} else if (authIn === 'header') {
 				revocationHeaders.set('Authorization', `Bearer ${token}`);
 				request = createOAuth2Request({
-					authIn: 'header',
+					// `authIn` on createOAuth2Request controls client
+					// credentials. The bearer token is already in the header.
+					authIn: 'query',
 					body: revocationBody,
 					clientId,
-					clientSecret,
-					encoding: 'application/x-www-form-urlencoded',
+					encoding,
 					headers: revocationHeaders,
 					url: endpoint.toString()
 				});
 			} else {
+				const queryEndpoint = new URL(endpoint);
+				queryEndpoint.searchParams.set(tokenParamName, token);
 				request = createOAuth2Request({
 					authIn: 'query',
 					body: revocationBody,
 					clientId,
-					clientSecret,
-					encoding: 'application/x-www-form-urlencoded',
+					encoding,
 					headers: revocationHeaders,
-					url: `${endpoint.toString()}?${tokenParamName}=${token}`
+					url: queryEndpoint.toString()
 				});
 			}
 
@@ -279,45 +294,30 @@ const buildOAuth2Client = async (
 				authIn,
 				body: payload,
 				clientId: config.clientId,
-				clientSecret: hasClientSecret(config)
-					? config.clientSecret
-					: undefined,
+				clientSecret: await resolveClientSecret(),
 				encoding,
 				url: tokenUrl
 			});
 			const response = await fetch(request);
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
-			const tokenResponse = await response.json();
-			if (!tokenResponse || typeof tokenResponse !== 'object') {
-				throw new Error('OAuth token endpoint returned a non-object response');
-			}
-			const oauthError = Reflect.get(tokenResponse, 'error');
-			if (typeof oauthError === 'string' && oauthError.length > 0) {
-				throw new Error(`OAuth token exchange failed: ${oauthError}`);
-			}
-			// Normalize providers whose access token is nested (e.g. Slack oauth/v2 returns the
-			// user token at authed_user.access_token) so consumers read `access_token` uniformly.
-			const nestedToken = meta.accessTokenPath
-				? readPath(tokenResponse, meta.accessTokenPath)
-				: undefined;
-			if (
-				typeof nestedToken === 'string' &&
-				nestedToken.length > 0 &&
-				tokenResponse &&
-				typeof tokenResponse === 'object'
-			) {
-				(tokenResponse as Record<string, unknown>).access_token =
-					nestedToken;
-			}
-			const accessToken = Reflect.get(tokenResponse, 'access_token');
-			if (typeof accessToken !== 'string' || accessToken.length === 0) {
-				throw new Error('OAuth token endpoint returned no access_token');
-			}
-
-			return tokenResponse;
+			return parseOAuth2TokenResponse(
+				await response.json(),
+				meta.accessTokenPath
+			);
 		}
 	};
+
+	// Keep the runtime surface aligned with the capability type. This matters
+	// for JavaScript consumers and for code that checks capabilities with `in`.
+	if (!meta.isRefreshable) {
+		Reflect.deleteProperty(client, 'refreshAccessToken');
+	}
+	if (!meta.revocationRequest) {
+		Reflect.deleteProperty(client, 'revokeToken');
+	}
+
+	return client;
 };
 
 /** Bring your own provider: pass a full ProviderConfig (see defineProvider)

@@ -1,3 +1,4 @@
+import { createAppleClientSecret } from './arctic-utils';
 import { anilistProfileQuery } from './graphqlQueries';
 import { DefineProviders, ProviderConfig } from './types';
 import { encodeBase64, getWithingsProps } from './utils';
@@ -84,17 +85,23 @@ export const providers = defineProviders({
 	},
 	apple: {
 		authorizationUrl: 'https://appleid.apple.com/auth/authorize',
+		createAuthorizationURLSearchParams: {
+			response_mode: 'form_post'
+		},
+		createClientSecret: (config) => createAppleClientSecret(config),
 		isOIDC: true,
 		isRefreshable: true,
-		PKCEMethod: 'S256',
-		profileRequest: {
-			authIn: 'header',
-			encoding: 'application/json',
-			method: 'GET',
-			url: 'https://appleid.apple.com/auth/userinfo'
+		revocationRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			tokenParamName: 'token',
+			url: 'https://appleid.apple.com/auth/revoke'
 		},
 		scopeRequired: false,
-		subject: ['id'],
+		subject: ['sub'],
+		subjectBySource: {
+			idToken: ['sub']
+		},
 		subjectType: 'string',
 		tokenRequest: {
 			authIn: 'body',

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { verifyIdToken } from '../src/oidc';
+import { createOIDCClient, verifyIdToken } from '../src/oidc';
 import { encodeBase64 } from '../src/utils';
 
 const MS_PER_SECOND = 1000;
@@ -82,6 +82,44 @@ const ecKeyPair = await crypto.subtle.generateKey(
 );
 const ecJwk = await exportPublicJwk(ecKeyPair.publicKey, 'ec-key');
 const ecParams: EcdsaParams = { hash: 'SHA-256', name: 'ECDSA' };
+
+describe('createOIDCClient', () => {
+	test('validates successful HTTP token responses', async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = async (input) => {
+			const url = input instanceof Request ? input.url : input.toString();
+			if (url.endsWith('/.well-known/openid-configuration')) {
+				return Response.json({
+					authorization_endpoint: `${ISSUER}/authorize`,
+					issuer: ISSUER,
+					jwks_uri: `${ISSUER}/jwks`,
+					token_endpoint: `${ISSUER}/token`
+				});
+			}
+
+			return Response.json({ error: 'invalid_grant' });
+		};
+
+		try {
+			const client = await createOIDCClient({
+				clientId: AUDIENCE,
+				clientSecret: 'client-secret',
+				issuer: ISSUER,
+				redirectUri: 'https://app.example.test/callback'
+			});
+
+			await expect(
+				client.validateAuthorizationCode({
+					code: 'expired-code',
+					codeVerifier:
+						'test-verifier-test-verifier-test-verifier-1234'
+				})
+			).rejects.toThrow('OAuth token exchange failed: invalid_grant');
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+});
 
 describe('verifyIdToken (RS256)', () => {
 	test('accepts a correctly signed token and returns its claims', async () => {

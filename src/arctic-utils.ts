@@ -23,6 +23,18 @@ SOFTWARE.*/
 import { NUM_GENERATOR_BYTES } from './constants';
 import { encodeBase64 } from './utils';
 
+const DAYS_IN_APPLE_CLIENT_SECRET_LIFETIME = 180;
+const HOURS_PER_DAY = 24;
+const MINUTES_PER_HOUR = 60;
+const SECONDS_PER_MINUTE = 60;
+const APPLE_CLIENT_SECRET_LIFETIME_SECONDS =
+	SECONDS_PER_MINUTE *
+	MINUTES_PER_HOUR *
+	HOURS_PER_DAY *
+	DAYS_IN_APPLE_CLIENT_SECRET_LIFETIME;
+const APPLE_ISSUER = 'https://appleid.apple.com';
+const MILLISECONDS_PER_SECOND = 1000;
+
 /**
  * RFC‑7636 S256 code challenge
  */
@@ -58,8 +70,48 @@ export const generateState =
  * – replaces “+”→“-” and “/”→“_”
  * – strips trailing “=” padding
  */
-const base64Url = (input: ArrayBuffer | Uint8Array) =>
+export const base64Url = (input: ArrayBuffer | Uint8Array) =>
 	encodeBase64(input)
 		.replace(/\+/g, '-')
 		.replace(/\//g, '_')
 		.replace(/=+$/, '');
+
+const encodeJwtPart = (value: object) =>
+	base64Url(new TextEncoder().encode(JSON.stringify(value)));
+
+/** Generate the ES256 client-secret JWT required by Sign in with Apple. */
+export const createAppleClientSecret = async (credentials: {
+	clientId: string;
+	keyId: string;
+	pkcs8PrivateKey: Uint8Array;
+	teamId: string;
+}) => {
+	const issuedAt = Math.floor(Date.now() / MILLISECONDS_PER_SECOND);
+	const header = encodeJwtPart({
+		alg: 'ES256',
+		kid: credentials.keyId,
+		typ: 'JWT'
+	});
+	const payload = encodeJwtPart({
+		aud: APPLE_ISSUER,
+		exp: issuedAt + APPLE_CLIENT_SECRET_LIFETIME_SECONDS,
+		iat: issuedAt,
+		iss: credentials.teamId,
+		sub: credentials.clientId
+	});
+	const signingInput = `${header}.${payload}`;
+	const privateKey = await crypto.subtle.importKey(
+		'pkcs8',
+		Uint8Array.from(credentials.pkcs8PrivateKey),
+		{ name: 'ECDSA', namedCurve: 'P-256' },
+		false,
+		['sign']
+	);
+	const signature = await crypto.subtle.sign(
+		{ hash: 'SHA-256', name: 'ECDSA' },
+		privateKey,
+		new TextEncoder().encode(signingInput)
+	);
+
+	return `${signingInput}.${base64Url(signature)}`;
+};

@@ -1,0 +1,2941 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="description"
+			content="Why Citra treats OAuth provider differences as typed configuration instead of a reason to abandon the abstraction."
+		/>
+		<meta name="theme-color" content="#171a17" />
+		<link rel="icon" href="assets/favicon.ico" sizes="any" />
+		<title>Why Citra: Typed OAuth Without Provider Classes</title>
+		<style>
+			:root {
+				--ink: #171a17;
+				--paper: #f4f0e6;
+				--paper-deep: #e6dfcf;
+				--lime: #cbf43c;
+				--orange: #ff714b;
+				--mint: #a9e6cb;
+				--muted: #666b63;
+				--line: rgba(23, 26, 23, 0.18);
+				--serif: Georgia, 'Times New Roman', serif;
+				--sans:
+					Inter, ui-sans-serif, system-ui, -apple-system,
+					BlinkMacSystemFont, 'Segoe UI', sans-serif;
+				--mono:
+					'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			html {
+				scroll-behavior: smooth;
+			}
+
+			body {
+				margin: 0;
+				background: var(--paper);
+				color: var(--ink);
+				font-family: var(--sans);
+				font-size: 16px;
+				-webkit-font-smoothing: antialiased;
+			}
+
+			a {
+				color: inherit;
+			}
+
+			a:focus-visible,
+			button:focus-visible {
+				outline: 3px solid var(--orange);
+				outline-offset: 4px;
+			}
+
+			::selection {
+				background: var(--lime);
+				color: var(--ink);
+			}
+
+			.reading-progress {
+				position: fixed;
+				z-index: 20;
+				top: 0;
+				left: 0;
+				width: 0;
+				height: 4px;
+				background: var(--orange);
+			}
+
+			.article-meta {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 28px;
+				width: min(100%, 1240px);
+				margin: 0 auto;
+				padding-bottom: 24px;
+				border-bottom: 1px solid var(--line);
+			}
+
+			.author-lockup {
+				display: flex;
+				gap: 14px;
+				align-items: center;
+			}
+
+			.absolute-logo {
+				width: auto;
+				height: 54px;
+				filter: drop-shadow(2px 3px 0 rgba(23, 26, 23, 0.16));
+			}
+
+			.author-lockup strong,
+			.author-lockup span {
+				display: block;
+			}
+
+			.author-lockup strong {
+				font-size: 0.9rem;
+				letter-spacing: -0.02em;
+			}
+
+			.author-lockup span,
+			.article-details {
+				margin-top: 4px;
+				color: var(--muted);
+				font-family: var(--mono);
+				font-size: 0.66rem;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+			}
+
+			.article-meta-actions {
+				display: flex;
+				gap: 22px;
+				align-items: center;
+			}
+
+			.source-link {
+				padding: 10px 14px;
+				border: 1px solid var(--ink);
+				background: var(--ink);
+				color: var(--paper);
+				font-size: 0.78rem;
+				font-weight: 750;
+				letter-spacing: 0.07em;
+				text-decoration: none;
+				text-transform: uppercase;
+			}
+
+			.article-toc {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 12px 22px;
+				align-items: center;
+				width: min(100%, 1240px);
+				margin: 38px auto 0;
+				padding: 16px 0;
+				border-top: 1px solid var(--line);
+				border-bottom: 1px solid var(--line);
+				font-family: var(--mono);
+				font-size: 0.67rem;
+				letter-spacing: 0.045em;
+				text-transform: uppercase;
+			}
+
+			.article-toc span {
+				margin-right: 8px;
+				padding: 7px 9px;
+				background: var(--orange);
+				font-weight: 800;
+			}
+
+			.article-toc a {
+				color: var(--muted);
+				font-weight: 700;
+				text-decoration-thickness: 1px;
+				text-underline-offset: 4px;
+			}
+
+			.hero {
+				position: relative;
+				overflow: hidden;
+				padding: 54px 20px 72px;
+			}
+
+			.hero::before {
+				position: absolute;
+				top: -210px;
+				right: -170px;
+				width: 520px;
+				height: 520px;
+				border: 1px solid var(--line);
+				border-radius: 50%;
+				box-shadow:
+					0 0 0 54px var(--paper),
+					0 0 0 55px var(--line),
+					0 0 0 110px var(--paper),
+					0 0 0 111px var(--line);
+				content: '';
+				pointer-events: none;
+			}
+
+			.hero-inner {
+				position: relative;
+				display: grid;
+				grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+				gap: 72px;
+				align-items: end;
+				width: min(100%, 1240px);
+				margin: 72px auto 0;
+			}
+
+			.eyebrow {
+				display: flex;
+				gap: 12px;
+				align-items: center;
+				margin: 0 0 26px;
+				font-family: var(--mono);
+				font-size: 0.76rem;
+				font-weight: 700;
+				letter-spacing: 0.07em;
+				text-transform: uppercase;
+			}
+
+			.eyebrow::before {
+				width: 28px;
+				height: 8px;
+				background: var(--orange);
+				content: '';
+			}
+
+			h1 {
+				max-width: 900px;
+				margin: 0;
+				font-family: var(--serif);
+				font-size: clamp(4rem, 8vw, 8.6rem);
+				font-weight: 400;
+				letter-spacing: -0.075em;
+				line-height: 0.82;
+			}
+
+			h1 em {
+				color: var(--orange);
+				font-weight: 400;
+			}
+
+			.hero-summary {
+				max-width: 710px;
+				margin: 42px 0 0;
+				font-size: clamp(1.15rem, 2vw, 1.55rem);
+				letter-spacing: -0.025em;
+				line-height: 1.45;
+			}
+
+			.hero-summary strong {
+				font-weight: 800;
+			}
+
+			.code-window {
+				border: 1px solid var(--ink);
+				background: var(--ink);
+				box-shadow: 14px 14px 0 var(--lime);
+				color: #f7f3e9;
+			}
+
+			.window-bar {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 12px 15px;
+				border-bottom: 1px solid rgba(244, 240, 230, 0.2);
+				color: #c7c9c3;
+				font-family: var(--mono);
+				font-size: 0.7rem;
+			}
+
+			.dots {
+				display: flex;
+				gap: 6px;
+			}
+
+			.dots i {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				background: var(--orange);
+			}
+
+			.dots i:nth-child(2) {
+				background: var(--lime);
+			}
+
+			.dots i:nth-child(3) {
+				background: var(--mint);
+			}
+
+			pre {
+				margin: 0;
+				overflow-x: auto;
+			}
+
+			.code-window pre {
+				padding: 28px 24px 32px;
+				font-family: var(--mono);
+				font-size: 0.77rem;
+				line-height: 1.75;
+			}
+
+			.token-keyword {
+				color: #f4947a;
+			}
+
+			.token-function {
+				color: var(--lime);
+			}
+
+			.token-string {
+				color: var(--mint);
+			}
+
+			.token-comment {
+				color: #90958d;
+			}
+
+			.stats {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				width: min(100% - 40px, 1240px);
+				margin: 44px auto 0;
+				border: 1px solid var(--ink);
+				background: var(--paper);
+			}
+
+			.stat {
+				padding: 24px 26px;
+				border-right: 1px solid var(--ink);
+			}
+
+			.stat:last-child {
+				border-right: 0;
+			}
+
+			.stat strong {
+				display: block;
+				font-family: var(--serif);
+				font-size: 3rem;
+				font-weight: 400;
+				letter-spacing: -0.06em;
+				line-height: 1;
+			}
+
+			.stat span {
+				display: block;
+				margin-top: 8px;
+				color: var(--muted);
+				font-family: var(--mono);
+				font-size: 0.67rem;
+				font-weight: 700;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+			}
+
+			article {
+				overflow: hidden;
+			}
+
+			.section {
+				padding: 108px 20px;
+				border-top: 1px solid var(--line);
+			}
+
+			.section-inner {
+				width: min(100%, 1120px);
+				margin: 0 auto;
+			}
+
+			.section-label {
+				margin: 0 0 20px;
+				color: var(--muted);
+				font-family: var(--mono);
+				font-size: 0.72rem;
+				font-weight: 700;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+
+			h2 {
+				max-width: 960px;
+				margin: 0;
+				font-family: var(--serif);
+				font-size: clamp(2.8rem, 6vw, 5.8rem);
+				font-weight: 400;
+				letter-spacing: -0.065em;
+				line-height: 0.96;
+			}
+
+			.lede {
+				max-width: 760px;
+				margin: 34px auto 0;
+				font-size: clamp(1.15rem, 2vw, 1.45rem);
+				letter-spacing: -0.025em;
+				line-height: 1.6;
+				text-align: center;
+			}
+
+			.argument {
+				background: var(--ink);
+				color: var(--paper);
+			}
+
+			.argument .section-label {
+				color: var(--lime);
+			}
+
+			.exchange {
+				display: grid;
+				grid-template-columns: 0.95fr 1.05fr;
+				gap: 56px;
+				margin-top: 70px;
+			}
+
+			.quote-card {
+				position: relative;
+				padding: 40px;
+				border: 1px solid rgba(244, 240, 230, 0.3);
+				background: rgba(244, 240, 230, 0.04);
+			}
+
+			.quote-card::before {
+				position: absolute;
+				top: -29px;
+				left: 28px;
+				color: var(--orange);
+				font-family: var(--serif);
+				font-size: 6rem;
+				content: '“';
+			}
+
+			blockquote {
+				margin: 0;
+				font-family: var(--serif);
+				font-size: 1.65rem;
+				letter-spacing: -0.03em;
+				line-height: 1.25;
+			}
+
+			.quote-card footer {
+				margin-top: 28px;
+				color: #aeb2aa;
+				font-family: var(--mono);
+				font-size: 0.7rem;
+				line-height: 1.5;
+				text-transform: uppercase;
+			}
+
+			.quote-card footer a {
+				text-underline-offset: 4px;
+			}
+
+			.counterpoint {
+				padding: 24px 0;
+			}
+
+			.counterpoint h3,
+			.definition-copy h3 {
+				margin: 0 0 18px;
+				font-size: 1.3rem;
+				letter-spacing: -0.035em;
+			}
+
+			.counterpoint p {
+				margin: 0 0 20px;
+				color: #c9cbc5;
+				font-size: 1.02rem;
+				line-height: 1.7;
+			}
+
+			.counterpoint .thesis {
+				padding-left: 20px;
+				border-left: 4px solid var(--lime);
+				color: var(--paper);
+				font-weight: 750;
+			}
+
+			.definition-demo {
+				display: grid;
+				grid-template-columns: 1.15fr 0.85fr;
+				gap: 48px;
+				margin-top: 70px;
+				align-items: start;
+			}
+
+			.definition-code {
+				box-shadow: -12px 12px 0 var(--lime);
+			}
+
+			.definition-copy {
+				border-top: 1px solid var(--ink);
+			}
+
+			.definition-copy h3 {
+				margin: 0;
+				padding-top: 23px;
+			}
+
+			.definition-copy h3 code {
+				font-size: 0.85em;
+			}
+
+			.definition-copy p {
+				margin: 10px 0 0;
+				padding-bottom: 23px;
+				border-bottom: 1px solid var(--line);
+				color: var(--muted);
+				font-size: 0.92rem;
+				line-height: 1.6;
+			}
+
+			.definition-copy p code {
+				color: #a92d17;
+				font-size: 0.86em;
+			}
+
+			.withings {
+				background: #e8e2d3;
+			}
+
+			.request-map {
+				display: grid;
+				grid-template-columns: 0.75fr 1fr;
+				gap: 56px;
+				margin-top: 64px;
+				align-items: start;
+			}
+
+			.request-explanation {
+				position: sticky;
+				top: 36px;
+			}
+
+			.request-explanation p {
+				margin: 0 0 22px;
+				color: #464b44;
+				line-height: 1.7;
+			}
+
+			.mini-kicker {
+				display: inline-block;
+				margin-bottom: 18px;
+				padding: 7px 10px;
+				background: var(--orange);
+				font-family: var(--mono);
+				font-size: 0.66rem;
+				font-weight: 800;
+				letter-spacing: 0.07em;
+				text-transform: uppercase;
+			}
+
+			.request-stack {
+				display: grid;
+				gap: 12px;
+			}
+
+			.request-row {
+				display: grid;
+				grid-template-columns: 132px 1fr;
+				border: 1px solid var(--ink);
+				background: var(--paper);
+			}
+
+			.request-row dt,
+			.request-row dd {
+				margin: 0;
+				padding: 19px 20px;
+			}
+
+			.request-row dt {
+				border-right: 1px solid var(--ink);
+				color: var(--muted);
+				font-family: var(--mono);
+				font-size: 0.68rem;
+				font-weight: 700;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+			}
+
+			.request-row dd {
+				font-family: var(--mono);
+				font-size: 0.79rem;
+				line-height: 1.55;
+			}
+
+			.request-row dd strong {
+				color: #bd3d21;
+			}
+
+			.request-row:last-child {
+				background: var(--lime);
+			}
+
+			.quirk-ledger {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 1px;
+				margin-top: 70px;
+				border: 1px solid var(--ink);
+				background: var(--ink);
+			}
+
+			.quirk-ledger > * {
+				padding: 28px;
+				background: var(--paper);
+			}
+
+			.quirk-intro {
+				grid-row: span 2;
+				background: var(--orange);
+			}
+
+			.quirk-intro h3 {
+				margin: 10px 0 0;
+				font-family: var(--serif);
+				font-size: 2rem;
+				font-weight: 400;
+				letter-spacing: -0.04em;
+				line-height: 1.1;
+			}
+
+			.quirk-ledger article strong,
+			.quirk-ledger article code {
+				display: block;
+			}
+
+			.quirk-ledger article strong {
+				margin-bottom: 12px;
+			}
+
+			.quirk-ledger article code {
+				margin-bottom: 14px;
+				color: #a92d17;
+				font-family: var(--mono);
+				font-size: 0.68rem;
+				line-height: 1.45;
+			}
+
+			.quirk-ledger article p {
+				margin: 0;
+				color: var(--muted);
+				font-size: 0.82rem;
+				line-height: 1.55;
+			}
+
+			.daily-tools {
+				display: grid;
+				grid-template-columns: 1.15fr repeat(2, 1fr);
+				gap: 1px;
+				margin-top: 54px;
+				border: 1px solid var(--ink);
+				background: var(--ink);
+			}
+
+			.daily-tools > * {
+				padding: 26px;
+				background: #fffaf0;
+			}
+
+			.daily-tools-intro {
+				grid-row: span 2;
+				background: var(--mint);
+			}
+
+			.daily-tools-intro h3 {
+				margin: 12px 0 0;
+				font-family: var(--serif);
+				font-size: 2rem;
+				font-weight: 400;
+				letter-spacing: -0.04em;
+				line-height: 1.1;
+			}
+
+			.daily-tools article > code,
+			.daily-tools article > strong {
+				display: block;
+				margin-bottom: 8px;
+				font-size: 0.78rem;
+			}
+
+			.daily-tools article > code {
+				color: #a92d17;
+				font-family: var(--mono);
+			}
+
+			.daily-tools article p {
+				margin: 14px 0 0;
+				color: var(--muted);
+				font-size: 0.8rem;
+				line-height: 1.55;
+			}
+
+			.type-section {
+				background: #fffaf0;
+			}
+
+			.type-grid {
+				display: grid;
+				grid-template-columns: 0.85fr 1.15fr;
+				gap: 68px;
+				margin-top: 72px;
+				align-items: start;
+			}
+
+			.type-notes {
+				display: grid;
+				gap: 0;
+				border-top: 1px solid var(--ink);
+			}
+
+			.type-note {
+				display: grid;
+				grid-template-columns: 36px 1fr;
+				gap: 14px;
+				padding: 23px 0;
+				border-bottom: 1px solid var(--line);
+			}
+
+			.type-note b {
+				font-family: var(--mono);
+				font-size: 0.72rem;
+			}
+
+			.type-note h3 {
+				margin: 0 0 8px;
+				font-size: 1rem;
+			}
+
+			.type-note p {
+				margin: 0;
+				color: var(--muted);
+				font-size: 0.92rem;
+				line-height: 1.55;
+			}
+
+			.type-code {
+				overflow: hidden;
+				border: 1px solid var(--ink);
+				background: #1d211e;
+				color: #f7f3e9;
+				box-shadow: -12px 12px 0 var(--orange);
+			}
+
+			.type-code pre {
+				padding: 28px;
+				font-family: var(--mono);
+				font-size: 0.76rem;
+				line-height: 1.75;
+			}
+
+			.code-case + .code-case {
+				border-top: 1px solid rgba(244, 240, 230, 0.2);
+			}
+
+			.code-case pre {
+				padding-bottom: 18px;
+			}
+
+			.error-target {
+				padding: 2px 3px;
+				border: 1px solid #ff7955;
+				background: rgba(255, 69, 45, 0.18);
+				color: #ff9b81;
+			}
+
+			.diagnostic {
+				margin: 0 28px 28px;
+				padding: 14px 16px;
+				border-left: 5px solid #ff3f2e;
+				background: #7e1f17;
+				color: #fff4ef;
+				font-family: var(--mono);
+			}
+
+			.diagnostic strong {
+				display: block;
+				margin-bottom: 8px;
+				color: #ffb4a3;
+				font-size: 0.68rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+
+			.diagnostic p {
+				margin: 0;
+				font-size: 0.72rem;
+				line-height: 1.55;
+			}
+
+			.validation-band {
+				margin-top: 84px;
+				padding: 34px 38px;
+				border: 1px solid var(--ink);
+				background: var(--orange);
+			}
+
+			.validation-band h3 {
+				margin: 0 0 18px;
+				font-family: var(--serif);
+				font-size: 2rem;
+				font-weight: 400;
+				letter-spacing: -0.045em;
+			}
+
+			.validation-band p {
+				max-width: 880px;
+				margin: 0;
+				line-height: 1.65;
+			}
+
+			.constructor-proof,
+			.runtime-narrowing {
+				display: grid;
+				grid-template-columns: 0.72fr 1.28fr;
+				gap: 54px;
+				margin-top: 82px;
+				align-items: start;
+			}
+
+			.constructor-intro h3,
+			.runtime-narrowing h3,
+			.custom-proof-copy h3 {
+				margin: 12px 0 16px;
+				font-family: var(--serif);
+				font-size: clamp(1.8rem, 3vw, 2.65rem);
+				font-weight: 400;
+				letter-spacing: -0.045em;
+				line-height: 1.08;
+			}
+
+			.constructor-intro > p:last-child,
+			.runtime-narrowing > div:first-child > p:last-child,
+			.custom-proof-copy > p {
+				color: var(--muted);
+				line-height: 1.65;
+			}
+
+			.constructor-errors {
+				display: grid;
+				gap: 14px;
+			}
+
+			.compiler-card {
+				overflow: hidden;
+				border: 1px solid var(--ink);
+				background: #1d211e;
+				color: #f7f3e9;
+			}
+
+			.compiler-card pre {
+				padding: 24px 28px 18px;
+				font-family: var(--mono);
+				font-size: 0.74rem;
+				line-height: 1.7;
+			}
+
+			.compiler-card .diagnostic {
+				margin-bottom: 24px;
+			}
+
+			.runtime-narrowing {
+				grid-template-columns: 0.65fr 1.35fr;
+				padding-top: 72px;
+				border-top: 1px solid var(--ink);
+			}
+
+			.oidc-section {
+				background: #dfe9ff;
+			}
+
+			.oidc-demo {
+				display: grid;
+				grid-template-columns: 1.1fr 0.9fr;
+				gap: 48px;
+				margin-top: 68px;
+				align-items: start;
+			}
+
+			.oidc-demo > .type-code {
+				box-shadow: -12px 12px 0 #7596e8;
+			}
+
+			.oidc-facts {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				border-top: 1px solid var(--ink);
+			}
+
+			.oidc-facts article {
+				padding: 22px 20px;
+				border-right: 1px solid var(--line);
+				border-bottom: 1px solid var(--line);
+			}
+
+			.oidc-facts article:nth-child(2n) {
+				border-right: 0;
+			}
+
+			.oidc-facts h3 {
+				margin: 0 0 9px;
+				font-size: 0.95rem;
+			}
+
+			.oidc-facts article p {
+				margin: 0;
+				color: #47515f;
+				font-size: 0.8rem;
+				line-height: 1.55;
+			}
+
+			.oidc-note {
+				grid-column: 1 / -1;
+				margin: 18px 0 0;
+				padding: 18px 20px;
+				border: 1px solid var(--ink);
+				background: var(--paper);
+				font-size: 0.83rem;
+				line-height: 1.6;
+			}
+
+			.identity-section {
+				background: var(--mint);
+			}
+
+			.identity-stage {
+				display: grid;
+				grid-template-columns: 1.05fr 0.95fr;
+				gap: 30px;
+				margin-top: 68px;
+			}
+
+			.provider-paths {
+				display: grid;
+				gap: 10px;
+			}
+
+			.provider-path {
+				display: grid;
+				grid-template-columns: 110px minmax(0, 1fr) 28px 76px;
+				gap: 12px;
+				align-items: center;
+				padding: 17px 18px;
+				border: 1px solid var(--ink);
+				background: var(--paper);
+			}
+
+			.provider-path strong {
+				font-size: 0.78rem;
+			}
+
+			.provider-path code {
+				font-family: var(--mono);
+				font-size: 0.66rem;
+				line-height: 1.35;
+				overflow-wrap: anywhere;
+			}
+
+			.provider-path .arrow {
+				color: var(--orange);
+				font-size: 1.2rem;
+				font-weight: 800;
+				text-align: center;
+			}
+
+			.provider-path .value-type {
+				padding: 5px 7px;
+				background: var(--paper-deep);
+				font-family: var(--mono);
+				font-size: 0.62rem;
+				font-weight: 700;
+				text-align: center;
+				text-transform: uppercase;
+			}
+
+			.identity-engine {
+				display: flex;
+				flex-direction: column;
+				padding: 28px;
+				border: 1px solid var(--ink);
+				background: var(--ink);
+				box-shadow: 12px 12px 0 var(--orange);
+				color: var(--paper);
+			}
+
+			.identity-engine .engine-label {
+				margin-bottom: 28px;
+				color: var(--lime);
+				font-family: var(--mono);
+				font-size: 0.68rem;
+				font-weight: 700;
+				letter-spacing: 0.07em;
+				text-transform: uppercase;
+			}
+
+			.engine-step {
+				display: grid;
+				grid-template-columns: 28px 1fr;
+				gap: 12px;
+				padding: 15px 0;
+				border-top: 1px solid rgba(244, 240, 230, 0.18);
+			}
+
+			.engine-step b {
+				color: var(--orange);
+				font-family: var(--mono);
+				font-size: 0.7rem;
+			}
+
+			.engine-step h3 {
+				margin: 0 0 6px;
+				font-size: 0.9rem;
+			}
+
+			.engine-step p {
+				margin: 0;
+				color: #b9bdb5;
+				font-size: 0.78rem;
+				line-height: 1.5;
+			}
+
+			.canonical-result {
+				margin-top: auto;
+				padding: 16px 18px;
+				border: 1px solid var(--lime);
+				background: rgba(203, 244, 60, 0.08);
+				font-family: var(--mono);
+				font-size: 0.75rem;
+				line-height: 1.6;
+			}
+
+			.canonical-result span {
+				color: var(--lime);
+			}
+
+			.identity-fields {
+				display: grid;
+				grid-template-columns: repeat(5, 1fr);
+				gap: 1px;
+				margin-top: 40px;
+				border: 1px solid var(--ink);
+				background: var(--ink);
+			}
+
+			.identity-caveat {
+				margin: 38px 0 0;
+				padding: 20px 24px;
+				border-left: 5px solid var(--orange);
+				background: rgba(244, 240, 230, 0.72);
+				font-size: 0.9rem;
+				line-height: 1.65;
+			}
+
+			.identity-field {
+				min-width: 0;
+				padding: 22px 18px;
+				background: var(--paper);
+			}
+
+			.identity-field code {
+				display: block;
+				margin-bottom: 10px;
+				color: #b23821;
+				font-family: var(--mono);
+				font-size: 0.68rem;
+				font-weight: 700;
+			}
+
+			.identity-field span {
+				color: var(--muted);
+				font-size: 0.78rem;
+				line-height: 1.45;
+			}
+
+			.extractor-payoff {
+				display: grid;
+				grid-template-columns: 0.8fr 1.2fr;
+				gap: 46px;
+				align-items: center;
+				margin-top: 54px;
+			}
+
+			.extractor-payoff h3 {
+				margin: 0;
+				font-family: var(--serif);
+				font-size: clamp(2rem, 4vw, 3.5rem);
+				font-weight: 400;
+				letter-spacing: -0.05em;
+				line-height: 1;
+			}
+
+			.extractor-payoff p {
+				margin: 0;
+				font-size: 1.05rem;
+				line-height: 1.7;
+			}
+
+			.custom {
+				background: var(--lime);
+			}
+
+			.custom .lede {
+				max-width: 820px;
+			}
+
+			.custom-code {
+				margin-top: 60px;
+				border: 1px solid var(--ink);
+				background: var(--paper);
+				box-shadow: 14px 14px 0 var(--ink);
+			}
+
+			.custom-code .window-bar {
+				border-bottom-color: var(--ink);
+				color: var(--muted);
+			}
+
+			.custom-code pre {
+				padding: 34px;
+				font-family: var(--mono);
+				font-size: clamp(0.7rem, 1.4vw, 0.86rem);
+				line-height: 1.75;
+			}
+
+			.custom-code .token-keyword {
+				color: #a92d17;
+			}
+
+			.custom-code .token-function {
+				color: #275e4c;
+			}
+
+			.custom-code .token-string {
+				color: #4e5f16;
+			}
+
+			.custom-code .token-comment {
+				color: #777b72;
+			}
+
+			.custom-proof {
+				display: grid;
+				grid-template-columns: 0.72fr 1.28fr;
+				gap: 54px;
+				margin-top: 76px;
+				padding-top: 64px;
+				border-top: 1px solid var(--ink);
+				align-items: start;
+			}
+
+			.custom-proof-copy .custom-limit {
+				margin-top: 24px;
+				padding: 18px 20px;
+				border: 1px solid var(--ink);
+				background: rgba(244, 240, 230, 0.65);
+				color: var(--ink);
+				font-size: 0.85rem;
+			}
+
+			.custom-errors {
+				display: grid;
+				gap: 14px;
+			}
+
+			.history {
+				background: var(--paper-deep);
+			}
+
+			.history-timeline {
+				position: relative;
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 0;
+				margin-top: 72px;
+				border-top: 1px solid var(--ink);
+			}
+
+			.history-event {
+				position: relative;
+				padding: 34px 28px 28px 0;
+			}
+
+			.history-event::before {
+				position: absolute;
+				top: -8px;
+				left: 0;
+				width: 13px;
+				height: 13px;
+				border: 1px solid var(--ink);
+				border-radius: 50%;
+				background: var(--orange);
+				content: '';
+			}
+
+			.history-event:not(:last-child) {
+				border-right: 1px solid var(--line);
+			}
+
+			.history-event:not(:first-child) {
+				padding-left: 28px;
+			}
+
+			.history-event:not(:first-child)::before {
+				left: 28px;
+			}
+
+			.history-date {
+				display: block;
+				margin-bottom: 34px;
+				color: var(--muted);
+				font-family: var(--mono);
+				font-size: 0.68rem;
+				font-weight: 700;
+				letter-spacing: 0.07em;
+				text-transform: uppercase;
+			}
+
+			.history-event h3 {
+				margin: 0 0 14px;
+				font-family: var(--serif);
+				font-size: 1.55rem;
+				font-weight: 400;
+				letter-spacing: -0.04em;
+				line-height: 1.05;
+			}
+
+			.history-event p {
+				margin: 0;
+				color: #4e534c;
+				font-size: 0.9rem;
+				line-height: 1.6;
+			}
+
+			.history-event p + p {
+				margin-top: 16px;
+			}
+
+			.history-event a {
+				text-underline-offset: 3px;
+			}
+
+			.history-today {
+				margin-top: 48px;
+				padding: 28px 32px;
+				border: 1px solid var(--ink);
+				background: var(--lime);
+				font-family: var(--serif);
+				font-size: clamp(1.45rem, 2.8vw, 2.25rem);
+				letter-spacing: -0.035em;
+				line-height: 1.3;
+				text-align: center;
+			}
+
+			.verdict {
+				background: var(--ink);
+				color: var(--paper);
+				text-align: center;
+			}
+
+			.verdict .section-inner {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.verdict .section-label {
+				color: var(--orange);
+			}
+
+			.verdict h2 {
+				max-width: 900px;
+			}
+
+			.verdict p {
+				max-width: 750px;
+				margin: 36px auto 0;
+				color: #c9cbc5;
+				font-size: 1.15rem;
+				line-height: 1.7;
+			}
+
+			.cta-row {
+				display: flex;
+				gap: 14px;
+				justify-content: center;
+				margin-top: 44px;
+			}
+
+			.install-command {
+				display: flex;
+				align-items: stretch;
+				min-width: 280px;
+				min-height: 50px;
+				border: 1px solid rgba(244, 240, 230, 0.5);
+				background: #0e100e;
+				text-align: left;
+			}
+
+			.install-command code {
+				display: flex;
+				flex: 1;
+				gap: 10px;
+				align-items: center;
+				padding: 0 16px;
+				font-family: var(--mono);
+				font-size: 0.78rem;
+			}
+
+			.command-prompt {
+				color: var(--lime);
+				user-select: none;
+			}
+
+			.copy-command {
+				display: inline-flex;
+				gap: 7px;
+				align-items: center;
+				justify-content: center;
+				min-width: 88px;
+				padding: 0 13px;
+				border: 0;
+				border-left: 1px solid rgba(244, 240, 230, 0.25);
+				background: transparent;
+				color: #bfc3ba;
+				cursor: pointer;
+				font-family: var(--mono);
+				font-size: 0.66rem;
+				font-weight: 700;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+			}
+
+			.copy-command:hover {
+				background: rgba(244, 240, 230, 0.08);
+				color: var(--paper);
+			}
+
+			.copy-command.copied {
+				background: var(--lime);
+				color: var(--ink);
+			}
+
+			.copy-command svg {
+				width: 15px;
+				height: 15px;
+				fill: none;
+				stroke: currentColor;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+				stroke-width: 1.7;
+			}
+
+			.button {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				min-height: 50px;
+				padding: 0 20px;
+				border: 1px solid var(--paper);
+				font-family: var(--mono);
+				font-size: 0.72rem;
+				font-weight: 800;
+				letter-spacing: 0.04em;
+				text-decoration: none;
+				text-transform: uppercase;
+			}
+
+			.sources {
+				padding: 46px 20px;
+				border-top: 1px solid rgba(244, 240, 230, 0.15);
+				background: var(--ink);
+				color: #8f948b;
+			}
+
+			.sources-inner {
+				display: grid;
+				grid-template-columns: 140px 1fr;
+				gap: 30px;
+				width: min(100%, 1120px);
+				margin: 0 auto;
+			}
+
+			.sources h2 {
+				font-family: var(--mono);
+				font-size: 0.7rem;
+				font-weight: 700;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+
+			.sources ol {
+				display: grid;
+				gap: 10px;
+				margin: 0;
+				padding-left: 20px;
+				font-family: var(--mono);
+				font-size: 0.72rem;
+				line-height: 1.55;
+			}
+
+			.sources a {
+				color: #c4c8bf;
+				text-underline-offset: 3px;
+			}
+
+			.site-footer {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 24px max(20px, calc((100% - 1120px) / 2));
+				background: var(--ink);
+				color: var(--paper);
+				font-family: var(--mono);
+				font-size: 0.68rem;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+			}
+
+			.site-footer span:last-child {
+				color: var(--lime);
+			}
+
+			@media (max-width: 900px) {
+				.hero {
+					padding-top: 36px;
+				}
+
+				.hero-inner,
+				.exchange,
+				.request-map,
+				.type-grid,
+				.definition-demo,
+				.constructor-proof,
+				.runtime-narrowing,
+				.oidc-demo,
+				.custom-proof {
+					grid-template-columns: 1fr;
+				}
+
+				.hero-inner {
+					gap: 58px;
+				}
+
+				.code-window {
+					max-width: 640px;
+				}
+
+				.request-explanation {
+					position: static;
+				}
+
+				.quirk-ledger {
+					grid-template-columns: 1fr 1fr;
+				}
+
+				.quirk-intro {
+					grid-column: 1 / -1;
+					grid-row: auto;
+				}
+
+				.daily-tools {
+					grid-template-columns: 1fr 1fr;
+				}
+
+				.daily-tools-intro {
+					grid-column: 1 / -1;
+					grid-row: auto;
+				}
+			}
+
+			@media (max-width: 620px) {
+				.article-meta {
+					align-items: flex-start;
+				}
+
+				.article-meta-actions {
+					align-items: flex-end;
+					flex-direction: column;
+					gap: 10px;
+				}
+
+				.article-details {
+					text-align: right;
+				}
+
+				.article-toc {
+					gap: 10px 16px;
+				}
+
+				.article-toc span {
+					width: 100%;
+					margin: 0;
+				}
+
+				h1 {
+					font-size: clamp(3.55rem, 18vw, 6rem);
+				}
+
+				.hero,
+				.section {
+					padding-right: 14px;
+					padding-left: 14px;
+				}
+
+				.section {
+					padding-top: 78px;
+					padding-bottom: 78px;
+				}
+
+				.stats {
+					grid-template-columns: 1fr;
+					width: calc(100% - 28px);
+				}
+
+				.stat {
+					border-right: 0;
+					border-bottom: 1px solid var(--ink);
+				}
+
+				.stat:last-child {
+					border-bottom: 0;
+				}
+
+				.quirk-ledger,
+				.oidc-facts,
+				.daily-tools {
+					grid-template-columns: 1fr;
+				}
+
+				.identity-stage,
+				.extractor-payoff {
+					grid-template-columns: 1fr;
+				}
+
+				.identity-fields {
+					grid-template-columns: 1fr 1fr;
+				}
+
+				.history-timeline {
+					grid-template-columns: 1fr;
+					border-top: 0;
+					border-left: 1px solid var(--ink);
+				}
+
+				.history-event,
+				.history-event:not(:first-child) {
+					padding: 0 0 38px 28px;
+					border-right: 0;
+				}
+
+				.history-event::before,
+				.history-event:not(:first-child)::before {
+					top: 0;
+					left: -7px;
+				}
+
+				.history-date {
+					margin-bottom: 14px;
+				}
+
+				.quirk-intro {
+					grid-column: auto;
+				}
+
+				.daily-tools-intro {
+					grid-column: auto;
+				}
+
+				.oidc-facts article {
+					border-right: 0;
+				}
+
+				.quote-card,
+				.validation-band {
+					padding: 30px 24px;
+				}
+
+				.request-row {
+					grid-template-columns: 1fr;
+				}
+
+				.request-row dt {
+					padding-bottom: 8px;
+					border-right: 0;
+				}
+
+				.request-row dd {
+					padding-top: 6px;
+				}
+
+				.custom-code pre,
+				.type-code pre {
+					padding: 22px 18px;
+					font-size: 0.68rem;
+				}
+
+				.diagnostic {
+					margin: 0 18px 22px;
+				}
+
+				.constructor-proof,
+				.runtime-narrowing,
+				.custom-proof {
+					gap: 34px;
+				}
+
+				.provider-path {
+					grid-template-columns: 96px minmax(0, 1fr) 60px;
+					gap: 7px;
+					padding: 14px 10px;
+				}
+
+				.provider-path .arrow {
+					display: none;
+				}
+
+				.provider-path code {
+					font-size: 0.6rem;
+				}
+
+				.provider-path .value-type {
+					font-size: 0.54rem;
+				}
+
+				.identity-engine {
+					padding: 22px 20px;
+				}
+
+				.identity-field:last-child {
+					grid-column: 1 / -1;
+				}
+
+				.cta-row {
+					flex-direction: column;
+					width: 100%;
+				}
+
+				.install-command {
+					width: 100%;
+				}
+
+				.sources-inner {
+					grid-template-columns: 1fr;
+				}
+
+				.site-footer {
+					align-items: flex-start;
+					flex-direction: column;
+					gap: 10px;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				html {
+					scroll-behavior: auto;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="reading-progress" aria-hidden="true"></div>
+		<main>
+			<section class="hero" aria-labelledby="page-title">
+				<div class="article-meta">
+					<div class="author-lockup">
+						<img
+							class="absolute-logo"
+							src="assets/absolutejs-logo.png"
+							alt="AbsoluteJS"
+						/>
+						<div>
+							<strong>AbsoluteJS</strong>
+							<span>Citra engineering</span>
+						</div>
+					</div>
+					<div class="article-meta-actions">
+						<span class="article-details">Essay · 9 min read</span>
+						<a
+							class="source-link"
+							href="https://github.com/absolutejs/citra"
+							target="_blank"
+							rel="noreferrer"
+							>View source ↗</a
+						>
+					</div>
+				</div>
+
+				<div class="hero-inner">
+					<div>
+						<p class="eyebrow">The OAuth layer we wanted</p>
+						<h1 id="page-title">
+							OAuth providers disagree. Our app
+							<em>doesn’t have to.</em>
+						</h1>
+						<p class="hero-summary">
+							We built Citra because one auth layer should be able
+							to use GitHub, Withings, Slack, or an enterprise
+							OIDC issuer without hiding how any of them works.
+							Provider behavior lives in
+							<strong>typed data</strong>
+							instead of another client class.
+						</p>
+					</div>
+					<div class="code-window" aria-label="Citra usage example">
+						<div class="window-bar">
+							<span class="dots" aria-hidden="true"
+								><i></i><i></i><i></i
+							></span>
+							<span>oauth.ts</span>
+						</div>
+						<pre><code><span class="token-keyword">const</span> client = <span class="token-keyword">await</span> <span class="token-function">createOAuth2Client</span>(
+  <span class="token-string">'withings'</span>,
+  {
+    clientId,
+    clientSecret,
+    redirectUri
+  }
+);
+
+<span class="token-keyword">await</span> client.<span class="token-function">createAuthorizationUrl</span>({
+  state,
+  scope: [<span class="token-string">'user.metrics'</span>],
+  <span class="token-comment">// scope is required and comma-encoded</span>
+});
+
+<span class="token-comment">// refreshAccessToken exists here.</span>
+<span class="token-comment">// codeVerifier is optional because Withings does not declare PKCE.</span></code></pre>
+					</div>
+				</div>
+				<nav class="article-toc" aria-label="In this article">
+					<span>In this article</span>
+					<a href="#argument">The disagreement</a>
+					<a href="#model">The model</a>
+					<a href="#withings">The hard case</a>
+					<a href="#types">Type safety</a>
+					<a href="#oidc">OIDC discovery</a>
+					<a href="#identity">Identity mapping</a>
+					<a href="#custom">Custom providers</a>
+					<a href="#history">Where Citra came from</a>
+				</nav>
+				<div class="stats" aria-label="Citra at a glance">
+					<div class="stat">
+						<strong>78</strong>
+						<span>Built-in provider configurations</span>
+					</div>
+					<div class="stat">
+						<strong>1</strong>
+						<span>Shared implementation</span>
+					</div>
+					<div class="stat">
+						<strong>0</strong>
+						<span>Provider client classes</span>
+					</div>
+				</div>
+			</section>
+
+			<article>
+				<section class="section argument" id="argument">
+					<div class="section-inner">
+						<p class="section-label">The design disagreement</p>
+						<h2>
+							OAuth providers share a protocol, but their clients
+							need different contracts.
+						</h2>
+						<p class="lede">
+							Arctic kept each provider client independent. We
+							needed clients that could move through one auth
+							layer without erasing their differences.
+						</p>
+
+						<div class="exchange">
+							<figure class="quote-card">
+								<blockquote>
+									“The clients aren’t designed to be passed
+									around.”
+								</blockquote>
+								<footer>
+									Pilcrow, responding in
+									<a
+										href="https://github.com/pilcrowonpaper/arctic/issues/299"
+										target="_blank"
+										rel="noreferrer"
+										>Arctic issue #299</a
+									>
+								</footer>
+							</figure>
+							<div class="counterpoint">
+								<h3>
+									A library can make that choice. The protocol
+									does not require it.
+								</h3>
+								<p>
+									Arctic optimized each provider client
+									independently. Each class stayed flexible,
+									and the clients became intentionally
+									non-interchangeable. Frameworks, adapters,
+									and multi-provider products had to add
+									wrappers, dynamic checks, and repeated
+									orchestration.
+								</p>
+								<p class="thesis">
+									In Citra, provider metadata controls runtime
+									behavior and the client type.
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section class="section" id="model">
+					<div class="section-inner">
+						<p class="section-label">Provider definitions</p>
+						<h2>One definition drives the request and its type.</h2>
+						<p class="lede">
+							A provider definition is executable configuration.
+							The request engine reads it at runtime. Capability
+							types read the literal flags at compile time.
+						</p>
+
+						<div class="definition-demo">
+							<div
+								class="type-code definition-code"
+								aria-label="Annotated provider definition"
+							>
+								<div class="window-bar">
+									<span class="dots" aria-hidden="true"
+										><i></i><i></i><i></i
+									></span>
+									<span>providers.ts</span>
+								</div>
+								<pre><code>withings: {
+  <span class="token-comment">// changes the returned client type</span>
+  isRefreshable: <span class="token-keyword">true</span>,
+  scopeRequired: <span class="token-keyword">true</span>,
+
+  <span class="token-comment">// changes authorization URL construction</span>
+  scopeDelimiter: <span class="token-string">','</span>,
+
+  <span class="token-comment">// normalizes a nonstandard response</span>
+  accessTokenPath: [<span class="token-string">'body'</span>, <span class="token-string">'access_token'</span>],
+
+  tokenRequest: {
+    authIn: <span class="token-string">'body'</span>,
+    encoding: <span class="token-string">'application/x-www-form-urlencoded'</span>,
+    url: <span class="token-string">'https://wbsapi.withings.net/v2/oauth2'</span>
+  },
+
+  subject: [<span class="token-string">'userid'</span>],
+  subjectType: <span class="token-string">'string'</span>
+}</code></pre>
+							</div>
+							<div class="definition-copy">
+								<h3><code>isRefreshable: true</code></h3>
+								<p>
+									The shared implementation can refresh a
+									token, and
+									<code>refreshAccessToken()</code> appears on
+									the returned TypeScript type.
+								</p>
+								<h3><code>scopeRequired: true</code></h3>
+								<p>
+									<code>createAuthorizationUrl()</code> will
+									not compile without a non-empty scope array.
+								</p>
+								<h3>
+									<code>authIn</code> and
+									<code>encoding</code>
+								</h3>
+								<p>
+									The request engine knows where credentials
+									belong and how the endpoint expects its
+									payload. No Withings branch is needed in the
+									engine.
+								</p>
+								<h3>
+									Built-in credentials are mapped separately
+								</h3>
+								<p>
+									<code>CredentialsFor&lt;P&gt;</code> maps
+									the provider name to its constructor type.
+									That is how Entra requires
+									<code>tenantId</code> and Intuit limits its
+									environment.
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section class="section withings" id="withings">
+					<div class="section-inner">
+						<p class="section-label">
+							Provider behavior in practice
+						</p>
+						<h2>
+							Withings puts five oddities into one OAuth flow.
+						</h2>
+						<p class="lede">
+							Withings combines unusual scope encoding, nested
+							token data, signed request bodies, action fields,
+							and a shared endpoint. Citra handles all of it
+							without a dedicated client class.
+						</p>
+
+						<div class="request-map">
+							<div class="request-explanation">
+								<span class="mini-kicker"
+									>Where the differences live</span
+								>
+								<p>
+									The application still calls the same
+									authorization, token, profile, refresh, and
+									revocation operations. The provider config
+									owns the wire-level differences.
+								</p>
+								<p>
+									The abstraction gives every provider
+									difference a fixed place to live. It never
+									depends on providers behaving alike.
+								</p>
+							</div>
+
+							<dl class="request-stack">
+								<div class="request-row">
+									<dt>Scopes</dt>
+									<dd>
+										<strong>scopeDelimiter: ','</strong>
+									</dd>
+								</div>
+								<div class="request-row">
+									<dt>Token path</dt>
+									<dd>
+										<strong
+											>['body', 'access_token']</strong
+										>
+									</dd>
+								</div>
+								<div class="request-row">
+									<dt>Exchange</dt>
+									<dd>
+										action=<strong>requesttoken</strong>
+									</dd>
+								</div>
+								<div class="request-row">
+									<dt>Profile</dt>
+									<dd>
+										POST + nonce + HMAC signature +
+										client_id
+									</dd>
+								</div>
+								<div class="request-row">
+									<dt>Revoke</dt>
+									<dd>
+										POST + action=<strong>revoke</strong> +
+										signed body
+									</dd>
+								</div>
+								<div class="request-row">
+									<dt>App API</dt>
+									<dd>
+										createAuthorizationUrl ·
+										validateAuthorizationCode ·
+										fetchUserProfile
+									</dd>
+								</div>
+							</dl>
+						</div>
+
+						<div class="quirk-ledger">
+							<div class="quirk-intro">
+								<span class="mini-kicker"
+									>The same request model</span
+								>
+								<h3>
+									We added these extension points because
+									providers needed them.
+								</h3>
+							</div>
+							<article>
+								<strong>HubSpot</strong>
+								<code>profileRequest.authIn: 'path'</code>
+								<p>
+									The access token becomes the final URL path
+									segment instead of a Bearer header.
+								</p>
+							</article>
+							<article>
+								<strong>Slack user OAuth</strong>
+								<code>scopeParamName + accessTokenPath</code>
+								<p>
+									Scopes use <code>user_scope</code>, and the
+									token arrives at
+									<code>authed_user.access_token</code>.
+								</p>
+							</article>
+							<article>
+								<strong>AniList</strong>
+								<code>POST · application/json · GraphQL</code>
+								<p>
+									Fetching identity means sending a GraphQL
+									query rather than calling a normal UserInfo
+									endpoint.
+								</p>
+							</article>
+							<article>
+								<strong>GoHighLevel</strong>
+								<code>subjectBySource.tokenResponse</code>
+								<p>
+									The connected account ID comes from the
+									token response, and profile requests require
+									a version header.
+								</p>
+							</article>
+							<article>
+								<strong>Intuit</strong>
+								<code>environment + computed headers</code>
+								<p>
+									Sandbox and production use different
+									UserInfo URLs. Revocation builds its own
+									Basic Auth header.
+								</p>
+							</article>
+							<article>
+								<strong>Apple</strong>
+								<code
+									>createClientSecret + idToken subject</code
+								>
+								<p>
+									Token requests receive a freshly signed
+									ES256 client-secret JWT. Authorization uses
+									<code>form_post</code>, revocation reuses a
+									fresh assertion, and identity is mapped from
+									the ID token because there is no UserInfo
+									endpoint.
+								</p>
+							</article>
+						</div>
+
+						<div class="daily-tools">
+							<div class="daily-tools-intro">
+								<p class="section-label">
+									Useful in every callback
+								</p>
+								<h3>Small pieces we should not rewrite.</h3>
+							</div>
+							<article>
+								<code>generateState()</code>
+								<code>generateCodeVerifier()</code>
+								<p>
+									Both use
+									<code>crypto.getRandomValues()</code> and
+									return URL-safe values.
+								</p>
+							</article>
+							<article>
+								<strong>Provider errors with context</strong>
+								<p>
+									Failed requests include HTTP status, URL,
+									and the parsed JSON or text response when
+									the provider sends one.
+								</p>
+							</article>
+							<article>
+								<strong>Authorization escape hatch</strong>
+								<p>
+									Pass extra <code>searchParams</code> without
+									forking a provider definition for one query
+									parameter.
+								</p>
+							</article>
+							<article>
+								<strong>Zero runtime dependencies</strong>
+								<p>
+									URL handling, PKCE, JWT signatures, and OIDC
+									verification use platform APIs.
+								</p>
+							</article>
+						</div>
+					</div>
+				</section>
+
+				<section class="section type-section" id="types">
+					<div class="section-inner">
+						<p class="section-label">TypeScript</p>
+						<h2>Selecting a provider changes the interface.</h2>
+						<p class="lede">
+							Conditional types read the selected provider’s
+							literal configuration and add its required arguments
+							and supported methods.
+						</p>
+
+						<div class="type-grid">
+							<div class="type-notes">
+								<section class="type-note">
+									<b>PKCE</b>
+									<div>
+										<h3>
+											Required inputs are really required
+										</h3>
+										<p>
+											A PKCE provider requires
+											<code>codeVerifier</code>. A
+											scope-required provider requires a
+											non-empty array.
+										</p>
+									</div>
+								</section>
+								<section class="type-note">
+									<b>API</b>
+									<div>
+										<h3>Unsupported methods disappear</h3>
+										<p>
+											If no revocation request is
+											declared, the client type does not
+											expose <code>revokeToken</code>.
+										</p>
+									</div>
+								</section>
+								<section class="type-note">
+									<b>OIDC</b>
+									<div>
+										<h3>OIDC is not assumed</h3>
+										<p>
+											<code>id_token</code> is optional in
+											the token response. Even an
+											OIDC-capable provider may omit it
+											when the flow did not request OpenID
+											Connect.
+										</p>
+									</div>
+								</section>
+								<section class="type-note">
+									<b>HTTP</b>
+									<div>
+										<h3>Runtime checks remain</h3>
+										<p>
+											Provider servers can still lie.
+											Citra rejects OAuth error objects
+											returned with HTTP 200 and responses
+											missing an access token.
+										</p>
+									</div>
+								</section>
+							</div>
+
+							<div
+								class="type-code"
+								aria-label="TypeScript error examples"
+							>
+								<div class="window-bar">
+									<span class="dots" aria-hidden="true"
+										><i></i><i></i><i></i
+									></span>
+									<span>the compiler is part of the API</span>
+								</div>
+								<div class="code-case">
+									<pre><code><span class="token-keyword">const</span> google = <span class="token-keyword">await</span> <span class="token-function">createOAuth2Client</span>(
+  <span class="token-string">'google'</span>,
+  credentials
+);
+
+google.<span class="token-function">createAuthorizationUrl</span>(<span class="error-target">{
+  state,
+  scope: [<span class="token-string">'openid'</span>]
+}</span>);</code></pre>
+									<div class="diagnostic">
+										<strong>Type error · TS2345</strong>
+										<p>
+											Property 'codeVerifier' is missing
+											in type '{ state: string; scope:
+											[string]; }' but required in type '{
+											codeVerifier: string; }'.
+										</p>
+									</div>
+								</div>
+
+								<div class="code-case">
+									<pre><code><span class="token-keyword">const</span> facebook = <span class="token-keyword">await</span> <span class="token-function">createOAuth2Client</span>(
+  <span class="token-string">'facebook'</span>,
+  credentials
+);
+
+facebook.<span class="error-target">revokeToken</span>(token);</code></pre>
+									<div class="diagnostic">
+										<strong>Type error · TS2339</strong>
+										<p>
+											Property 'revokeToken' does not
+											exist on type
+											'BaseOAuth2Client&lt;"facebook"&gt;'.
+										</p>
+									</div>
+								</div>
+
+								<div class="code-case">
+									<pre><code><span class="token-keyword">const</span> tokens =
+  <span class="token-keyword">await</span> facebook.<span class="token-function">validateAuthorizationCode</span>({
+    code,
+    codeVerifier
+  });
+
+tokens.id_token?.toString();
+<span class="token-comment">// optional because a token exchange may omit it</span></code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="validation-band">
+							<h3>What Citra checks at the token boundary</h3>
+							<p>
+								Code exchange, refresh, and discovered OIDC
+								token responses must be objects with a non-empty
+								<code>access_token</code>. Citra also rejects a
+								string <code>error</code> field, including the
+								HTTP 200 error responses GitHub is known to
+								return. This is a minimum OAuth check, not full
+								validation of every provider-specific field.
+								Cryptographic ID-token verification belongs to
+								the standalone OIDC client in the next section.
+							</p>
+						</div>
+
+						<div class="constructor-proof">
+							<div class="constructor-intro">
+								<p class="section-label">
+									Before the first request
+								</p>
+								<h3>
+									Provider-specific credentials fail at
+									compile time.
+								</h3>
+								<p>
+									Built-in credential types are maintained in
+									<code>CredentialsMap</code>. The provider
+									name selects the matching constructor type.
+								</p>
+							</div>
+							<div class="constructor-errors">
+								<div class="compiler-card">
+									<pre><code><span class="token-function">createOAuth2Client</span>(<span class="token-string">'microsoftentraid'</span>, {
+  clientId,
+  clientSecret,
+  redirectUri
+});</code></pre>
+									<div class="diagnostic">
+										<strong>Type error · TS2345</strong>
+										<p>
+											Property 'tenantId' is missing in
+											type '{ clientId: string;
+											clientSecret: string; redirectUri:
+											string; }' but required in type
+											'MicrosoftEntraIdOAuth2Credentials'.
+										</p>
+									</div>
+								</div>
+								<div class="compiler-card">
+									<pre><code><span class="token-function">createOAuth2Client</span>(<span class="token-string">'intuit'</span>, {
+  clientId,
+  clientSecret,
+  redirectUri,
+  environment: <span class="error-target"><span class="token-string">'staging'</span></span>
+});</code></pre>
+									<div class="diagnostic">
+										<strong>Type error · TS2322</strong>
+										<p>
+											Type '"staging"' is not assignable
+											to type '"production" | "sandbox"'.
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="runtime-narrowing">
+							<div>
+								<p class="section-label">
+									Providers chosen at runtime
+								</p>
+								<h3>
+									Generic code can narrow a client without
+									classes.
+								</h3>
+								<p>
+									A route parameter or database value is not a
+									string literal. Citra exports provider-name
+									guards, capability lists, and client guards
+									for that case.
+								</p>
+							</div>
+							<div class="type-code">
+								<div class="window-bar">
+									<span class="dots" aria-hidden="true"
+										><i></i><i></i><i></i
+									></span>
+									<span>disconnect-provider.ts</span>
+								</div>
+								<pre><code><span class="token-keyword">function</span> <span class="token-function">revokeIfSupported</span>&lt;P <span class="token-keyword">extends</span> ProviderOption&gt;(
+  provider: P,
+  client: BaseOAuth2Client&lt;P&gt;,
+  token: string
+) {
+  <span class="token-keyword">if</span> (<span class="token-function">isRevocableOAuth2Client</span>(provider, client)) {
+    <span class="token-keyword">return</span> client.<span class="token-function">revokeToken</span>(token);
+  }
+}
+
+<span class="token-comment">// no instanceof, class hierarchy, or unsafe cast</span></code></pre>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section class="section oidc-section" id="oidc">
+					<div class="section-inner">
+						<p class="section-label">OIDC discovery</p>
+						<h2>The provider catalog is optional for OIDC.</h2>
+						<p class="lede">
+							For issuers that support authorization code flow
+							with PKCE and <code>client_secret_post</code>, Citra
+							can discover the endpoints at runtime and verify the
+							resulting ID token with WebCrypto.
+						</p>
+
+						<div class="oidc-demo">
+							<div class="type-code">
+								<div class="window-bar">
+									<span class="dots" aria-hidden="true"
+										><i></i><i></i><i></i
+									></span>
+									<span>enterprise-oidc.ts</span>
+								</div>
+								<pre><code><span class="token-keyword">const</span> oidc = <span class="token-keyword">await</span> <span class="token-function">createOIDCClient</span>({
+  issuer: <span class="token-string">'https://login.example.com'</span>,
+  clientId,
+  clientSecret,
+  redirectUri
+});
+
+<span class="token-keyword">const</span> authorizationUrl =
+  <span class="token-keyword">await</span> oidc.<span class="token-function">createAuthorizationUrl</span>({
+    codeVerifier,
+    nonce,
+    state
+  });
+
+<span class="token-keyword">const</span> tokens =
+  <span class="token-keyword">await</span> oidc.<span class="token-function">validateAuthorizationCode</span>({
+    code,
+    codeVerifier
+  });
+
+<span class="token-keyword">if</span> (!tokens.id_token) {
+  <span class="token-keyword">throw new</span> Error(<span class="token-string">'Missing id_token'</span>);
+}
+
+<span class="token-keyword">const</span> claims =
+  <span class="token-keyword">await</span> oidc.<span class="token-function">verifyIdToken</span>(
+    tokens.id_token,
+    { nonce }
+  );</code></pre>
+							</div>
+
+							<div class="oidc-facts">
+								<article>
+									<h3>Discovery</h3>
+									<p>
+										Reads the authorization, token, JWKS,
+										and optional UserInfo endpoints from
+										<code
+											>/.well-known/openid-configuration</code
+										>. The returned issuer must match the
+										one we configured.
+									</p>
+								</article>
+								<article>
+									<h3>PKCE by construction</h3>
+									<p>
+										Authorization and code exchange require
+										a verifier. S256 is built in, and
+										default scopes are
+										<code>openid email profile</code>.
+									</p>
+								</article>
+								<article>
+									<h3>Signature and claim checks</h3>
+									<p>
+										Supports RS256 and ES256, then checks
+										issuer, audience, expiration, subject,
+										and an optional nonce.
+									</p>
+								</article>
+								<article>
+									<h3>JWKS caching and rotation</h3>
+									<p>
+										Signing keys are cached. Once the cache
+										is at least 60 seconds old, a failed
+										verification triggers one JWKS refresh
+										and retry.
+									</p>
+								</article>
+								<p class="oidc-note">
+									This verification path belongs to
+									<code>createOIDCClient()</code>. Selecting
+									an OIDC provider from the catalog does not
+									automatically verify its ID token.
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section class="section identity-section" id="identity">
+					<div class="section-inner">
+						<p class="section-label">
+							Identity mappings and helpers
+						</p>
+						<h2>We map the fields our auth layer needs.</h2>
+						<p class="lede">
+							A successful token exchange still leaves us parsing
+							a different identity response for every provider.
+							GitHub gives us <code>profile.id</code>. Etsy nests
+							the ID under <code>results[0]</code>. GoHighLevel
+							puts it in the token response. We record those paths
+							in the provider definition.
+						</p>
+
+						<div class="identity-stage">
+							<div class="provider-paths">
+								<div class="provider-path">
+									<strong>GitHub</strong>
+									<code>profile.id</code>
+									<span class="arrow">→</span>
+									<span class="value-type">number</span>
+								</div>
+								<div class="provider-path">
+									<strong>Etsy</strong>
+									<code>profile.results[0].user_id</code>
+									<span class="arrow">→</span>
+									<span class="value-type">number</span>
+								</div>
+								<div class="provider-path">
+									<strong>Tiltify</strong>
+									<code>profile.data.id</code>
+									<span class="arrow">→</span>
+									<span class="value-type">string</span>
+								</div>
+								<div class="provider-path">
+									<strong>Tumblr</strong>
+									<code>profile.response.user.name</code>
+									<span class="arrow">→</span>
+									<span class="value-type">string</span>
+								</div>
+								<div class="provider-path">
+									<strong>Facebook</strong>
+									<code>profile.id · id_token.sub</code>
+									<span class="arrow">→</span>
+									<span class="value-type">string</span>
+								</div>
+								<div class="provider-path">
+									<strong>GoHighLevel</strong>
+									<code>tokenResponse.locationId</code>
+									<span class="arrow">→</span>
+									<span class="value-type">string</span>
+								</div>
+							</div>
+
+							<div class="identity-engine">
+								<span class="engine-label"
+									>What Citra exports</span
+								>
+								<div class="engine-step">
+									<b>PATH</b>
+									<div>
+										<h3><code>subject</code></h3>
+										<p>
+											The canonical nested path and its
+											expected primitive type live in the
+											provider definition.
+										</p>
+									</div>
+								</div>
+								<div class="engine-step">
+									<b>SOURCE</b>
+									<div>
+										<h3><code>subjectBySource</code></h3>
+										<p>
+											A provider can declare different
+											paths for a profile, ID token, or
+											token response.
+										</p>
+									</div>
+								</div>
+								<div class="engine-step">
+									<b>READ</b>
+									<div>
+										<h3>
+											<code
+												>extractPropFromIdentity()</code
+											>
+										</h3>
+										<p>
+											Walks the nested path and can reject
+											a value with the wrong string,
+											number, boolean, or object type.
+										</p>
+									</div>
+								</div>
+								<div class="engine-step">
+									<b>MOVE</b>
+									<div>
+										<h3>
+											<code
+												>normalizeProviderIdentity()</code
+											>
+										</h3>
+										<p>
+											Copies a source-specific subject to
+											the provider’s canonical subject
+											path.
+										</p>
+									</div>
+								</div>
+								<div class="canonical-result">
+									<span>application reads</span><br />
+									extractPropFromIdentity(<br />
+									&nbsp;&nbsp;identity,<br />
+									&nbsp;&nbsp;provider.subject,<br />
+									&nbsp;&nbsp;provider.subjectType<br />
+									)
+								</div>
+							</div>
+						</div>
+
+						<p class="identity-caveat">
+							These are metadata and helper functions, not an
+							automatic unified-profile method. Our auth layer
+							chooses whether it is handling a profile, verified
+							ID token, or token response, then calls the helper
+							with that source.
+						</p>
+
+						<div
+							class="identity-fields"
+							aria-label="Mapped identity fields"
+						>
+							<div class="identity-field">
+								<code>subject</code>
+								<span
+									>Stable provider identity with an expected
+									string or number type.</span
+								>
+							</div>
+							<div class="identity-field">
+								<code>email</code>
+								<span
+									>Mapped whether it lives at
+									<code>email</code> or deeper.</span
+								>
+							</div>
+							<div class="identity-field">
+								<code>fullName</code>
+								<span
+									>A provider’s display-name field, declared
+									once.</span
+								>
+							</div>
+							<div class="identity-field">
+								<code>givenName / familyName</code>
+								<span
+									>Separate name parts when the provider
+									exposes them.</span
+								>
+							</div>
+							<div class="identity-field">
+								<code>picture</code>
+								<span
+									>Even nested avatar paths become provider
+									metadata.</span
+								>
+							</div>
+						</div>
+
+						<div class="extractor-payoff">
+							<h3>
+								Our auth layer does not need provider parsing
+								branches.
+							</h3>
+							<p>
+								This is the part we care about most. We do not
+								keep a GitHub branch, an Etsy branch, and a
+								GoHighLevel branch in our auth layer. Generic
+								code reads the provider mapping and runs the
+								same extractor. When we add a provider, we map
+								its response once.
+							</p>
+						</div>
+					</div>
+				</section>
+
+				<section class="section custom" id="custom">
+					<div class="section-inner">
+						<p class="section-label">Bring your own provider</p>
+						<h2>Custom providers keep the capability inference.</h2>
+						<p class="lede">
+							We do not need to wait for a catalog release to
+							integrate a private server or a provider Citra has
+							not seen. A literal definition controls the same
+							request engine. Its flags determine which operations
+							exist on both the inferred type and the runtime
+							object.
+						</p>
+
+						<div
+							class="custom-code"
+							aria-label="Custom provider example"
+						>
+							<div class="window-bar">
+								<span class="dots" aria-hidden="true"
+									><i></i><i></i><i></i
+								></span>
+								<span>acme-provider.ts</span>
+							</div>
+							<pre><code><span class="token-keyword">const</span> acme = <span class="token-function">defineProvider</span>({
+  authorizationUrl: <span class="token-string">'https://acme.test/oauth/authorize'</span>,
+  isOIDC: <span class="token-keyword">true</span>,
+  isRefreshable: <span class="token-keyword">true</span>,
+  PKCEMethod: <span class="token-string">'S256'</span>,
+  scopeRequired: <span class="token-keyword">true</span>,
+  subject: [<span class="token-string">'sub'</span>],
+  subjectType: <span class="token-string">'string'</span>,
+  profileRequest: {
+    url: <span class="token-string">'https://acme.test/oauth/userinfo'</span>,
+    method: <span class="token-string">'GET'</span>,
+    authIn: <span class="token-string">'header'</span>,
+    encoding: <span class="token-string">'application/json'</span>
+  },
+  tokenRequest: {
+    url: <span class="token-string">'https://acme.test/oauth/token'</span>,
+    authIn: <span class="token-string">'body'</span>,
+    encoding: <span class="token-string">'application/x-www-form-urlencoded'</span>
+  }
+});
+
+<span class="token-keyword">const</span> client = <span class="token-keyword">await</span> <span class="token-function">createCustomOAuth2Client</span>(acme, credentials);
+<span class="token-keyword">await</span> client.<span class="token-function">refreshAccessToken</span>(refreshToken);</code></pre>
+						</div>
+
+						<div class="custom-proof">
+							<div class="custom-proof-copy">
+								<p class="section-label">
+									Inferred from the literal
+								</p>
+								<h3>
+									This literal produces a refreshable client
+									with required PKCE and scopes.
+								</h3>
+								<p>
+									Those facts come from
+									<code>isRefreshable</code>,
+									<code>PKCEMethod</code>, and
+									<code>scopeRequired</code>. There is no
+									separate custom-client interface to keep in
+									sync.
+								</p>
+								<p class="custom-limit">
+									One limit remains: extra credential fields
+									unique to a custom provider are not inferred
+									today. Custom definitions get capability
+									inference, but built-in
+									<code>CredentialsMap</code> entries still
+									provide the stronger constructor types.
+								</p>
+							</div>
+							<div class="custom-errors">
+								<div class="compiler-card">
+									<pre><code>client.<span class="token-function">createAuthorizationUrl</span>({
+  state,
+  scope: [<span class="token-string">'openid'</span>]
+});</code></pre>
+									<div class="diagnostic">
+										<strong>Type error · TS2345</strong>
+										<p>
+											Property 'codeVerifier' is missing
+											in type '{ state: string; scope:
+											[string]; }' but required in type '{
+											codeVerifier: string; }'.
+										</p>
+									</div>
+								</div>
+								<div class="compiler-card">
+									<pre><code>client.<span class="error-target">revokeToken</span>(accessToken);</code></pre>
+									<div class="diagnostic">
+										<strong
+											>Compiler result, shortened ·
+											TS2339</strong
+										>
+										<p>
+											Property 'revokeToken' does not
+											exist on the inferred client type.
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section class="section history" id="history">
+					<div class="section-inner">
+						<p class="section-label">Where Citra came from</p>
+						<h2>
+							A missing ID token exposed a bigger design question.
+						</h2>
+						<p class="lede">
+							The project started with a practical problem. We
+							needed one dependable integration layer for
+							providers that expose different slices of OAuth.
+						</p>
+
+						<div class="history-timeline">
+							<section class="history-event">
+								<span class="history-date">April 2025</span>
+								<h3>The ordinary case threw an exception</h3>
+								<p>
+									In
+									<a
+										href="https://github.com/pilcrowonpaper/arctic/issues/299"
+										target="_blank"
+										rel="noreferrer"
+										>Arctic issue #299</a
+									>, we pointed out that
+									<code>idToken()</code> threw when a token
+									response omitted <code>id_token</code>. That
+									absence can be valid when a flow did not use
+									OpenID Connect, so our shared layer could
+									not treat it as exceptional every time.
+								</p>
+							</section>
+							<section class="history-event">
+								<span class="history-date"
+									>The disagreement</span
+								>
+								<h3>Should provider clients interchange?</h3>
+								<p>
+									Arctic’s answer was no: providers omit
+									features, violate specifications, and need
+									flexible individual behavior. Consumers who
+									needed a shared interface were expected to
+									wrap each provider client themselves.
+								</p>
+							</section>
+							<section class="history-event">
+								<span class="history-date">Citra’s answer</span>
+								<h3>Make differences typed data</h3>
+								<p>
+									Citra moved endpoints, capabilities, request
+									placement, encoding, identity paths, and
+									provider quirks into literal configuration.
+									One engine reads that data at runtime while
+									conditional types derive the client
+									contract.
+								</p>
+							</section>
+							<section class="history-event">
+								<span class="history-date">July 2026</span>
+								<h3>Arctic was deprecated</h3>
+								<p>
+									Pilcrow later
+									<a
+										href="https://pilcrowonpaper.com/blog/18"
+										target="_blank"
+										rel="noreferrer"
+										>deprecated Arctic</a
+									>, citing provider maintenance, an API that
+									was not tailored enough, and a belief that
+									OAuth was the wrong layer to abstract. Those
+									concerns are worth taking seriously. Citra's
+									answer is to keep the shared operations
+									small, make capabilities visible in the
+									type, and leave wire details in provider
+									configuration.
+								</p>
+								<p>
+									Configuration does not stop providers from
+									changing their APIs. Contract fixtures and
+									catalog maintenance still matter. What it
+									changes is where that work happens and how
+									much application code it can disturb.
+								</p>
+							</section>
+						</div>
+
+						<p class="history-today">
+							That disagreement gave us a concrete test: can one
+							engine represent 78 provider configurations without
+							pretending they have the same capabilities? Citra
+							does it with typed configuration, custom providers,
+							OIDC discovery, and identity mapping.
+						</p>
+					</div>
+				</section>
+
+				<section class="section verdict" id="verdict">
+					<div class="section-inner">
+						<p class="section-label">Where Citra is going</p>
+						<h2>Keep provider details out of application code.</h2>
+						<p>
+							Citra is useful today because adding a provider
+							usually means describing its HTTP behavior, not
+							implementing another client. Application code gets a
+							stable OAuth surface while provider definitions
+							retain the differences.
+						</p>
+						<p>
+							Our next work is specific: validate more provider
+							responses at the network boundary and infer custom
+							credential fields as precisely as built-in
+							credentials. The goal stays the same. Supporting
+							another provider should add its requirements to the
+							catalog instead of scattering new branches through
+							the application.
+						</p>
+						<div class="cta-row">
+							<div
+								class="install-command"
+								aria-label="Install Citra with Bun"
+							>
+								<code
+									><span
+										class="command-prompt"
+										aria-hidden="true"
+										>$</span
+									>
+									bun add citra</code
+								>
+								<button
+									class="copy-command"
+									type="button"
+									data-copy="bun add citra"
+									aria-label="Copy bun add citra"
+								>
+									<svg viewBox="0 0 20 20" aria-hidden="true">
+										<rect
+											x="6.5"
+											y="6.5"
+											width="9"
+											height="9"
+											rx="1.5"
+										></rect>
+										<path
+											d="M13.5 6.5V5A1.5 1.5 0 0 0 12 3.5H5A1.5 1.5 0 0 0 3.5 5v7A1.5 1.5 0 0 0 5 13.5h1.5"
+										></path>
+									</svg>
+									<span class="copy-label">Copy</span>
+								</button>
+							</div>
+							<a
+								class="button"
+								href="https://github.com/absolutejs/citra"
+								target="_blank"
+								rel="noreferrer"
+								>Read the source ↗</a
+							>
+						</div>
+					</div>
+				</section>
+			</article>
+
+			<aside class="sources" aria-labelledby="sources-title">
+				<div class="sources-inner">
+					<h2 id="sources-title">Sources &amp; context</h2>
+					<ol>
+						<li>
+							<a
+								href="https://github.com/pilcrowonpaper/arctic/issues/299"
+								target="_blank"
+								rel="noreferrer"
+								>Arctic issue #299, “Changing behavior of
+								OAuth2Tokens.idToken()”</a
+							>
+							: the original interchangeability discussion from
+							April 2025.
+						</li>
+						<li>
+							<a
+								href="https://pilcrowonpaper.com/blog/18"
+								target="_blank"
+								rel="noreferrer"
+								>Pilcrow, “I am deprecating most of my
+								open-source NPM packages”</a
+							>
+							: the case against abstracting at the OAuth protocol
+							layer from July 2026.
+						</li>
+						<li>
+							<a
+								href="https://github.com/absolutejs/citra/blob/main/src/providers.ts"
+								target="_blank"
+								rel="noreferrer"
+								>Citra provider definitions</a
+							>
+							and
+							<a
+								href="https://github.com/absolutejs/citra/blob/main/src/types.ts"
+								target="_blank"
+								rel="noreferrer"
+								>conditional client types</a
+							>
+							: the implementation behind the claims on this page.
+						</li>
+					</ol>
+				</div>
+			</aside>
+		</main>
+
+		<footer class="site-footer">
+			<span>Citra · OAuth2 for TypeScript</span>
+			<span>78 provider configurations, one request engine.</span>
+		</footer>
+
+		<script>
+			const progress = document.querySelector('.reading-progress');
+			const updateProgress = () => {
+				const scrollable =
+					document.documentElement.scrollHeight - window.innerHeight;
+				const value =
+					scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+				progress.style.width = `${Math.min(100, value)}%`;
+			};
+			window.addEventListener('scroll', updateProgress, {
+				passive: true
+			});
+			updateProgress();
+
+			const copyButton = document.querySelector('[data-copy]');
+			copyButton.addEventListener('click', async () => {
+				const value = copyButton.dataset.copy;
+				await navigator.clipboard.writeText(value);
+				const label = copyButton.querySelector('.copy-label');
+				const original = label.textContent;
+				label.textContent = 'Copied';
+				copyButton.classList.add('copied');
+				copyButton.setAttribute('aria-label', 'Copied bun add citra');
+				window.setTimeout(() => {
+					label.textContent = original;
+					copyButton.classList.remove('copied');
+					copyButton.setAttribute('aria-label', 'Copy bun add citra');
+				}, 1600);
+			});
+		</script>
+	</body>
+</html>

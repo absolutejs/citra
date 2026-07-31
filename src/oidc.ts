@@ -1,6 +1,10 @@
 import { createS256CodeChallenge } from './arctic-utils';
 import { OAuth2TokenResponse } from './types';
-import { decodeBase64 } from './utils';
+import {
+	createOAuth2FetchError,
+	decodeBase64,
+	parseOAuth2TokenResponse
+} from './utils';
 
 // Runtime, discovery-configured OIDC client. Unlike the compile-time provider catalog, an
 // enterprise OIDC connection is described entirely at runtime by its issuer: the authorize/
@@ -48,9 +52,7 @@ const fetchJson = async (url: string) => {
 		headers: { accept: 'application/json' }
 	});
 	if (!response.ok) {
-		throw new Error(
-			`Request to ${url} failed with status ${response.status}`
-		);
+		throw await createOAuth2FetchError(response);
 	}
 
 	return response.json();
@@ -338,11 +340,11 @@ export const createOIDCClient = async (config: OIDCClientConfig) => {
 			method: 'POST'
 		});
 		if (!response.ok) {
-			throw new Error(
-				`OIDC token request failed with status ${response.status}`
-			);
+			throw await createOAuth2FetchError(response);
 		}
-		const tokens: OAuth2TokenResponse = await response.json();
+		const tokens: OAuth2TokenResponse = parseOAuth2TokenResponse(
+			await response.json()
+		);
 
 		return tokens;
 	};

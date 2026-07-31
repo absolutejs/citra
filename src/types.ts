@@ -85,7 +85,7 @@ export type ProviderOption = keyof typeof providers;
 
 export type OAuth2RequestOptions = {
 	url: string;
-	body: Record<string, unknown> | URLSearchParams;
+	body?: Record<string, unknown> | URLSearchParams;
 	authIn: 'header' | 'body' | 'query';
 	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 	headers?: HeadersInit;
@@ -222,6 +222,11 @@ export type ProviderConfig = {
 		// TODO : remove any type in favor of the actual config for this specific provider
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		| ((config: any) => Record<string, string>);
+	// Some providers, notably Apple, require a signed client assertion instead
+	// of a stored client-secret string.
+	// TODO : remove any type in favor of the actual config for this specific provider
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	createClientSecret?: (config: any) => string | Promise<string>;
 
 	isOIDC: boolean;
 	isRefreshable: boolean;

@@ -1,6 +1,20 @@
 import { BASE64_BLOCK_SIZE } from './constants';
 import { isExpectedType, isObject } from './typeGuards';
-import { OAuth2RequestOptions, ProviderConfig, TypeMap } from './types';
+import {
+	OAuth2RequestOptions,
+	OAuth2TokenResponse,
+	ProviderConfig,
+	TypeMap
+} from './types';
+
+const readPath = (value: unknown, path: string[]) =>
+	path.reduce<unknown>(
+		(cursor, key) =>
+			cursor && typeof cursor === 'object'
+				? Reflect.get(cursor, key)
+				: undefined,
+		value
+	);
 
 export const createOAuth2FetchError = async (response: Response) => {
 	const clone = response.clone();
@@ -42,11 +56,25 @@ export const createOAuth2Request = ({
 		);
 	}
 
+	if (body === undefined && authIn !== 'body') {
+		return new Request(url, {
+			headers: oauthHeaders,
+			method: 'POST'
+		});
+	}
+
 	if (encoding === 'application/json') {
 		oauthHeaders.set('Content-Type', 'application/json');
+		const jsonBody =
+			body instanceof URLSearchParams
+				? Object.fromEntries(body.entries())
+				: { ...body };
+		if (authIn === 'body') jsonBody.client_id = clientId;
+		if (authIn === 'body' && clientSecret)
+			jsonBody.client_secret = clientSecret;
 
 		return new Request(url, {
-			body: JSON.stringify(body),
+			body: JSON.stringify(jsonBody),
 			headers: oauthHeaders,
 			method: 'POST'
 		});
@@ -57,7 +85,7 @@ export const createOAuth2Request = ({
 	const entries =
 		body instanceof URLSearchParams
 			? Array.from(body.entries())
-			: Object.entries(body).filter(
+			: Object.entries(body ?? {}).filter(
 					(entry): entry is [string, string] =>
 						typeof entry[1] === 'string'
 				);
@@ -172,6 +200,32 @@ export const hmacSha256 = async (message: string, secret: string) => {
 	return Array.from(new Uint8Array(sigBuffer))
 		.map((byte) => byte.toString(16).padStart(2, '0'))
 		.join('');
+};
+export const parseOAuth2TokenResponse = (
+	value: unknown,
+	accessTokenPath?: string[]
+) => {
+	if (!isObject(value)) {
+		throw new Error('OAuth token endpoint returned a non-object response');
+	}
+	const oauthError = Reflect.get(value, 'error');
+	if (typeof oauthError === 'string' && oauthError.length > 0) {
+		throw new Error(`OAuth token exchange failed: ${oauthError}`);
+	}
+	const nestedToken = accessTokenPath
+		? readPath(value, accessTokenPath)
+		: undefined;
+	if (typeof nestedToken === 'string' && nestedToken.length > 0) {
+		value.access_token = nestedToken;
+	}
+	if (
+		typeof value.access_token !== 'string' ||
+		value.access_token.length === 0
+	) {
+		throw new Error('OAuth token endpoint returned no access_token');
+	}
+
+	return value as OAuth2TokenResponse;
 };
 
 type ExtractPropFromIdentity = {

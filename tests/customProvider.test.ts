@@ -120,6 +120,29 @@ describe('createCustomOAuth2Client', () => {
 		expect('refreshAccessToken' in client).toBe(false);
 		expect('revokeToken' in client).toBe(false);
 	});
+
+	it('omits profile fetching when a custom config has no profile request', async () => {
+		const client = await createCustomOAuth2Client(
+			defineProvider({
+				authorizationUrl: 'https://auth.example.test/oauth2/authorize',
+				isOIDC: true,
+				isRefreshable: false,
+				scopeRequired: false,
+				subject: ['sub'],
+				subjectType: 'string',
+				tokenRequest: {
+					authIn: 'body',
+					encoding: 'application/x-www-form-urlencoded',
+					url: 'https://auth.example.test/oauth2/token'
+				}
+			}),
+			credentials
+		);
+
+		expect('fetchUserProfile' in client).toBe(false);
+		// @ts-expect-error no profileRequest means no fetchUserProfile method
+		expect(client.fetchUserProfile).toBeUndefined();
+	});
 });
 
 describe('Apple built-in provider', () => {
@@ -703,8 +726,8 @@ describe('Microsoft customer identity built-in providers', () => {
 			tenantSubdomain: 'contoso'
 		});
 
-		expect(client.fetchUserProfile('access-token')).rejects.toThrow(
-			'identity through the id_token'
-		);
+		expect('fetchUserProfile' in client).toBe(false);
+		// @ts-expect-error ID-token-only providers expose no profile method.
+		expect(client.fetchUserProfile).toBeUndefined();
 	});
 });

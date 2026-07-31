@@ -3,9 +3,12 @@ import {
 	BaseOAuth2Client,
 	OIDCProvider,
 	PKCEProvider,
+	ProfileOAuth2Client,
+	ProfileProvider,
 	ProviderOption,
 	RefreshableOAuth2Client,
 	RefreshableProvider,
+	RevocationInputForProvider,
 	RevocableOAuth2Client,
 	RevocableProvider,
 	ScopeRequiredProvider,
@@ -58,11 +61,28 @@ export const isPKCEProviderOption = (
 
 	return provider.PKCEMethod !== undefined;
 };
+export const isProfileOAuth2Client = <P extends ProviderOption>(
+	providerName: P,
+	client: BaseOAuth2Client<P>
+): client is BaseOAuth2Client<P> & ProfileOAuth2Client =>
+	isProfileProviderOption(providerName) &&
+	'fetchUserProfile' in client &&
+	typeof client.fetchUserProfile === 'function';
+export const isProfileProviderOption = (
+	option: string
+): option is ProfileProvider => {
+	if (!isValidProviderOption(option)) return false;
+	const provider = providers[option];
+
+	return provider.profileRequest !== undefined;
+};
 export const isRefreshableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
-	_client: BaseOAuth2Client<P>
-): _client is BaseOAuth2Client<P> & RefreshableOAuth2Client =>
-	isRefreshableProviderOption(providerName);
+	client: BaseOAuth2Client<P>
+): client is BaseOAuth2Client<P> & RefreshableOAuth2Client =>
+	isRefreshableProviderOption(providerName) &&
+	'refreshAccessToken' in client &&
+	typeof client.refreshAccessToken === 'function';
 export const isRefreshableProviderOption = (
 	option: string
 ): option is RefreshableProvider => {
@@ -73,9 +93,12 @@ export const isRefreshableProviderOption = (
 };
 export const isRevocableOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
-	_client: BaseOAuth2Client<P>
-): _client is BaseOAuth2Client<P> & RevocableOAuth2Client =>
-	isRevocableProviderOption(providerName);
+	client: BaseOAuth2Client<P>
+): client is BaseOAuth2Client<P> &
+	RevocableOAuth2Client<RevocationInputForProvider<P>> =>
+	isRevocableProviderOption(providerName) &&
+	'revokeToken' in client &&
+	typeof client.revokeToken === 'function';
 export const isRevocableProviderOption = (
 	option: string
 ): option is RevocableProvider => {

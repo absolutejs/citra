@@ -7,6 +7,7 @@ import {
 	CustomProviderCredentials,
 	OAuth2Client,
 	OAuth2ClientForConfig,
+	ProfileOAuth2Client,
 	ProviderConfig,
 	ProviderOption,
 	RefreshableOAuth2Client,
@@ -23,8 +24,9 @@ import {
 // provider config) and `config` (the caller's credentials).
 type ClientCredentials = { clientId: string; redirectUri?: string | null };
 type RuntimeOAuth2Client = BaseOAuth2ClientForConfig<ProviderConfig> &
+	ProfileOAuth2Client &
 	RefreshableOAuth2Client &
-	RevocableOAuth2Client;
+	RevocableOAuth2Client<string | number>;
 
 const buildOAuth2Client = async (
 	meta: ProviderConfig,
@@ -191,16 +193,33 @@ const buildOAuth2Client = async (
 			return parseOAuth2TokenResponse(await response.json());
 		},
 
-		async revokeToken(token: string) {
+		async revokeToken(input: string | number) {
 			const { revocationRequest } = meta;
 			if (!revocationRequest) {
 				throw new Error(
 					'Token revocation not defined for this provider'
 				);
 			}
+			if (
+				revocationRequest.authIn !== 'header' &&
+				revocationRequest.inputType === 'number' &&
+				(typeof input !== 'number' || !Number.isFinite(input))
+			) {
+				throw new TypeError(
+					'This provider requires a numeric revocation input'
+				);
+			}
 
-			const { url, authIn, body, encoding, headers, tokenParamName } =
-				revocationRequest;
+			const {
+				url,
+				authIn,
+				body,
+				encoding,
+				headers,
+				includeClientCredentials = true,
+				tokenParamName,
+				validateResponse
+			} = revocationRequest;
 			const endpoint = await resolveConfigProp(url);
 			const resolvedBody = await resolveConfigProp(body);
 			const revocationBody =
@@ -216,15 +235,22 @@ const buildOAuth2Client = async (
 			let request: Request;
 			if (authIn === 'body') {
 				const bodyWithToken = revocationBody ?? new URLSearchParams();
-				bodyWithToken.set(tokenParamName, token);
+				bodyWithToken.set(tokenParamName, String(input));
 				const hasAuthorizationHeader =
 					revocationHeaders.has('Authorization');
-				if (!hasAuthorizationHeader)
+				if (includeClientCredentials && !hasAuthorizationHeader)
 					bodyWithToken.set('client_id', clientId);
-				if (!hasAuthorizationHeader && clientSecret)
+				if (
+					includeClientCredentials &&
+					!hasAuthorizationHeader &&
+					clientSecret
+				)
 					bodyWithToken.set('client_secret', clientSecret);
 				request = createOAuth2Request({
-					authIn: hasAuthorizationHeader ? 'query' : 'body',
+					authIn:
+						hasAuthorizationHeader || !includeClientCredentials
+							? 'query'
+							: 'body',
 					body: bodyWithToken,
 					clientId,
 					clientSecret,
@@ -233,7 +259,10 @@ const buildOAuth2Client = async (
 					url: endpoint.toString()
 				});
 			} else if (authIn === 'header') {
-				revocationHeaders.set('Authorization', `Bearer ${token}`);
+				revocationHeaders.set(
+					'Authorization',
+					`Bearer ${String(input)}`
+				);
 				request = createOAuth2Request({
 					// `authIn` on createOAuth2Request controls client
 					// credentials. The bearer token is already in the header.
@@ -246,7 +275,7 @@ const buildOAuth2Client = async (
 				});
 			} else {
 				const queryEndpoint = new URL(endpoint);
-				queryEndpoint.searchParams.set(tokenParamName, token);
+				queryEndpoint.searchParams.set(tokenParamName, String(input));
 				request = createOAuth2Request({
 					authIn: 'query',
 					body: revocationBody,
@@ -259,6 +288,11 @@ const buildOAuth2Client = async (
 
 			const response = await fetch(request);
 			if (!response.ok) throw await createOAuth2FetchError(response);
+			if (validateResponse) {
+				await validateResponse(
+					await response.json().catch(() => undefined)
+				);
+			}
 		},
 
 		async validateAuthorizationCode(opts: {
@@ -310,6 +344,9 @@ const buildOAuth2Client = async (
 
 	// Keep the runtime surface aligned with the capability type. This matters
 	// for JavaScript consumers and for code that checks capabilities with `in`.
+	if (!meta.profileRequest) {
+		Reflect.deleteProperty(client, 'fetchUserProfile');
+	}
 	if (!meta.isRefreshable) {
 		Reflect.deleteProperty(client, 'refreshAccessToken');
 	}
@@ -330,11 +367,13 @@ export const createCustomOAuth2Client: <const C extends ProviderConfig>(
 ) => Promise<OAuth2ClientForConfig<C>> = (providerConfig, credentials) =>
 	buildOAuth2Client(providerConfig, credentials);
 
-export const createOAuth2Client: <P extends ProviderOption>(
+export const createOAuth2Client = <P extends ProviderOption>(
 	providerName: P,
 	config: CredentialsFor<P>
-) => Promise<OAuth2Client<P>> = (providerName, config) =>
-	buildOAuth2Client(providers[providerName], config);
+) =>
+	buildOAuth2Client(providers[providerName], config) as unknown as Promise<
+		OAuth2Client<P>
+	>;
 
 export {
 	extractPropFromIdentity,

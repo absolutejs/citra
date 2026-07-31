@@ -123,8 +123,11 @@ const assertClaims = (
 	expected: { audience: string; issuer: string; nonce?: string }
 ) => {
 	const aud = Reflect.get(payload, 'aud');
+	const azp = Reflect.get(payload, 'azp');
 	const exp = Reflect.get(payload, 'exp');
+	const iat = Reflect.get(payload, 'iat');
 	const iss = Reflect.get(payload, 'iss');
+	const nbf = Reflect.get(payload, 'nbf');
 	const sub = Reflect.get(payload, 'sub');
 	const audiences = Array.isArray(aud) ? aud : [aud];
 	const nowSeconds = Math.floor(Date.now() / MILLISECONDS_PER_SECOND);
@@ -138,8 +141,34 @@ const assertClaims = (
 	if (!audiences.includes(expected.audience)) {
 		throw new Error('id_token "aud" does not include the client id');
 	}
+	if (
+		audiences.some((audience) => typeof audience !== 'string') ||
+		(typeof aud !== 'string' && !Array.isArray(aud))
+	) {
+		throw new Error('id_token "aud" must be a string or string array');
+	}
+	if (
+		audiences.length > 1 &&
+		(typeof azp !== 'string' || azp !== expected.audience)
+	) {
+		throw new Error(
+			'id_token with multiple audiences requires matching "azp"'
+		);
+	}
 	if (typeof exp !== 'number' || exp + CLOCK_SKEW_SECONDS < nowSeconds) {
 		throw new Error('id_token has expired');
+	}
+	if (typeof iat !== 'number') {
+		throw new Error('id_token is missing numeric "iat"');
+	}
+	if (iat > nowSeconds + CLOCK_SKEW_SECONDS) {
+		throw new Error('id_token "iat" is in the future');
+	}
+	if (
+		nbf !== undefined &&
+		(typeof nbf !== 'number' || nbf > nowSeconds + CLOCK_SKEW_SECONDS)
+	) {
+		throw new Error('id_token is not active yet');
 	}
 	if (
 		expected.nonce !== undefined &&

@@ -17,6 +17,7 @@ const toBase64Url = (input: string | Uint8Array) =>
 
 const buildIdToken = async (input: {
 	alg: string;
+	additionalClaims?: Record<string, unknown>;
 	audience?: string | string[];
 	expiresInSeconds?: number;
 	issuer?: string;
@@ -38,7 +39,8 @@ const buildIdToken = async (input: {
 		iat: nowSeconds,
 		iss: input.issuer ?? ISSUER,
 		nonce: input.nonce,
-		sub: input.subject ?? 'user-789'
+		sub: input.subject ?? 'user-789',
+		...input.additionalClaims
 	};
 	const signingInput = `${toBase64Url(JSON.stringify(header))}.${toBase64Url(
 		JSON.stringify(payload)
@@ -189,6 +191,43 @@ describe('verifyIdToken (RS256)', () => {
 		).rejects.toThrow('"aud"');
 	});
 
+	test('requires azp to select this client from multiple audiences', async () => {
+		const missingAzp = await buildIdToken({
+			alg: 'RS256',
+			audience: [AUDIENCE, 'api-client'],
+			kid: 'rsa-key',
+			signingKey: rsaKeyPair.privateKey,
+			signParams: rsaParams
+		});
+		const matchingAzp = await buildIdToken({
+			additionalClaims: { azp: AUDIENCE },
+			alg: 'RS256',
+			audience: [AUDIENCE, 'api-client'],
+			kid: 'rsa-key',
+			signingKey: rsaKeyPair.privateKey,
+			signParams: rsaParams
+		});
+
+		expect(
+			verifyIdToken({
+				audience: AUDIENCE,
+				idToken: missingAzp,
+				issuer: ISSUER,
+				jwks: [rsaJwk]
+			})
+		).rejects.toThrow('"azp"');
+		expect(
+			(
+				await verifyIdToken({
+					audience: AUDIENCE,
+					idToken: matchingAzp,
+					issuer: ISSUER,
+					jwks: [rsaJwk]
+				})
+			).azp
+		).toBe(AUDIENCE);
+	});
+
 	test('rejects an expired token', async () => {
 		const idToken = await buildIdToken({
 			alg: 'RS256',
@@ -206,6 +245,41 @@ describe('verifyIdToken (RS256)', () => {
 				jwks: [rsaJwk]
 			})
 		).rejects.toThrow('expired');
+	});
+
+	test('rejects tokens issued in the future or not active yet', async () => {
+		const nowSeconds = Math.floor(Date.now() / MS_PER_SECOND);
+		const issuedInFuture = await buildIdToken({
+			additionalClaims: { iat: nowSeconds + ONE_HOUR_SECONDS },
+			alg: 'RS256',
+			kid: 'rsa-key',
+			signingKey: rsaKeyPair.privateKey,
+			signParams: rsaParams
+		});
+		const notActive = await buildIdToken({
+			additionalClaims: { nbf: nowSeconds + ONE_HOUR_SECONDS },
+			alg: 'RS256',
+			kid: 'rsa-key',
+			signingKey: rsaKeyPair.privateKey,
+			signParams: rsaParams
+		});
+
+		expect(
+			verifyIdToken({
+				audience: AUDIENCE,
+				idToken: issuedInFuture,
+				issuer: ISSUER,
+				jwks: [rsaJwk]
+			})
+		).rejects.toThrow('"iat"');
+		expect(
+			verifyIdToken({
+				audience: AUDIENCE,
+				idToken: notActive,
+				issuer: ISSUER,
+				jwks: [rsaJwk]
+			})
+		).rejects.toThrow('not active');
 	});
 
 	test('rejects a nonce mismatch and accepts a matching nonce', async () => {

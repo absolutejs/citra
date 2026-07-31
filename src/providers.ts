@@ -1,7 +1,11 @@
 import { createAppleClientSecret } from './arctic-utils';
 import { anilistProfileQuery } from './graphqlQueries';
 import { DefineProviders, ProviderConfig } from './types';
-import { encodeBase64, getWithingsProps } from './utils';
+import {
+	assertWithingsSuccess,
+	encodeBase64,
+	getWithingsSignatureParams
+} from './utils';
 
 export const defineProviders: DefineProviders = (providers) => providers;
 
@@ -1710,50 +1714,26 @@ export const providers = defineProviders({
 		authorizationUrl: 'https://account.withings.com/oauth2_user/authorize2',
 		isOIDC: false,
 		isRefreshable: true,
-		profileRequest: {
-			authIn: 'header',
-			body: async (config) => {
-				const props = await getWithingsProps(config);
-				if (props === undefined)
-					throw new Error('Failed to get Withings search properties');
-				const { nonce, hashedSignature } = props;
-
-				return [
-					['action', 'getuser'],
-					['nonce', nonce],
-					['client_id', config.clientId],
-					['signature', hashedSignature]
-				];
-			},
-			encoding: 'application/x-www-form-urlencoded',
-			method: 'POST',
-			url: 'https://wbsapi.withings.net/v2/oauth2'
-		},
 		refreshAccessTokenBody: {
 			action: 'requesttoken'
 		},
 		revocationRequest: {
-			authIn: 'header',
-			body: async (config) => {
-				const props = await getWithingsProps(config);
-				if (!props) throw new Error('Failed to get Withings props');
-				const { nonce, hashedSignature } = props;
-
-				return [
-					['action', 'revoke'],
-					['client_id', config.clientId],
-					['nonce', nonce],
-					['signature', hashedSignature]
-				];
-			},
+			authIn: 'body',
+			body: (config) => getWithingsSignatureParams(config, 'revoke'),
 			encoding: 'application/x-www-form-urlencoded',
-			method: 'POST',
-			url: 'https://wbsapi.withings.net/v2/oauth2'
+			includeClientCredentials: false,
+			inputType: 'number',
+			tokenParamName: 'userid',
+			url: 'https://wbsapi.withings.net/v2/oauth2',
+			validateResponse: (value) => assertWithingsSuccess(value)
 		},
 		scopeDelimiter: ',',
 		scopeRequired: true,
 		subject: ['userid'],
-		subjectType: 'string',
+		subjectBySource: {
+			tokenResponse: ['body', 'userid']
+		},
+		subjectType: 'number',
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',

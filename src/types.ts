@@ -48,11 +48,19 @@ type BaseRevocation = {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		| ((config: any) => Promise<URLSearchParamsInit>);
 	encoding: 'application/x-www-form-urlencoded' | 'application/json';
+	/**
+	 * Set to false when the provider authenticates the request through a
+	 * provider-specific signature already included in `body`.
+	 */
+	includeClientCredentials?: boolean;
+	// Some providers return operation status inside an HTTP 200 JSON body.
+	validateResponse?: (value: unknown) => void | Promise<void>;
 };
 
 type NamedRevocation = BaseRevocation & {
 	authIn: 'query' | 'body';
-	tokenParamName: 'token' | 'access_token' | 'refresh_token';
+	tokenParamName: 'token' | 'access_token' | 'refresh_token' | 'userid';
+	inputType?: 'string' | 'number';
 };
 
 type HeaderRevocation = BaseRevocation & {
@@ -113,6 +121,12 @@ export type RefreshableProvider = {
 		: never;
 }[ProviderOption];
 
+export type ProfileProvider = {
+	[K in ProviderOption]: (typeof providers)[K]['profileRequest'] extends ProfileRequestConfig
+		? K
+		: never;
+}[ProviderOption];
+
 export type RevocableProvider = {
 	[K in ProviderOption]: (typeof providers)[K]['revocationRequest'] extends RevocationRequestConfig
 		? K
@@ -142,7 +156,9 @@ export type BaseOAuth2Client<P extends ProviderOption> = {
 			? { codeVerifier: string }
 			: { codeVerifier?: string })
 	): Promise<OAuth2TokenResponse>;
+};
 
+export type ProfileOAuth2Client = {
 	fetchUserProfile(accessToken: string): Promise<Record<string, unknown>>;
 };
 
@@ -150,13 +166,29 @@ export type RefreshableOAuth2Client = {
 	refreshAccessToken(refreshToken: string): Promise<OAuth2TokenResponse>;
 };
 
-export type RevocableOAuth2Client = {
-	revokeToken(token: string): Promise<void>;
+export type RevocableOAuth2Client<Input extends string | number = string> = {
+	revokeToken(input: Input): Promise<void>;
 };
 
+export type RevocationInputForProvider<P extends ProviderOption> =
+	(typeof providers)[P]['revocationRequest'] extends {
+		inputType: 'number';
+	}
+		? number
+		: string;
+
+type ProfileCapability<P extends ProviderOption> = ProviderOption extends P
+	? Partial<ProfileOAuth2Client>
+	: P extends ProfileProvider
+		? ProfileOAuth2Client
+		: unknown;
+
 export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
+	ProfileCapability<P> &
 	(P extends RefreshableProvider ? RefreshableOAuth2Client : unknown) &
-	(P extends RevocableProvider ? RevocableOAuth2Client : unknown);
+	(P extends RevocableProvider
+		? RevocableOAuth2Client<RevocationInputForProvider<P>>
+		: unknown);
 
 /** Credentials for a caller-defined (custom) provider. Extra fields are
  *  passed through to any `(config) => ...` functions in the provider config. */
@@ -192,18 +224,25 @@ export type BaseOAuth2ClientForConfig<C extends ProviderConfig> = {
 			? { codeVerifier: string }
 			: { codeVerifier?: string })
 	): Promise<OAuth2TokenResponse>;
-
-	fetchUserProfile(accessToken: string): Promise<Record<string, unknown>>;
 };
 
 export type OAuth2ClientForConfig<C extends ProviderConfig> =
 	BaseOAuth2ClientForConfig<C> &
+		((C & ProviderConfig)['profileRequest'] extends ProfileRequestConfig
+			? ProfileOAuth2Client
+			: unknown) &
 		((C & ProviderConfig)['isRefreshable'] extends true
 			? RefreshableOAuth2Client
 			: unknown) &
 		((C &
 			ProviderConfig)['revocationRequest'] extends RevocationRequestConfig
-			? RevocableOAuth2Client
+			? RevocableOAuth2Client<
+					(C & ProviderConfig)['revocationRequest'] extends {
+						inputType: 'number';
+					}
+						? number
+						: string
+				>
 			: unknown);
 
 export type TypeMap = {
@@ -268,7 +307,7 @@ export type ProviderConfig = {
 export type OAuth2TokenResponse = {
 	access_token: string;
 	refresh_token?: string;
-	token_type: string;
+	token_type?: string;
 	expires_in?: number;
 	scope?: string;
 	id_token?: string;
@@ -639,6 +678,27 @@ type WithingsOAuth2Credentials = {
 	clientSecret: string;
 	redirectUri: string;
 };
+type AttioOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
+type CloseOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
+type MondayOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
+type ZohoOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+	region?: string;
+};
 type WorkOSOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
@@ -661,11 +721,12 @@ type ZoomOAuth2Credentials = {
 	redirectUri: string;
 };
 
-type CredentialsMap = {
+export type CredentialsMap = {
 	'42': FortyTwoOAuth2Credentials;
 	amazoncognito: AmazonCognitoOAuth2Credentials;
 	anilist: AniListOAuth2Credentials;
 	apple: AppleOAuth2Credentials;
+	attio: AttioOAuth2Credentials;
 	auth0: Auth0OAuth2Credentials;
 	authentik: AuthentikOAuth2Credentials;
 	autodesk: AutodeskOAuth2Credentials;
@@ -676,6 +737,7 @@ type CredentialsMap = {
 	box: BoxOAuth2Credentials;
 	bungie: BungieOAuth2Credentials;
 	calendly: CalendlyOAuth2Credentials;
+	close: CloseOAuth2Credentials;
 	coinbase: CoinbaseOAuth2Credentials;
 	discord: DiscordOAuth2Credentials;
 	donationalerts: DonationAlertsOAuth2Credentials;
@@ -704,6 +766,7 @@ type CredentialsMap = {
 	mercadopago: MercadoPagoOAuth2Credentials;
 	microsoftentraexternalid: MicrosoftEntraExternalIdOAuth2Credentials;
 	microsoftentraid: MicrosoftEntraIdOAuth2Credentials;
+	monday: MondayOAuth2Credentials;
 	myanimelist: MyAnimeListOAuth2Credentials;
 	naver: NaverOAuth2Credentials;
 	notion: NotionOAuth2Credentials;
@@ -735,6 +798,7 @@ type CredentialsMap = {
 	workos: WorkOSOAuth2Credentials;
 	yahoo: YahooOAuth2Credentials;
 	yandex: YandexOAuth2Credentials;
+	zoho: ZohoOAuth2Credentials;
 	zoom: ZoomOAuth2Credentials;
 };
 

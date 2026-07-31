@@ -139,7 +139,8 @@ const tokenResponse = await googleClient.validateAuthorizationCode({
 
 ## Fetching the User Profile
 
-Exchange the `user_access_token` for the user information on the profile API route for the provider
+When the selected provider declares a profile request,
+`fetchUserProfile()` is present on both the client type and runtime object:
 
 ```ts
 const profile = await googleClient.fetchUserProfile(tokenResponse.access_token);
@@ -153,17 +154,17 @@ If supported by the provider, you can refresh and revoke tokens:
 ```ts
 const { refresh_token, access_token } = tokenResponse;
 
-// Example check to see if provider has a refresh or revoke route. In practice `googleClient` will know `refreshToken` and `revokeToken` does exist, and conversly it will error if it is a provider without said routes
-
 if (refresh_token) {
 	const newTokens = await googleClient.refreshAccessToken(refresh_token);
 }
 
-if (isRevocableProvider(googleClient)) {
-	// To revoke an access or refresh token:
-	await googleClient.revokeToken(access_token);
-}
+await googleClient.revokeToken(access_token);
 ```
+
+Unsupported refresh, revoke, and profile methods are absent from the inferred
+type and the runtime object. Most revocation endpoints accept a token string.
+Withings is provider-specific: its inferred `revokeToken()` input is the
+numeric `userid` returned by its token exchange.
 
 ## Types
 
@@ -244,6 +245,9 @@ Conditional types for narrowing providers by feature:
 - **`RefreshableProvider`**  
   Providers where `isRefreshable === true`
 
+- **`ProfileProvider`**
+  Providers defining `profileRequest`
+
 - **`RevocableProvider`**  
   Providers defining `revocationRequest`
 
@@ -297,11 +301,18 @@ Conditional types for narrowing providers by feature:
     			: unknown)
     	): Promise<OAuth2TokenResponse>;
 
-    	/**
-    	 * Fetch the authenticated user’s profile.
-    	 * - `accessToken` must be a valid bearer token.
-    	 */
-    	fetchUserProfile(accessToken: string): Promise<unknown>;
+    };
+    ```
+
+- **ProfileOAuth2Client**
+
+    Available when `profileRequest` is defined.
+
+    ```ts
+    export type ProfileOAuth2Client = {
+        fetchUserProfile(
+            accessToken: string
+        ): Promise<Record<string, unknown>>;
     };
     ```
 
@@ -323,11 +334,11 @@ Conditional types for narrowing providers by feature:
     Available when `revocationRequest` is defined;
 
     ```ts
-    export type RevocableOAuth2Client = {
-    	/**
-    	 * Revoke an access or refresh token.
-    	 */
-    	revokeToken(token: string): Promise<void>;
+    export type RevocableOAuth2Client<Input extends string | number = string> = {
+        /**
+         * Revoke using the provider-specific input.
+         */
+        revokeToken(input: Input): Promise<void>;
     };
     ```
 
@@ -398,6 +409,7 @@ Providers are grouped by special requirements:
 | Amazon Cognito     | Untested: TODO – needed cc                             |
 | AniList            | —                                                      |
 | Apple              | Untested: Paid                                         |
+| Attio              | Untested                                               |
 | Atlassian          | —                                                      |
 | Auth0              | —                                                      |
 | Authentik          | Untested                                               |
@@ -407,17 +419,21 @@ Providers are grouped by special requirements:
 | Bitbucket          | —                                                      |
 | Box                | —                                                      |
 | Bungie             | Untested: HTTPS Required                               |
+| Calendly           | —                                                      |
+| Close              | Untested                                               |
 | Coinbase           | HTTPS Required                                         |
 | Discord            | —                                                      |
 | Donation Alerts    | —                                                      |
-| Dribble            | Untested: Paid                                         |
+| Dribbble           | Untested: Paid                                         |
 | Dropbox            | —                                                      |
 | Epic Games         | Untested: HTTPS Required                               |
 | Etsy               | Untested: Pending Approval                             |
 | Facebook           | —                                                      |
+| Figma              | —                                                      |
 | Gitea              | In Development                                         |
 | GitHub             | —                                                      |
 | GitLab             | —                                                      |
+| GoHighLevel        | Token-response identity supported                      |
 | Google             | —                                                      |
 | Intuit             | —                                                      |
 | Kakao              | —                                                      |
@@ -432,10 +448,12 @@ Providers are grouped by special requirements:
 | Mercado Pago       | Untested: Region Restricted                            |
 | Microsoft Entra External ID | CIAM: tenant subdomain + tenant ID required  |
 | Microsoft Entra ID | —                                                      |
+| Monday             | Untested                                               |
 | MyAnimeList        | —                                                      |
 | Naver              | In Development                                         |
 | Notion             | —                                                      |
 | Okta               | —                                                      |
+| OnSpark            | Contract tested                                        |
 | Osu                | —                                                      |
 | Patreon            | —                                                      |
 | Polar              | —                                                      |
@@ -446,6 +464,7 @@ Providers are grouped by special requirements:
 | Salesforce         | —                                                      |
 | Shikimori          | Untested: Region Restricted                            |
 | Slack              | Untested: HTTPS Required                               |
+| Slack User         | Untested: HTTPS Required                               |
 | Spotify            | —                                                      |
 | start.gg           | —                                                      |
 | Strava             | —                                                      |
@@ -456,10 +475,11 @@ Providers are grouped by special requirements:
 | Twitch             | —                                                      |
 | Twitter            | Untested: Paid                                         |
 | VK                 | Public Domain Only (Untested: localhost Not Supported) |
-| Withings           | Fetch profile in development                           |
+| Withings           | Contract tested; identity comes from token response    |
 | WorkOS             | In Development                                         |
 | Yahoo              | Untested: HTTPS Required                               |
 | Yandex             | —                                                      |
+| Zoho               | Untested                                               |
 | Zoom               | —                                                      |
 
 The Microsoft providers are intentionally separate: `microsoftentraid` is for

@@ -2,6 +2,7 @@ import { providers } from './providers';
 import {
 	isOIDCProviderOption,
 	isPKCEProviderOption,
+	isProfileProviderOption,
 	isRefreshableProviderOption,
 	isRevocableProviderOption,
 	isScopeRequiredProviderOption,
@@ -12,6 +13,9 @@ export const oidcProviderOptions =
 	Object.keys(providers).filter(isOIDCProviderOption);
 export const pkceProviderOptions =
 	Object.keys(providers).filter(isPKCEProviderOption);
+export const profileProviderOptions = Object.keys(providers).filter(
+	isProfileProviderOption
+);
 export const providerOptions = Object.keys(providers).filter(
 	isValidProviderOption
 );

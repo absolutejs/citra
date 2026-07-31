@@ -1664,7 +1664,7 @@
 						</div>
 					</div>
 					<div class="article-meta-actions">
-						<span class="article-details">Essay · 9 min read</span>
+						<span class="article-details">Essay · 11 min read</span>
 						<a
 							class="source-link"
 							href="https://github.com/absolutejs/citra"
@@ -1713,13 +1713,21 @@
   <span class="token-comment">// scope is required and comma-encoded</span>
 });
 
-<span class="token-comment">// refreshAccessToken exists here.</span>
-<span class="token-comment">// codeVerifier is optional because Withings does not declare PKCE.</span></code></pre>
+<span class="token-keyword">const</span> tokens =
+  <span class="token-keyword">await</span> client.<span class="token-function">validateAuthorizationCode</span>({ code });
+<span class="token-comment">// Withings returns userid beside its nested token.</span>
+<span class="token-keyword">const</span> userId = <span class="token-function">extractPropFromIdentity</span>(
+  tokens,
+  [<span class="token-string">'body'</span>, <span class="token-string">'userid'</span>],
+  <span class="token-string">'number'</span>
+);
+<span class="token-keyword">await</span> client.<span class="token-function">revokeToken</span>(userId);
+<span class="token-comment">// ^ number required; a token string is a type error.</span></code></pre>
 					</div>
 				</div>
 				<nav class="article-toc" aria-label="In this article">
 					<span>In this article</span>
-					<a href="#argument">The disagreement</a>
+					<a href="#argument">The application problem</a>
 					<a href="#model">The model</a>
 					<a href="#withings">The hard case</a>
 					<a href="#types">Type safety</a>
@@ -1747,50 +1755,45 @@
 			<article>
 				<section class="section argument" id="argument">
 					<div class="section-inner">
-						<p class="section-label">The design disagreement</p>
+						<p class="section-label">The application problem</p>
 						<h2>
 							OAuth providers share a protocol, but their clients
 							need different contracts.
 						</h2>
 						<p class="lede">
-							Arctic kept each provider client independent. We
-							needed clients that could move through one auth
-							layer without erasing their differences.
+							Our auth layer accepts a provider selected from a
+							route, database row, or application setting. It
+							needs one orchestration path while preserving the
+							inputs and operations each provider actually
+							supports.
 						</p>
 
 						<div class="exchange">
 							<figure class="quote-card">
 								<blockquote>
-									“The clients aren’t designed to be passed
-									around.”
+									The provider is dynamic. The contract should
+									still be precise.
 								</blockquote>
 								<footer>
-									Pilcrow, responding in
-									<a
-										href="https://github.com/pilcrowonpaper/arctic/issues/299"
-										target="_blank"
-										rel="noreferrer"
-										>Arctic issue #299</a
-									>
+									The requirement from our application
 								</footer>
 							</figure>
 							<div class="counterpoint">
 								<h3>
-									A library can make that choice. The protocol
-									does not require it.
+									A shared engine does not require a flattened
+									interface.
 								</h3>
 								<p>
-									Arctic optimized each provider client
-									independently. Each class stayed flexible,
-									and the clients became intentionally
-									non-interchangeable. Frameworks, adapters,
-									and multi-provider products had to add
-									wrappers, dynamic checks, and repeated
-									orchestration.
+									GitHub has no refresh method. Google
+									requires PKCE and scopes. Apple has no
+									UserInfo endpoint. Withings disconnects a
+									user with a numeric ID and a signed request.
+									Citra keeps those facts in the selected
+									client type and provider definition.
 								</p>
 								<p class="thesis">
-									In Citra, provider metadata controls runtime
-									behavior and the client type.
+									The same literal configuration controls the
+									HTTP request and the TypeScript surface.
 								</p>
 							</div>
 						</div>
@@ -1829,6 +1832,14 @@
   <span class="token-comment">// normalizes a nonstandard response</span>
   accessTokenPath: [<span class="token-string">'body'</span>, <span class="token-string">'access_token'</span>],
 
+  revocationRequest: {
+    authIn: <span class="token-string">'body'</span>,
+    inputType: <span class="token-string">'number'</span>,
+    tokenParamName: <span class="token-string">'userid'</span>,
+    body: config =&gt;
+      <span class="token-function">getWithingsSignatureParams</span>(config, <span class="token-string">'revoke'</span>)
+  },
+
   tokenRequest: {
     authIn: <span class="token-string">'body'</span>,
     encoding: <span class="token-string">'application/x-www-form-urlencoded'</span>,
@@ -1836,7 +1847,10 @@
   },
 
   subject: [<span class="token-string">'userid'</span>],
-  subjectType: <span class="token-string">'string'</span>
+  subjectBySource: {
+    tokenResponse: [<span class="token-string">'body'</span>, <span class="token-string">'userid'</span>]
+  },
+  subjectType: <span class="token-string">'number'</span>
 }</code></pre>
 							</div>
 							<div class="definition-copy">
@@ -1883,13 +1897,14 @@
 							Provider behavior in practice
 						</p>
 						<h2>
-							Withings puts five oddities into one OAuth flow.
+							Withings makes its differences impossible to ignore.
 						</h2>
 						<p class="lede">
-							Withings combines unusual scope encoding, nested
-							token data, signed request bodies, action fields,
-							and a shared endpoint. Citra handles all of it
-							without a dedicated client class.
+							Its scopes are comma-separated, tokens are nested,
+							operations share an action-based endpoint, and
+							disconnecting a user requires a fresh nonce, a
+							second HMAC, and the numeric <code>userid</code>.
+							Citra represents each requirement directly.
 						</p>
 
 						<div class="request-map">
@@ -1898,15 +1913,17 @@
 									>Where the differences live</span
 								>
 								<p>
-									The application still calls the same
-									authorization, token, profile, refresh, and
-									revocation operations. The provider config
-									owns the wire-level differences.
+									The application uses the same authorization,
+									token, refresh, and revocation lifecycle.
+									Identity comes from the token response
+									because Withings does not expose a general
+									UserInfo request in this configuration.
 								</p>
 								<p>
-									The abstraction gives every provider
-									difference a fixed place to live. It never
-									depends on providers behaving alike.
+									The revocation input changes too:
+									<code>revokeToken()</code> accepts a number
+									for Withings and a token string for standard
+									revocation endpoints.
 								</p>
 							</div>
 
@@ -1932,17 +1949,18 @@
 									</dd>
 								</div>
 								<div class="request-row">
-									<dt>Profile</dt>
+									<dt>Identity</dt>
 									<dd>
-										POST + nonce + HMAC signature +
-										client_id
+										<strong>body.userid</strong> from the
+										token response
 									</dd>
 								</div>
 								<div class="request-row">
 									<dt>Revoke</dt>
 									<dd>
-										POST + action=<strong>revoke</strong> +
-										signed body
+										POST + fresh nonce + second HMAC +
+										numeric <strong>userid</strong>; JSON
+										status validated
 									</dd>
 								</div>
 								<div class="request-row">
@@ -1950,7 +1968,7 @@
 									<dd>
 										createAuthorizationUrl ·
 										validateAuthorizationCode ·
-										fetchUserProfile
+										refreshAccessToken · revokeToken(userid)
 									</dd>
 								</div>
 							</dl>
@@ -2100,9 +2118,11 @@
 									<div>
 										<h3>Unsupported methods disappear</h3>
 										<p>
-											If no revocation request is
-											declared, the client type does not
-											expose <code>revokeToken</code>.
+											Refresh, revoke, and profile methods
+											appear only when their configuration
+											exists. They are absent from both
+											the type and runtime object
+											otherwise.
 										</p>
 									</div>
 								</section>
@@ -2176,7 +2196,7 @@ facebook.<span class="error-target">revokeToken</span>(token);</code></pre>
 										<p>
 											Property 'revokeToken' does not
 											exist on type
-											'BaseOAuth2Client&lt;"facebook"&gt;'.
+											'OAuth2Client&lt;"facebook"&gt;'.
 										</p>
 									</div>
 								</div>
@@ -2199,13 +2219,17 @@ tokens.id_token?.toString();
 							<p>
 								Code exchange, refresh, and discovered OIDC
 								token responses must be objects with a non-empty
-								<code>access_token</code>. Citra also rejects a
-								string <code>error</code> field, including the
-								HTTP 200 error responses GitHub is known to
-								return. This is a minimum OAuth check, not full
-								validation of every provider-specific field.
-								Cryptographic ID-token verification belongs to
-								the standalone OIDC client in the next section.
+								<code>access_token</code>. When
+								<code>refresh_token</code>,
+								<code>token_type</code>, <code>scope</code>, or
+								<code>id_token</code> is present, it must be a
+								string. <code>expires_in</code> must be a
+								non-negative number; numeric strings are
+								normalized. Citra also rejects OAuth error
+								objects returned with HTTP 200. Extra
+								provider-specific fields remain
+								<code>unknown</code> until the application
+								extracts and validates them.
 							</p>
 						</div>
 
@@ -2286,14 +2310,14 @@ tokens.id_token?.toString();
 								<pre><code><span class="token-keyword">function</span> <span class="token-function">revokeIfSupported</span>&lt;P <span class="token-keyword">extends</span> ProviderOption&gt;(
   provider: P,
   client: BaseOAuth2Client&lt;P&gt;,
-  token: string
+  input: RevocationInputForProvider&lt;P&gt;
 ) {
   <span class="token-keyword">if</span> (<span class="token-function">isRevocableOAuth2Client</span>(provider, client)) {
-    <span class="token-keyword">return</span> client.<span class="token-function">revokeToken</span>(token);
+    <span class="token-keyword">return</span> client.<span class="token-function">revokeToken</span>(input);
   }
 }
 
-<span class="token-comment">// no instanceof, class hierarchy, or unsafe cast</span></code></pre>
+<span class="token-comment">// the guard checks the client method at runtime too</span></code></pre>
 							</div>
 						</div>
 					</div>
@@ -2374,8 +2398,9 @@ tokens.id_token?.toString();
 									<h3>Signature and claim checks</h3>
 									<p>
 										Supports RS256 and ES256, then checks
-										issuer, audience, expiration, subject,
-										and an optional nonce.
+										issuer, audience, authorized party,
+										expiration, issued-at, not-before,
+										subject, and an optional nonce.
 									</p>
 								</article>
 								<article>
@@ -2394,6 +2419,24 @@ tokens.id_token?.toString();
 									automatically verify its ID token.
 								</p>
 							</div>
+						</div>
+
+						<div class="validation-band">
+							<h3>Security responsibilities stay visible</h3>
+							<p>
+								Citra generates cryptographically random state
+								and verifier values, but the application must
+								store them with the browser session and compare
+								the returned <code>state</code>. If it sends a
+								nonce, it must retain that value and pass it to
+								<code>verifyIdToken()</code>. The discovered
+								client currently supports confidential clients
+								using <code>client_secret_post</code>; it does
+								not negotiate every token-endpoint
+								authentication method. It also does not validate
+								hybrid-flow <code>at_hash</code> or
+								<code>c_hash</code> claims.
+							</p>
 						</div>
 					</div>
 				</section>
@@ -2801,14 +2844,29 @@ tokens.id_token?.toString();
 							retain the differences.
 						</p>
 						<p>
-							Our next work is specific: validate more provider
-							responses at the network boundary and infer custom
+							Our next work is specific: expand live provider
+							contract fixtures, support more discovered OIDC
+							client-authentication methods, and infer custom
 							credential fields as precisely as built-in
-							credentials. The goal stays the same. Supporting
-							another provider should add its requirements to the
-							catalog instead of scattering new branches through
-							the application.
+							credentials. Supporting another provider should add
+							its requirements to the catalog instead of
+							scattering new branches through the application.
 						</p>
+						<div class="validation-band">
+							<h3>Current boundaries</h3>
+							<p>
+								Citra 0.29.9 is pre-1.0. The catalog contains 78
+								typed configurations, and compile-time tests
+								require a credential mapping for every one. That
+								does not mean every provider has been
+								live-tested with production credentials.
+								Provider APIs still change, so the catalog and
+								its fixtures require maintenance. Citra has zero
+								runtime dependencies and uses the Business
+								Source License 1.1, which converts to Apache 2.0
+								on May 29, 2030.
+							</p>
+						</div>
 						<div class="cta-row">
 							<div
 								class="install-command"
@@ -2883,19 +2941,37 @@ tokens.id_token?.toString();
 						</li>
 						<li>
 							<a
-								href="https://github.com/absolutejs/citra/blob/main/src/providers.ts"
+								href="https://github.com/absolutejs/citra/blob/v0.29.9/src/providers.ts"
 								target="_blank"
 								rel="noreferrer"
 								>Citra provider definitions</a
 							>
 							and
 							<a
-								href="https://github.com/absolutejs/citra/blob/main/src/types.ts"
+								href="https://github.com/absolutejs/citra/blob/v0.29.9/src/types.ts"
 								target="_blank"
 								rel="noreferrer"
 								>conditional client types</a
 							>
 							: the implementation behind the claims on this page.
+						</li>
+						<li>
+							<a
+								href="https://developer.withings.com/developer-guide/v3/get-access/sign-your-requests/"
+								target="_blank"
+								rel="noreferrer"
+								>Withings request-signing guide</a
+							>
+							and
+							<a
+								href="https://developer.withings.com/api-reference/"
+								target="_blank"
+								rel="noreferrer"
+								>OAuth API reference</a
+							>
+							: the nonce, HMAC, and numeric
+							<code>userid</code> revocation contract used in the
+							hard-case example.
 						</li>
 					</ol>
 				</div>

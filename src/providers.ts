@@ -174,6 +174,7 @@ export const providers = defineProviders({
 				token_type_hint: 'refresh_token'
 			}),
 			encoding: 'application/json',
+			inputSource: 'refreshToken',
 			tokenParamName: 'token',
 			url: (config) => `https://${config.domain}/oauth/revoke`
 		},
@@ -1332,6 +1333,7 @@ export const providers = defineProviders({
 				token_type_hint: 'refresh_token'
 			}),
 			encoding: 'application/json',
+			inputSource: 'refreshToken',
 			url: 'https://www.reddit.com/api/v1/revoke_token'
 		},
 		scopeRequired: true,
@@ -1722,6 +1724,7 @@ export const providers = defineProviders({
 			body: (config) => getWithingsSignatureParams(config, 'revoke'),
 			encoding: 'application/x-www-form-urlencoded',
 			includeClientCredentials: false,
+			inputSource: 'subject',
 			inputType: 'number',
 			tokenParamName: 'userid',
 			url: 'https://wbsapi.withings.net/v2/oauth2',

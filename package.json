@@ -1,6 +1,6 @@
 {
 	"name": "citra",
-	"version": "0.29.9",
+	"version": "0.29.10",
 	"description": "OAuth 2.0 library for TypeScript",
 	"repository": {
 		"type": "git",

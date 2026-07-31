@@ -2,7 +2,10 @@ import { describe, expect, it } from 'bun:test';
 import {
 	createCustomOAuth2Client,
 	createOAuth2Client,
-	decodeBase64
+	decodeBase64,
+	isProfileOAuth2Client,
+	isRefreshableOAuth2Client,
+	isRevocableOAuth2Client
 } from '../src/index';
 import { defineProvider, providers } from '../src/providers';
 
@@ -90,6 +93,9 @@ describe('createCustomOAuth2Client', () => {
 		expect(typeof client.refreshAccessToken).toBe('function');
 		expect('refreshAccessToken' in client).toBe(true);
 		expect('revokeToken' in client).toBe(false);
+		expect(isProfileOAuth2Client(client)).toBe(true);
+		expect(isRefreshableOAuth2Client(client)).toBe(true);
+		expect(isRevocableOAuth2Client(client)).toBe(false);
 		// Type-level: no revocationRequest in the config means no revokeToken.
 		// @ts-expect-error revokeToken is not part of this client's type
 		const revoke = client.revokeToken;
@@ -411,7 +417,12 @@ describe('provider request configuration', () => {
 				}),
 				{ clientId: 'custom-client' }
 			);
-			await client.revokeToken('token+with/slashes?');
+			expect(isRevocableOAuth2Client(client)).toBe(true);
+			const revocationInput = client.resolveRevocationInput({
+				accessToken: 'token+with/slashes?'
+			});
+			expect(revocationInput).toBe('token+with/slashes?');
+			await client.revokeToken(revocationInput);
 
 			const url = new URL(request?.url ?? '');
 			expect(url.searchParams.get('hint')).toBe('keep');

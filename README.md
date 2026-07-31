@@ -166,6 +166,30 @@ type and the runtime object. Most revocation endpoints accept a token string.
 Withings is provider-specific: its inferred `revokeToken()` input is the
 numeric `userid` returned by its token exchange.
 
+Generalized auth systems can ask a revocable client to select that
+provider-specific value from an authorization context:
+
+```ts
+const input = client.resolveRevocationInput({
+	accessToken,
+	refreshToken,
+	subject: userIdentity.sub
+});
+
+await client.revokeToken(input);
+```
+
+The provider definition declares whether revocation uses the access token,
+refresh token, or normalized subject. Custom clients work with the same
+runtime capability guards without requiring a built-in provider name:
+
+```ts
+if (isRevocableOAuth2Client(customClient)) {
+	const input = customClient.resolveRevocationInput({ accessToken });
+	await customClient.revokeToken(input);
+}
+```
+
 ## Types
 
 Citra’s TypeScript definitions let you configure and consume OAuth2 providers with full type safety.
@@ -335,6 +359,7 @@ Conditional types for narrowing providers by feature:
 
     ```ts
     export type RevocableOAuth2Client<Input extends string | number = string> = {
+		resolveRevocationInput(context: RevocationInputContext): Input;
         /**
          * Revoke using the provider-specific input.
          */

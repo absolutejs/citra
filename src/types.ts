@@ -53,6 +53,11 @@ type BaseRevocation = {
 	 * provider-specific signature already included in `body`.
 	 */
 	includeClientCredentials?: boolean;
+	/**
+	 * Tells generalized auth systems which authorization value the provider's
+	 * revocation endpoint expects. Defaults to `accessToken`.
+	 */
+	inputSource?: RevocationInputSource;
 	// Some providers return operation status inside an HTTP 200 JSON body.
 	validateResponse?: (value: unknown) => void | Promise<void>;
 };
@@ -166,7 +171,16 @@ export type RefreshableOAuth2Client = {
 	refreshAccessToken(refreshToken: string): Promise<OAuth2TokenResponse>;
 };
 
+export type RevocationInputSource = 'accessToken' | 'refreshToken' | 'subject';
+
+export type RevocationInputContext = {
+	accessToken?: string;
+	refreshToken?: string;
+	subject?: string | number;
+};
+
 export type RevocableOAuth2Client<Input extends string | number = string> = {
+	resolveRevocationInput(context: RevocationInputContext): Input;
 	revokeToken(input: Input): Promise<void>;
 };
 

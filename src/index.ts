@@ -11,6 +11,7 @@ import {
 	ProviderConfig,
 	ProviderOption,
 	RefreshableOAuth2Client,
+	RevocationInputContext,
 	RevocableOAuth2Client
 } from './types';
 import {
@@ -192,6 +193,40 @@ const buildOAuth2Client = async (
 
 			return parseOAuth2TokenResponse(await response.json());
 		},
+		resolveRevocationInput(context: RevocationInputContext) {
+			const { revocationRequest } = meta;
+			if (!revocationRequest) {
+				throw new Error(
+					'Token revocation not defined for this provider'
+				);
+			}
+
+			const inputSource = revocationRequest.inputSource ?? 'accessToken';
+			const input = context[inputSource];
+			if (input === undefined) {
+				throw new Error(
+					`Revocation requires ${inputSource}, but it was not provided`
+				);
+			}
+			const expectsNumber =
+				revocationRequest.authIn !== 'header' &&
+				revocationRequest.inputType === 'number';
+			if (
+				expectsNumber &&
+				(typeof input !== 'number' || !Number.isFinite(input))
+			) {
+				throw new TypeError(
+					'This provider requires a numeric revocation input'
+				);
+			}
+			if (!expectsNumber && typeof input !== 'string') {
+				throw new TypeError(
+					'This provider requires a string revocation input'
+				);
+			}
+
+			return input;
+		},
 
 		async revokeToken(input: string | number) {
 			const { revocationRequest } = meta;
@@ -351,6 +386,7 @@ const buildOAuth2Client = async (
 		Reflect.deleteProperty(client, 'refreshAccessToken');
 	}
 	if (!meta.revocationRequest) {
+		Reflect.deleteProperty(client, 'resolveRevocationInput');
 		Reflect.deleteProperty(client, 'revokeToken');
 	}
 
@@ -365,7 +401,9 @@ export const createCustomOAuth2Client: <const C extends ProviderConfig>(
 	providerConfig: C,
 	credentials: CustomProviderCredentials
 ) => Promise<OAuth2ClientForConfig<C>> = (providerConfig, credentials) =>
-	buildOAuth2Client(providerConfig, credentials);
+	buildOAuth2Client(providerConfig, credentials) as unknown as Promise<
+		OAuth2ClientForConfig<typeof providerConfig>
+	>;
 
 export const createOAuth2Client = <P extends ProviderOption>(
 	providerName: P,

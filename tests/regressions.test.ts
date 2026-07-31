@@ -4,6 +4,7 @@ import {
 	extractPropFromIdentity,
 	hmacSha256,
 	isProfileOAuth2Client,
+	isRefreshableOAuth2Client,
 	isRevocableOAuth2Client,
 	normalizeProviderIdentity,
 	parseOAuth2TokenResponse
@@ -150,6 +151,9 @@ describe('runtime capability guards', () => {
 
 		expect(isRevocableOAuth2Client('google', facebook)).toBe(false);
 		expect(isProfileOAuth2Client('facebook', facebook)).toBe(true);
+		expect(isProfileOAuth2Client(facebook)).toBe(true);
+		expect(isRefreshableOAuth2Client(facebook)).toBe(false);
+		expect(isRevocableOAuth2Client(facebook)).toBe(false);
 	});
 });
 
@@ -213,7 +217,12 @@ describe('Withings signed revocation', () => {
 				clientSecret,
 				redirectUri: 'https://app.example.test/callback'
 			});
-			await client.revokeToken(WITHINGS_USER_ID);
+			const revocationInput = client.resolveRevocationInput({
+				accessToken: 'withings-access-token',
+				subject: WITHINGS_USER_ID
+			});
+			expect(revocationInput).toBe(WITHINGS_USER_ID);
+			await client.revokeToken(revocationInput);
 
 			expect(revocationBody.get('action')).toBe('revoke');
 			expect(revocationBody.get('client_id')).toBe(clientId);
@@ -229,6 +238,44 @@ describe('Withings signed revocation', () => {
 		} finally {
 			globalThis.fetch = originalFetch;
 		}
+	});
+
+	it('resolves access, refresh, and subject inputs from provider metadata', async () => {
+		const google = await createOAuth2Client('google', {
+			clientId: 'google-client',
+			clientSecret: 'google-secret',
+			redirectUri: 'https://app.example.test/callback'
+		});
+		const auth0 = await createOAuth2Client('auth0', {
+			clientId: 'auth0-client',
+			clientSecret: 'auth0-secret',
+			domain: 'tenant.example.test',
+			redirectUri: 'https://app.example.test/callback'
+		});
+		const withings = await createOAuth2Client('withings', {
+			clientId: 'withings-client',
+			clientSecret: 'withings-secret',
+			redirectUri: 'https://app.example.test/callback'
+		});
+
+		expect(
+			google.resolveRevocationInput({
+				accessToken: 'access-token',
+				refreshToken: 'refresh-token'
+			})
+		).toBe('access-token');
+		expect(
+			auth0.resolveRevocationInput({
+				accessToken: 'access-token',
+				refreshToken: 'refresh-token'
+			})
+		).toBe('refresh-token');
+		expect(
+			withings.resolveRevocationInput({ subject: WITHINGS_USER_ID })
+		).toBe(WITHINGS_USER_ID);
+		expect(() =>
+			withings.resolveRevocationInput({ accessToken: 'access-token' })
+		).toThrow('requires subject');
 	});
 
 	it('rejects token-shaped input for userid revocation at runtime', async () => {

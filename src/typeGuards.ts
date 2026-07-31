@@ -61,13 +61,33 @@ export const isPKCEProviderOption = (
 
 	return provider.PKCEMethod !== undefined;
 };
-export const isProfileOAuth2Client = <P extends ProviderOption>(
+export function isProfileOAuth2Client<Client extends object>(
+	client: Client
+): client is Client & ProfileOAuth2Client;
+export function isProfileOAuth2Client<P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & ProfileOAuth2Client =>
-	isProfileProviderOption(providerName) &&
-	'fetchUserProfile' in client &&
-	typeof client.fetchUserProfile === 'function';
+): client is BaseOAuth2Client<P> & ProfileOAuth2Client;
+export function isProfileOAuth2Client(
+	providerOrClient: string | object,
+	maybeClient?: object
+) {
+	const client = maybeClient ?? providerOrClient;
+	if (
+		maybeClient !== undefined &&
+		(typeof providerOrClient !== 'string' ||
+			!isProfileProviderOption(providerOrClient))
+	) {
+		return false;
+	}
+
+	return (
+		typeof client === 'object' &&
+		client !== null &&
+		'fetchUserProfile' in client &&
+		typeof client.fetchUserProfile === 'function'
+	);
+}
 export const isProfileProviderOption = (
 	option: string
 ): option is ProfileProvider => {
@@ -76,13 +96,33 @@ export const isProfileProviderOption = (
 
 	return provider.profileRequest !== undefined;
 };
-export const isRefreshableOAuth2Client = <P extends ProviderOption>(
+export function isRefreshableOAuth2Client<Client extends object>(
+	client: Client
+): client is Client & RefreshableOAuth2Client;
+export function isRefreshableOAuth2Client<P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
-): client is BaseOAuth2Client<P> & RefreshableOAuth2Client =>
-	isRefreshableProviderOption(providerName) &&
-	'refreshAccessToken' in client &&
-	typeof client.refreshAccessToken === 'function';
+): client is BaseOAuth2Client<P> & RefreshableOAuth2Client;
+export function isRefreshableOAuth2Client(
+	providerOrClient: string | object,
+	maybeClient?: object
+) {
+	const client = maybeClient ?? providerOrClient;
+	if (
+		maybeClient !== undefined &&
+		(typeof providerOrClient !== 'string' ||
+			!isRefreshableProviderOption(providerOrClient))
+	) {
+		return false;
+	}
+
+	return (
+		typeof client === 'object' &&
+		client !== null &&
+		'refreshAccessToken' in client &&
+		typeof client.refreshAccessToken === 'function'
+	);
+}
 export const isRefreshableProviderOption = (
 	option: string
 ): option is RefreshableProvider => {
@@ -91,14 +131,36 @@ export const isRefreshableProviderOption = (
 
 	return provider.isRefreshable;
 };
-export const isRevocableOAuth2Client = <P extends ProviderOption>(
+export function isRevocableOAuth2Client<Client extends object>(
+	client: Client
+): client is Client & RevocableOAuth2Client<string | number>;
+export function isRevocableOAuth2Client<P extends ProviderOption>(
 	providerName: P,
 	client: BaseOAuth2Client<P>
 ): client is BaseOAuth2Client<P> &
-	RevocableOAuth2Client<RevocationInputForProvider<P>> =>
-	isRevocableProviderOption(providerName) &&
-	'revokeToken' in client &&
-	typeof client.revokeToken === 'function';
+	RevocableOAuth2Client<RevocationInputForProvider<P>>;
+export function isRevocableOAuth2Client(
+	providerOrClient: string | object,
+	maybeClient?: object
+) {
+	const client = maybeClient ?? providerOrClient;
+	if (
+		maybeClient !== undefined &&
+		(typeof providerOrClient !== 'string' ||
+			!isRevocableProviderOption(providerOrClient))
+	) {
+		return false;
+	}
+
+	return (
+		typeof client === 'object' &&
+		client !== null &&
+		'resolveRevocationInput' in client &&
+		typeof client.resolveRevocationInput === 'function' &&
+		'revokeToken' in client &&
+		typeof client.revokeToken === 'function'
+	);
+}
 export const isRevocableProviderOption = (
 	option: string
 ): option is RevocableProvider => {

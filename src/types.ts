@@ -1,5 +1,11 @@
 import { providers } from './providers';
 
+// Built-in provider definitions predate custom credential inference and use
+// heterogeneous credential maps. Keep their contextual callback parameter
+// open while custom definitions opt into a concrete credential contract.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyProviderCredentials = any;
+
 export type NonEmptyArray<T> = [T, ...T[]];
 type URLSearchParamsInit =
 	| string
@@ -7,46 +13,32 @@ type URLSearchParamsInit =
 	| string[][]
 	| URLSearchParams;
 
-type ProfileRequestConfig = {
-	// TODO: remove any type in favor of the actual config for this specific provider
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	url: string | ((config: any) => string);
+type ProfileRequestConfig<Credentials = AnyProviderCredentials> = {
+	url: string | ((config: Credentials) => string);
 	method: 'GET' | 'POST';
 	// 'path' appends the access token as the final URL path segment — required by
 	// providers whose token-info endpoint is keyed by the token itself (e.g.
 	// HubSpot's GET /oauth/v1/access-tokens/{token}), not a Bearer header.
 	authIn: 'header' | 'query' | 'path';
-	// TODO: remove any type in favor of the actual config for this specific provider
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	headers?: HeadersInit | ((config: any) => HeadersInit);
+	headers?: HeadersInit | ((config: Credentials) => HeadersInit);
 	body?:
 		| URLSearchParamsInit
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		| ((config: any) => URLSearchParamsInit)
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		| ((config: any) => Promise<URLSearchParamsInit>);
+		| ((config: Credentials) => URLSearchParamsInit)
+		| ((config: Credentials) => Promise<URLSearchParamsInit>);
 	searchParams?:
 		| URLSearchParamsInit
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		| ((config: any) => URLSearchParamsInit)
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		| ((config: any) => Promise<URLSearchParamsInit>);
+		| ((config: Credentials) => URLSearchParamsInit)
+		| ((config: Credentials) => Promise<URLSearchParamsInit>);
 	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 };
 
-type BaseRevocation = {
-	// TODO: remove any type in favor of the actual config for this specific provider
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	url: string | ((config: any) => string);
-	// TODO: remove any type in favor of the actual config for this specific provider
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	headers?: HeadersInit | ((config: any) => HeadersInit);
+type BaseRevocation<Credentials = AnyProviderCredentials> = {
+	url: string | ((config: Credentials) => string);
+	headers?: HeadersInit | ((config: Credentials) => HeadersInit);
 	body?:
 		| URLSearchParamsInit
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		| ((config: any) => URLSearchParamsInit)
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		| ((config: any) => Promise<URLSearchParamsInit>);
+		| ((config: Credentials) => URLSearchParamsInit)
+		| ((config: Credentials) => Promise<URLSearchParamsInit>);
 	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 	/**
 	 * Set to false when the provider authenticates the request through a
@@ -62,34 +54,36 @@ type BaseRevocation = {
 	validateResponse?: (value: unknown) => void | Promise<void>;
 };
 
-type NamedRevocation = BaseRevocation & {
-	authIn: 'query' | 'body';
-	tokenParamName: 'token' | 'access_token' | 'refresh_token' | 'userid';
-	inputType?: 'string' | 'number';
-};
+type NamedRevocation<Credentials = AnyProviderCredentials> =
+	BaseRevocation<Credentials> & {
+		authIn: 'query' | 'body';
+		tokenParamName: 'token' | 'access_token' | 'refresh_token' | 'userid';
+		inputType?: 'string' | 'number';
+	};
 
-type HeaderRevocation = BaseRevocation & {
-	authIn: 'header';
-	tokenParamName?: never;
-};
+type HeaderRevocation<Credentials = AnyProviderCredentials> =
+	BaseRevocation<Credentials> & {
+		authIn: 'header';
+		tokenParamName?: never;
+	};
 
-type RevocationRequestConfig = NamedRevocation | HeaderRevocation;
+type RevocationRequestConfig<Credentials = AnyProviderCredentials> =
+	| NamedRevocation<Credentials>
+	| HeaderRevocation<Credentials>;
 
-type TokenRequestConfig = {
-	// TODO: remove any type in favor of the actual config for this specific provider
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	url: string | ((config: any) => string);
+type TokenRequestConfig<Credentials = AnyProviderCredentials> = {
+	url: string | ((config: Credentials) => string);
 	authIn: 'body' | 'header';
 	encoding: 'application/x-www-form-urlencoded' | 'application/json';
 };
 
 export type DefineProviders = <
-	ProviderMap extends Record<string, ProviderConfig>
+	ProviderMap extends Record<string, ProviderConfig<AnyProviderCredentials>>
 >(
 	providerMap: ProviderMap
 ) => {
 	[ProviderName in keyof ProviderMap]: ProviderMap[ProviderName] &
-		ProviderConfig;
+		ProviderConfig<AnyProviderCredentials>;
 };
 
 export type ProvidersMap = typeof providers;
@@ -204,12 +198,15 @@ export type OAuth2Client<P extends ProviderOption> = BaseOAuth2Client<P> &
 		? RevocableOAuth2Client<RevocationInputForProvider<P>>
 		: unknown);
 
-/** Credentials for a caller-defined (custom) provider. Extra fields are
- *  passed through to any `(config) => ...` functions in the provider config. */
-export type CustomProviderCredentials = {
+export type CustomProviderCredentialsBase = {
 	clientId: string;
 	clientSecret?: string | null;
 	redirectUri?: string;
+};
+
+/** Backward-compatible open credential shape for custom providers that do
+ *  not declare a narrower credential contract. */
+export type CustomProviderCredentials = CustomProviderCredentialsBase & {
 	[key: string]: unknown;
 };
 
@@ -266,28 +263,22 @@ export type TypeMap = {
 	object: Record<string, unknown>;
 };
 
-export type ProviderConfig = {
-	// TODO : remove any type in favor of the actual config for this specific provider
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	authorizationUrl: string | ((config: any) => string);
+export type ProviderConfig<Credentials = AnyProviderCredentials> = {
+	authorizationUrl: string | ((config: Credentials) => string);
 	createAuthorizationURLSearchParams?:
 		| Record<string, string>
-		// TODO : remove any type in favor of the actual config for this specific provider
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		| ((config: any) => Record<string, string>);
+		| ((config: Credentials) => Record<string, string>);
 	// Some providers, notably Apple, require a signed client assertion instead
 	// of a stored client-secret string.
-	// TODO : remove any type in favor of the actual config for this specific provider
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	createClientSecret?: (config: any) => string | Promise<string>;
+	createClientSecret?: (config: Credentials) => string | Promise<string>;
 
 	isOIDC: boolean;
 	isRefreshable: boolean;
 	PKCEMethod?: 'S256' | 'plain';
 	// Some OIDC providers intentionally return identity only in the id_token.
-	profileRequest?: ProfileRequestConfig;
+	profileRequest?: ProfileRequestConfig<Credentials>;
 	refreshAccessTokenBody?: Record<string, string>;
-	revocationRequest?: RevocationRequestConfig;
+	revocationRequest?: RevocationRequestConfig<Credentials>;
 	scopeRequired: boolean;
 	// The authorize-URL query param the requested scopes are sent under. Defaults to
 	// `scope`; Slack's user-token oauth/v2 flow uses `user_scope`.
@@ -298,7 +289,7 @@ export type ProviderConfig = {
 	// `access_token` (e.g. Slack oauth/v2 nests the user token at authed_user.access_token).
 	// When set, validateAuthorizationCode normalizes the response so `access_token` holds it.
 	accessTokenPath?: string[];
-	tokenRequest: TokenRequestConfig;
+	tokenRequest: TokenRequestConfig<Credentials>;
 	validateAuthorizationCodeBody?: Record<string, string>;
 	subject: string[];
 	subjectBySource?: {
@@ -317,6 +308,24 @@ export type ProviderConfig = {
 	familyName?: string[];
 	picture?: string[];
 };
+
+declare const customProviderCredentials: unique symbol;
+
+/** A provider definition with a compile-time credential contract attached.
+ *  The symbol is type-only; it adds no runtime property to the definition. */
+export type CustomProviderDefinition<
+	Config extends ProviderConfig<Credentials>,
+	Credentials extends CustomProviderCredentialsBase
+> = Config & {
+	readonly [customProviderCredentials]: Credentials;
+};
+
+export type CredentialsForCustomProvider<Definition> = Definition extends {
+	readonly [customProviderCredentials]: infer Credentials extends
+		CustomProviderCredentialsBase;
+}
+	? Credentials
+	: CustomProviderCredentials;
 
 export type OAuth2TokenResponse = {
 	access_token: string;

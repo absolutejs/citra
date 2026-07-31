@@ -1,6 +1,12 @@
 import { createAppleClientSecret } from './arctic-utils';
 import { anilistProfileQuery } from './graphqlQueries';
-import { DefineProviders, ProviderConfig } from './types';
+import {
+	CustomProviderCredentials,
+	CustomProviderCredentialsBase,
+	CustomProviderDefinition,
+	DefineProviders,
+	ProviderConfig
+} from './types';
 import {
 	assertWithingsSuccess,
 	encodeBase64,
@@ -8,12 +14,6 @@ import {
 } from './utils';
 
 export const defineProviders: DefineProviders = (providers) => providers;
-
-/** Capture a caller-defined provider config as a literal so
- *  createCustomOAuth2Client can derive its capabilities type-safely. */
-export const defineProvider: <const C extends ProviderConfig>(
-	config: C
-) => C = (config) => config;
 
 export const providers = defineProviders({
 	'42': {
@@ -1901,3 +1901,22 @@ export const providers = defineProviders({
 		}
 	}
 });
+
+/** Capture a caller-defined provider as a literal. Call with a config directly
+ *  for the backward-compatible open credential shape, or call
+ *  `defineProvider<Credentials>()(config)` to attach an exact credential
+ *  contract and type every config callback with it. */
+export function defineProvider<const Config extends ProviderConfig>(
+	config: Config
+): CustomProviderDefinition<Config, CustomProviderCredentials>;
+export function defineProvider<
+	Credentials extends CustomProviderCredentialsBase
+>(): <const Config extends ProviderConfig<Credentials>>(
+	config: Config
+) => CustomProviderDefinition<Config, Credentials>;
+export function defineProvider(config?: ProviderConfig) {
+	return config === undefined
+		? <Config extends ProviderConfig>(providerConfig: Config) =>
+				providerConfig
+		: config;
+}

@@ -46,6 +46,66 @@ const credentials: TestCredentials = {
 };
 
 describe('createCustomOAuth2Client', () => {
+	it('passes a declared custom credential contract to config factories', async () => {
+		type TenantCredentials = TestCredentials & {
+			audience: string;
+			tenantId: string;
+		};
+		const provider = defineProvider<TenantCredentials>()({
+			isOIDC: true,
+			isRefreshable: false,
+			profileRequest: {
+				authIn: 'header',
+				encoding: 'application/json',
+				method: 'GET',
+				headers: ({ audience }) => ({ 'x-acme-audience': audience }),
+				url: ({ tenantId }) =>
+					`https://${tenantId}.acme.test/oauth2/userinfo`
+			},
+			scopeRequired: false,
+			subject: ['sub'],
+			subjectType: 'string',
+			tokenRequest: {
+				authIn: 'body',
+				encoding: 'application/x-www-form-urlencoded',
+				url: ({ tenantId }) =>
+					`https://${tenantId}.acme.test/oauth2/token`
+			},
+			authorizationUrl: ({ tenantId }) =>
+				`https://${tenantId}.acme.test/oauth2/authorize`
+		});
+		const client = await createCustomOAuth2Client(provider, {
+			audience: 'account-api',
+			...credentials,
+			tenantId: 'north'
+		});
+		const authorizationUrl = await client.createAuthorizationUrl({
+			state: 'tenant-state'
+		});
+		const originalFetch = globalThis.fetch;
+		let profileRequest: Request | undefined;
+		globalThis.fetch = async (input, init) => {
+			profileRequest =
+				input instanceof Request ? input : new Request(input, init);
+
+			return Response.json({ sub: 'acme-user' });
+		};
+
+		try {
+			await client.fetchUserProfile('access-token');
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+
+		expect(authorizationUrl.hostname).toBe('north.acme.test');
+		expect(profileRequest?.url).toBe(
+			'https://north.acme.test/oauth2/userinfo'
+		);
+		expect(profileRequest?.headers.get('x-acme-audience')).toBe(
+			'account-api'
+		);
+	});
+
 	it('builds an authorization URL from the custom config', async () => {
 		const client = await createCustomOAuth2Client(
 			acmeProvider,

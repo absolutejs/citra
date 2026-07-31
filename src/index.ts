@@ -4,7 +4,7 @@ import { hasClientSecret } from './typeGuards';
 import {
 	BaseOAuth2ClientForConfig,
 	CredentialsFor,
-	CustomProviderCredentials,
+	CredentialsForCustomProvider,
 	OAuth2Client,
 	OAuth2ClientForConfig,
 	ProfileOAuth2Client,
@@ -397,10 +397,10 @@ const buildOAuth2Client = async (
  *  and credentials — the returned client's capabilities (PKCE, scope
  *  requirements, refresh, revoke) are typed from YOUR config literal, exactly
  *  like a built-in provider. */
-export const createCustomOAuth2Client: <const C extends ProviderConfig>(
-	providerConfig: C,
-	credentials: CustomProviderCredentials
-) => Promise<OAuth2ClientForConfig<C>> = (providerConfig, credentials) =>
+export const createCustomOAuth2Client: <const Config extends ProviderConfig>(
+	providerConfig: Config,
+	credentials: NoInfer<CredentialsForCustomProvider<Config>>
+) => Promise<OAuth2ClientForConfig<Config>> = (providerConfig, credentials) =>
 	buildOAuth2Client(providerConfig, credentials) as unknown as Promise<
 		OAuth2ClientForConfig<typeof providerConfig>
 	>;

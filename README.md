@@ -6,6 +6,7 @@
 - [Why Citra?](#why-citra)
 - [Installation](#installation)
 - [Getting Started](#getting-started)
+- [Custom Providers](#custom-providers)
 - [Building the Authorization URL](#building-the-authorization-url)
 - [Handling the Callback](#handling-the-callback)
 - [Fetching the User Profile](#fetching-the-user-profile)
@@ -57,6 +58,51 @@ const googleClient = await createOAuth2Client('google', {
 ```
 
 All providers have their proper environment variables listed in `env.example`. Feel free to copy that into your project, remove `.example` from the name, and uncomment out the providers you need.
+
+## Custom Providers
+
+A custom provider can carry an exact credential contract. The contract types
+every credential-dependent URL, header, body, and client-secret factory in the
+definition, then becomes the required input to `createCustomOAuth2Client()`.
+
+```ts
+import { createCustomOAuth2Client, defineProvider } from 'citra';
+
+type AcmeCredentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+	tenantId: string;
+};
+
+const acme = defineProvider<AcmeCredentials>()({
+	authorizationUrl: ({ tenantId }) =>
+		`https://${tenantId}.acme.test/oauth/authorize`,
+	isOIDC: true,
+	isRefreshable: true,
+	PKCEMethod: 'S256',
+	scopeRequired: true,
+	subject: ['sub'],
+	subjectType: 'string',
+	tokenRequest: {
+		authIn: 'body',
+		encoding: 'application/x-www-form-urlencoded',
+		url: ({ tenantId }) =>
+			`https://${tenantId}.acme.test/oauth/token`
+	}
+});
+
+const acmeClient = await createCustomOAuth2Client(acme, {
+	clientId: 'YOUR_CLIENT_ID',
+	clientSecret: 'YOUR_CLIENT_SECRET',
+	redirectUri: 'https://yourapp.com/auth/callback',
+	tenantId: 'north'
+});
+```
+
+Omitting `tenantId`, assigning it a non-string value, or passing an undeclared
+credential is a type error. Calling `defineProvider(config)` directly remains
+supported and uses the open, backward-compatible custom credential shape.
 
 ## Building the Authorization URL
 

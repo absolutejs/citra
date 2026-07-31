@@ -1,6 +1,6 @@
 {
 	"name": "citra",
-	"version": "0.29.10",
+	"version": "0.29.11",
 	"description": "OAuth 2.0 library for TypeScript",
 	"repository": {
 		"type": "git",
@@ -19,8 +19,8 @@
 		"test": "bun test",
 		"format": "absolute prettier --write",
 		"lint": "absolute eslint",
-		"typecheck": "absolute typecheck",
-		"release": "bun run format && bun run build && bun publish"
+		"typecheck": "absolute typecheck && tsc --project tsconfig.type-tests.json",
+		"release": "bun run format && bun run typecheck && bun run lint && bun run test && bun run build && bun publish"
 	},
 	"devDependencies": {
 		"@absolutejs/absolute": "^0.19.0-beta.1023",

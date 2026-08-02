@@ -19,7 +19,7 @@
 
 ## Introduction
 
-Citra is a curated collection of OAuth 2.0 provider configurations, each bundled with the correct endpoints and request details. It provides a ready-to-use foundation for integrating secure authentication into JavaScript and TypeScript applications. <!-- This README is an overview of Citra, the full documentation can be found [here](//TODO: Add docs link). -->
+Citra is a curated collection of OAuth 2.0 provider configurations, each bundled with the correct endpoints and request details. It provides a ready-to-use foundation for integrating secure authentication into JavaScript and TypeScript applications. See the [complete Citra guide](https://absolutejs.com/documentation/citra) for installation, provider configuration, and integration patterns.
 
 ## Why Citra?
 
@@ -477,7 +477,7 @@ Providers are grouped by special requirements:
 | Provider           | Tag                                                    |
 | ------------------ | ------------------------------------------------------ |
 | 42                 | Untested: Restricted                                   |
-| Amazon Cognito     | Untested: TODO – needed cc                             |
+| Amazon Cognito     | Untested: client credentials and hosted domain required |
 | AniList            | —                                                      |
 | Apple              | Untested: Paid                                         |
 | Attio              | Untested                                               |

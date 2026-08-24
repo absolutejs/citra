@@ -54,6 +54,19 @@ describe('absolutejs provider', () => {
 		);
 	});
 
+	it('authorizes without naming a scope', async () => {
+		// The control plane grants whatever the client is registered for when
+		// the request names no scope, so requiring one here would force every
+		// consumer to restate what registration already settled.
+		const client = await createOAuth2Client('absolutejs', credentials);
+		const url = await client.createAuthorizationUrl({
+			codeVerifier: 'verifier',
+			state: 'state'
+		});
+
+		expect(url.searchParams.get('scope')).toBeNull();
+	});
+
 	it('carries the profile, refresh, and revoke capabilities it advertises', async () => {
 		// The docs site tracks authorize/profile/refresh/revoke status per
 		// provider, so a provider that claims these must actually expose them.

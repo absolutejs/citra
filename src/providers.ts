@@ -58,7 +58,9 @@ export const providers = defineProviders({
 			url: (config) =>
 				`https://${config.baseURL ?? 'absolutejs.ai'}/oauth2/revoke`
 		},
-		scopeRequired: true,
+		// A control plane falls back to the scopes the client is registered
+		// for when the authorize request names none, so asking is optional.
+		scopeRequired: false,
 		subject: ['sub'],
 		subjectBySource: {
 			idToken: ['sub'],

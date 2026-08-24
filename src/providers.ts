@@ -35,6 +35,43 @@ export const providers = defineProviders({
 			url: 'https://api.intra.42.fr/oauth/token'
 		}
 	},
+	absolutejs: {
+		authorizationUrl: (config) =>
+			`https://${config.baseURL ?? 'absolutejs.ai'}/oauth2/authorize`,
+		email: ['email'],
+		fullName: ['name'],
+		isOIDC: true,
+		isRefreshable: true,
+		picture: ['picture'],
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: (config) =>
+				`https://${config.baseURL ?? 'absolutejs.ai'}/oauth2/userinfo`
+		},
+		revocationRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			tokenParamName: 'token',
+			url: (config) =>
+				`https://${config.baseURL ?? 'absolutejs.ai'}/oauth2/revoke`
+		},
+		scopeRequired: true,
+		subject: ['sub'],
+		subjectBySource: {
+			idToken: ['sub'],
+			profile: ['sub']
+		},
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: (config) =>
+				`https://${config.baseURL ?? 'absolutejs.ai'}/oauth2/token`
+		}
+	},
 	amazoncognito: {
 		authorizationUrl: 'https://${domain}/oauth2/authorize',
 		isOIDC: true,

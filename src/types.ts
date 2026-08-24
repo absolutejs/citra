@@ -346,6 +346,18 @@ type FortyTwoOAuth2Credentials = {
 	clientSecret: string;
 	redirectUri: string;
 };
+/**
+ * An AbsoluteJS control plane acting as the identity provider.
+ *
+ * `baseURL` defaults to the hosted control plane at `absolutejs.ai`; a
+ * self-hosted control plane sets it to its own origin host.
+ */
+type AbsoluteJSOAuth2Credentials = {
+	baseURL?: string;
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
 type AmazonCognitoOAuth2Credentials = {
 	domain: string;
 	clientId: string;
@@ -746,6 +758,7 @@ type ZoomOAuth2Credentials = {
 
 export type CredentialsMap = {
 	'42': FortyTwoOAuth2Credentials;
+	absolutejs: AbsoluteJSOAuth2Credentials;
 	amazoncognito: AmazonCognitoOAuth2Credentials;
 	anilist: AniListOAuth2Credentials;
 	apple: AppleOAuth2Credentials;

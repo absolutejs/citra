@@ -28,7 +28,7 @@
 	},
 	"devDependencies": {
 		"@absolutejs/absolute": "^0.20.0-beta.0",
-		"@absolutejs/changelog": "^0.4.0",
+		"@absolutejs/changelog": "^0.5.1",
 		"@stylistic/eslint-plugin": "^5.10.0",
 		"@types/bun": "1.3.14",
 		"eslint": "^9",

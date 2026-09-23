@@ -567,3 +567,18 @@ Found an issue or want to add a new provider? Please open an issue or submit a p
 ## License
 
 Business Source License 1.1 © Alex Kahn — production use is free except offering citra as a competing hosted service (see the Additional Use Grant in [LICENSE](./LICENSE)). Converts to Apache 2.0 on May 29, 2030.
+
+### Neon partner OAuth
+
+`createOAuth2Client('neon', { clientId, clientSecret, redirectUri })` uses Neon's
+partner OAuth endpoints with S256 PKCE. Authorization requires a scope list and a
+code verifier. Request `openid` for identity; request both `offline` and
+`offline_access` when refresh access is needed. Select management permissions
+explicitly (for example `urn:neoncloud:projects:read`); none are added implicitly.
+Identity is `sub`, not an assumed email. Profile, refresh and token revocation are
+available through the standard client methods.
+
+Neon must register your partner application and exact callback URLs before live
+use. See [Neon's OAuth integration guide](https://neon.com/docs/guides/oauth-integration).
+Creating a regular Neon database account does not register an OAuth application
+or establish a referral agreement.

@@ -592,6 +592,11 @@ type NaverOAuth2Credentials = {
 	clientSecret: string;
 	redirectUri: string;
 };
+type NeonOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+};
 type NotionOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
@@ -805,6 +810,7 @@ export type CredentialsMap = {
 	monday: MondayOAuth2Credentials;
 	myanimelist: MyAnimeListOAuth2Credentials;
 	naver: NaverOAuth2Credentials;
+	neon: NeonOAuth2Credentials;
 	notion: NotionOAuth2Credentials;
 	okta: OktaOAuth2Credentials;
 	onspark: OnSparkOAuth2Credentials;

@@ -1147,6 +1147,32 @@ export const providers = defineProviders({
 			url: 'https://nid.naver.com/oauth2.0/token'
 		}
 	},
+	neon: {
+		authorizationUrl: 'https://oauth2.neon.tech/oauth2/auth',
+		isOIDC: true,
+		isRefreshable: true,
+		PKCEMethod: 'S256',
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: 'https://oauth2.neon.tech/userinfo'
+		},
+		revocationRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			tokenParamName: 'token',
+			url: 'https://oauth2.neon.tech/oauth2/revoke'
+		},
+		scopeRequired: true,
+		subject: ['sub'],
+		subjectType: 'string',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: 'https://oauth2.neon.tech/oauth2/token'
+		}
+	},
 	notion: {
 		authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
 		email: ['bot', 'owner', 'user', 'person', 'email'],

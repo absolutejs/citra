@@ -50,20 +50,26 @@ describe('Neon built-in provider', () => {
 	test('exchanges, refreshes, reads identity and revokes through the shared client', async () => {
 		const requests: Request[] = [];
 		const fetchSpy = spyOn(globalThis, 'fetch').mockImplementation(
-			async (input, init) => {
-				const request = new Request(input, init);
-				requests.push(request.clone());
+			Object.assign(
+				async (
+					input: Parameters<typeof fetch>[0],
+					init?: Parameters<typeof fetch>[1]
+				) => {
+					const request = new Request(input, init);
+					requests.push(request.clone());
 
-				return Response.json(
-					request.url.endsWith('/userinfo')
-						? { sub: 'neon-subject' }
-						: {
-								access_token: 'test-access',
-								refresh_token: 'test-refresh',
-								token_type: 'Bearer'
-							}
-				);
-			}
+					return Response.json(
+						request.url.endsWith('/userinfo')
+							? { sub: 'neon-subject' }
+							: {
+									access_token: 'test-access',
+									refresh_token: 'test-refresh',
+									token_type: 'Bearer'
+								}
+					);
+				},
+				{ preconnect: fetch.preconnect }
+			)
 		);
 		try {
 			const client = await createOAuth2Client('neon', credentials);

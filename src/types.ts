@@ -19,7 +19,10 @@ type ProfileRequestConfig<Credentials = AnyProviderCredentials> = {
 	// 'path' appends the access token as the final URL path segment — required by
 	// providers whose token-info endpoint is keyed by the token itself (e.g.
 	// HubSpot's GET /oauth/v1/access-tokens/{token}), not a Bearer header.
-	authIn: 'header' | 'query' | 'path';
+	authIn: 'header' | 'query' | 'path' | 'body';
+	tokenParamName?: string;
+	includeClientCredentials?: boolean;
+	validateResponse?: (value: unknown) => void;
 	headers?: HeadersInit | ((config: Credentials) => HeadersInit);
 	body?:
 		| URLSearchParamsInit

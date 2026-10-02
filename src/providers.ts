@@ -761,12 +761,48 @@ export const providers = defineProviders({
 		isOIDC: false,
 		isRefreshable: true,
 		profileRequest: {
-			// HubSpot keys token-info by the token in the path, not a Bearer header:
-			// GET /oauth/v1/access-tokens/{token}. authIn:'path' appends it.
-			authIn: 'path',
-			encoding: 'application/json',
-			method: 'GET',
-			url: 'https://api.hubapi.com/oauth/v1/access-tokens'
+			authIn: 'body',
+			body: { token_type_hint: 'access_token' },
+			encoding: 'application/x-www-form-urlencoded',
+			includeClientCredentials: true,
+			method: 'POST',
+			tokenParamName: 'token',
+			url: 'https://api.hubapi.com/oauth/2026-09/token/introspect',
+			validateResponse: (value: unknown) => {
+				if (
+					!value ||
+					typeof value !== 'object' ||
+					!('active' in value) ||
+					value.active !== true ||
+					!('hub_id' in value) ||
+					!Number.isSafeInteger(value.hub_id) ||
+					Number(value.hub_id) <= 0
+				) {
+					throw new Error(
+						'HubSpot returned an inactive token or invalid portal identity'
+					);
+				}
+				// Introspection can echo bearer tokens; never persist them as profile metadata.
+				const signed = Reflect.get(value, 'signed_access_token');
+				Reflect.set(
+					value,
+					'is_user_level',
+					Boolean(
+						signed &&
+						typeof signed === 'object' &&
+						Reflect.get(signed, 'isUserLevel') === true
+					)
+				);
+				Reflect.deleteProperty(value, 'token');
+				Reflect.deleteProperty(value, 'signed_access_token');
+			}
+		},
+		revocationRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			inputSource: 'refreshToken',
+			tokenParamName: 'token',
+			url: 'https://api.hubapi.com/oauth/2026-03/token/revoke'
 		},
 		scopeRequired: true,
 		subject: ['hub_id'],
@@ -774,7 +810,7 @@ export const providers = defineProviders({
 		tokenRequest: {
 			authIn: 'body',
 			encoding: 'application/x-www-form-urlencoded',
-			url: 'https://api.hubapi.com/oauth/v1/token'
+			url: 'https://api.hubapi.com/oauth/2026-09/token'
 		}
 	},
 	intuit: {

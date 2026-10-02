@@ -123,7 +123,7 @@ const buildOAuth2Client = async (
 			} = profileRequest;
 
 			const endpoint = new URL(await resolveConfigProp(url));
-			const resolvedBody = await resolveConfigProp(profileBody);
+			let resolvedBody = await resolveConfigProp(profileBody);
 
 			new URLSearchParams(await resolveConfigProp(searchParams)).forEach(
 				(value, key) => endpoint.searchParams.append(key, value)
@@ -145,6 +145,23 @@ const buildOAuth2Client = async (
 
 			if (authIn === 'header') {
 				profileHeaders.Authorization = `Bearer ${accessToken}`;
+			} else if (authIn === 'body') {
+				if (method !== 'POST')
+					throw new Error(
+						'Body profile authentication requires POST'
+					);
+				const body = new URLSearchParams(resolvedBody);
+				body.set(
+					profileRequest.tokenParamName ?? 'access_token',
+					accessToken
+				);
+				const secret = profileRequest.includeClientCredentials
+					? await resolveClientSecret()
+					: undefined;
+				if (profileRequest.includeClientCredentials)
+					body.set('client_id', config.clientId);
+				if (secret) body.set('client_secret', secret);
+				resolvedBody = Object.fromEntries(body);
 			} else if (authIn === 'path') {
 				endpoint.pathname = `${endpoint.pathname.replace(/\/+$/, '')}/${encodeURIComponent(accessToken)}`;
 			} else {
@@ -165,7 +182,16 @@ const buildOAuth2Client = async (
 			const response = await fetch(profileTarget, init);
 			if (!response.ok) throw await createOAuth2FetchError(response);
 
-			return response.json();
+			const profile: unknown = await response.json();
+			if (
+				!profile ||
+				typeof profile !== 'object' ||
+				Array.isArray(profile)
+			)
+				throw new Error('Profile endpoint returned an invalid object');
+			profileRequest.validateResponse?.(profile);
+
+			return profile as Record<string, unknown>;
 		},
 		async refreshAccessToken(refreshToken: string) {
 			const { authIn, encoding } = meta.tokenRequest;

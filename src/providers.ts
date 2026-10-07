@@ -839,7 +839,7 @@ export const providers = defineProviders({
 		subject: ['id'],
 		subjectType: 'string',
 		tokenRequest: {
-			authIn: 'body',
+			authIn: 'header',
 			encoding: 'application/x-www-form-urlencoded',
 			url: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'
 		}

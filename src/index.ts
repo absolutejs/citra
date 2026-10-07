@@ -201,10 +201,6 @@ const buildOAuth2Client = async (
 
 			const { clientId } = config;
 			const clientSecretValue = await resolveClientSecret();
-			if (clientSecretValue) {
-				params.set('client_id', clientId);
-				params.set('client_secret', clientSecretValue);
-			}
 
 			const request = createOAuth2Request({
 				authIn,

@@ -1418,6 +1418,43 @@ export const providers = defineProviders({
 			url: 'https://auth.polar.com/oauth/token'
 		}
 	},
+	procore: {
+		authorizationUrl: (config) =>
+			config.environment === 'production'
+				? 'https://login.procore.com/oauth/authorize'
+				: 'https://login-sandbox.procore.com/oauth/authorize',
+		isOIDC: false,
+		isRefreshable: true,
+		profileRequest: {
+			authIn: 'header',
+			encoding: 'application/json',
+			method: 'GET',
+			url: (config) =>
+				config.environment === 'production'
+					? 'https://api.procore.com/rest/v1.0/me'
+					: 'https://sandbox.procore.com/rest/v1.0/me'
+		},
+		revocationRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			tokenParamName: 'token',
+			url: (config) =>
+				config.environment === 'production'
+					? 'https://login.procore.com/oauth/revoke'
+					: 'https://login-sandbox.procore.com/oauth/revoke'
+		},
+		scopeRequired: false,
+		subject: ['id'],
+		subjectType: 'number',
+		tokenRequest: {
+			authIn: 'body',
+			encoding: 'application/x-www-form-urlencoded',
+			url: (config) =>
+				config.environment === 'production'
+					? 'https://login.procore.com/oauth/token'
+					: 'https://login-sandbox.procore.com/oauth/token'
+		}
+	},
 	reddit: {
 		authorizationUrl: 'https://www.reddit.com/api/v1/authorize',
 		isOIDC: false,

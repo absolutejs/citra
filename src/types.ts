@@ -515,6 +515,12 @@ type GoogleOAuth2Credentials = {
 	clientSecret: string | null;
 	redirectUri: string;
 };
+type ProcoreOAuth2Credentials = {
+	clientId: string;
+	clientSecret: string;
+	redirectUri: string;
+	environment: 'sandbox' | 'production';
+};
 type IntuitOAuth2Credentials = {
 	clientId: string;
 	clientSecret: string;
@@ -798,6 +804,7 @@ export type CredentialsMap = {
 	google: GoogleOAuth2Credentials;
 	hubspot: HubSpotOAuth2Credentials;
 	intuit: IntuitOAuth2Credentials;
+	procore: ProcoreOAuth2Credentials;
 	kakao: KakaoOAuth2Credentials;
 	keycloak: KeycloakOAuth2Credentials;
 	kick: KickOAuth2Credentials;

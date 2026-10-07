@@ -5,6 +5,21 @@
 		{
 			"changes": [
 				{
+					"kind": "added",
+					"summary": "Add Procore OAuth with explicit sandbox or production credentials, authorization code exchange, profile, refresh, and token revocation.",
+					"symbols": [
+						"providers",
+						"providerOptions",
+						"CredentialsMap"
+					]
+				}
+			],
+			"date": "2026-10-07",
+			"version": "0.31.0"
+		},
+		{
+			"changes": [
+				{
 					"kind": "fixed",
 					"summary": "Intuit token exchange uses Basic client authentication; refresh requests respect the configured credential location without duplicating credentials in the body.",
 					"symbols": [
